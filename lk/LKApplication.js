@@ -6,7 +6,11 @@ class LKApplication extends Application{
     }
 
     getCurrentLKUser(){
+        return this._lkUser;
+    }
 
+    setCurrentLKUser(lkUser){
+        this._lkUser = lkUser;
     }
 }
 module.exports = LKApplication;

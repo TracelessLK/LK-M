@@ -9,9 +9,7 @@ import {
 } from 'react-native';
 import entryUtil from "./common/util/entryUtil"
 import {Root, Spinner, Toast} from "native-base"
-import Application from './lk/LKApplication'
-
-new Application("LK").start();
+import {} from './Manifest'
 
 import LKEntry from './lk/LKEntry'
 

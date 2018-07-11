@@ -1,4 +1,3 @@
-import LogcalLoginHandler from "../common/logic/handler/login/LocalLoginHandler"
 class Application{
 
     static _current=null;
@@ -13,15 +12,15 @@ class Application{
     }
 
     start(){
+        return this;
     }
 
-
+    setLoginHandler(h){
+        this._loginHandler = h;
+    }
 
     getLoginHandler () {
-        if(!this.loginHandler){
-            return new LogcalLoginHandler();
-        }
-        return this.loginHandler;
+        return this._loginHandler;
     }
 }
 module.exports = Application;
