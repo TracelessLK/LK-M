@@ -15,6 +15,14 @@ class Application{
         return this;
     }
 
+    setCurrentUser(user){
+        this._user = user;
+    }
+
+    getCurrentUser(){
+        return this._user;
+    }
+
     setLoginHandler(h){
         this._loginHandler = h;
     }
