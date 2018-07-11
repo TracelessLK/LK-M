@@ -13,11 +13,11 @@ import LoginView from "../common/view/login/PassLoginView"
 import MainView from "../common/view/navigator/MainView";
 import ScanRegisterView from '../common/view/register/ScanRegisterView';
 import {Toast} from "native-base";
-const AppTemplate = require("../common/AppTemplate")
-const loginHandler = AppTemplate.getLoginHandler()
+const Application = require("../engine/Application")
+const loginHandler = Application.getCurrentApp().getLoginHandler()
 
 
-export default class LKAPP extends Component<{}> {
+export default class LKEntry extends Component<{}> {
 
     constructor(props){
         super(props);

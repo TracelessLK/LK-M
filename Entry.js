@@ -9,11 +9,15 @@ import {
 } from 'react-native';
 import entryUtil from "./common/util/entryUtil"
 import {Root, Spinner, Toast} from "native-base"
-import LKApp from './lk/LKAPP'
+import Application from './lk/LKApplication'
+
+new Application("LK").start();
+
+import LKEntry from './lk/LKEntry'
 
 entryUtil.init()
 
-export default class App extends Component<{}> {
+export default class Entry extends Component<{}> {
     constructor(props){
         super(props);
     }
@@ -31,7 +35,7 @@ export default class App extends Component<{}> {
         return (
             <Root>
                 <View style={styles.container}>
-                    <LKApp></LKApp>
+                    <LKEntry></LKEntry>
                 </View>
             </Root>
 
