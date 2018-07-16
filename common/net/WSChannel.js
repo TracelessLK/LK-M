@@ -1,6 +1,8 @@
 import EventTarget from '../core/EventTarget'
 class WSChannel extends EventTarget{
 
+    _reconnectDelay=0
+
     constructor(url,keepAlive){
         super();
         this._url = url;
@@ -16,20 +18,15 @@ class WSChannel extends EventTarget{
                     reject(e);
                 }
                 if(this._ws){
-                    this._ws.onmessage = (message)=> {
-                        this.fire("message",message);
-                    };
+                    this._ws.onmessage = this._onmessage;
                     this._ws.onerror = (event)=>{
-                        this.fire("error",event);
                     };
                     this._ws.onclose = (event)=>{
-                        delete this._ws;
-                        if(this._keepAlive){
-                            this.applyChannel()
+                        if((!this._foreClose)&&this._keepAlive){
+                            this._reconnect();
                         }
-                        this.fire("close",event);
                     }
-                    this.ws.onopen = function () {
+                    this._ws.onopen = function () {
                         resolve(this);
 
                     };
@@ -40,19 +37,46 @@ class WSChannel extends EventTarget{
         });
 
     }
-    send(message){
-        try{
-            this._ws.send(message);
-        }catch(e){
-            console.info(e);
+    _reconnect(){
+        let delay = this._reconnectDelay>=5000?5000:this._reconnectDelay;
+        let con =  ()=> {
+            this._reconnectDelay+=1000;
+            delete this._ws;
+            this.applyChannel().then(()=>{
+                this._reconnectDelay=0;
+                this._onreconnect(this);
+            });
+        }
+        if(delay){
+            setTimeout(()=>{
+
+                con();
+
+            },delay);
+        }else{
+            con();
         }
     }
+    _onmessage(message){
+
+    }
+    _onreconnect(channel){
+
+    }
+
+    send(message){
+        this._ws.send(message);
+    }
     close(){
+        this._foreClose = true;
         try{
             this._ws.close();
         }catch(e){
             console.info(e);
         }
+    }
+    getUrl(){
+        return this._url;
     }
 }
 module.exports=WSChannel

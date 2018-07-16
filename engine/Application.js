@@ -30,5 +30,6 @@ class Application{
     getLoginHandler () {
         return this._loginHandler;
     }
+
 }
 module.exports = Application;

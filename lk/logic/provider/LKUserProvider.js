@@ -1,8 +1,11 @@
 import LKUser from '../../store/LKUser'
 class LKUserProvider{
-    getAll(){
+    asyGetAll(){
         return LKUser.getAll();
+    }
+    asyGet(userId){
+        return LKUser.get(userId);
     }
 
 }
-module.exports = LKUserProvider;
+module.exports = new LKUserProvider();
