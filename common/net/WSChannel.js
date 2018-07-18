@@ -22,7 +22,7 @@ class WSChannel extends EventTarget{
                     this._ws.onerror = (event)=>{
                     };
                     this._ws.onclose = (event)=>{
-                        if((!this._foreClose)&&this._keepAlive){
+                        if((!this._foreClosed)&&this._keepAlive){
                             this._reconnect();
                         }
                     }
@@ -68,7 +68,7 @@ class WSChannel extends EventTarget{
         this._ws.send(message);
     }
     close(){
-        this._foreClose = true;
+        this._foreClosed = true;
         try{
             this._ws.close();
         }catch(e){

@@ -10,6 +10,7 @@ class LKChannel extends WSChannel{
 
     constructor(url){
         super(url,true);
+        this._ping();
     }
 
     _onmessage(message){
@@ -76,7 +77,7 @@ class LKChannel extends WSChannel{
         };
     }
 
-    sendMessage(req){
+    _sendMessage(req){
         return new Promise((resolve,reject)=>{
             let msgId = req.header.id;
             this._callbacks[msgId] = (msg)=>{
@@ -99,15 +100,42 @@ class LKChannel extends WSChannel{
 
     }
 
+   async _ping(){
+        let deprecated = false;
+        if(!this._lastPongTime){
+            this._lastPongTime = Date.now();
+        }else if(this._ws&&!this._foreClosed&&Date.now()-this._lastPongTime>180000){
+            try{
+                this._ws.close();
+            }catch (e){
+
+            }
+            delete this._ws;
+            deprecated=true;
+        }
+        if(!deprecated&&!this._foreClosed){
+            try{
+                let result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping")]);
+                result[0]._sendMessage(result[1]).then(()=>{
+                    this._lastPongTime = Date.now();
+                });
+            }catch (e){
+
+            }
+
+        }
+        setTimeout(()=>{this._ping()},60000);
+    }
+
     async login(){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("login")]);
-        return result[0].sendMessage(result[1]);
+        return result[0]._sendMessage(result[1]);
     }
 
    async register(ip,port,uid,did,venderDid,pk,checkCode,qrCode){
         let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode};
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
-        return result[0].sendMessage(result[1]);
+        return result[0]._sendMessage(result[1]);
     }
 
 }
