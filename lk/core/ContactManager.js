@@ -21,3 +21,6 @@ class ContactManager extends EventTarget{
         this.fire("deviceRemoved",detail);
     }
 }
+
+
+module.exports = new ContactManager();

@@ -1,6 +1,8 @@
 import LKApplication from './lk/LKApplication'
 import LKUserHandler from './lk/logic/handler/LKUserHandler'
-import LocalLoginHandler from "./common/logic/handler/login/LocalLoginHandler"
+import LocalLoginHandler from "./lk/logic/handler/LKLoginHandler"
+
+
 import LKOrgProvider from './lk/logic/provider/LKOrgProvider'
 import LKUserProvider from './lk/logic/provider/LKUserProvider'
 import LKDeviceProvider from './lk/logic/provider/LKDeviceProvider'

@@ -19,5 +19,10 @@ class LKLoginHandler extends  LoginHandler{
        return userId;
     }
 
+    getLogin(){
+        return true
+    }
+
 }
 
+module.exports = new LKLoginHandler()

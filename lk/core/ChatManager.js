@@ -67,8 +67,8 @@ class ChatManager{
                 this._hotContacts[contact.id] = contact;
             });
             //devices
-            let result = await Promise.all(ps);
-            result.forEach((devices)=>{
+            let result2 = await Promise.all(ps);
+            result2.forEach((devices)=>{
                 if(checkChatKey){
                     devices.forEach((device)=>{
                         let rsa = new RSAKey();
