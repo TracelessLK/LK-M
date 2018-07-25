@@ -4,7 +4,7 @@ import CryptoJS from "crypto-js";
 import RNFS from 'react-native-fs';
 class LKLoginHandler extends  LoginHandler{
     needLogin(){
-        return true;
+        return false;
     }
 
    async asyLogin(userId,password){
