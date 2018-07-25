@@ -18,6 +18,7 @@ export default class ScanRegisterView extends React.Component {
 
     constructor(props) {
         super(props);
+
         this.state={
             scanVisible:false,
             step:1,
@@ -123,12 +124,13 @@ export default class ScanRegisterView extends React.Component {
         const {data} = e
 
         const decryptedText = util.decryptAes(data)
-        this.decryptedText = decryptedText
         const obj = JSON.parse(decryptedText)
         if(obj.action === 'registerForAdmin'){
             this.setState({
                 scanVisible:false,
-                checkCodeMode:true
+            })
+            this.props.navigation.navigate("CheckCodeView",{
+                obj
             })
 
         }else{

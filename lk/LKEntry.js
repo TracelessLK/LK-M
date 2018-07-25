@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import LoginView from "../common/view/login/PassLoginView"
 import MainView from "../common/view/navigator/MainView";
-import ScanRegisterView from './view/login/ScanRegisterView';
+import LoginStack from './view/login/LoginStack';
 import {Toast} from "native-base";
 const Application = require("../engine/Application")
 const loginHandler = Application.getCurrentApp().getLoginHandler()
@@ -55,7 +55,7 @@ export default class LKEntry extends Component<{}> {
 
             }
         }else{
-            content=<ScanRegisterView ></ScanRegisterView>
+            content= LoginStack
         }
 
         return (

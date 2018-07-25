@@ -17,6 +17,7 @@ export default class CheckCodeView extends Component<{}> {
     constructor(props) {
         super(props);
         this.state = {};
+
     }
 
     componentDidMount = () => {
@@ -56,7 +57,7 @@ export default class CheckCodeView extends Component<{}> {
                                       duration: 3000
                                   })
                                 }else{
-                                    const obj = JSON.parse(this.props.decryptedText)
+                                    const obj = this.props.navigation.state.params.obj
                                     obj.checkCode = this.text
                                     fetch(`${config.url}api/user/${obj.action}`, {
                                         method: 'POST',
