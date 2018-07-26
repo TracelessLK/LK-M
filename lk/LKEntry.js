@@ -11,16 +11,17 @@ import {
 } from 'react-native';
 import LoginView from "../common/view/login/PassLoginView"
 import MainView from "../common/view/navigator/MainView";
-import ScanRegisterView from '../common/view/register/ScanRegisterView';
+import LoginStack from './view/login/LoginStack';
 import {Toast} from "native-base";
 const Application = require("../engine/Application")
 const loginHandler = Application.getCurrentApp().getLoginHandler()
-
+const AppUtil  = require('./AppUtil')
 
 export default class LKEntry extends Component<{}> {
 
     constructor(props){
         super(props);
+        AppUtil.setApp(this);
         this.state={};
     }
 
@@ -36,6 +37,14 @@ export default class LKEntry extends Component<{}> {
 
     }
 
+    reset=()=>{
+        if(loginHandler.getLogin()) {
+            this.setState({reset:true});
+        } else {
+            // loginHandler.asyLogin
+        }
+    }
+
     render() {
         let content=null;
         if(loginHandler.needLogin()){
@@ -46,7 +55,7 @@ export default class LKEntry extends Component<{}> {
 
             }
         }else{
-            content=<ScanRegisterView ></ScanRegisterView>
+            content= LoginStack
         }
 
         return (

@@ -6,6 +6,8 @@ import {TabNavigator } from 'react-navigation';
 import {StackNavigator}from "react-navigation";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import TestView from './TestView'
+import CheckCodeView from '../../../lk/view/login/CheckCodeView'
+import ScanRegisterView from '../../../lk/view/login/ScanRegisterView'
 const iconSize = 26
 
 let style = {display:"flex",justifyContent:"center",alignItems:"center"}
@@ -72,6 +74,20 @@ let MainStack = StackNavigator({
             headerTitle: '版本信息'
         }
     },
+    CheckCodeView: {
+        screen: CheckCodeView,
+        navigationOptions:{
+            headerTitle: '管理员注册'
+        }
+    },
+    ScanRegisterView: {
+        screen: ScanRegisterView,
+        navigationOptions:{
+            headerTitle: '扫码注册'
+        }
+    },
+
+
 }, {
     transitionConfig:function transitionConfig(){
         return {

@@ -8,14 +8,21 @@
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
+    "aes-js": "^3.1.1",
     "crypto-js": "^3.1.9-1",
+    "lodash": "^4.17.10",
     "native-base": "^2.6.1",
     "prop-types": "^15.6.2",
     "react": "16.3.1",
     "react-native": "0.55.4",
+    "react-native-camera": "^1.1.4",
+    "react-native-device-info": "^0.22.0",
     "react-native-fs": "^2.10.14",
+    "react-native-rsa": "0.0.3",
+    "react-native-sqlite-storage": "^3.3.6",
     "react-native-vector-icons": "^4.6.0",
-    "react-navigation": "2.5.5"
+    "react-navigation": "2.5.5",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "babel-jest": "23.0.1",

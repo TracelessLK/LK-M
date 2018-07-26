@@ -1,5 +1,5 @@
 import UUID from 'uuid/v4';
-import EventTarget from '../../common/net/WSChannel'
+import WSChannel from '../../common/net/WSChannel'
 import Application from '../LKApplication'
 import CryptoJS from "crypto-js";
 
