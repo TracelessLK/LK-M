@@ -5,7 +5,7 @@ class LKChatProvider{
     asyGetChat(chatId){
         return Chat.getChat(chatId);
     }
-    asyGeChattMembers(chatId){
+    asyGetChatMembers(chatId){
         return Chat.getChatMembers(chatId);
     }
 }

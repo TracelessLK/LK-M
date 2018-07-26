@@ -46,12 +46,18 @@ class LKApplication extends Application{
         return this._lkUserHandler;
     }
 
-
-    async asyGetOrgTopMCode(){
-        if (!this._orgTopMCode) {
-             this._orgTopMCode = await this._lkOrgProvider.getTopMCode();
+    async asyGetTopOrgMCode(){
+        if (!this._topOrgMCode) {
+             this._topOrgMCode = await this._lkOrgProvider.asyGetTopOrg(this.getCurrentUser().id).orgMCode;
         }
-        return this._orgTopMCode;
+        return this._topOrgMCode;
+    }
+
+    async asyGetTopMemberMCode(){
+        if (!this._topMemberMCode) {
+            this._topMemberMCode = await this._lkOrgProvider.asyGetTopOrg(this.getCurrentUser().id).memberMCode;
+        }
+        return this._topMemberMCode;
     }
 
     setLKOrgProvider(p){

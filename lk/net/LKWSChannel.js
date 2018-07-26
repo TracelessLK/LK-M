@@ -39,7 +39,8 @@ class LKChannel extends WSChannel{
     async _asyNewRequest (action,content,targets,chatId,lastChatMsg,preSentChatMsg) {
         let id = this._generateMsgId();
         let ps = [];
-        ps.push(Application.getCurrentApp().getTopMCode());
+        ps.push(Application.getCurrentApp().asyGetTopOrgMCode());
+        ps.push(Application.getCurrentApp().asyGetTopMemberMCode());
         if(chatId){
             ps.push(Application.getCurrentApp().getChatManager().getChat(chatId));
             ps.push(Application.getCurrentApp().getChatManager().asyGetChatMembers(chatId,true));
@@ -47,9 +48,10 @@ class LKChannel extends WSChannel{
         let result = await Promise.all(ps);
 
         let orgMCode = result[0];
+        let memberMCode = result[1];
         let _content = chatId?CryptoJS.AES.encrypt(content, result[1].key).toString():content;
         let _targets = chatId?result[2]:targets;
-        let mCode = Application.getCurrentApp().getCurrentUser().mCode;
+        //let mCode = Application.getCurrentApp().getCurrentUser().mCode;
 
         return  {
             header:{
@@ -58,14 +60,14 @@ class LKChannel extends WSChannel{
                 action:action,
                 uid:Application.getCurrentApp().getCurrentUser().id,
                 did:Application.getCurrentApp().getCurrentUser().deviceId,
-                mCode:mCode,
+                memberMCode:memberMCode,
                 orgMCode:orgMCode,
 
                 chatId:chatId,
                 lastChatMsg:lastChatMsg,
                 preSentChatMsg:preSentChatMsg,
                 targets:_targets,
-                sendTime:Date.now(),
+                time:Date.now(),
 
                 timeout:Application.getCurrentApp().getMessageTimeout()
 

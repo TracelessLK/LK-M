@@ -7,13 +7,13 @@ db.transaction((tx)=>{
     });
 });
 class Org{
-    getTopMCode(){
+    getTopOrg(userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from org where parentId is null";
-                tx.executeSql(sql,[],function (tx,results) {
+                let sql = "select * from org where parentId is null and ownerUserId=?";
+                tx.executeSql(sql,[userId],function (tx,results) {
                     if(results.rows.length>0){
-                        resolve(results.rows.item(0).data.mcode);
+                        resolve(results.rows.item(0).data);
                     }else{
                         resolve(null);
                     }
@@ -23,23 +23,6 @@ class Org{
                 });
             });
         });
-    }
-    getAll(){
-        return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
-                let sql = "select * from lkuser";
-                tx.executeSql(sql,[],function (tx,results) {
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i).data);
-                    }
-                    resolve(ary);
-                },function (err) {
-                    reject(err);
-                });
-            });
-        });
-
     }
 }
 module.exports = new Org();

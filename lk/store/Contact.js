@@ -1,6 +1,7 @@
 
 import db from '../../common/store/DataBase'
 db.transaction((tx)=>{
+    //include org members & foreign contacts
     let sql ="create table if not exists contact(id TEXT PRIMARY KEY NOT NULL,name TEXT,pic TEXT,serverIP TEXT,serverPort INTEGER,isFriend INTEGER,orgId TEXT,mCode TEXT,ownerUserId TEXT,reserve1 TEXT)";
     tx.executeSql(sql,[],function () {
     },function (err) {

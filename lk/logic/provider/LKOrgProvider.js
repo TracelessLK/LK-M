@@ -1,7 +1,7 @@
 import Org from '../../store/Org'
 class LKOrgProvider{
-    asyGetTopMCode(){
-        return Org.getTopMCode();
+    asyGetTopOrg(userId){
+        return Org.getTopOrg(userId);
     }
 }
 module.exports = new LKOrgProvider();
