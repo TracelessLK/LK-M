@@ -26,6 +26,14 @@ class LKApplication extends Application{
 
     }
 
+    getLKWSChannelClass(){
+        return this._channel;
+    }
+
+    getLKWSChannelClass(){
+        return this._channelClass;
+    }
+
     setLKWSChannelClass(channelClass){
         this._channelClass = channelClass;
     }
