@@ -38,19 +38,33 @@ class LKChannel extends WSChannel{
 
     async _asyNewRequest (action,content,targets,chatId,lastChatMsg,preSentChatMsg) {
         let id = this._generateMsgId();
-        let ps = [];
-        ps.push(Application.getCurrentApp().asyGetTopOrgMCode());
-        ps.push(Application.getCurrentApp().asyGetTopMemberMCode());
-        if(chatId){
-            ps.push(Application.getCurrentApp().getChatManager().getChat(chatId));
-            ps.push(Application.getCurrentApp().getChatManager().asyGetChatMembers(chatId,true));
+        let orgMCode = null;
+        let memberMCode = null;
+        let _content = null;
+        let _targets = null;
+        let uid = null;
+        let did = null;
+        if(Application.getCurrentApp().getCurrentUser()){
+            uid = Application.getCurrentApp().getCurrentUser().id;
+            did = Application.getCurrentApp().getCurrentUser().deviceId;
+            let ps = [];
+            ps.push(Application.getCurrentApp().asyGetTopOrgMCode());
+            ps.push(Application.getCurrentApp().asyGetTopMemberMCode());
+            if(chatId){
+                ps.push(Application.getCurrentApp().getChatManager().getChat(chatId));
+                ps.push(Application.getCurrentApp().getChatManager().asyGetChatMembers(chatId,true));
+            }
+            let result = await Promise.all(ps);
+            orgMCode = result[0];
+            memberMCode = result[1];
+            if(chatId){
+                _content = CryptoJS.AES.encrypt(content, result[2].key).toString();
+                _targets = result[3];
+            }
         }
-        let result = await Promise.all(ps);
+        _content = _content?_content:content;
+        _targets = _targets?_targets:targets;
 
-        let orgMCode = result[0];
-        let memberMCode = result[1];
-        let _content = chatId?CryptoJS.AES.encrypt(content, result[1].key).toString():content;
-        let _targets = chatId?result[2]:targets;
         //let mCode = Application.getCurrentApp().getCurrentUser().mCode;
 
         return  {
@@ -58,8 +72,8 @@ class LKChannel extends WSChannel{
                 version:"1.0",
                 id:id,
                 action:action,
-                uid:Application.getCurrentApp().getCurrentUser().id,
-                did:Application.getCurrentApp().getCurrentUser().deviceId,
+                uid:uid,
+                did:did,
                 memberMCode:memberMCode,
                 orgMCode:orgMCode,
 
@@ -74,8 +88,7 @@ class LKChannel extends WSChannel{
             },
             body:{
                 content:_content
-            },
-            sign:""
+            }
         };
     }
 
@@ -129,15 +142,16 @@ class LKChannel extends WSChannel{
         setTimeout(()=>{this._ping()},60000);
     }
 
-    async login(){
+    async asyLogin(){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("login")]);
         return result[0]._sendMessage(result[1]);
     }
 
-   async register(ip,port,uid,did,venderDid,pk,checkCode,qrCode){
-        let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode};
+   async asyRegister(ip,port,uid,did,venderDid,pk,checkCode,qrCode,description){
+        let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
-        return result[0]._sendMessage(result[1]);
+        let response = await result[0]._sendMessage(result[1]);
+        //TODO 解析同步过来的数据
     }
 
 }

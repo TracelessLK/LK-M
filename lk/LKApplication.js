@@ -21,7 +21,7 @@ class LKApplication extends Application{
 
         }
         this._channel.applyChannel().then((channel)=>{
-            channel.login(user.id,user.deviceId);
+            channel.asyLogin(user.id,user.deviceId);
         })
 
     }
