@@ -148,22 +148,14 @@ class LKChannel extends WSChannel{
     }
 
    async asyRegister(ip,port,uid,did,venderDid,pk,checkCode,qrCode,description){
-        return new Promise((resolve,reject)=>{
-            let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
-            let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
-            result[0]._sendMessage(result[1]).then((msg)=>{
-                if(msg.body.content.error){
-                    reject(msg.body.content.error)
-                }else{
-                    resolve();
-                    //TODO 解析同步过来的数据
-                }
-            }).catch((error)=>{
-                reject(error);
-            });
-        });
-
-
+       let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
+       let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
+       const  msgAfter = await result[0]._sendMessage(result[1])
+       if(msgAfter.body.content.error){
+           throw msgAfter.body.content.error
+       }else{
+           //TODO 解析同步过来的数据
+       }
     }
 
 }
