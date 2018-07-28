@@ -102,12 +102,12 @@ class LKChannel extends WSChannel{
             try{
                 super.send(JSON.stringify(req));
             }catch (e){
-                reject({err:e.toString()});
+                reject({error:e.toString()});
             }
 
             setTimeout(()=>{
                 if(this._callbacks[msgId]){
-                    reject({err:"timeout"});
+                    reject({error:"timeout"});
                 }
 
             },this._timeout);
@@ -148,10 +148,22 @@ class LKChannel extends WSChannel{
     }
 
    async asyRegister(ip,port,uid,did,venderDid,pk,checkCode,qrCode,description){
-        let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
-        let response = await result[0]._sendMessage(result[1]);
-        //TODO 解析同步过来的数据
+        return new Promise((resolve,reject)=>{
+            let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
+            let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
+            result[0]._sendMessage(result[1]).then((msg)=>{
+                if(msg.body.content.error){
+                    reject(msg.body.content.error)
+                }else{
+                    resolve();
+                    //TODO 解析同步过来的数据
+                }
+            }).catch((error)=>{
+                reject(error);
+            });
+        });
+
+
     }
 
 }
