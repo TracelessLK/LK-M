@@ -29,7 +29,7 @@ class LKChannel extends WSChannel{
 
     _onreconnect(){
         if(Application.getCurrentApp().getCurrentUser())
-            this.login();
+            this.asyLogin();
     }
 
     _generateMsgId () {
