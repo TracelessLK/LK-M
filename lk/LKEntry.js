@@ -14,7 +14,10 @@ import MainView from "../common/view/navigator/MainView";
 import LoginStack from './view/login/LoginStack';
 import {Toast} from "native-base";
 const Application = require("../engine/Application")
-const loginHandler = Application.getCurrentApp().getLoginHandler()
+const lkApplication = Application.getCurrentApp()
+
+
+const loginHandler = lkApplication.getLoginHandler()
 const AppUtil  = require('./AppUtil')
 
 export default class LKEntry extends Component<{}> {
@@ -47,6 +50,11 @@ export default class LKEntry extends Component<{}> {
 
     render() {
         let content=null;
+        const userProvider = lkApplication.getLKUserProvider();
+        (async()=>{
+             const userAry = await userProvider.asyGetAll()
+        })()
+
         if(loginHandler.needLogin()){
             if(loginHandler.getLogin()){
                 content = <MainView  />

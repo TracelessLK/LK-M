@@ -15,13 +15,8 @@ const config = require('../../config')
 export default class CheckCodeView extends Component<{}> {
 
     constructor(props) {
-
         super(props);
-        const obj = this.props.navigation.state.params.obj
-
-        this.state = {
-            hasCheckCode:obj.hasCheckCode
-        };
+        this.state = {};
 
     }
 
@@ -38,15 +33,15 @@ export default class CheckCodeView extends Component<{}> {
     }
     onChangeText = (t)=>{
 
-       this.text = t?t.trim():''
+        this.text = t?t.trim():''
 
     }
     render() {
         return (
             <View style={{display:"flex",alignItems:'center',justifyContent:'center',flex:1}}>
                 <View style={{display:'flex',justifyContent:"flex-start",alignItems:"flex-start",marginVertical:15,width:'95%'}}>
-                    <Item floatingLabel >
-                        <Label>请输入验证码</Label>
+                    <Item floatingLabel  >
+                        <Label>请设置登录密码</Label>
                         <Input ref='input' onChangeText={this.onChangeText}></Input>
                     </Item>
                 </View>
@@ -55,16 +50,16 @@ export default class CheckCodeView extends Component<{}> {
 
                             onPress={debounceFunc(()=>{
                                 if(!this.text){
-                                  Toast.show({
-                                      text: '请输入验证码',
-                                      position: "top",
-                                      type:"warning",
-                                      duration: 3000
-                                  })
+                                    Toast.show({
+                                        text: '请设置登录密码',
+                                        position: "top",
+                                        type:"warning",
+                                        duration: 3000
+                                    })
                                 }else{
                                     const obj = this.props.navigation.state.params.obj
                                     obj.checkCode = this.text
-                                    fetch(`${config.url}api/user/${obj.action}`, {
+                                    fetch(`${config.url}api/member/${obj.action}`, {
                                         method: 'POST',
                                         headers: {
                                             Accept: 'application/json',
@@ -78,7 +73,6 @@ export default class CheckCodeView extends Component<{}> {
                                             if(errorMsg){
                                                 Alert.alert("提示",errorMsg)
                                             }else{
-                                                Alert.alert("提示","成功注册管理员,验证码即为登录密码")
                                                 this.props.navigation.goBack()
                                             }
                                         })()
@@ -90,8 +84,8 @@ export default class CheckCodeView extends Component<{}> {
                                 }
 
 
-                    })}>
-                        <Text style={{color:"white"}}>注册管理员</Text>
+                            })}>
+                        <Text style={{color:"white"}}>保存</Text>
                     </Button>
                 </View>
 

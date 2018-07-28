@@ -6,14 +6,14 @@ import CryptoJS from "crypto-js";
 class LKChannel extends WSChannel{
 
     _callbacks={}
-    _timeout:60000
+    _timeout=60000
 
     constructor(url){
         super(url,true);
         this._ping();
     }
 
-    _onmessage(message){
+    _onmessage = (message)=>{
         let msg = JSON.parse(message.data);
         let header = msg.header;
         let isResponse = header.response;
@@ -21,7 +21,6 @@ class LKChannel extends WSChannel{
             let msgId = header.msgId;
             let callback = this._callbacks[msgId];
             if(callback){
-
                 callback(msg);
             }
         }
@@ -130,8 +129,9 @@ class LKChannel extends WSChannel{
         }
         if(!deprecated&&!this._foreClosed){
             try{
-                let result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping")]);
-                result[0]._sendMessage(result[1]).then(()=>{
+                const channel = await this.applyChannel()
+                let request = await this._asyNewRequest("ping")
+                channel._sendMessage(request).then(()=>{
                     this._lastPongTime = Date.now();
                 });
             }catch (e){
@@ -148,12 +148,16 @@ class LKChannel extends WSChannel{
     }
 
    async asyRegister(ip,port,uid,did,venderDid,pk,checkCode,qrCode,description){
+
        let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
-       let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
-       const  msgAfter = await result[0]._sendMessage(result[1])
+       const channel = await this.applyChannel()
+       let request = await this._asyNewRequest("register",msg)
+       const  msgAfter = await channel._sendMessage(request)
        if(msgAfter.body.content.error){
            throw msgAfter.body.content.error
        }else{
+           console.log('register')
+
            //TODO 解析同步过来的数据
        }
     }
