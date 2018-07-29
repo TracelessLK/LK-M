@@ -1,10 +1,33 @@
 import {Platform, PushNotificationIOS} from "react-native";
 import {Toast} from 'native-base'
-let deviceIdApn,deviceIdApnPromise
+
+
+
+
+let deviceIdApnPromise = new Promise(resolve=>{
+    if(Platform.OS === 'ios'){
+        PushNotificationIOS.requestPermissions().then(res=>{
+
+
+            PushNotificationIOS.addEventListener('register', (deviceId) => {
+
+                if(__DEV__ && Platform.OS === 'ios'){
+                    console.log(`deviceId APN: ${deviceId}`)
+
+                }
+                resolve(deviceId)
+
+            });
+        })
+    }else{
+        resolve()
+    }
+
+
+})
 
 
 const pushUtil = {
-    deviceIdApn:null,
     setJpush(option){
         if(Platform.OS === 'android'){
         }
@@ -12,10 +35,7 @@ const pushUtil = {
     init(){
         if(Platform.OS === 'ios'){
             //必须要调用requestPermissions,否则无法接受到register事件获取deviceId
-            PushNotificationIOS.requestPermissions().then(res=>{
 
-            })
-            deviceIdApnPromise = this.iosPushInit()
 
             PushNotificationIOS.getInitialNotification().then(res=>{
                 //TODO 跳转到指定聊天窗口
@@ -42,39 +62,13 @@ const pushUtil = {
                 }
             });
             PushNotificationIOS.addEventListener('registrationError', (reason) => {
+                console.log(reason)
 
             });
         }
     },
     getAPNDeviceId(){
-        let result;
-        if(Platform.OS === 'ios'){
-            if(deviceIdApn){
-                result = Promise.resolve(deviceIdApn)
-            }else{
-                result = deviceIdApnPromise
-            }
-        }else{
-            result = Promise.resolve(null)
-        }
-
-        return result
-    },
-    iosPushInit(){
-        return new Promise(resolve=>{
-            PushNotificationIOS.addEventListener('register', (deviceId) => {
-                if(__DEV__ && Platform.OS === 'ios'){
-                    // console.log(`deviceId APN: ${deviceId}`)
-
-                }
-
-                deviceIdApn = deviceId
-                this.deviceIdApn = deviceIdApn
-
-                resolve(deviceId)
-            });
-
-        })
+        return deviceIdApnPromise
     },
     removeNotify(){
         if(Platform.OS === 'ios'){
@@ -83,5 +77,7 @@ const pushUtil = {
         }
     },
 }
+
+pushUtil.init()
 
 module.exports = pushUtil

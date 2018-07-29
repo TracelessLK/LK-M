@@ -9,32 +9,32 @@ class WSChannel extends EventTarget{
         this._keepAlive = keepAlive;
     }
     applyChannel(){
-        return new Promise((resolve,reject)=>{
-            if(!this._ws){
-                try{
-                    this._ws = new WebSocket(this._url);
-                }catch (e){
-                    delete this._ws;
-                    reject(e);
-                }
-                if(this._ws){
-                    this._ws.onmessage = this._onmessage;
-                    this._ws.onerror = (event)=>{
-                    };
-                    this._ws.onclose = (event)=>{
-                        if((!this._foreClosed)&&this._keepAlive){
-                            this._reconnect();
-                        }
-                    }
-                    this._ws.onopen = function () {
-                        resolve(this);
-
-                    };
-                }
-            }else{
-                resolve(this);
+        if(!this.openPromise){
+            try{
+                this._ws = new WebSocket(this._url);
+            }catch (e){
+                delete this._ws;
+                return Promise.reject(e)
             }
-        });
+            if(this._ws){
+                this._ws.onmessage = this._onmessage;
+                this._ws.onerror = (event)=>{
+                };
+                this._ws.onclose = (event)=>{
+                    if((!this._foreClosed)&&this._keepAlive){
+                        this._reconnect();
+                    }
+                }
+                this.openPromise = new Promise(resolve => {
+                    this._ws.onopen =  ()=> {
+                        resolve(this);
+                    };
+                })
+                return this.openPromise
+            }
+        }else{
+           return this.openPromise
+        }
 
     }
     _reconnect(){
@@ -66,6 +66,7 @@ class WSChannel extends EventTarget{
 
     send(message){
         this._ws.send(message);
+
     }
     close(){
         this._foreClosed = true;

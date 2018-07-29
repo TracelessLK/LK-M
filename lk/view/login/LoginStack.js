@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 
 import CheckCodeView from "./CheckCodeView";
+import SetPasswordView from "./SetPasswordView";
 import {StackNavigator} from "react-navigation";
 import ScanRegisterView from "./ScanRegisterView";
+import RegisterView from "./RegisterView";
 
 
 let MainStack = StackNavigator({
@@ -18,6 +20,18 @@ let MainStack = StackNavigator({
             headerTitle: '管理员注册'
         }
     },
+    SetPasswordView: {
+        screen: SetPasswordView,
+        navigationOptions:{
+            headerTitle: '设置登录密码'
+        }
+    },
+    RegisterView:{
+        screen: RegisterView,
+        navigationOptions:{
+            headerTitle: '注册'
+        }
+    }
 
 
 

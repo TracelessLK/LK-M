@@ -14,7 +14,10 @@ import MainView from "../common/view/navigator/MainView";
 import LoginStack from './view/login/LoginStack';
 import {Toast} from "native-base";
 const Application = require("../engine/Application")
-const loginHandler = Application.getCurrentApp().getLoginHandler()
+const lkApplication = Application.getCurrentApp()
+
+
+const loginHandler = lkApplication.getLoginHandler()
 const AppUtil  = require('./AppUtil')
 
 export default class LKEntry extends Component<{}> {
@@ -22,12 +25,12 @@ export default class LKEntry extends Component<{}> {
     constructor(props){
         super(props);
         AppUtil.setApp(this);
-        this.state={};
+        this.state={
+            content:null
+        };
     }
 
-    componentDidMount=()=>{
 
-    }
 
     componentWillUnmount=()=>{
     }
@@ -38,31 +41,54 @@ export default class LKEntry extends Component<{}> {
     }
 
     reset=()=>{
-        if(loginHandler.getLogin()) {
-            this.setState({reset:true});
-        } else {
-            // loginHandler.asyLogin
-        }
+        this.setState({reset:true});
+
     }
 
     render() {
-        let content=null;
-        if(loginHandler.needLogin()){
-            if(loginHandler.getLogin()){
-                content = <MainView  />
-            }else{
-                content=<LoginView ></LoginView>;
 
-            }
-        }else{
-            content= LoginStack
-        }
 
         return (
             <View style={styles.container}>
-                {content}
+                {this.state.content}
             </View>
         );
+    }
+
+    componentDidMount(){
+        this.asyncRender()
+
+    }
+    async asyncRender(){
+
+        let content=null;
+        const currentUser = lkApplication.getCurrentUser()
+        //TODO:password login
+        if(currentUser){
+            content
+
+        }else{
+            const userProvider = lkApplication.getLKUserProvider();
+
+            const userAry = await userProvider.asyGetAll()
+            const {length} = userAry
+
+            if(length === 0){
+                content= LoginStack
+            }else if(length ===1){
+                await lkApplication.setCurrentUser(userAry[0])
+                content = <MainView  />
+            }else if(length > 1){
+                //TODO
+            }
+
+        }
+
+
+        this.setState({
+            content
+        })
+
     }
 
 }

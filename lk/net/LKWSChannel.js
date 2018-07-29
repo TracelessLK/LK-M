@@ -6,14 +6,14 @@ import CryptoJS from "crypto-js";
 class LKChannel extends WSChannel{
 
     _callbacks={}
-    _timeout:60000
+    _timeout=60000
 
     constructor(url){
         super(url,true);
         this._ping();
     }
 
-    _onmessage(message){
+    _onmessage = (message)=>{
         let msg = JSON.parse(message.data);
         let header = msg.header;
         let isResponse = header.response;
@@ -21,7 +21,6 @@ class LKChannel extends WSChannel{
             let msgId = header.msgId;
             let callback = this._callbacks[msgId];
             if(callback){
-
                 callback(msg);
             }
         }
@@ -29,7 +28,7 @@ class LKChannel extends WSChannel{
 
     _onreconnect(){
         if(Application.getCurrentApp().getCurrentUser())
-            this.login();
+            this.asyLogin();
     }
 
     _generateMsgId () {
@@ -166,10 +165,7 @@ class LKChannel extends WSChannel{
                 reject(error);
             });
         });
-
-
     }
-
 }
 
 module.exports=LKChannel;

@@ -13,15 +13,15 @@ class LKApplication extends Application{
 
     setCurrentUser(user){
         super.setCurrentUser(user);
-        let url='ws://'+user.serverIP+':'+user.serverPort+'/transfer';
+        let url='ws://'+user.serverIP+':'+user.serverPort;
         if((!this._channel)||(this._channel.getUrl()!=url)){
             if(this._channel)
                 this._channel.close();
-            this._channel = new this._channelClass('ws://'+user.serverIP+':'+user.serverPort+'/transfer',true);
+            this._channel = new this._channelClass('ws://'+user.serverIP+':'+user.serverPort,true);
 
         }
-        this._channel.applyChannel().then((channel)=>{
-            channel.asyLogin(user.id,user.deviceId);
+        return this._channel.applyChannel().then((channel)=>{
+            return channel.asyLogin(user.id,user.password);
         })
 
     }
@@ -32,7 +32,8 @@ class LKApplication extends Application{
         });
     }
 
-    getLKWSChannelClass(){
+
+    getLKWSChannel(){
         return this._channel;
     }
 
