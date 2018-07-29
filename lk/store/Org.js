@@ -24,5 +24,41 @@ class Org{
             });
         });
     }
+    reset(orgs,userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "delete from org";
+                tx.executeSql(sql,[],function (tx,results) {
+                    if(orgs&&orgs.length>0){
+                        let sql = "insert into org(id,name,parentId,mCode,memberMCode,ownerUserId) values ";
+                        var params=[];
+                        for(var i=0;i<orgs.length;i++){
+                            var org = orgs[i];
+                            sql += "(?,?,?,?,?)";
+                            if(i<orgs.length-1){
+                                sql +=",";
+                            }
+                            params.push(org.id);
+                            params.push(org.name);
+                            params.push(org.parentId);
+                            params.push(org.mCode);
+                            params.push(org.memberMCode);
+                            params.push(userId);
+
+                        }
+                        tx.executeSql(sql,params,function () {
+                            resolve();
+                        },function (err) {
+                            reject(err);
+                        });
+                    }else{
+                        resolve();
+                    }
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
 }
 module.exports = new Org();

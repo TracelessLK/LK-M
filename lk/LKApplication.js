@@ -26,6 +26,12 @@ class LKApplication extends Application{
 
     }
 
+    initOrgContacts(orgs,members,friends){
+        this._lkContactHandler.asyResetContacts(members,friends,this.getCurrentUser().id).then(()=>{
+            this._lkOrgHandler.asyResetOrgs(orgs,this.getCurrentUser().id);
+        });
+    }
+
     getLKWSChannelClass(){
         return this._channel;
     }
@@ -36,6 +42,22 @@ class LKApplication extends Application{
 
     setLKWSChannelClass(channelClass){
         this._channelClass = channelClass;
+    }
+
+    setLKOrgHandler(h){
+        this._lkOrgHandler = h;
+    }
+
+    getLKOrgHandler(){
+        return this._lkOrgHandler;
+    }
+
+    setLKContactHandler(h){
+        this._lkContactHandler = h;
+    }
+
+    getLKContactHandler(){
+        return this._lkContactHandler;
     }
 
     setLKUserProvider(p){

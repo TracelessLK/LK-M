@@ -152,11 +152,15 @@ class LKChannel extends WSChannel{
             let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
             let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
             result[0]._sendMessage(result[1]).then((msg)=>{
-                if(msg.body.content.error){
-                    reject(msg.body.content.error)
+                let content = msg.body.content;
+                if(content.error){
+                    reject(content.error);
                 }else{
+                    let orgs = content.orgs;
+                    let members = content.members;
+                    let friends = content.friends;
+                    Application.getCurrentApp().initOrgContacts(orgs,members,friends);
                     resolve();
-                    //TODO 解析同步过来的数据
                 }
             }).catch((error)=>{
                 reject(error);
