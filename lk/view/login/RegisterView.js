@@ -8,6 +8,7 @@ import {
     View, Modal, ScrollView,TextInput
 } from 'react-native';
 import PropTypes from 'prop-types'
+import RNFS from 'react-native-fs';
 import { Container, Header, Content, Input, Item,Button ,Icon,Label,Toast} from 'native-base';
 import RSAKey from "react-native-rsa";
 const {debounceFunc} = require('../../../common/util/commonUtil')
@@ -17,6 +18,7 @@ const lkApplication = require('../../LKApplication').getCurrentApp()
 const uuid = require('uuid')
 const deviceInfo = require('react-native-device-info')
 const pushUtil = require('../../../common/util/pushUtil')
+const AppUtil = require('../../AppUtil.js')
 
 
 export default class CheckCodeView extends Component<{}> {
@@ -112,8 +114,9 @@ export default class CheckCodeView extends Component<{}> {
 
                                     (async()=>{
                                         try{
+                                            const password = await RNFS.hash(this.password,'md5')
                                             const user = {
-                                                uid:uuid(),
+                                                id:obj.id,
                                                 name:obj.name,
                                                 publicKey,
                                                 privateKey,
@@ -123,23 +126,23 @@ export default class CheckCodeView extends Component<{}> {
                                                 serverPort:obj.port,
                                                 orgId:obj.orgId,
                                                 mCode:obj.mCode,
-                                                password:this.password
+                                                password
                                             }
 
                                             const venderDid = await pushUtil.getAPNDeviceId()
 
-                                            const result =  await wsChannel.asyRegister(obj.ip,obj.port,user.uid,user.deviceId,venderDid,publicKey,this.checkCode,qrcode)
+                                            const result =  await wsChannel.asyRegister(obj.ip,obj.port,user.id,user.deviceId,venderDid,publicKey,this.checkCode,qrcode)
                                             const userhandler = lkApplication.getLKUserHandler()
 
                                             //id,name,pic,publicKey,privateKey,deviceId,serverIP,serverPort,serverPublicKey,orgId,mCode,password,reserve1
                                             await userhandler.asyAddLKUser(user)
-                                            Alert.alert("提示","成功注册管理员,验证码即为登录密码")
+                                            AppUtil.reset()
+
                                         }catch(error){
-                                            console.log(error)
-                                            console.log(JSON.stringify(error))
+                                            const errStr = JSON.stringify(error)
+                                            console.log(errStr)
 
-
-                                            Alert.alert(JSON.stringify(error))
+                                            Alert.alert(errStr)
                                         }
 
                                     })()
@@ -147,7 +150,7 @@ export default class CheckCodeView extends Component<{}> {
 
 
                             })}>
-                        <Text style={{color:"white"}}>注册管理员</Text>
+                        <Text style={{color:"white"}}>注册</Text>
                     </Button>
                 </View>
 

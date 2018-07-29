@@ -6,7 +6,7 @@ import {
     StyleSheet, Text,
     View,
 } from 'react-native';
-
+const lkApplication = require('../../../lk/LKApplication').getCurrentApp()
 export default class TestView extends Component<{}> {
 
     constructor(props) {
@@ -15,8 +15,8 @@ export default class TestView extends Component<{}> {
     }
 
     componentDidMount = () => {
-
     }
+
 
     componentWillUnmount = () => {
     }
@@ -27,10 +27,13 @@ export default class TestView extends Component<{}> {
     }
 
     render() {
+        const user = lkApplication.getCurrentUser()
+
         return (
             <View>
                 <Text>
-                    test
+                    {JSON.stringify(user)}
+
                 </Text>
             </View>
         );

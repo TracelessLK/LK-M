@@ -129,9 +129,8 @@ class LKChannel extends WSChannel{
         }
         if(!deprecated&&!this._foreClosed){
             try{
-                const channel = await this.applyChannel()
-                let request = await this._asyNewRequest("ping")
-                channel._sendMessage(request).then(()=>{
+                let result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping")]);
+                result[0]._sendMessage(result[1]).then(()=>{
                     this._lastPongTime = Date.now();
                 });
             }catch (e){
@@ -150,13 +149,11 @@ class LKChannel extends WSChannel{
    async asyRegister(ip,port,uid,did,venderDid,pk,checkCode,qrCode,description){
 
        let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
-       const channel = await this.applyChannel()
-       let request = await this._asyNewRequest("register",msg)
-       const  msgAfter = await channel._sendMessage(request)
+       let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
+       const  msgAfter = await result[0]._sendMessage(result[1])
        if(msgAfter.body.content.error){
            throw msgAfter.body.content.error
        }else{
-           console.log('register')
 
            //TODO 解析同步过来的数据
        }

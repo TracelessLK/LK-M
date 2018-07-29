@@ -20,8 +20,8 @@ class LKApplication extends Application{
             this._channel = new this._channelClass('ws://'+user.serverIP+':'+user.serverPort,true);
 
         }
-        this._channel.applyChannel().then((channel)=>{
-            channel.asyLogin(user.id,user.deviceId);
+        return this._channel.applyChannel().then((channel)=>{
+            return channel.asyLogin(user.id,user.password);
         })
 
     }
