@@ -118,13 +118,13 @@ class LKChannel extends WSChannel{
         let deprecated = false;
         if(!this._lastPongTime){
             this._lastPongTime = Date.now();
-        }else if(this._ws&&!this._foreClosed&&Date.now()-this._lastPongTime>180000){
+        }else if(this._openPromise&&!this._foreClosed&&Date.now()-this._lastPongTime>180000){
             try{
                 this._ws.close();
             }catch (e){
 
             }
-            delete this._ws;
+            delete this._openPromise;
             deprecated=true;
         }
         if(!deprecated&&!this._foreClosed){

@@ -9,7 +9,7 @@ class WSChannel extends EventTarget{
         this._keepAlive = keepAlive;
     }
     applyChannel(){
-        if(!this.openPromise){
+        if(!this._openPromise){
             try{
                 this._ws = new WebSocket(this._url);
             }catch (e){
@@ -25,15 +25,15 @@ class WSChannel extends EventTarget{
                         this._reconnect();
                     }
                 }
-                this.openPromise = new Promise(resolve => {
+                this._openPromise = new Promise(resolve => {
                     this._ws.onopen =  ()=> {
                         resolve(this);
                     };
                 })
-                return this.openPromise
+                return this._openPromise
             }
         }else{
-           return this.openPromise
+           return this._openPromise
         }
 
     }
@@ -41,7 +41,7 @@ class WSChannel extends EventTarget{
         let delay = this._reconnectDelay>=5000?5000:this._reconnectDelay;
         let con =  ()=> {
             this._reconnectDelay+=1000;
-            delete this._ws;
+            delete this._openPromise;
             this.applyChannel().then(()=>{
                 this._reconnectDelay=0;
                 this._onreconnect(this);
