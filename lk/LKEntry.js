@@ -65,7 +65,7 @@ export default class LKEntry extends Component<{}> {
         const currentUser = lkApplication.getCurrentUser()
         //TODO:password login
         if(currentUser){
-            content
+            content = <MainView  />
 
         }else{
             const userProvider = lkApplication.getLKUserProvider();
@@ -76,7 +76,7 @@ export default class LKEntry extends Component<{}> {
             if(length === 0){
                 content= LoginStack
             }else if(length ===1){
-                await lkApplication.setCurrentUser(userAry[0])
+               lkApplication.setCurrentUser(userAry[0])
                 content = <MainView  />
             }else if(length > 1){
                 //TODO

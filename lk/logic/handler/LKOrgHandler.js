@@ -4,4 +4,4 @@ class LKOrgHandler{
         return Org.reset(orgs,userId);
     }
 }
-module.exports = new LKUserHandler();
+module.exports = new LKOrgHandler();

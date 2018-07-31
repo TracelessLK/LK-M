@@ -4,4 +4,4 @@ class LKContactHandler{
         return Contact.reset(members,friends,userId);
     }
 }
-module.exports = new LKUserHandler();
+module.exports = new LKContactHandler();
