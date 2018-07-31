@@ -53,9 +53,9 @@ class LKChannel extends WSChannel{
                 ps.push(Application.getCurrentApp().getChatManager().getChat(chatId));
                 ps.push(Application.getCurrentApp().getChatManager().asyGetChatMembers(chatId,true));
             }
-            let result = await Promise.all(ps);
-            orgMCode = result[0];
-            memberMCode = result[1];
+            // let result = await Promise.all(ps);
+            // orgMCode = result[0];
+            // memberMCode = result[1];
             if(chatId){
                 _content = CryptoJS.AES.encrypt(content, result[2].key).toString();
                 _targets = result[3];
@@ -73,8 +73,8 @@ class LKChannel extends WSChannel{
                 action:action,
                 uid:uid,
                 did:did,
-                memberMCode:memberMCode,
-                orgMCode:orgMCode,
+                //memberMCode:memberMCode,
+                //orgMCode:orgMCode,
 
                 chatId:chatId,
                 lastChatMsg:lastChatMsg,
@@ -129,9 +129,19 @@ class LKChannel extends WSChannel{
         }
         if(!deprecated&&!this._foreClosed){
             try{
-                let result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping")]);
-                result[0]._sendMessage(result[1]).then(()=>{
+                let result = await Promise.all([Application.getCurrentApp().asyGetTopOrgMCode(),Application.getCurrentApp().asyGetTopMemberMCode()]);
+                let topOrgMCode = result[0];
+                let topMemberMCode = result[1];
+                let result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping",{topOrgMCode:topOrgMCode,topMemberMCode:topMemberMCode})]);
+                result[0]._sendMessage(result[1]).then((msg)=>{
                     this._lastPongTime = Date.now();
+                    //TODO
+                    if(topOrgMCode!=msg.body.content.topOrgMCode){
+
+                    }
+                    if(topMemberMCode!=msg.body.content.topMemberMCode){
+
+                    }
                 });
             }catch (e){
 
