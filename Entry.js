@@ -12,6 +12,8 @@ import {Root, Spinner, Toast} from "native-base"
 import {} from './Manifest'
 
 import LKEntry from './lk/LKEntry'
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 
 entryUtil.init()
 
