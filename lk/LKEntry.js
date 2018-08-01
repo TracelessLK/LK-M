@@ -15,6 +15,7 @@ import LoginStack from './view/login/LoginStack';
 import {Toast} from "native-base";
 const Application = require("../engine/Application")
 const lkApplication = Application.getCurrentApp()
+import LoadingView from '../common/view/LoadingView'
 
 
 const loginHandler = lkApplication.getLoginHandler()
@@ -24,7 +25,6 @@ export default class LKEntry extends Component<{}> {
 
     constructor(props){
         super(props);
-        AppUtil.setApp(this);
         this.state={
             content:null
         };
@@ -33,40 +33,17 @@ export default class LKEntry extends Component<{}> {
 
 
     componentWillUnmount=()=>{
-    }
-
-
-    componentWillUnmount =()=> {
 
     }
 
-    reset=()=>{
-        this.setState({reset:true});
-
-    }
-
-    render() {
 
 
-        return (
-            <View style={styles.container}>
-                {this.state.content}
-            </View>
-        );
-    }
-
-    componentDidMount(){
-        this.asyncRender()
-
-    }
-    async asyncRender(){
-
+    async getContentAsync(){
         let content=null;
         const currentUser = lkApplication.getCurrentUser()
         //TODO:password login
         if(currentUser){
             content = <MainView  />
-
         }else{
             const userProvider = lkApplication.getLKUserProvider();
 
@@ -76,20 +53,22 @@ export default class LKEntry extends Component<{}> {
             if(length === 0){
                 content= LoginStack
             }else if(length ===1){
-               lkApplication.setCurrentUser(userAry[0])
+                lkApplication.setCurrentUser(userAry[0])
                 content = <MainView  />
             }else if(length > 1){
                 //TODO
             }
-
         }
 
-
-        this.setState({
-            content
-        })
-
+        return content
     }
+
+    render() {
+        return (
+            <LoadingView getContentAsync={this.getContentAsync}></LoadingView>
+        )
+    }
+
 
 }
 
