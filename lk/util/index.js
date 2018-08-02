@@ -10,7 +10,16 @@ const util = {
 
         const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
         return decryptedText
-    }
+    },
+    getAvatarSource(pic){
+        let result
+        if(pic){
+            result = {uri:pic}
+        }else{
+            result = require('../image/defaultAvatar.png')
+        }
+        return result
+    },
 }
 
 Object.freeze(util)

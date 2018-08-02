@@ -5,18 +5,18 @@ import AuthStack from '../auth/AuthStack'
 import MainStack from './MainStack'
 const Application = require("../../LKApplication")
 const lkApplication = Application.getCurrentApp()
-
+const Manifest = require('../../../Manifest')
 const option = {
     AuthStack,
     MainStack,
-    async getRouterName():number{
+    async getRouterName(){
         let routerName
         const currentUser = lkApplication.getCurrentUser()
 
         if(currentUser){
             routerName = 'PasswordLoginView'
         }else{
-            const userProvider = lkApplication.getLKUserProvider();
+            const userProvider = Manifest.get('LKUserProvider');
             const userAry = await userProvider.asyGetAll()
             const {length} = userAry
 

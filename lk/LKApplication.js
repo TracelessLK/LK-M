@@ -13,7 +13,7 @@ class LKApplication extends Application{
         if((!this._channel)||(this._channel.getUrl()!=url)){
             if(this._channel)
                 this._channel.close();
-            this._channel = new ConfigManager.getWSChannel()('ws://'+user.serverIP+':'+user.serverPort,true);
+            this._channel = new (ConfigManager.getWSChannel())('ws://'+user.serverIP+':'+user.serverPort,true);
 
         }
         return this._channel.applyChannel().then((channel)=>{

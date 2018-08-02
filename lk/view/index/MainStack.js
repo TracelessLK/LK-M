@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types'
 import ContactView from '../contact/ContactView'
+import AddContactView from '../contact/AddContactView'
 import ChatView from '../chat/ChatView'
 import MineView from '../mine/MineView'
 
@@ -23,7 +24,8 @@ const MainTab = createTabNavigator({
 })
 
 const StackNavigator = createStackNavigator({
-    MainTab
+    MainTab,
+    AddContactView,
 })
 
 export default StackNavigator

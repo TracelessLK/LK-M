@@ -17,6 +17,12 @@ const Application = require("../engine/Application")
 const lkApplication = Application.getCurrentApp()
 import LoadingView from '../common/view/LoadingView'
 import EntryView from './view/index/EntryView'
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings([
+    'Warning: isMounted(...) is deprecated in plain JavaScript React classes. Instead, make sure to clean up subscriptions and pending requests in componentWillUnmount to prevent memory leaks.',
+    "Module RCTHotUpdate requires",
+    "Method `jumpToIndex` is deprecated"
+]);
 
 
 export default class LKEntry extends Component<{}> {
