@@ -1,5 +1,5 @@
 import ConfigManager from './common/core/ConfigManager'
-import WSChannel from './net/LKWSChannel'
+import WSChannel from './lk/net/LKWSChannel'
 
 ConfigManager.configure("WSChannel",WSChannel);
 
