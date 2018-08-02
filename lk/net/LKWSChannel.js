@@ -158,11 +158,7 @@ class LKChannel extends WSChannel{
                     if(orgMCode!= content.orgMCode){
                         let orgs = content.orgs;
                         if(orgs){
-                            curApp.getLKOrgHandler().asyResetOrgs(orgs,curApp.getCurrentUser().id).then(function () {
-                                return curApp.getLKMagicCodeHandler().asyUpdateOrgMagicCode(content.orgMCode,curApp.getCurrentUser().id);
-                            }).then(function () {
-                                curApp.setOrgMagicCode(content.orgMCode);
-                            });
+                            curApp.getOrgManager().resetOrgs(content.orgMCode,orgs);
                         }
                     }
                     if(memberMCode!=content.memberMCode){

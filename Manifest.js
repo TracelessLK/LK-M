@@ -15,6 +15,8 @@ import LKChatProvider from './lk/logic/provider/LKChatProvider'
 
 import ContactManager from './lk/core/ContactManager'
 import ChatManager from './lk/core/ChatManager'
+import OrgManager from './lk/core/OrgManager'
+
 import LKWSChannel from './lk/net/LKWSChannel'
 
 
@@ -36,6 +38,7 @@ application.setLKChatProvider(LKChatProvider);
 
 application.setContactManager(ContactManager);
 application.setChatManager(ChatManager);
+
 application.setLKWSChannelClass(LKWSChannel);
 
 application.start();
