@@ -9,6 +9,7 @@ class LKApplication extends Application{
         super.start();
         this._contactManager.start();
         this._chatManager.start();
+        this._orgManager.start();
     }
 
     setCurrentUser(user){
@@ -171,6 +172,12 @@ class LKApplication extends Application{
 
     getContactManager(){
         return this._contactManager;
+    }
+    setOrgManager(m){
+        this._orgManager = m;
+    }
+    getOrgManager(){
+        return this._orgManager;
     }
 
 
