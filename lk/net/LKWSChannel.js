@@ -1,6 +1,11 @@
 import UUID from 'uuid/v4';
 import WSChannel from '../../common/net/WSChannel'
 import Application from '../LKApplication'
+import ChatManager from '../core/ChatManager'
+import OrgManager from '../core/OrgManager'
+import ContactManager from "../core/ChatManager"
+import LKContactProvider from '../logic/provider/LKContactProvider'
+import LKContactHandler from '../logic/handler/LKContactHandler'
 import CryptoJS from "crypto-js";
 
 class LKChannel extends WSChannel{
@@ -47,8 +52,8 @@ class LKChannel extends WSChannel{
 
             if(chatId){
                 let ps = [];
-                ps.push(Application.getCurrentApp().getChatManager().asyGetChat(chatId));
-                ps.push(Application.getCurrentApp().getChatManager().asyGetChatMembers(chatId,true));
+                ps.push(ChatManager.asyGetChat(chatId));
+                ps.push(ChatManager.asyGetChatMembers(chatId,true));
                 _content = CryptoJS.AES.encrypt(content, result[0].key).toString();
                 _targets = result[1];
             }
@@ -112,7 +117,7 @@ class LKChannel extends WSChannel{
        serverMembers.forEach(function (m) {
            remoteMembers.set(m.id,m);
        });
-       let localMembers = await curApp.getLKContactProvider().asyGetAll(curApp.getCurrentUser().id);
+       let localMembers = await LKContactProvider.asyGetAll(curApp.getCurrentUser().id);
        localMembers.forEach((lm)=>{
            let curMCode = lm.mCode;
            let curId = lm.id;
@@ -158,14 +163,14 @@ class LKChannel extends WSChannel{
                     if(orgMCode!= content.orgMCode){
                         let orgs = content.orgs;
                         if(orgs){
-                            curApp.getOrgManager().resetOrgs(content.orgMCode,orgs);
+                            OrgManager.asyResetOrgs(content.orgMCode,orgs);
                         }
                     }
                     if(memberMCode!=content.memberMCode){
                         let members = content.members;
                         if(members) {
                             this._checkMembersDiff(members).then((diff)=>{
-                                curApp.getLKContactHandler().asyRemoveContacts(diff.removed,curApp.getCurrentUser().id);
+                                LKContactHandler.asyRemoveContacts(diff.removed,curApp.getCurrentUser().id);
                                 //TODO added modified
                             });
                         }
@@ -196,11 +201,17 @@ class LKChannel extends WSChannel{
                 if(content.error){
                     reject(content.error);
                 }else{
+                    let orgMCode = content.orgMCode;
                     let orgs = content.orgs;
+                    let memberMCode = content.memberMCode;
                     let members = content.members;
                     let friends = content.friends;
-                    Application.getCurrentApp().initOrgContacts(orgs,members,friends);
-                    resolve();
+                    OrgManager.asyResetOrgs(orgMCode,orgs).then(function () {
+                        return ContactManager.asyResetContacts(memberMCode,members,friends)
+                    }).then(function () {
+                        resolve();
+                    })
+
                 }
             }).catch((error)=>{
                 reject(error);

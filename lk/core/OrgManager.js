@@ -1,20 +1,24 @@
 import Application from '../LKApplication'
 import EventTarget from '../../common/core/EventTarget'
+import LKOrgHandler from '../logic/handler/LKOrgHandler'
+import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
+
 class OrgManager extends EventTarget{
 
     start(){
 
     }
 
-    resetOrgs(newOrgMCode,orgs){
+    asyResetOrgs(newOrgMCode,orgs){
         let curApp = Application.getCurrentApp();
-        curApp.getLKOrgHandler().asyResetOrgs(orgs,curApp.getCurrentUser().id).then(function () {
-            return curApp.getLKMagicCodeHandler().asyUpdateOrgMagicCode(newOrgMCode,curApp.getCurrentUser().id);
+        LKOrgHandler.asyResetOrgs(orgs,curApp.getCurrentUser().id).then(function () {
+            return LKMagicCodeHandler.asyUpdateOrgMagicCode(newOrgMCode,curApp.getCurrentUser().id);
         }).then(function () {
             curApp.setOrgMagicCode(newOrgMCode);
             this.fire("orgChanged");
         });
     }
+
 }
 
 

@@ -11,10 +11,6 @@ class Application{
         return this._current;
     }
 
-    start(){
-        return this;
-    }
-
     setCurrentUser(user){
         this._user = user;
     }
