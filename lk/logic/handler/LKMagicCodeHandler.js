@@ -7,5 +7,9 @@ class LKMagicCodeHandler{
     asyUpdateOrgMagicCode(code,userId){
         return MagicCode.updateOrgMagicCode(code,userId);
     }
+
+    asyUpdateMemberMagicCode(code,userId){
+        return MagicCode.updateMemberMagicCode(code,userId);
+    }
 }
 module.exports = new LKMagicCodeHandler();

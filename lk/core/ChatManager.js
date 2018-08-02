@@ -1,4 +1,7 @@
 import Application from '../LKApplication'
+import ContactManager from './ContactManager'
+import LKChatProvider from '../logic/provider/LKChatProvider'
+import LKDeviceProvider from '../logic/provider/LKDeviceProvider'
 class ChatManager{
     //承担 chat->members基本信息的缓存管理
     _recentChats = [];//
@@ -6,12 +9,11 @@ class ChatManager{
     _maxRecent = 6;
     _hotContacts = {};
 
-    start(){
-        let contactMgr = Application.getCurrentApp().getContactManager();
-        contactMgr.on("mCodeChanged",this._doContactMCodeChange);
-        contactMgr.on("mCodeChanged",this._doContactMCodeChange);
-        contactMgr.on("deviceAdded",this._doContactDeviceAdded);
-        contactMgr.on("deviceRemoved",this._doContactDeviceRemoved);
+    constructor(){
+        ContactManager.on("mCodeChanged",this._doContactMCodeChange);
+        ContactManager.on("mCodeChanged",this._doContactMCodeChange);
+        ContactManager.on("deviceAdded",this._doContactDeviceAdded);
+        ContactManager.on("deviceRemoved",this._doContactDeviceRemoved);
     }
 
     //TODO监听mcode的变化
@@ -37,8 +39,8 @@ class ChatManager{
     async asyGetChatMembers(chatId,checkChatKey){
         if(this._recentChatsIndex[chatId]===undefined){
             //chat&members
-            let p1 = Application.getCurrentApp().getLKChatProvider().asyGetChat(chatId);
-            let p2 = Application.getCurrentApp().getLKChatProvider().asyGetChatMembers(chatId);
+            let p1 = LKChatProvider.asyGetChat(chatId);
+            let p2 = LKChatProvider.asyGetChatMembers(chatId);
             let result = await Promise.all([p1,p2]);
             if(this._recentChats.length>=this._maxRecent){
                 let oldChatId = this._recentChats[0].chatId;
@@ -61,7 +63,7 @@ class ChatManager{
                 chat.members.push(contact.id);
                 let oldContact = this._hotContacts[contact.id];
                 if(!oldContact){
-                    ps.push(Application.getCurrentApp().getLKDeviceProvider().asyGetAll(contact.id));
+                    ps.push(LKDeviceProvider.asyGetAll(contact.id));
                     contact.devices=[];
                 }
                 this._hotContacts[contact.id] = contact;
