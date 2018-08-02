@@ -5,8 +5,12 @@ class LKContactProvider{
         return Contact.get(contactId);
     }
 
-    asyLeftSelectAllDevices(contactId){
-        return Contact.leftSelectAllDevices(contactId);
+    asyGetAll(userId){
+        return Contact.getAll(userId);
+    }
+
+    asySelectAllDevices(contactId){
+        return Contact.selectAllDevices(contactId);
     }
 }
 module.exports = new LKContactProvider();

@@ -1,7 +1,7 @@
 
 import db from '../../common/store/DataBase'
 db.transaction((tx)=>{
-    let sql = "create table if not exists org(id TEXT PRIMARY KEY NOT NULL,name TEXT,parentId TEXT,mCode TEXT,memberMCode TEXT,ownerUserId TEXT,reserve1 TEXT)";
+    let sql = "create table if not exists org(id TEXT PRIMARY KEY NOT NULL,name TEXT,parentId TEXT,ownerUserId TEXT,reserve1 TEXT)";
     tx.executeSql(sql,[],function () {
     },function (err) {
     });
@@ -30,21 +30,18 @@ class Org{
                 let sql = "delete from org";
                 tx.executeSql(sql,[],function (tx,results) {
                     if(orgs&&orgs.length>0){
-                        let sql = "insert into org(id,name,parentId,mCode,memberMCode,ownerUserId) values ";
+                        let sql = "insert into org(id,name,parentId,ownerUserId) values ";
                         var params=[];
                         for(var i=0;i<orgs.length;i++){
                             var org = orgs[i];
-                            sql += "(?,?,?,?,?)";
+                            sql += "(?,?,?,?)";
                             if(i<orgs.length-1){
                                 sql +=",";
                             }
                             params.push(org.id);
                             params.push(org.name);
                             params.push(org.parentId);
-                            params.push(org.mCode);
-                            params.push(org.memberMCode);
                             params.push(userId);
-
                         }
                         tx.executeSql(sql,params,function () {
                             resolve();

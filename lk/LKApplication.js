@@ -45,6 +45,44 @@ class LKApplication extends Application{
         this._channelClass = channelClass;
     }
 
+    setOrgMagicCode(code){
+        this._orgMCode = code;
+    }
+
+    setMemberMagicCode(code){
+        this._memberMCode = code;
+    }
+
+    async asyGetOrgMCode(){
+        if (!this._orgMCode) {
+            this._orgMCode = await this._lkMagicCodeProvider.asyGetMagicCode(this.getCurrentUser().id).orgMCode;
+        }
+        return this._orgMCode;
+    }
+
+    async asyGetMemberMCode(){
+        if (!this._memberMCode) {
+            this._memberMCode = await this._lkMagicCodeProvider.asyGetMagicCode(this.getCurrentUser().id).memberMCode;
+        }
+        return this._memberMCode;
+    }
+
+    setMessageTimeout(timeout){
+        this._messageTimeout = timeout;
+    }
+
+    getMessageTimeout(){
+        return this._messageTimeout;
+    }
+    //-------------------------------handler-----------------------------------
+    setLKMagicCodeHandler(h){
+        this._lkMagicCodeHandler = h;
+    }
+
+    getLKMagicCodeHandler(){
+        return this._lkMagicCodeHandler;
+    }
+
     setLKOrgHandler(h){
         this._lkOrgHandler = h;
     }
@@ -61,14 +99,6 @@ class LKApplication extends Application{
         return this._lkContactHandler;
     }
 
-    setLKUserProvider(p){
-        this._lkUserProvider = p;
-    }
-
-    getLKUserProvider(){
-        return this._lkUserProvider;
-    }
-
     setLKUserHandler(h){
         this._lkUserHandler = h;
     }
@@ -77,18 +107,14 @@ class LKApplication extends Application{
         return this._lkUserHandler;
     }
 
-    async asyGetTopOrgMCode(){
-        if (!this._topOrgMCode) {
-             this._topOrgMCode = await this._lkOrgProvider.asyGetTopOrg(this.getCurrentUser().id).orgMCode;
-        }
-        return this._topOrgMCode;
+
+    //---------------------------------------------provider----------------------------------------------
+    setLKUserProvider(p){
+        this._lkUserProvider = p;
     }
 
-    async asyGetTopMemberMCode(){
-        if (!this._topMemberMCode) {
-            this._topMemberMCode = await this._lkOrgProvider.asyGetTopOrg(this.getCurrentUser().id).memberMCode;
-        }
-        return this._topMemberMCode;
+    getLKUserProvider(){
+        return this._lkUserProvider;
     }
 
     setLKOrgProvider(p){
@@ -123,6 +149,14 @@ class LKApplication extends Application{
         return this._lkChatProvider;
     }
 
+    setLKMagicCodeProvider(p){
+        this._lkMagicCodeProvider = p;
+    }
+
+    getLKMagicCodeProvider(){
+        return this._lkMagicCodeProvider;
+    }
+//----------------------------------manager---------------------------------------------
     setChatManager(m){
         this._chatManager = m;
     }
@@ -139,12 +173,6 @@ class LKApplication extends Application{
         return this._contactManager;
     }
 
-    setMessageTimeout(timeout){
-        this._messageTimeout = timeout;
-    }
 
-    getMessageTimeout(){
-        return this._messageTimeout;
-    }
 }
 module.exports = LKApplication;
