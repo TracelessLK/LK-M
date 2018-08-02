@@ -37,8 +37,6 @@ class LKChannel extends WSChannel{
 
     async _asyNewRequest (action,content,targets,chatId,lastChatMsg,preSentChatMsg) {
         let id = this._generateMsgId();
-        let orgMCode = null;
-        let memberMCode = null;
         let _content = null;
         let _targets = null;
         let uid = null;
@@ -46,19 +44,13 @@ class LKChannel extends WSChannel{
         if(Application.getCurrentApp().getCurrentUser()){
             uid = Application.getCurrentApp().getCurrentUser().id;
             did = Application.getCurrentApp().getCurrentUser().deviceId;
-            let ps = [];
-            ps.push(Application.getCurrentApp().asyGetTopOrgMCode());
-            ps.push(Application.getCurrentApp().asyGetTopMemberMCode());
+
             if(chatId){
-                ps.push(Application.getCurrentApp().getChatManager().getChat(chatId));
+                let ps = [];
+                ps.push(Application.getCurrentApp().getChatManager().asyGetChat(chatId));
                 ps.push(Application.getCurrentApp().getChatManager().asyGetChatMembers(chatId,true));
-            }
-            // let result = await Promise.all(ps);
-            // orgMCode = result[0];
-            // memberMCode = result[1];
-            if(chatId){
-                _content = CryptoJS.AES.encrypt(content, result[2].key).toString();
-                _targets = result[3];
+                _content = CryptoJS.AES.encrypt(content, result[0].key).toString();
+                _targets = result[1];
             }
         }
         _content = _content?_content:content;
@@ -73,9 +65,6 @@ class LKChannel extends WSChannel{
                 action:action,
                 uid:uid,
                 did:did,
-                //memberMCode:memberMCode,
-                //orgMCode:orgMCode,
-
                 chatId:chatId,
                 lastChatMsg:lastChatMsg,
                 preSentChatMsg:preSentChatMsg,
@@ -114,6 +103,35 @@ class LKChannel extends WSChannel{
 
     }
 
+   async  _checkMembersDiff(serverMembers){
+       let curApp = Application.getCurrentApp();
+       let added = [];
+       let modified = [];
+       let removed = [];
+       let remoteMembers = new Map();
+       serverMembers.forEach(function (m) {
+           remoteMembers.set(m.id,m);
+       });
+       let localMembers = await curApp.getLKContactProvider().asyGetAll(curApp.getCurrentUser().id);
+       localMembers.forEach((lm)=>{
+           let curMCode = lm.mCode;
+           let curId = lm.id;
+           let remoteM = remoteMembers.get(lm.id);
+           if(remoteM){
+               if(remoteM.mCode!=lm.mCode){
+                   modified.push(lm.id);
+               }
+               remoteMembers.delete(lm.id);
+           }else{
+               removed.push(lm.id);
+           }
+       });
+       remoteMembers.forEach(function (v,k) {
+           added.push(k);
+       });
+       return {added:added,modified:modified,removed:removed};
+    }
+
    async _ping(){
         let deprecated = false;
         if(!this._lastPongTime){
@@ -129,17 +147,32 @@ class LKChannel extends WSChannel{
         }
         if(!deprecated&&!this._foreClosed){
             try{
-                let result = await Promise.all([Application.getCurrentApp().asyGetTopOrgMCode(),Application.getCurrentApp().asyGetTopMemberMCode()]);
-                let topOrgMCode = result[0];
-                let topMemberMCode = result[1];
-                let result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping",{topOrgMCode:topOrgMCode,topMemberMCode:topMemberMCode})]);
+                let curApp = Application.getCurrentApp();
+                let result = await Promise.all([curApp.asyGetOrgMCode(),curApp.asyGetMemberMCode()]);
+                let orgMCode = result[0];
+                let memberMCode = result[1];
+                let result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping",{orgMCode:orgMCode,memberMCode:memberMCode})]);
                 result[0]._sendMessage(result[1]).then((msg)=>{
+                    let content = msg.body.content;
                     this._lastPongTime = Date.now();
-                    //TODO
-                    if(topOrgMCode!=msg.body.content.topOrgMCode){
-
+                    if(orgMCode!= content.orgMCode){
+                        let orgs = content.orgs;
+                        if(orgs){
+                            curApp.getLKOrgHandler().asyResetOrgs(orgs,curApp.getCurrentUser().id).then(function () {
+                                return curApp.getLKMagicCodeHandler().asyUpdateOrgMagicCode(content.orgMCode,curApp.getCurrentUser().id);
+                            }).then(function () {
+                                curApp.setOrgMagicCode(content.orgMCode);
+                            });
+                        }
                     }
-                    if(topMemberMCode!=msg.body.content.topMemberMCode){
+                    if(memberMCode!=content.memberMCode){
+                        let members = content.members;
+                        if(members) {
+                            this._checkMembersDiff(members).then((diff)=>{
+                                curApp.getLKContactHandler().asyRemoveContacts(diff.removed,curApp.getCurrentUser().id);
+                                //TODO added modified
+                            });
+                        }
 
                     }
                 });
