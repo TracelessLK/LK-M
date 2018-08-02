@@ -58,4 +58,5 @@ class LKApplication extends Application{
     }
 
 }
-module.exports = new LKApplication("LK");
+new LKApplication("LK");
+module.exports = LKApplication;
