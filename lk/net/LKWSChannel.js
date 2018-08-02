@@ -151,7 +151,7 @@ class LKChannel extends WSChannel{
                 let result = await Promise.all([curApp.asyGetOrgMCode(),curApp.asyGetMemberMCode()]);
                 let orgMCode = result[0];
                 let memberMCode = result[1];
-                let result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping",{orgMCode:orgMCode,memberMCode:memberMCode})]);
+                result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping",{orgMCode:orgMCode,memberMCode:memberMCode})]);
                 result[0]._sendMessage(result[1]).then((msg)=>{
                     let content = msg.body.content;
                     this._lastPongTime = Date.now();
