@@ -54,6 +54,7 @@ class LKChannel extends WSChannel{
                 let ps = [];
                 ps.push(ChatManager.asyGetChat(chatId));
                 ps.push(ChatManager.asyGetChatMembers(chatId,true));
+                let result = await Promise.all(ps);
                 _content = CryptoJS.AES.encrypt(content, result[0].key).toString();
                 _targets = result[1];
             }

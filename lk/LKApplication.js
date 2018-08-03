@@ -26,6 +26,13 @@ class LKApplication extends Application{
         }
     }
 
+    register(user){
+        let channel = new (ConfigManager.getWSChannel())('ws://'+option.ip+':'+option.port,true);
+        channel.asyRegister(option).then(function () {
+            //TODO
+        });
+    }
+
     asyUnRegister(){
         const p = this._channel.asyUnRegister()
          const p2 = p.then( ()=> {
