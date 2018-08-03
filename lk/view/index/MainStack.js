@@ -16,6 +16,7 @@ import ContactView from '../contact/ContactView'
 import AddContactView from '../contact/AddContactView'
 import ChatView from '../chat/ChatView'
 import MineView from '../mine/MineView'
+import DevView from '../mine/dev/DevView'
 
 const MainTab = createBottomTabNavigator({
     ChatView,
@@ -54,6 +55,7 @@ const StackNavigator = createStackNavigator({
 
         }
     },
+    DevView
 },{
     navigationOptions:{
         headerStyle:{

@@ -18,12 +18,14 @@ const option = {
         }else{
             const userProvider = Manifest.get('LKUserProvider');
             const userAry = await userProvider.asyGetAll()
+
             const {length} = userAry
 
             if(length === 0){
                 routerName = 'ScanRegisterView'
             }else if(length ===1){
                 lkApplication.setCurrentUser(userAry[0])
+
                 routerName = 'MainStack'
             }else if(length > 1){
                 routerName = 'SelectUserView'
@@ -32,6 +34,7 @@ const option = {
         return routerName
     }
 }
+console.log('hsdfsdf')
 
 const EntryView = navigatorUtil.getNavigator(option)
 

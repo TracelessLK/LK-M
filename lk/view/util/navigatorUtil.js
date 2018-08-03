@@ -48,7 +48,7 @@ const navigatorUtil = {
             render() {
                 return (
                     <View style={styles.container}>
-                        <ActivityIndicator />
+                        <ActivityIndicator size='large'/>
                     </View>
                 )
             }
