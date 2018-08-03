@@ -61,62 +61,94 @@ class Contact{
         });
     }
 
+    rebuidMembers(ids,newMembers,userId){
+        this.removeContacts(ids,userId).then(()=>{
+            this.addNewMembers(newMembers);
+        })
+    }
+
+    addNewMembers(members,userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                if(members&&members.length>0){
+                    let sql = "insert into contact(id,name,pic,serverIP,serverPort,isFriend,orgId,mCode,ownerUserId) values ";
+                    var params=[];
+                    for(var i=0;i<members.length;i++){
+                        var member = members[i];
+                        sql += "(?,?,?,?,?,?,?,?,?)";
+                        if(i<members.length-1){
+                            sql +=",";
+                        }
+                        params.push(member.id);
+                        params.push(member.name);
+                        params.push(member.pic);
+                        params.push(null);
+                        params.push(null);
+                        params.push(0);
+                        params.push(member.orgId);
+                        params.push(member.mCode);
+                        params.push(userId);
+                    }
+
+                    tx.executeSql(sql,params,function () {
+                        resolve();
+                    },function (err) {
+                        reject(err);
+                    });
+                }else{
+                    resolve();
+                }
+            });
+        });
+    }
+
+    addNewFriends(friends,userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                if(friends&&friends.length>0){
+                    let sql = "insert into contact(id,name,pic,serverIP,serverPort,isFriend,orgId,mCode,ownerUserId) values ";
+                    var params=[];
+                    for(var i=0;i<friends.length;i++){
+                        var friend = friends[i];
+                        sql += "(?,?,?,?,?,?,?,?,?)";
+                        if(i<friends.length-1){
+                            sql +=",";
+                        }
+                        params.push(friend.id);
+                        params.push(friend.name);
+                        params.push(friend.pic);
+                        params.push(friend.serverIP);
+                        params.push(friend.serverPort);
+                        params.push(1);
+                        params.push(null);
+                        params.push(friend.mCode);
+                        params.push(userId);
+                    }
+
+                    tx.executeSql(sql,params,function () {
+                        resolve();
+                    },function (err) {
+                        reject(err);
+                    });
+                }else{
+                    resolve();
+                }
+            });
+        });
+    }
+
+
     resetContacts(members,friends,userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 let sql = "delete from contact where ownerUserId=?";
-                tx.executeSql(sql,[userId],function (tx,results) {
-                    if((members&&members.length>0)||(friends&&friends.length>0)){
-                        let sql = "insert into contact(id,name,pic,serverIP,serverPort,isFriend,orgId,mCode,ownerUserId) values ";
-                        var params=[];
-                        if((members&&members.length>0)){
-                            for(var i=0;i<members.length;i++){
-                                var member = members[i];
-                                sql += "(?,?,?,?,?,?,?,?,?)";
-                                if(i<members.length-1){
-                                    sql +=",";
-                                }
-                                params.push(member.id);
-                                params.push(member.name);
-                                params.push(member.pic);
-                                params.push(null);
-                                params.push(null);
-                                params.push(0);
-                                params.push(member.orgId);
-                                params.push(member.mCode);
-                                params.push(userId);
-                            }
-                        }
-                        if(friends&&friends.length>0){
-                            if((members&&members.length>0)){
-                                sql +=",";
-                            }
-                            for(var i=0;i<friends.length;i++){
-                                var friend = friends[i];
-                                sql += "(?,?,?,?,?,?,?,?,?)";
-                                if(i<friends.length-1){
-                                    sql +=",";
-                                }
-                                params.push(friend.id);
-                                params.push(friend.name);
-                                params.push(friend.pic);
-                                params.push(friend.serverIP);
-                                params.push(friend.serverPort);
-                                params.push(1);
-                                params.push(null);
-                                params.push(friend.mCode);
-                                params.push(userId);
-                            }
-                        }
-
-                        tx.executeSql(sql,params,function () {
-                            resolve();
-                        },function (err) {
-                            reject(err);
-                        });
-                    }else{
+                tx.executeSql(sql,[userId], (tx,results) =>{
+                    Promise.all([this.addNewMembers(),this.addNewFriends()]).then(function () {
                         resolve();
-                    }
+                    }).then(function (err) {
+                        reject(err);
+                    });
+
                 },function (err) {
                     reject(err);
                 });

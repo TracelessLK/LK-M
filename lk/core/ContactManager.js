@@ -32,6 +32,16 @@ class ContactManager extends EventTarget{
             this.fire("contactChanged");
         });
     }
+
+    asyRebuildMembers(newMemberMCode,ids,newMembers){
+        let curApp = Application.getCurrentApp();
+        LKContactHandler.asyRebuidMembers(ids,newMembers,curApp.getCurrentUser().id).then(function () {
+            return LKMagicCodeHandler.asyUpdateMemberMagicCode(newMemberMCode,curApp.getCurrentUser().id);
+        }).then(function () {
+            curApp.setMemberMagicCode(newMemberMCode);
+            this.fire("contactChanged");
+        });
+    }
 }
 
 

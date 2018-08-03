@@ -7,5 +7,9 @@ class LKContactHandler{
     asyRemoveContacts(ids,userId){
         return Contact.removeContacts(ids,userId);
     }
+
+    asyRebuidMembers(ids,newMembers,userId){
+        return Contact.rebuidMembers(ids,newMembers,userId);
+    }
 }
 module.exports = new LKContactHandler();

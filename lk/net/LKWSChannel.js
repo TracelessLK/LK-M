@@ -171,7 +171,7 @@ class LKChannel extends WSChannel{
                         if(members) {
                             this._checkMembersDiff(members).then((diff)=>{
                                 LKContactHandler.asyRemoveContacts(diff.removed,curApp.getCurrentUser().id);
-                                //TODO added modified
+                                this._asyFetchMembers(content.memberMCode,diff.added,diff.modified);
                             });
                         }
 
@@ -183,6 +183,19 @@ class LKChannel extends WSChannel{
 
         }
         setTimeout(()=>{this._ping()},60000);
+    }
+
+    async _asyFetchMembers(remoteMemberMCode,added,modified){
+       let ids = added.contact(modified);
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("fetchMembers",{members:ids})]);
+        return new Promise((resolve,reject)=>{
+            result[0]._sendMessage(result[1]).then((msg)=> {
+                let members = msg.content.members;
+                return ContactManager.asyRebuildMembers(remoteMemberMCode,ids,members);
+            }).then(()=>{
+                resolve();
+            });
+        });
     }
 
     async asyLogin(){
