@@ -10,23 +10,24 @@ import {
 const {debounceFunc} = require("../../../common/util/commonUtil")
 const {getAvatarSource} = require("../../util")
 import { Avatar ,SearchBar} from 'react-native-elements'
+const lkApp = require('../../LKApplication').getCurrentApp()
+const manifest = require('../../../Manifest')
 
 import {
     Body, Button, Card, CardItem, Container, Content ,Header,Icon,Input,Item,Left,
     List,ListItem,Right,Spinner,Thumbnail,Toast
 } from 'native-base';
+const util = require('../util/navigatorUtil')
 
 export default class ContactView extends Component<{}> {
-    static navigationOptions =({ navigation, screenProps }) => (
-        {
-            headerRight: (
-                <TouchableOpacity onPress={debounceFunc(()=>{ navigation.navigate("AddContactView")})}
-                                  style={{marginRight:20}}>
-                    <Icon name="plus" size={22} />
-                </TouchableOpacity>
-            )
+    static navigationOptions =({ navigation, screenProps }) => {
+        return {
+            tabBarIcon: ({ tintColor, focused }) =>{
+                return util.getTabLogo('通讯录',focused,"table-of-contents" ,20)
+            }
         }
-    );
+    }
+
 
     constructor(props){
         super(props);
@@ -41,6 +42,16 @@ export default class ContactView extends Component<{}> {
         for(let event of this.eventAry){
             // Store.on(event,this.update);
         }
+        const user = lkApp.getCurrentUser();
+        (async()=>{
+            const LKContactProvider =   manifest.get('LKContactProvider')
+            const allContact = await LKContactProvider.asyGetAll(user.id)
+            console.log(allContact)
+            console.log('sdfs')
+
+
+        })()
+
     }
 
     componentWillUnmount =()=> {
@@ -82,11 +93,44 @@ export default class ContactView extends Component<{}> {
                    clearIcon={{ color: 'red' }}
                    onChangeText={this.someMethod}
                    onClear={this.someMethod}
-                   placeholder='Type Here...'
-                   inputContainerStyle={{backgroundColor:"blue"}}
-                   containerStyle={{}}
+                   placeholder='搜索'
+                   containerStyle={{backgroundColor:"#f0f0f0"}}
+                   inputStyle={ {
+                       backgroundColor:"white",display:'flex',
+                       alignItems:"center",justifyContent:"center",color:"black"
+                   }}
                />
+               <View>
+                   <View style={{padding:10}}>
+                       <Text style={{color:"#a0a0a0"}}>
+                           外部联系人
+                       </Text>
+                   </View>
+                   <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
+                   </View>
+               </View>
+               <View style={{backgroundColor:"white"}}>
+                   <TouchableOpacity  onPress={()=>{
 
+                   }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
+                                          alignItems:"center"}}>
+                       <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../../image/contact.png')} />
+                       <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
+                           <Text style={{fontSize:18,fontWeight:"500"}}>
+                               外部联系人
+                           </Text>
+                       </View>
+                   </TouchableOpacity>
+               </View>
+               <View>
+                   <View style={{padding:10}}>
+                       <Text style={{color:"#a0a0a0"}}>
+                           组织通讯录
+                       </Text>
+                   </View>
+                   <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
+                   </View>
+               </View>
            </View>
 
         );

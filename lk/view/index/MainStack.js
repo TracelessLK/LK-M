@@ -1,4 +1,4 @@
-import { createSwitchNavigator, createStackNavigator,createTabNavigator } from 'react-navigation'
+import { createSwitchNavigator, createStackNavigator,createBottomTabNavigator } from 'react-navigation'
 import React, { Component } from 'react';
 import {
     Alert,
@@ -17,15 +17,49 @@ import AddContactView from '../contact/AddContactView'
 import ChatView from '../chat/ChatView'
 import MineView from '../mine/MineView'
 
-const MainTab = createTabNavigator({
+const MainTab = createBottomTabNavigator({
     ChatView,
-    ContactView,
-    MineView
-})
+    ContactView:{
+        screen:ContactView,
+        navigationOptions:{
+            title:"000",
+            headerTitle:"dsfdf",
+            tabBarLabel:'通讯录',
+            headerTitleStyle:{
+                color:"red"
+            }
+        }
+    },
+    MineView,
 
+},{
+    tabBarOptions:{
+        showLabel:false
+
+    }
+})
+const style = {
+    style1:{
+        color:"white"
+    }
+}
 const StackNavigator = createStackNavigator({
     MainTab,
-    AddContactView,
+    AddContactView:{
+        screen:AddContactView,
+        navigationOptions:{
+            headerTitle:"添加外部联系人",
+            headerTitleStyle:style.style1,
+            headerBackTitleStyle:style.style1,
+
+        }
+    },
+},{
+    navigationOptions:{
+        headerStyle:{
+            backgroundColor:"#5077AA"
+        }
+    }
 })
 
 export default StackNavigator

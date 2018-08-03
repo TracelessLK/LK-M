@@ -12,9 +12,19 @@ import {
     View,Modal,
 } from 'react-native';
 import PropTypes from 'prop-types'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+const lkStyle = require('../style')
+const util = require('../util/navigatorUtil')
 
 
 export default class MineStack extends Component<{}> {
+    static navigationOptions =({ navigation, screenProps }) => {
+        return {
+            tabBarIcon: ({ tintColor, focused }) =>{
+                return util.getTabLogo('我的',focused,"account-outline" )
+            }
+        }
+    }
 
     constructor(props){
         super(props);
@@ -44,7 +54,7 @@ export default class MineStack extends Component<{}> {
 }
 
 MineStack.defaultProps = {
-    
+
 }
 
 MineStack.propTypes = {
