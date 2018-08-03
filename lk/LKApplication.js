@@ -9,16 +9,24 @@ class LKApplication extends Application{
 
     setCurrentUser(user){
         super.setCurrentUser(user);
-        let url='ws://'+user.serverIP+':'+user.serverPort;
+        let url=user?'ws://'+user.serverIP+':'+user.serverPort:null;
         if((!this._channel)||(this._channel.getUrl()!=url)){
-            if(this._channel)
+            if(this._channel){
                 this._channel.close();
-            this._channel = new (ConfigManager.getWSChannel())('ws://'+user.serverIP+':'+user.serverPort,true);
+                delete this._channel;
+            }
+            if(url)
+                this._channel = new (ConfigManager.getWSChannel())('ws://'+user.serverIP+':'+user.serverPort,true);
 
         }
-        return this._channel.applyChannel().then((channel)=>{
-            return channel.asyLogin(user.id,user.password);
-        })
+        if(this._channel) {
+            this._channel.applyChannel().then((channel)=>{
+                return channel.asyLogin(user.id,user.password);
+            })
+        }
+    }
+
+    reset(){
 
     }
 

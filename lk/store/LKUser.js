@@ -52,5 +52,17 @@ class LKUser{
             });
         });
     }
+    remove(id){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "delete from lkuser where id=?";
+                tx.executeSql(sql,[id],function (tx,results) {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
 }
 module.exports = new LKUser();
