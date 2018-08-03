@@ -5,7 +5,8 @@ import AuthStack from '../auth/AuthStack'
 import MainStack from './MainStack'
 const Application = require("../../LKApplication")
 const lkApplication = Application.getCurrentApp()
-const Manifest = require('../../../Manifest')
+import userProvider from '../../logic/provider/LKUserProvider'
+
 const option = {
     AuthStack,
     MainStack,
@@ -16,9 +17,7 @@ const option = {
         if(currentUser){
             routerName = 'PasswordLoginView'
         }else{
-            const userProvider = Manifest.get('LKUserProvider');
             const userAry = await userProvider.asyGetAll()
-
             const {length} = userAry
 
             if(length === 0){
@@ -34,7 +33,6 @@ const option = {
         return routerName
     }
 }
-console.log('hsdfsdf')
 
 const EntryView = navigatorUtil.getNavigator(option)
 

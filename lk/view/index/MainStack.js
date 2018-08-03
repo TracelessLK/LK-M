@@ -9,7 +9,7 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    View,Modal,
+    View,Modal,StatusBar,Image
 } from 'react-native';
 import PropTypes from 'prop-types'
 import ContactView from '../contact/ContactView'
@@ -34,6 +34,7 @@ const MainTab = createBottomTabNavigator({
     MineView,
 
 },{
+    headerTitle:"dfsf",
     tabBarOptions:{
         showLabel:false
 
@@ -60,7 +61,22 @@ const StackNavigator = createStackNavigator({
     navigationOptions:{
         headerStyle:{
             backgroundColor:"#5077AA"
-        }
+        },
+        headerTitleStyle:{
+            color:"white"
+        },
+        headerBackTitleStyle:{
+            color:"white"
+        },
+        headerBackground:(
+            <StatusBar
+                barStyle="light-content"
+                backgroundColor="red"
+            />
+        ),
+        headerBackImage:(
+            <Image style={{width:30,height:30}} source={require('../../image/back-icon.png')}></Image>
+        )
     }
 })
 

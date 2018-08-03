@@ -15,7 +15,8 @@ const config = require('../../config')
 export default class BasicInfoView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => {
         return {
-            title:"开发者工具"
+            headerTitle:"开发者工具",
+
         }
     }
     constructor(props){

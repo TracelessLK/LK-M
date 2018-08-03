@@ -20,7 +20,7 @@ export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => {
         return {
             tabBarIcon: ({ tintColor, focused }) =>{
-                return util.getTabLogo('消息',focused,"message-outline" )
+                return util.getTabLogo('消息',focused,"message-outline",24 )
             }
         }
     }
