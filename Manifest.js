@@ -10,6 +10,8 @@ import LKContactProvider from './lk/logic/provider/LKContactProvider'
 ConfigManager.configure("WSChannel",WSChannel);
 ConfigManager.configure("ChatManager",ChatManager);
 ConfigManager.configure("ContactManager",ContactManager);
+ConfigManager.configure("OrgManager",OrgManager);
+
 ConfigManager.configure("LKUserProvider",LKUserProvider);
 ConfigManager.configure("LKContactProvider",LKContactProvider);
 
