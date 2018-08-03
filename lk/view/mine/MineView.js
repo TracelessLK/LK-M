@@ -23,9 +23,7 @@ const LKContactProvider =   manifest.get('LKContactProvider')
 export default class MineView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => {
         return {
-            tabBarIcon: ({ tintColor, focused }) =>{
-                return util.getTabLogo('我的',focused,"account-outline" )
-            }
+            headerTitle:"我"
         }
     }
     constructor(props){

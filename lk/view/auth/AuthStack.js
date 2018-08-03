@@ -17,9 +17,10 @@ import ScanRegisterView from './ScanRegisterView'
 import SelectUserView from './SelectUserView'
 
 const StackNavigator = createStackNavigator({
-    PasswordLoginView,
     ScanRegisterView,
+    PasswordLoginView,
     SelectUserView
+},{
 })
 
 export default StackNavigator
