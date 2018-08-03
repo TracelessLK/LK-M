@@ -26,9 +26,17 @@ class LKApplication extends Application{
         }
     }
 
-    reset(){
+    asyUnRegister(){
+        const p = this._channel.asyUnRegister()
+         const p2 = p.then( ()=> {
+            //TODO 删除数据、清除缓存
 
+            this.setCurrentUser(null);
+
+        })
+        return p2
     }
+
 
     getLKWSChannel(){
         return this._channel;
