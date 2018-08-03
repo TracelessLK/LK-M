@@ -231,6 +231,11 @@ class LKChannel extends WSChannel{
             });
         });
     }
+
+    async asyUnRegister(){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("unRegister")]);
+        return result[0]._sendMessage(result[1]);
+    }
 }
 
 module.exports=LKChannel;
