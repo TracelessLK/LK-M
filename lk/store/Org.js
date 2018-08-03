@@ -7,17 +7,12 @@ db.transaction((tx)=>{
     });
 });
 class Org{
-    getTopOrg(userId){
+    getChildren(parentId,userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from org where parentId is null and ownerUserId=?";
-                tx.executeSql(sql,[userId],function (tx,results) {
-                    if(results.rows.length>0){
-                        resolve(results.rows.item(0).data);
-                    }else{
-                        resolve(null);
-                    }
-
+                let sql = "select * from org where parentId=? and ownerUserId=?";
+                tx.executeSql(sql,[parentId,userId],function (tx,results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
