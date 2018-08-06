@@ -19,60 +19,17 @@ const lkStyle = require('../style')
 const navigatorUtil = {
 
     getNavigator(option:number){
-        const {getRouterName,MainStack,AuthStack} = option
-
-        class Loading extends Component<{}> {
-            constructor(props){
-                super(props);
-                this.state={};
-                this._bootstrapAsync();
-            }
-
-            componentDidMount(){
-
-            }
-
-            componentDidUpdate(){
-            }
-
-
-            componentWillUnmount(){
-
-            }
-
-            _bootstrapAsync = async () => {
-                const routerName = await getRouterName()
-                this.props.navigation.navigate(routerName);
-            }
-
-            render() {
-                return (
-                    <View style={styles.container}>
-                        <ActivityIndicator size='large'/>
-                    </View>
-                )
-            }
-
-        }
-
+        const {getRouterName,MainStack,AuthStack,Loading} = option
         const SwitchStack = createSwitchNavigator(
             {
-                Loading,
-                MainStack,
-                AuthStack ,
+
             },
             {
                 initialRouteName: 'Loading',
             }
         );
 
-        const styles = StyleSheet.create({
-            container: {
-                flex: 1,
-                alignItems:"center",
-                justifyContent:"center"
-            },
-        });
+
         return SwitchStack
     },
     getTabLogo(title,focused,iconName,iconSize=26){

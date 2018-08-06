@@ -1,6 +1,7 @@
 const style = {
     color:{
-        mainColor:"#5077AA"
+        mainColor:"#00753c",
+        secondColor:"#979ea8"
     }
 }
 

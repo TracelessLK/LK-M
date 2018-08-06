@@ -12,16 +12,13 @@ import {
     View,Modal,
 } from 'react-native';
 import PropTypes from 'prop-types'
-const util = require('../util/navigatorUtil')
 
 
 export default class ChatView extends Component<{}> {
 
     static navigationOptions =({ navigation, screenProps }) => {
         return {
-            tabBarIcon: ({ tintColor, focused }) =>{
-                return util.getTabLogo('消息',focused,"message-outline",24 )
-            }
+            headerTitle:"消息"
         }
     }
 

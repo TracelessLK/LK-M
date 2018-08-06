@@ -10,6 +10,7 @@ const {debounceFunc} = require("../../../../common/util/commonUtil")
 const {getAvatarSource} = require("../../../util")
 import { Avatar, Button,Card,Icon ,List,ListItem} from 'react-native-elements'
 const config = require('../../config')
+const lkApp = require('../../../LKApplication').getCurrentApp()
 
 
 export default class BasicInfoView extends Component<{}> {
@@ -147,8 +148,15 @@ export default class BasicInfoView extends Component<{}> {
                         '重置后会删除当前账号的所有数据,请确认是否继续本操作?',
                         [
                             {text: '取消', onPress: () => {}, style: 'cancel'},
-                            {text: '确认', onPress: () => {
-                                }},
+                            {text: '确认', onPress: ()=>{
+                                (async()=>{
+                                    await lkApp.asyUnRegister()
+                                    this.props.navigation.navigate("AuthStack")
+
+                                })()
+
+                                }
+                            },
                         ],
                         { cancelable: false }
                     )

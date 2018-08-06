@@ -22,12 +22,7 @@ const util = require('../util/navigatorUtil')
 export default class ContactView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => {
         return {
-            tabBarIcon: ({ tintColor, focused }) =>{
-                return util.getTabLogo('通讯录',focused,"table-of-contents" )
-            },
-            navigationOptions:{
-                title:"dfsf"
-            }
+            headerTitle:"通讯录"
         }
     }
 

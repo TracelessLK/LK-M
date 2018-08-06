@@ -11,6 +11,8 @@ class WSChannel extends EventTarget{
     applyChannel(){
         if(!this._openPromise){
             try{
+                console.log(this._url)
+                this._url = 'ws://172.18.1.181:3001'
                 this._ws = new WebSocket(this._url);
             }catch (e){
                 delete this._ws;
@@ -27,6 +29,8 @@ class WSChannel extends EventTarget{
                 }
                 this._openPromise = new Promise(resolve => {
                     this._ws.onopen =  ()=> {
+                         console.log('open')
+
                         resolve(this);
                     };
                 })

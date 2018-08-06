@@ -7,16 +7,25 @@ const {debounceFunc} = commonUtil
 import PropTypes from 'prop-types'
 
 export default class ScanView extends Component<{}> {
-
+    static navigationOptions =({ navigation, screenProps }) => {
+        return {
+            header:null
+        }
+    }
     constructor(props) {
         super(props);
+        const {onRead} = this.props.navigation.state.params
+        this.onRead = onRead
     }
 
     render() {
         return (
             <View style={styles.container}>
                 <Camera
-                    onBarCodeRead={debounceFunc((e)=>{this.props.onRead(e)},1000*2)}
+                    onBarCodeRead={debounceFunc((e)=>{
+                        this.props.navigation.goBack()
+                        this.onRead(e)
+                    },1000*2)}
                     style={styles.preview}
                     aspect={Camera.constants.Aspect.full}>
                     <View style={{flex:1,backgroundColor:"#000",opacity:0.5,width:"100%"}}/>
@@ -30,7 +39,9 @@ export default class ScanView extends Component<{}> {
                         </View>
                         <View style={{flex:1,backgroundColor:"#000",opacity:0.5,height:"100%"}}/>
                     </View>
-                    <TouchableOpacity onPress={this.props.onCancel} style={{
+                    <TouchableOpacity onPress={()=>{
+                        this.props.navigation.goBack()
+                    }} style={{
                         flex: 2,
                         backgroundColor: "#000",
                         opacity: 0.5,
@@ -46,8 +57,6 @@ export default class ScanView extends Component<{}> {
 }
 
 ScanView.propTypes = {
-    onRead:PropTypes.func.isRequired,
-    onCancel:PropTypes.func.isRequired,
 }
 const styles = StyleSheet.create({
     container: {
