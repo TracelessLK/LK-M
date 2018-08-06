@@ -63,7 +63,7 @@ class Contact{
 
     rebuidMembers(ids,newMembers,userId){
         this.removeContacts(ids,userId).then(()=>{
-            this.addNewMembers(newMembers);
+            this.addNewMembers(newMembers,userId);
         })
     }
 
@@ -143,7 +143,7 @@ class Contact{
             db.transaction((tx)=>{
                 let sql = "delete from contact where ownerUserId=?";
                 tx.executeSql(sql,[userId], (tx,results) =>{
-                    Promise.all([this.addNewMembers(),this.addNewFriends()]).then(function () {
+                    Promise.all([this.addNewMembers(members),this.addNewFriends(friends)]).then(function () {
                         resolve();
                     }).then(function (err) {
                         reject(err);
