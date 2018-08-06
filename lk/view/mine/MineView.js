@@ -124,6 +124,8 @@ export default class MineView extends Component<{}> {
                     title:`开发者工具`,
                     icon:'https',
                     onPress:debounceFunc(()=>{
+                        console.log('devView')
+
                         this.props.navigation.navigate('DevView',{
                         })
                     }),

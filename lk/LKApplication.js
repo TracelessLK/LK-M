@@ -46,7 +46,7 @@ class LKApplication extends Application{
                         user.serverPublicKey = serverPK;
                         return ConfigManager.getUserManager().asyAddLKUser(user);
                     }).then(function () {
-                        resolve();
+                        resolve(user);
                     })
 
                 }

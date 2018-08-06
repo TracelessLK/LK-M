@@ -126,7 +126,8 @@ export default class RegisterView extends Component<{}> {
 
                                         const venderDid = await pushUtil.getAPNDeviceId()
 
-                                        lkApplication.asyRegister(user,venderDid,this.checkCode,qrcode,JSON.stringify(description,null,2)).then(()=>{
+                                        lkApplication.asyRegister(user,venderDid,this.checkCode,qrcode,JSON.stringify(description,null,2)).then((user)=>{
+                                            lkApplication.setCurrentUser(user)
                                             this.props.navigation.navigate('MainStack')
 
                                         }).catch(error=>{

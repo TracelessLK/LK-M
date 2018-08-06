@@ -18,12 +18,13 @@ import ChatView from '../chat/ChatView'
 import MineView from '../mine/MineView'
 import DevView from '../mine/dev/DevView'
 const util = require('../util/navigatorUtil')
+const style = require('../style')
 
 
 const stackNavigatorConfig = {
     navigationOptions:{
         headerStyle:{
-            backgroundColor:"#5077AA"
+            backgroundColor:style.color.mainColor
         },
         headerTitleStyle:{
             color:"white"
@@ -43,17 +44,21 @@ const stackNavigatorConfig = {
     }
 }
 
+const noHeader = {
+    headerMode:"none"
+}
+
 const ChatTab = createStackNavigator({
     ChatView
-},stackNavigatorConfig)
+},noHeader)
 
 const ContactTab = createStackNavigator({
     ContactView,
-},stackNavigatorConfig)
+},noHeader)
 
 const MineTab = createStackNavigator({
     MineView
-},stackNavigatorConfig)
+},noHeader)
 
 const MainTab = createBottomTabNavigator({
     ChatTab:{
@@ -85,7 +90,8 @@ const MainTab = createBottomTabNavigator({
     tabBarOptions:{
         showLabel:false
     },
-    lazy:false
+    lazy:false,
+
 })
 
 const MainStack = createStackNavigator({
@@ -94,4 +100,4 @@ const MainStack = createStackNavigator({
     DevView
 },stackNavigatorConfig)
 
-export default MainTab
+export default MainStack

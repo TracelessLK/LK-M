@@ -91,14 +91,14 @@ export default class ScanRegisterView extends React.Component {
 
                     {logoView}
                     <View style={{height:40,backgroundColor:"#f0f0f0",width:"100%",flexDirection:"row",alignItems:"center"}}>
-                        <View style={{width:4,height:18,backgroundColor:lkStyle.color.mainColor,marginLeft:10}}></View>
+                        <View style={{width:4,height:18,backgroundColor:lkStyle.color.logoColor,marginLeft:10}}></View>
                         <Text style={{color:"#a0a0a0",paddingLeft:5,fontSize:14}}>注册</Text>
                     </View>
                     <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center"}}>
                         <TouchableOpacity style={{height:50,backgroundColor:"#ffffff",width:"100%",flexDirection:"row",
                             borderBottomWidth:1,borderColor:lkStyle.color.secondColor,justifyContent:'flex-start',alignItems:"center"}}
                                           onPress={this.showScanView}>
-                            <Icon name="qrcode" size={30}  color={lkStyle.color.mainColor} style={{margin:10}}/>
+                            <Icon name="qrcode" size={30}  color={lkStyle.color.logoColor} style={{margin:10}}/>
                             <Text style={{}}>扫码注册</Text>
 
                         </TouchableOpacity>
