@@ -139,10 +139,13 @@ class LKChannel extends WSChannel{
     }
 
    async _ping(){
+       if(this._foreClosed){
+           return;
+       }
         let deprecated = false;
         if(!this._lastPongTime){
             this._lastPongTime = Date.now();
-        }else if(this._openPromise&&!this._foreClosed&&Date.now()-this._lastPongTime>180000){
+        }else if(this._openPromise&&Date.now()-this._lastPongTime>180000){
             try{
                 this._ws.close();
             }catch (e){
@@ -151,38 +154,52 @@ class LKChannel extends WSChannel{
             delete this._openPromise;
             deprecated=true;
         }
-        if(!deprecated&&!this._foreClosed){
+        if(!deprecated){
             try{
                 let curApp = Application.getCurrentApp();
-                let result = await Promise.all([curApp.asyGetOrgMCode(),curApp.asyGetMemberMCode()]);
-                let orgMCode = result[0];
-                let memberMCode = result[1];
-                result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping",{orgMCode:orgMCode,memberMCode:memberMCode})]);
-                result[0]._sendMessage(result[1]).then((msg)=>{
-                    let content = msg.body.content;
-                    this._lastPongTime = Date.now();
-                    if(orgMCode!= content.orgMCode){
-                        let orgs = content.orgs;
-                        if(orgs){
-                            OrgManager.asyResetOrgs(content.orgMCode,orgs);
-                        }
-                    }
-                    if(memberMCode!=content.memberMCode){
-                        let members = content.members;
-                        if(members) {
-                            this._checkMembersDiff(members).then((diff)=>{
-                                LKContactHandler.asyRemoveContacts(diff.removed,curApp.getCurrentUser().id);
-                                this._asyFetchMembers(content.memberMCode,diff.added,diff.modified);
-                            });
-                        }
+                let result;
+                let orgMCode;
+                let memberMCode ;
+                let checkMCode = false;
+                if(curApp.getCurrentUser()){
+                    result = await Promise.all([curApp.asyGetOrgMCode(),curApp.asyGetMemberMCode()]);
+                    orgMCode = result[0];
+                    memberMCode = result[1];
+                    result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping",{orgMCode:orgMCode,memberMCode:memberMCode})]);
+                    checkMCode = true;
+                }else{
+                    result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping")]);
+                }
 
+                result[0]._sendMessage(result[1]).then((msg)=>{
+                    this._lastPongTime = Date.now();
+                    if(checkMCode){
+                        let content = msg.body.content;
+                        if(orgMCode!= content.orgMCode){
+                            let orgs = content.orgs;
+                            if(orgs){
+                                OrgManager.asyResetOrgs(content.orgMCode,orgs,curApp.getCurrentUser().id);
+                            }
+                        }
+                        if(memberMCode!=content.memberMCode){
+                            let members = content.members;
+                            if(members) {
+                                this._checkMembersDiff(members).then((diff)=>{
+                                    LKContactHandler.asyRemoveContacts(diff.removed,curApp.getCurrentUser().id);
+                                    this._asyFetchMembers(content.memberMCode,diff.added,diff.modified);
+                                });
+                            }
+
+                        }
                     }
+
                 });
             }catch (e){
 
             }
 
         }
+
         setTimeout(()=>{this._ping()},60000);
     }
 
@@ -220,7 +237,7 @@ class LKChannel extends WSChannel{
                     let memberMCode = content.memberMCode;
                     let members = content.members;
                     let friends = content.friends;
-                    OrgManager.asyResetOrgs(orgMCode,orgs).then(function () {
+                    OrgManager.asyResetOrgs(orgMCode,orgs,uid).then(function () {
                         return ContactManager.asyResetContacts(memberMCode,members,friends)
                     }).then(function () {
                         resolve();
