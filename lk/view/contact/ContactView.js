@@ -12,6 +12,8 @@ const {getAvatarSource} = require("../../util")
 import { Avatar ,SearchBar} from 'react-native-elements'
 const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
+const LKContactProvider =  require("../../logic/provider/LKContactProvider")
+const LKOrgProvider =  require("../../logic/provider/LKOrgProvider")
 
 import {
     Body, Button, Card, CardItem, Container, Content ,Header,Icon,Input,Item,Left,
@@ -42,12 +44,11 @@ export default class ContactView extends Component<{}> {
         }
         const user = lkApp.getCurrentUser();
         (async()=>{
-            // const LKContactProvider =   manifest.get('LKContactProvider')
-            // const LKOrgProvider =   manifest.get('LKOrgProvider')
-            // const allContact = await LKContactProvider.asyGetAll(user.id)
-            // console.log(allContact)
-            // const topOrg = await LKOrgProvider.asyGetChildren(null,user.id)
-            // console.log(topOrg)
+
+            const allContact = await LKContactProvider.asyGetAll(user.id)
+            console.log(allContact)
+            const topOrg = await LKOrgProvider.asyGetChildren(null,user.id)
+            console.log(topOrg)
 
 
         })()

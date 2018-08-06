@@ -50,15 +50,15 @@ const noHeader = {
 
 const ChatTab = createStackNavigator({
     ChatView
-},noHeader)
+},stackNavigatorConfig)
 
 const ContactTab = createStackNavigator({
     ContactView,
-},noHeader)
+},stackNavigatorConfig)
 
 const MineTab = createStackNavigator({
     MineView
-},noHeader)
+},stackNavigatorConfig)
 
 const MainTab = createBottomTabNavigator({
     ChatTab:{
@@ -95,7 +95,12 @@ const MainTab = createBottomTabNavigator({
 })
 
 const MainStack = createStackNavigator({
-    MainTab,
+    MainTab:{
+        screen:MainTab,
+        navigationOptions:{
+            header:null
+        }
+    },
     AddContactView,
     DevView
 },stackNavigatorConfig)
