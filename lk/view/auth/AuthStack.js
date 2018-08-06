@@ -15,11 +15,13 @@ import PropTypes from 'prop-types'
 import PasswordLoginView from './PasswordLoginView'
 import ScanRegisterView from './ScanRegisterView'
 import SelectUserView from './SelectUserView'
+import RegisterView from './RegisterView'
 
 const StackNavigator = createStackNavigator({
     ScanRegisterView,
     PasswordLoginView,
-    SelectUserView
+    SelectUserView,
+    RegisterView
 },{
 })
 

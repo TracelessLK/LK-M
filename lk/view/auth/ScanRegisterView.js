@@ -39,11 +39,9 @@ export default class ScanRegisterView extends React.Component {
     }
 
     showScanView=()=>{
-        this.props.navigation.navigate("ScanView",{onRead:(e)=>{
-            console.log(e)
-            
-            }})
-        // this.setState({scanVisible:true});
+        this.props.navigation.navigate("ScanView",{onRead:this.onRead
+
+            })
     }
 
 
@@ -58,6 +56,7 @@ export default class ScanRegisterView extends React.Component {
         const decryptedText = util.decryptAes(data)
         const obj = JSON.parse(decryptedText)
 
+
         if(obj.action === 'registerForAdmin') {
             this.setState({
                 scanVisible: false,
@@ -66,9 +65,6 @@ export default class ScanRegisterView extends React.Component {
                 obj
             })
         }else if(obj.action === 'register'){
-            this.setState({
-                scanVisible: false,
-            })
             this.props.navigation.navigate("RegisterView", {
                 obj,
                 qrcode:data

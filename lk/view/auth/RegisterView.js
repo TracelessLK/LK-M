@@ -18,7 +18,6 @@ const lkApplication = require('../../LKApplication').getCurrentApp()
 const uuid = require('uuid')
 const deviceInfo = require('react-native-device-info')
 const pushUtil = require('../../../common/util/pushUtil')
-const AppUtil = require('../../AppUtil.js')
 
 
 export default class CheckCodeView extends Component<{}> {
@@ -43,9 +42,6 @@ export default class CheckCodeView extends Component<{}> {
     }
 
 
-    componentWillUnmount = () => {
-
-    }
     onChangeText = (t)=>{
 
         this.name = t?t.trim():''
@@ -64,7 +60,7 @@ export default class CheckCodeView extends Component<{}> {
 
     render() {
         return (
-            <View style={{display:"flex",alignItems:'center',justifyContent:'center',flex:1}}>
+            <View style={{display:"flex",alignItems:'center',justifyContent:'flex-start',flex:1,marginTop:200}}>
                 <View style={{display:'flex',justifyContent:"flex-start",alignItems:"flex-start",marginVertical:15,width:'95%'}}>
                     {this.state.hasCheckCode? (
                         <Item floatingLabel  >
@@ -122,7 +118,6 @@ export default class CheckCodeView extends Component<{}> {
                                                 privateKey,
                                                 deviceId:uuid(),
                                                 serverIP:obj.ip,
-                                                serverPublicKey:obj.serverPublicKey,
                                                 serverPort:obj.port,
                                                 orgId:obj.orgId,
                                                 mCode:obj.mCode,
@@ -134,7 +129,7 @@ export default class CheckCodeView extends Component<{}> {
                                             const result =  await wsChannel.asyRegister(obj.ip,obj.port,user.id,user.deviceId,venderDid,publicKey,this.checkCode,qrcode)
                                             const userhandler = lkApplication.getLKUserHandler()
 
-                                            //id,name,pic,publicKey,privateKey,deviceId,serverIP,serverPort,serverPublicKey,orgId,mCode,password,reserve1
+                                            //id,name,pic,publicKey,privateKey,deviceId,serverIP,serverPort,orgId,mCode,password,reserve1
                                             await userhandler.asyAddLKUser(user)
                                             AppUtil.reset()
 

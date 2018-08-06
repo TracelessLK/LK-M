@@ -14,8 +14,8 @@ export default class ScanView extends Component<{}> {
     }
     constructor(props) {
         super(props);
-        const {onRead} = this.props.navigation.state.params
-        this.onRead = onRead
+        // const {onRead} = this.props.navigation.state.params
+        // this.onRead = onRead
     }
 
     render() {
@@ -23,9 +23,10 @@ export default class ScanView extends Component<{}> {
             <View style={styles.container}>
                 <Camera
                     onBarCodeRead={debounceFunc((e)=>{
+                        this.props.navigation.state.params.onRead(e)
                         this.props.navigation.goBack()
-                        this.onRead(e)
-                    },1000*2)}
+
+                    },1000*5)}
                     style={styles.preview}
                     aspect={Camera.constants.Aspect.full}>
                     <View style={{flex:1,backgroundColor:"#000",opacity:0.5,width:"100%"}}/>
