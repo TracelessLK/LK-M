@@ -11,9 +11,9 @@ class OrgManager extends EventTarget{
 
     asyResetOrgs(newOrgMCode,orgs,userId){
         let curApp = Application.getCurrentApp();
-        return LKOrgHandler.asyResetOrgs(orgs,userId).then(function () {
+        return LKOrgHandler.asyResetOrgs(orgs,userId).then( () =>{
             return LKMagicCodeHandler.asyUpdateOrgMagicCode(newOrgMCode,userId);
-        }).then(function () {
+        }).then( ()=>{
             curApp.setOrgMagicCode(newOrgMCode);
             this.fire("orgChanged");
         });
