@@ -27,7 +27,7 @@ class ContactManager extends EventTarget{
         let curApp = Application.getCurrentApp();
         return  LKContactHandler.asyResetContacts(members,friends,userId||curApp.getCurrentUser().id).then(function () {
             return LKMagicCodeHandler.asyUpdateMemberMagicCode(newMemberMCode,userId||curApp.getCurrentUser().id);
-        }).then(function () {
+        }).then( ()=> {
             curApp.setMemberMagicCode(newMemberMCode);
             this.fire("contactChanged");
         });
@@ -37,7 +37,7 @@ class ContactManager extends EventTarget{
         let curApp = Application.getCurrentApp();
         LKContactHandler.asyRebuidMembers(ids,newMembers,curApp.getCurrentUser().id).then(function () {
             return LKMagicCodeHandler.asyUpdateMemberMagicCode(newMemberMCode,curApp.getCurrentUser().id);
-        }).then(function () {
+        }).then(() =>{
             curApp.setMemberMagicCode(newMemberMCode);
             this.fire("contactChanged");
         });

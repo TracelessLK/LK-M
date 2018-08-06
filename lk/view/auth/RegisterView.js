@@ -11,6 +11,7 @@ import PropTypes from 'prop-types'
 import RNFS from 'react-native-fs';
 import { Container, Header, Content, Input, Item,Button ,Icon,Label,Toast} from 'native-base';
 import RSAKey from "react-native-rsa";
+import MainStack from "../index/MainStack";
 const {debounceFunc} = require('../../../common/util/commonUtil')
 const config = require('../../config')
 const lkApplication = require('../../LKApplication').getCurrentApp()
@@ -18,14 +19,14 @@ const lkApplication = require('../../LKApplication').getCurrentApp()
 const uuid = require('uuid')
 const deviceInfo = require('react-native-device-info')
 const pushUtil = require('../../../common/util/pushUtil')
+const md5 = require("crypto-js/md5");
 
 
-export default class CheckCodeView extends Component<{}> {
+export default class RegisterView extends Component<{}> {
 
     constructor(props) {
         super(props);
         const obj = this.props.navigation.state.params.obj
-        console.log(obj)
 
 
         this.state = {
@@ -70,7 +71,7 @@ export default class CheckCodeView extends Component<{}> {
 
                         ) :null}
                     <Item floatingLabel  >
-                        <Label>请设置登录密码</Label>
+                        <Label>请为您的密钥设置密码</Label>
                         <Input ref='input' onChangeText={this.onChangeText3}></Input>
                     </Item>
                 </View>
@@ -87,19 +88,13 @@ export default class CheckCodeView extends Component<{}> {
 
                                 }else if(!this.password){
                                     Toast.show({
-                                        text: '请设置登录密码',
+                                        text: '请为您的密钥设置密码',
                                         position: "top",
                                         type: "warning",
                                         duration: 3000
                                     })
                                 }else{
                                     const {obj,qrcode} = this.props.navigation.state.params
-
-                                    const LKWSChannelClass = lkApplication.getLKWSChannelClass()
-                                    //ws://www.host.com/path
-                                    const wsChannel = new LKWSChannelClass(`ws://${obj.ip}:${obj.port}`)
-
-
 
                                     const bits = 1024;
                                     const exponent = '10001';
@@ -109,36 +104,39 @@ export default class CheckCodeView extends Component<{}> {
                                     const privateKey = rsa.getPrivateString(); // return js
 
                                     (async()=>{
-                                        try{
-                                            const password = await RNFS.hash(this.password,'md5')
-                                            const user = {
-                                                id:obj.id,
-                                                name:obj.name,
-                                                publicKey,
-                                                privateKey,
-                                                deviceId:uuid(),
-                                                serverIP:obj.ip,
-                                                serverPort:obj.port,
-                                                orgId:obj.orgId,
-                                                mCode:obj.mCode,
-                                                password
-                                            }
+                                        const password = md5(this.password).toString()
 
-                                            const venderDid = await pushUtil.getAPNDeviceId()
+                                        const user = {
+                                            id:obj.id,
+                                            name:obj.name,
+                                            publicKey,
+                                            privateKey,
+                                            deviceId:uuid(),
+                                            serverIP:obj.ip,
+                                            serverPort:obj.port,
+                                            orgId:obj.orgId,
+                                            mCode:obj.mCode,
+                                            password
+                                        }
 
-                                            const result =  await wsChannel.asyRegister(obj.ip,obj.port,user.id,user.deviceId,venderDid,publicKey,this.checkCode,qrcode)
-                                            const userhandler = lkApplication.getLKUserHandler()
+                                        const description = {
+                                            brand:deviceInfo.getBrand(),
+                                            device:deviceInfo.getDeviceId()
+                                        }
 
-                                            //id,name,pic,publicKey,privateKey,deviceId,serverIP,serverPort,orgId,mCode,password,reserve1
-                                            await userhandler.asyAddLKUser(user)
-                                            AppUtil.reset()
+                                        const venderDid = await pushUtil.getAPNDeviceId()
 
-                                        }catch(error){
+                                        lkApplication.asyRegister(user,venderDid,this.checkCode,qrcode,JSON.stringify(description,null,2)).then(()=>{
+                                            this.props.navigation.navigate('MainStack')
+
+                                        }).catch(error=>{
                                             const errStr = JSON.stringify(error)
-                                            console.log(errStr)
+                                            console.log(error)
 
                                             Alert.alert(errStr)
-                                        }
+                                        })
+
+
 
                                     })()
                                 }
@@ -155,6 +153,6 @@ export default class CheckCodeView extends Component<{}> {
 
 }
 
-CheckCodeView.defaultProps = {};
+RegisterView.defaultProps = {};
 
-CheckCodeView.propTypes = {};
+RegisterView.propTypes = {};

@@ -24,8 +24,6 @@ export default class ScanView extends Component<{}> {
                 <Camera
                     onBarCodeRead={debounceFunc((e)=>{
                         this.props.navigation.state.params.onRead(e)
-                        this.props.navigation.goBack()
-
                     },1000*5)}
                     style={styles.preview}
                     aspect={Camera.constants.Aspect.full}>
