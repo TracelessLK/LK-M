@@ -23,10 +23,10 @@ class ContactManager extends EventTarget{
         this.fire("deviceRemoved",detail);
     }
 
-    asyResetContacts(newMemberMCode,members,friends){
+    asyResetContacts(newMemberMCode,members,friends,userId){
         let curApp = Application.getCurrentApp();
-        return  LKContactHandler.asyResetContacts(members,friends,curApp.getCurrentUser().id).then(function () {
-            return LKMagicCodeHandler.asyUpdateMemberMagicCode(newMemberMCode,curApp.getCurrentUser().id);
+        return  LKContactHandler.asyResetContacts(members,friends,userId||curApp.getCurrentUser().id).then(function () {
+            return LKMagicCodeHandler.asyUpdateMemberMagicCode(newMemberMCode,userId||curApp.getCurrentUser().id);
         }).then(function () {
             curApp.setMemberMagicCode(newMemberMCode);
             this.fire("contactChanged");
