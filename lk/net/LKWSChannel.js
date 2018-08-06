@@ -3,7 +3,7 @@ import WSChannel from '../../common/net/WSChannel'
 import Application from '../LKApplication'
 import ChatManager from '../core/ChatManager'
 import OrgManager from '../core/OrgManager'
-import ContactManager from "../core/ChatManager"
+import ContactManager from "../core/ContactManager"
 import LKContactProvider from '../logic/provider/LKContactProvider'
 import LKContactHandler from '../logic/handler/LKContactHandler'
 import CryptoJS from "crypto-js";
@@ -223,31 +223,8 @@ class LKChannel extends WSChannel{
 
    async asyRegister(ip,port,uid,did,venderDid,pk,checkCode,qrCode,description){
        let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
-
        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
-
-       return new Promise((resolve,reject)=>{
-            result[0]._sendMessage(result[1]).then((msg)=>{
-                let content = msg.body.content;
-                if(content.error){
-                    reject(content.error);
-                }else{
-                    let orgMCode = content.orgMCode;
-                    let orgs = content.orgs;
-                    let memberMCode = content.memberMCode;
-                    let members = content.members;
-                    let friends = content.friends;
-                    OrgManager.asyResetOrgs(orgMCode,orgs,uid).then(function () {
-                        return ContactManager.asyResetContacts(memberMCode,members,friends)
-                    }).then(function () {
-                        resolve();
-                    })
-
-                }
-            }).catch((error)=>{
-                reject(error);
-            });
-        });
+       return result[0]._sendMessage(result[1]);
     }
 
     async asyUnRegister(){

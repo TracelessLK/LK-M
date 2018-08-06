@@ -2,6 +2,9 @@
 
 import Chat from '../../store/Chat'
 class LKChatProvider{
+    asyGetAll(){
+        return Chat.getAll();
+    }
     asyGetChat(chatId){
         return Chat.getChat(chatId);
     }

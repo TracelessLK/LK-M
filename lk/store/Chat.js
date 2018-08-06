@@ -1,7 +1,7 @@
 
 import db from '../../common/store/DataBase'
 db.transaction((tx)=>{
-    tx.executeSql("create table if not exists chat(id TEXT PRIMARY KEY NOT NULL,name TEXT,newMsgNum INTEGER,order INTEGER,onTop INTEGER,reserve1 TEXT)",[],function () {
+    tx.executeSql("create table if not exists chat(id TEXT PRIMARY KEY NOT NULL,name TEXT,newMsgNum INTEGER,createTime INTEGER,topTime INTEGER,reserve1 TEXT)",[],function () {
     },function (err) {
     });
     tx.executeSql("create table if not exists chatMember(chatId TEXT,contactId TEXT,reserve1 TEXT,primary key(chatId,contactId))",[],function () {
@@ -13,7 +13,7 @@ class Chat{
     getAll(){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from chat order by 'order' desc";
+                let sql = "select * from chat order by topTime desc,createTime desc";
                 tx.executeSql(sql,[],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
@@ -59,6 +59,18 @@ class Chat{
         });
     }
 
+    addNewChat(chatId,name,newMsgNum){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "insert into chat(id,name,newMsgNum,createTime,topTime) values (?,?,?,?,?)";
+                tx.executeSql(sql,[chatId,name,newMsgNum||0,Date.now(),0],function () {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
 
 
 }

@@ -28,30 +28,33 @@ class LKApplication extends Application{
 
     asyRegister(user,venderDid,checkCode,qrcode,description){
         let channel = new (ConfigManager.getWSChannel())('ws://'+user.serverIP+':'+user.serverPort,true);
-        channel.asyRegister(user.serverIP,user.serverPort,user.id,user.deviceId,venderDid,user.publicKey,checkCode,qrcode,description).then(function (msg) {
-            let content = msg.body.content;
-            if(content.error){
-                reject(content.error);
-            }else{
-                let serverPK = content.publicKey;
-                let orgMCode = content.orgMCode;
-                let orgs = content.orgs;
-                let memberMCode = content.memberMCode;
-                let members = content.members;
-                let friends = content.friends;
-                ConfigManager.getOrgManager().asyResetOrgs(orgMCode,orgs).then(function () {
-                    return ConfigManager.getContactManager().asyResetContacts(memberMCode,members,friends)
-                }).then(function () {
-                    user.serverPublicKey = serverPK;
-                    return ConfigManager.getUserManager().asyAddLKUser(user);
-                }).then(function () {
-                    resolve();
-                })
+        return new Promise((resolve,reject)=>{
+            channel.asyRegister(user.serverIP,user.serverPort,user.id,user.deviceId,venderDid,user.publicKey,checkCode,qrcode,description).then(function (msg) {
+                let content = msg.body.content;
+                if(content.error){
+                    reject(content.error);
+                }else{
+                    let serverPK = content.publicKey;
+                    let orgMCode = content.orgMCode;
+                    let orgs = content.orgs;
+                    let memberMCode = content.memberMCode;
+                    let members = content.members;
+                    let friends = content.friends;
+                    ConfigManager.getOrgManager().asyResetOrgs(orgMCode,orgs).then(function () {
+                        return ConfigManager.getContactManager().asyResetContacts(memberMCode,members,friends,user.id)
+                    }).then(function () {
+                        user.serverPublicKey = serverPK;
+                        return ConfigManager.getUserManager().asyAddLKUser(user);
+                    }).then(function () {
+                        resolve();
+                    })
 
-            }
+                }
 
 
-        });
+            });
+        })
+
     }
 
     asyUnRegister(){
