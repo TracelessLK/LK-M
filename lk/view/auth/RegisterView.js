@@ -1,19 +1,12 @@
 import React, {Component} from 'react';
 import {
     Alert,
-    AsyncStorage,
-    NativeModules,
-    Platform,
-    StyleSheet, Text,
-    View, Modal, ScrollView,TextInput
+    Text,
+    View
 } from 'react-native';
-import PropTypes from 'prop-types'
-import RNFS from 'react-native-fs';
-import { Container, Header, Content, Input, Item,Button ,Icon,Label,Toast} from 'native-base';
+import { Input, Item,Button ,Label,Toast} from 'native-base';
 import RSAKey from "react-native-rsa";
-import MainStack from "../index/MainStack";
 const {debounceFunc} = require('../../../common/util/commonUtil')
-const config = require('../../config')
 const lkApplication = require('../../LKApplication').getCurrentApp()
 
 const uuid = require('uuid')
@@ -33,13 +26,6 @@ export default class RegisterView extends Component<{}> {
             hasCheckCode:obj.hasCheckCode
         };
 
-    }
-
-    componentDidMount = () => {
-
-    }
-
-    componentWillUnmount = () => {
     }
 
 

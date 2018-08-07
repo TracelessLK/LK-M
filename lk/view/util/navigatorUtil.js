@@ -11,20 +11,6 @@ const lkStyle = require('../style')
 
 const navigatorUtil = {
 
-    getNavigator(option:number){
-        const {getRouterName,MainStack,AuthStack,Loading} = option
-        const SwitchStack = createSwitchNavigator(
-            {
-
-            },
-            {
-                initialRouteName: 'Loading',
-            }
-        );
-
-
-        return SwitchStack
-    },
     getTabLogo(title,focused,iconName,iconSize=26){
         let color = focused?lkStyle.color.mainColor:"#a0a0a0"
         let style = {display:"flex",justifyContent:"center",alignItems:"center"}

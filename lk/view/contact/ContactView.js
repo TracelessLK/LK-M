@@ -4,19 +4,18 @@ import {
     Text,
     TouchableOpacity,
     View,
-    ScrollView,
-    Platform
 } from 'react-native';
-const {debounceFunc} = require("../../../common/util/commonUtil")
-const {getAvatarSource} = require("../../util")
 import { Avatar ,SearchBar} from 'react-native-elements'
+const {debounceFunc} = require("../../../common/util/commonUtil")
 const lkApp = require('../../LKApplication').getCurrentApp()
-const manifest = require('../../../Manifest')
 const LKContactProvider =  require("../../logic/provider/LKContactProvider")
 const LKOrgProvider =  require("../../logic/provider/LKOrgProvider")
+const {getAvatarSource} = require("../../util")
+
+
 
 export default class ContactView extends Component<{}> {
-    static navigationOptions =({ navigation, screenProps }) => {
+    static navigationOptions =() => {
         return {
             headerTitle:"通讯录"
         }
@@ -29,30 +28,32 @@ export default class ContactView extends Component<{}> {
             ContactView:this
         });
         this.eventAry = []
+        this.state = {
+            friendAry:[]
+        }
 
     }
 
     componentDidMount(){
-        for(let event of this.eventAry){
-            // Store.on(event,this.update);
-        }
-        const user = lkApp.getCurrentUser();
+        // for(let event of this.eventAry){
+        //     // Store.on(event,this.update);
+        // }
         (async()=>{
 
-            const allContact = await LKContactProvider.asyGetAll(user.id)
-            console.log(allContact)
-            const topOrg = await LKOrgProvider.asyGetChildren(null,user.id)
-            console.log(topOrg)
+
+            // const topOrg = await LKOrgProvider.asyGetChildren(null,user.id)
+            // console.log(topOrg)
 
 
         })()
+        this.asyncRender()
 
     }
 
     componentWillUnmount =()=> {
-        for(let event of this.eventAry){
-            // Store.un(event,this.update);
-        }
+        // for(let event of this.eventAry){
+        //     // Store.un(event,this.update);
+        // }
     }
 
     update = ()=>{
@@ -67,19 +68,41 @@ export default class ContactView extends Component<{}> {
         this.props.navigation.navigate("FriendInfoView",{ContactView:this,friend:f});
     })
 
-    doSearch(){
-
-    }
-
-    textChange(){
-
-    }
     someMethod(){
+//
+    }
 
+    async asyncRender(){
+        const user = lkApp.getCurrentUser();
+        console.log(user)
+        let friends = [];
+        const all = await LKContactProvider.asyGetAll(user.id)
+        console.log(all)
+        for(let i=0;i<all.length;i++){
+            let f = all[i];
+
+            friends.push(<TouchableOpacity key={i} onPress={()=>{this.go2FriendInfoView(f)}} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
+                <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
+                    <Avatar
+                        source={getAvatarSource(f.pic)}
+                        onPress={() => {}}
+                        activeOpacity={1}
+                    />
+                    <Text>    {f.name}  </Text>
+                </View>
+            </TouchableOpacity>);
+            friends.push(<View key={i+"line"} style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
+
+        }
+        console.log(friends)
+
+        this.setState({
+            friendAry:friends
+        })
     }
 
     render() {
-        const searchBarBgColor = Platform.OS === 'android' ?'#bdc6cf' :'#f0f0f0'
+
         return (
            <View>
 
@@ -126,6 +149,7 @@ export default class ContactView extends Component<{}> {
                    <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
                    </View>
                </View>
+               {this.state.friendAry}
            </View>
 
         );
