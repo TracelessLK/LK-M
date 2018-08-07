@@ -1,20 +1,13 @@
-import { createSwitchNavigator, createStackNavigator,createBottomTabNavigator } from 'react-navigation'
-import React, { Component } from 'react';
+import {  createStackNavigator,createBottomTabNavigator } from 'react-navigation'
+import React from 'react';
 import {
-    Alert,
-    AsyncStorage,
-    Button,
-    NativeModules,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,Modal,StatusBar,Image
+  StatusBar,Image
 } from 'react-native';
-import PropTypes from 'prop-types'
 import ContactView from '../contact/ContactView'
 import AddContactView from '../contact/AddContactView'
+import FriendInfoView from '../contact/FriendInfoView'
 import ChatView from '../chat/ChatView'
+import RecentView from '../chat/RecentView'
 import MineView from '../mine/MineView'
 import DevView from '../mine/dev/DevView'
 const util = require('../util/navigatorUtil')
@@ -39,17 +32,13 @@ const stackNavigatorConfig = {
             />
         ),
         headerBackImage:(
-            <Image style={{width:30,height:30}} source={require('../../image/back-icon.png')}></Image>
+            <Image style={{width:30,height:30}} source={require('../image/back-icon.png')}></Image>
         )
     }
 }
 
-const noHeader = {
-    headerMode:"none"
-}
-
 const ChatTab = createStackNavigator({
-    ChatView
+    RecentView
 },stackNavigatorConfig)
 
 const ContactTab = createStackNavigator({
@@ -64,7 +53,7 @@ const MainTab = createBottomTabNavigator({
     ChatTab:{
         screen:ChatTab,
         navigationOptions:{
-            tabBarIcon: ({ tintColor, focused }) =>{
+            tabBarIcon: ({  focused }) =>{
                 return util.getTabLogo('消息',focused,"message-outline",24 )
             }
         }
@@ -72,7 +61,7 @@ const MainTab = createBottomTabNavigator({
     ContactTab:{
         screen:ContactTab,
         navigationOptions:{
-            tabBarIcon: ({ tintColor, focused }) =>{
+            tabBarIcon: ({  focused }) =>{
                 return util.getTabLogo('通讯录',focused,"table-of-contents" )
             },
         }
@@ -80,7 +69,7 @@ const MainTab = createBottomTabNavigator({
     MineTab:{
         screen:MineTab,
         navigationOptions:{
-            tabBarIcon: ({ tintColor, focused }) =>{
+            tabBarIcon: ({  focused }) =>{
                 return util.getTabLogo('我',focused,"account-outline" )
             }
         }
@@ -102,7 +91,9 @@ const MainStack = createStackNavigator({
         }
     },
     AddContactView,
-    DevView
+    DevView,
+    FriendInfoView,
+    ChatView
 },stackNavigatorConfig)
 
 export default MainStack

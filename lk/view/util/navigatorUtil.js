@@ -1,12 +1,10 @@
 
-import React, { Component } from 'react';
+import React, {  } from 'react';
 import {
     View,
     Text
 } from 'react-native';
-import PropTypes from 'prop-types'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { createSwitchNavigator, createStackNavigator } from 'react-navigation'
 const lkStyle = require('../style')
 
 const navigatorUtil = {

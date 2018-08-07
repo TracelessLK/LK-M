@@ -3,12 +3,8 @@ import React from 'react';
 import { Image, Keyboard, Modal,StyleSheet,Text,TextInput,Alert,
     TouchableOpacity,TouchableWithoutFeedback,View} from 'react-native';
 import {Toast} from 'native-base'
-import AppUtil from "../../AppUtil";
-import UUID from 'uuid/v4';
-import RSAKey from 'react-native-rsa';
 import ScanView from '../../../common/view/ScanView'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import pushUtil from "../../../common/util/pushUtil";
 const versionLocal = require('../../../package').version
 const util = require('../../util')
 const config = require('../../config')
@@ -17,7 +13,7 @@ const lkApplication = require('../../LKApplication')
 const lkStyle = require('../style')
 
 export default class ScanRegisterView extends React.Component {
-    static navigationOptions =({ navigation, screenProps }) => {
+    static navigationOptions =() => {
         return {
             header:null
         }
@@ -84,7 +80,7 @@ export default class ScanRegisterView extends React.Component {
     }
 
     render() {
-        const logoView = <Image source={require('../../image/1024x1024.png')} style={{width:150,height:150,marginBottom:50,marginTop:100}} resizeMode="cover"></Image>
+        const logoView = <Image source={require('../image/1024x1024.png')} style={{width:150,height:150,marginBottom:50,marginTop:100}} resizeMode="cover"></Image>
         let content = (
             <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
                 <View style={{display:"flex",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",flex:1,backgroundColor:"#ffffff"}}>

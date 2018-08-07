@@ -4,8 +4,9 @@ import {
     Text,
     TouchableOpacity,
     View,
+    ScrollView
 } from 'react-native';
-import { Avatar ,SearchBar} from 'react-native-elements'
+import { SearchBar} from 'react-native-elements'
 const {debounceFunc} = require("../../../common/util/commonUtil")
 const lkApp = require('../../LKApplication').getCurrentApp()
 const LKContactProvider =  require("../../logic/provider/LKContactProvider")
@@ -65,7 +66,7 @@ export default class ContactView extends Component<{}> {
     })
 
     go2FriendInfoView=debounceFunc((f)=>{
-        this.props.navigation.navigate("FriendInfoView",{ContactView:this,friend:f});
+        this.props.navigation.navigate("FriendInfoView",{friend:f});
     })
 
     someMethod(){
@@ -74,37 +75,38 @@ export default class ContactView extends Component<{}> {
 
     async asyncRender(){
         const user = lkApp.getCurrentUser();
-        console.log(user)
-        let friends = [];
+        let friendAry = [];
         const all = await LKContactProvider.asyGetAll(user.id)
-        console.log(all)
         for(let i=0;i<all.length;i++){
             let f = all[i];
-
-            friends.push(<TouchableOpacity key={i} onPress={()=>{this.go2FriendInfoView(f)}} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                    <Avatar
-                        source={getAvatarSource(f.pic)}
-                        onPress={() => {}}
-                        activeOpacity={1}
-                    />
-                    <Text>    {f.name}  </Text>
+            const content = (
+                <View style={{backgroundColor:"white",borderBottomColor:"#f0f0f0",borderBottomWidth:1}} key={i}>
+                    <TouchableOpacity  onPress={()=>{
+                        this.go2FriendInfoView(f)
+                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
+                        alignItems:"center",}} >
+                        <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={getAvatarSource(f.pic)} />
+                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
+                            <Text style={{fontSize:18,fontWeight:"500"}}>
+                                {f.name}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
-            </TouchableOpacity>);
-            friends.push(<View key={i+"line"} style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
+            )
 
+            friendAry.push(content)
         }
-        console.log(friends)
 
         this.setState({
-            friendAry:friends
+            friendAry
         })
     }
 
     render() {
 
         return (
-           <View>
+           <ScrollView>
 
                <SearchBar
                    lightTheme
@@ -132,7 +134,7 @@ export default class ContactView extends Component<{}> {
 
                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
                                           alignItems:"center"}}>
-                       <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../../image/contact.png')} />
+                       <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../image/contact.png')} />
                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
                            <Text style={{fontSize:18,fontWeight:"500"}}>
                                外部联系人
@@ -150,7 +152,7 @@ export default class ContactView extends Component<{}> {
                    </View>
                </View>
                {this.state.friendAry}
-           </View>
+           </ScrollView>
 
         );
     }
