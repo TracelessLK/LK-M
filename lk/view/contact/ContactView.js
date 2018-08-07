@@ -15,12 +15,6 @@ const manifest = require('../../../Manifest')
 const LKContactProvider =  require("../../logic/provider/LKContactProvider")
 const LKOrgProvider =  require("../../logic/provider/LKOrgProvider")
 
-import {
-    Body, Button, Card, CardItem, Container, Content ,Header,Icon,Input,Item,Left,
-    List,ListItem,Right,Spinner,Thumbnail,Toast
-} from 'native-base';
-const util = require('../util/navigatorUtil')
-
 export default class ContactView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => {
         return {
