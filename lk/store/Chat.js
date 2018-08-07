@@ -17,7 +17,7 @@ class Chat{
                 tx.executeSql(sql,[],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i).data);
+                        ary.push(results.rows.item(i));
                     }
                     resolve(ary);
                 },function (err) {
@@ -32,7 +32,7 @@ class Chat{
                 let sql = "select * from chat where id=?";
                 tx.executeSql(sql,[chatId],function (tx,results) {
                     if(results.rows.length>0){
-                        resolve(results.rows.item(0).data);
+                        resolve(results.rows.item(0));
                     }else{
                         resolve(null);
                     }
@@ -49,7 +49,7 @@ class Chat{
                 tx.executeSql(sql,[chatId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i).data);
+                        ary.push(results.rows.item(i));
                     }
                     resolve(ary);
                 },function (err) {
@@ -60,10 +60,44 @@ class Chat{
     }
 
     addNewChat(chatId,name,newMsgNum){
+
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 let sql = "insert into chat(id,name,newMsgNum,createTime,topTime) values (?,?,?,?,?)";
                 tx.executeSql(sql,[chatId,name,newMsgNum||0,Date.now(),0],function () {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
+    addNemMembers(chatId,members){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "insert into chatMember(chatId,contactId) values ";
+                for(let i=0;i<members.length;i++){
+                    sql += "('"+chatId+"',";
+                    sql +="?)";
+                    if(i<members.length-1){
+                        sql += ",";
+                    }
+                }
+                tx.executeSql(sql,members,function () {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
+    topChat(chatId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "update chat set topTime=? where id=?";
+                tx.executeSql(sql,[Date.now(),chatId],function () {
                     resolve();
                 },function (err) {
                     reject(err);

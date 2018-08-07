@@ -14,7 +14,7 @@ class MagicCode{
                 let sql = "select * from magicCode where ownerUserId=?";
                 tx.executeSql(sql,[userId],function (tx,results) {
                     if(results.rows.length>0){
-                        resolve(results.rows.item(0).data);
+                        resolve(results.rows.item(0));
                     }else{
                         resolve(null);
                     }

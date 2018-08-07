@@ -10,8 +10,15 @@ class Org{
     getChildren(parentId,userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from org where parentId=? and ownerUserId=?";
-                tx.executeSql(sql,[parentId,userId],function (tx,results) {
+                let sql = "select * from org where ownerUserId=? and ";
+                if(parentId){
+                    sql+="parentId='";
+                    sql+=parentId;
+                    sql+="'";
+                }else{
+                    sql+="parentId is null";
+                }
+                tx.executeSql(sql,[userId],function (tx,results) {
                     resolve(results);
                 },function (err) {
                     reject(err);
