@@ -14,7 +14,7 @@ class Contact{
                 let sql = "select * from contact where id=?";
                 tx.executeSql(sql,[contactId],function (tx,results) {
                     if(results.rows.length>0){
-                        resolve(results.rows.item(0).data);
+                        resolve(results.rows.item(0));
                     }else{
                         resolve(null);
                     }
@@ -33,7 +33,7 @@ class Contact{
                 tx.executeSql(sql,[userId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i).data);
+                        ary.push(results.rows.item(i));
                     }
                     resolve(ary);
                 },function (err) {
@@ -51,7 +51,7 @@ class Contact{
                 tx.executeSql(sql,[contactId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i).data);
+                        ary.push(results.rows.item(i));
                     }
                     resolve(ary);
                 },function (err) {

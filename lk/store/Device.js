@@ -12,7 +12,7 @@ class Device{
                 tx.executeSql(sql,[contactId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i).data);
+                        ary.push(results.rows.item(i));
                     }
                     resolve(ary);
                 },function (err) {
@@ -28,7 +28,7 @@ class Device{
                 let sql = "select * from device where id=?";
                 tx.executeSql(sql,[deviceId],function (tx,results) {
                     if(results.rows.length>0){
-                        resolve(results.rows.item(0).data);
+                        resolve(results.rows.item(0));
                     }else{
                         resolve(null);
                     }
