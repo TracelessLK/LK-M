@@ -26,6 +26,23 @@ class Contact{
 
     }
 
+    getMembersByOrg(userId,orgId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "select * from contact where ownerUserId=? and isFriend=0 and orgId=? ";
+                tx.executeSql(sql,[userId,orgId],function (tx,results) {
+                    let ary = [];
+                    for(let i=0;i<results.rows.length;i++){
+                        ary.push(results.rows.item(i));
+                    }
+                    resolve(ary);
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
     getAll(userId,isFriend){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{

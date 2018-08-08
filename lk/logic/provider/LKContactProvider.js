@@ -17,6 +17,10 @@ class LKContactProvider{
         return Contact.getAll(userId,1);
     }
 
+    asyGetMembersByOrg(userId,orgId){
+        return Contact.getMembersByOrg(userId,orgId);
+    }
+
     asySelectAllDevices(contactId){
         return Contact.selectAllDevices(contactId);
     }
