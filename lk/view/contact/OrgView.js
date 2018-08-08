@@ -47,6 +47,11 @@ export default class OrgView extends Component<{}> {
 
     }
 
+    go2FriendInfoView=debounceFunc((f)=>{
+        this.props.navigation.navigate("FriendInfoView",{friend:f});
+    })
+
+
     go2OrgView = debounceFunc((org)=>{
         this.props.navigation.navigate({routeName:"OrgView", params:{org}, key:org.id});
     })
