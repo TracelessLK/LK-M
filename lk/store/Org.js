@@ -18,8 +18,14 @@ class Org{
                 }else{
                     sql+="parentId is null";
                 }
-                tx.executeSql(sql,[userId],function (tx,results) {
-                    resolve(results);
+
+                tx.executeSql(sql,[userId,parentId],function (tx,results) {
+
+                    let ary = [];
+                    for(let i=0;i<results.rows.length;i++){
+                        ary.push(results.rows.item(i));
+                    }
+                    resolve(ary);
                 },function (err) {
                     reject(err);
                 });

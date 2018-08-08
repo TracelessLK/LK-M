@@ -40,7 +40,7 @@ class LKApplication extends Application{
                     let memberMCode = content.memberMCode;
                     let members = content.members;
                     let friends = content.friends;
-                    ConfigManager.getOrgManager().asyResetOrgs(orgMCode,orgs).then(function () {
+                    ConfigManager.getOrgManager().asyResetOrgs(orgMCode,orgs,user.id).then(function () {
                         return ConfigManager.getContactManager().asyResetContacts(memberMCode,members,friends,user.id)
                     }).then(function () {
                         user.serverPublicKey = serverPK;

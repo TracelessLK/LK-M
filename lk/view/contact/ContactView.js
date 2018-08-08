@@ -4,23 +4,19 @@ import {
     Text,
     TouchableOpacity,
     View,
-    ScrollView,
-    Platform
+    ScrollView
 } from 'react-native';
+import { SearchBar} from 'react-native-elements'
 const {debounceFunc} = require("../../../common/util/commonUtil")
-const {getAvatarSource} = require("../../util")
-import { Avatar ,SearchBar} from 'react-native-elements'
 const lkApp = require('../../LKApplication').getCurrentApp()
-const manifest = require('../../../Manifest')
+const LKContactProvider =  require("../../logic/provider/LKContactProvider")
+const LKOrgProvider =  require("../../logic/provider/LKOrgProvider")
+const {getAvatarSource} = require("../../util")
 
-import {
-    Body, Button, Card, CardItem, Container, Content ,Header,Icon,Input,Item,Left,
-    List,ListItem,Right,Spinner,Thumbnail,Toast
-} from 'native-base';
-const util = require('../util/navigatorUtil')
+
 
 export default class ContactView extends Component<{}> {
-    static navigationOptions =({ navigation, screenProps }) => {
+    static navigationOptions =() => {
         return {
             headerTitle:"通讯录"
         }
@@ -33,31 +29,24 @@ export default class ContactView extends Component<{}> {
             ContactView:this
         });
         this.eventAry = []
+        this.state = {
+            contentAry:[]
+        }
 
     }
 
     componentDidMount(){
-        for(let event of this.eventAry){
-            // Store.on(event,this.update);
-        }
-        const user = lkApp.getCurrentUser();
-        (async()=>{
-            // const LKContactProvider =   manifest.get('LKContactProvider')
-            // const LKOrgProvider =   manifest.get('LKOrgProvider')
-            // const allContact = await LKContactProvider.asyGetAll(user.id)
-            // console.log(allContact)
-            // const topOrg = await LKOrgProvider.asyGetChildren(null,user.id)
-            // console.log(topOrg)
-
-
-        })()
+        // for(let event of this.eventAry){
+        //     // Store.on(event,this.update);
+        // }
+        this.asyncRender()
 
     }
 
     componentWillUnmount =()=> {
-        for(let event of this.eventAry){
-            // Store.un(event,this.update);
-        }
+        // for(let event of this.eventAry){
+        //     // Store.un(event,this.update);
+        // }
     }
 
     update = ()=>{
@@ -69,24 +58,72 @@ export default class ContactView extends Component<{}> {
     })
 
     go2FriendInfoView=debounceFunc((f)=>{
-        this.props.navigation.navigate("FriendInfoView",{ContactView:this,friend:f});
+        this.props.navigation.navigate("FriendInfoView",{friend:f});
     })
 
-    doSearch(){
+    go2OrgView = debounceFunc((org)=>{
+        this.props.navigation.navigate("OrgView",{org});
+    })
 
-    }
-
-    textChange(){
-
-    }
     someMethod(){
+//
+    }
 
+    async asyncRender(){
+        const user = lkApp.getCurrentUser();
+        const orgAry = await LKOrgProvider.asyGetChildren(null,user.id)
+        const contentAry = []
+        for(let i=0;i<orgAry.length;i++){
+            let org = orgAry[i];
+            const content = (
+                <View style={{backgroundColor:"white",borderBottomColor:"#f0f0f0",borderBottomWidth:1}} key={i+"org"}>
+                    <TouchableOpacity  onPress={()=>{
+                        this.go2OrgView(org)
+                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
+                        alignItems:"center",}} >
+                        <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../image/folder.png')} />
+                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
+                            <Text style={{fontSize:18,fontWeight:"500"}}>
+                                {org.name}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            )
+
+            contentAry.push(content)
+        }
+        const all = await LKContactProvider.asyGetAll(user.id)
+        for(let i=0;i<all.length;i++){
+            let f = all[i];
+            const content = (
+                <View style={{backgroundColor:"white",borderBottomColor:"#f0f0f0",borderBottomWidth:1}} key={i+'friend'}>
+                    <TouchableOpacity  onPress={()=>{
+                        this.go2FriendInfoView(f)
+                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
+                        alignItems:"center",}} >
+                        <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={getAvatarSource(f.pic)} />
+                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
+                            <Text style={{fontSize:18,fontWeight:"500"}}>
+                                {f.name}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            )
+
+            contentAry.push(content)
+        }
+
+        this.setState({
+            contentAry
+        })
     }
 
     render() {
-        const searchBarBgColor = Platform.OS === 'android' ?'#bdc6cf' :'#f0f0f0'
+
         return (
-           <View>
+           <ScrollView>
 
                <SearchBar
                    lightTheme
@@ -114,7 +151,7 @@ export default class ContactView extends Component<{}> {
 
                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
                                           alignItems:"center"}}>
-                       <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../../image/contact.png')} />
+                       <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../image/contact.png')} />
                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
                            <Text style={{fontSize:18,fontWeight:"500"}}>
                                外部联系人
@@ -131,7 +168,8 @@ export default class ContactView extends Component<{}> {
                    <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
                    </View>
                </View>
-           </View>
+               {this.state.contentAry}
+           </ScrollView>
 
         );
     }

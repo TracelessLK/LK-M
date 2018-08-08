@@ -16,7 +16,7 @@ const util = {
         if(pic){
             result = {uri:pic}
         }else{
-            result = require('../image/defaultAvatar.png')
+            result = require('../view/image/defaultAvatar.png')
         }
         return result
     },
