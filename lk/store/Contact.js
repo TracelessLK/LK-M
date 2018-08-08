@@ -26,10 +26,15 @@ class Contact{
 
     }
 
-    getAll(userId){
+    getAll(userId,isFriend){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 let sql = "select * from contact where ownerUserId=?";
+                if(isFriend==0){
+                    sql += " and isFriend=0";
+                }else if(isFriend==1){
+                    sql += " and isFriend=1";
+                }
                 tx.executeSql(sql,[userId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){

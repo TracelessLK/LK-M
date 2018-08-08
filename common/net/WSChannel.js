@@ -68,6 +68,7 @@ class WSChannel extends EventTarget{
 
     send(message){
         this._ws.send(message);
+        //TODO WebSocket is already in closing or closed state
 
     }
     close(){

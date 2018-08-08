@@ -9,6 +9,14 @@ class LKContactProvider{
         return Contact.getAll(userId);
     }
 
+    asyGetAllMembers(userId){
+        return Contact.getAll(userId,0);
+    }
+
+    asyGetAllFriends(userId){
+        return Contact.getAll(userId,1);
+    }
+
     asySelectAllDevices(contactId){
         return Contact.selectAllDevices(contactId);
     }
