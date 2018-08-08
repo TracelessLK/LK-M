@@ -39,6 +39,13 @@ export default class ChatView extends Component<{}> {
     //     // }
     // );
 
+    static navigationOptions =({ navigation }) => {
+        const {friend} = navigation.state.params
+        return {
+            headerTitle:friend.name
+        }
+    }
+
 
     constructor(props){
         super(props);

@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest",
+    "test": "npm run lint && jest --coverage",
     "flow": "flow",
-    "lint": "eslint --ext .js ."
+    "lint": "eslint --ext .js .",
+    "try":"jest --coverage"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",

@@ -10,7 +10,12 @@ const {getAvatarSource} = require("../../util")
 
 
 export default class FriendInfoView extends Component<{}> {
-
+    static navigationOptions =({ navigation }) => {
+        const {friend} = navigation.state.params
+        return {
+            headerTitle:friend.name
+        }
+    }
     constructor(props) {
         super(props);
         this.state = {};

@@ -1,15 +1,15 @@
 import React, { Component} from 'react';
 import { Button,Image,StyleSheet,Switch,Text,TextInput,TouchableOpacity,View} from 'react-native';
 import Camera from 'react-native-camera';
-import {RNCamera} from 'react-native-camera';
+// import {RNCamera} from 'react-native-camera';
+// const Camera = RNCamera
 const commonUtil = require('../util/commonUtil')
 const {debounceFunc} = commonUtil
-import PropTypes from 'prop-types'
 
 export default class ScanView extends Component<{}> {
-    static navigationOptions =({ navigation, screenProps }) => {
+    static navigationOptions =() => {
         return {
-            header:null
+            headerTitle:"扫描二维码"
         }
     }
     constructor(props) {

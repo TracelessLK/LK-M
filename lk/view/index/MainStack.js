@@ -8,6 +8,7 @@ import AddContactView from '../contact/AddContactView'
 import FriendInfoView from '../contact/FriendInfoView'
 import ChatView from '../chat/ChatView'
 import RecentView from '../chat/RecentView'
+import OrgView from '../contact/OrgView'
 import MineView from '../mine/MineView'
 import DevView from '../mine/dev/DevView'
 const util = require('../util/navigatorUtil')
@@ -93,7 +94,8 @@ const MainStack = createStackNavigator({
     AddContactView,
     DevView,
     FriendInfoView,
-    ChatView
+    ChatView,
+    OrgView
 },stackNavigatorConfig)
 
 export default MainStack

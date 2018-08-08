@@ -30,7 +30,7 @@ export default class ContactView extends Component<{}> {
         });
         this.eventAry = []
         this.state = {
-            friendAry:[]
+            contentAry:[]
         }
 
     }
@@ -39,14 +39,6 @@ export default class ContactView extends Component<{}> {
         // for(let event of this.eventAry){
         //     // Store.on(event,this.update);
         // }
-        (async()=>{
-
-
-            // const topOrg = await LKOrgProvider.asyGetChildren(null,user.id)
-            // console.log(topOrg)
-
-
-        })()
         this.asyncRender()
 
     }
@@ -69,18 +61,43 @@ export default class ContactView extends Component<{}> {
         this.props.navigation.navigate("FriendInfoView",{friend:f});
     })
 
+    go2OrgView = debounceFunc((org)=>{
+        this.props.navigation.navigate("OrgView",{org});
+    })
+
     someMethod(){
 //
     }
 
     async asyncRender(){
         const user = lkApp.getCurrentUser();
-        let friendAry = [];
+        const orgAry = await LKOrgProvider.asyGetChildren(null,user.id)
+        const contentAry = []
+        for(let i=0;i<orgAry.length;i++){
+            let org = orgAry[i];
+            const content = (
+                <View style={{backgroundColor:"white",borderBottomColor:"#f0f0f0",borderBottomWidth:1}} key={i+"org"}>
+                    <TouchableOpacity  onPress={()=>{
+                        this.go2OrgView(org)
+                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
+                        alignItems:"center",}} >
+                        <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../image/folder.png')} />
+                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
+                            <Text style={{fontSize:18,fontWeight:"500"}}>
+                                {org.name}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            )
+
+            contentAry.push(content)
+        }
         const all = await LKContactProvider.asyGetAll(user.id)
         for(let i=0;i<all.length;i++){
             let f = all[i];
             const content = (
-                <View style={{backgroundColor:"white",borderBottomColor:"#f0f0f0",borderBottomWidth:1}} key={i}>
+                <View style={{backgroundColor:"white",borderBottomColor:"#f0f0f0",borderBottomWidth:1}} key={i+'friend'}>
                     <TouchableOpacity  onPress={()=>{
                         this.go2FriendInfoView(f)
                     }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
@@ -95,11 +112,11 @@ export default class ContactView extends Component<{}> {
                 </View>
             )
 
-            friendAry.push(content)
+            contentAry.push(content)
         }
 
         this.setState({
-            friendAry
+            contentAry
         })
     }
 
@@ -151,7 +168,7 @@ export default class ContactView extends Component<{}> {
                    <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
                    </View>
                </View>
-               {this.state.friendAry}
+               {this.state.contentAry}
            </ScrollView>
 
         );
