@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const commonUtil = {
     getTimeDisplay: function () {
         const date = new Date();
@@ -18,5 +20,6 @@ const commonUtil = {
         return filePath.split('/')[6]
     }
 }
+Object.freeze(commonUtil)
 
 module.exports = commonUtil

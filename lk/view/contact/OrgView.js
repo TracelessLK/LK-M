@@ -80,10 +80,7 @@ export default class OrgView extends Component<{}> {
 
             contentAry.push(content)
         }
-        let all = await LKContactProvider.asyGetAll(user.id)
-        all = all.filter(ele=>{
-            return ele.orgId === this.org.id
-        })
+        let all = await LKContactProvider.asyGetMembersByOrg(user.id,this.org.id)
         for(let i=0;i<all.length;i++){
             let f = all[i];
             const content = (

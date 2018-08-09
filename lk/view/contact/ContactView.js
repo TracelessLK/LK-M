@@ -93,7 +93,7 @@ export default class ContactView extends Component<{}> {
 
             contentAry.push(content)
         }
-        const all = await LKContactProvider.asyGetAll(user.id)
+        const all = await LKContactProvider.asyGetAllMembers(user.id)
         for(let i=0;i<all.length;i++){
             let f = all[i];
             const content = (
