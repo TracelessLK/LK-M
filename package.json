@@ -8,7 +8,8 @@
     "flow": "flow",
     "lint": "eslint --ext .js .",
     "try": "jest --coverage",
-    "postinstall": "node bin/postinstall"
+    "postinstall": "node bin/postinstall",
+    "coverage":"node bin/coverage"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
