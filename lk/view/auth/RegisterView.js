@@ -10,9 +10,10 @@ const {debounceFunc} = require('../../../common/util/commonUtil')
 const lkApplication = require('../../LKApplication').getCurrentApp()
 
 const uuid = require('uuid')
-const deviceInfo = require('react-native-device-info')
+import deviceInfo from 'react-native-device-info'
 const pushUtil = require('../../../common/util/pushUtil')
 const md5 = require("crypto-js/md5");
+
 
 
 export default class RegisterView extends Component<{}> {
@@ -20,7 +21,8 @@ export default class RegisterView extends Component<{}> {
     constructor(props) {
         super(props);
         const obj = this.props.navigation.state.params.obj
-
+        console.log(obj)
+        
 
         this.state = {
             hasCheckCode:obj.hasCheckCode

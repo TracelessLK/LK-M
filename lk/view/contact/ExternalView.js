@@ -88,7 +88,7 @@ export default class ExternalView extends Component<{}> {
 
             </View>
         )
-        const content = this.state.contentAry.length?(
+        const content = dataAry.length?(
             <ScrollView>
                 <SearchBar
                     onChangeText={this.onChangeText}

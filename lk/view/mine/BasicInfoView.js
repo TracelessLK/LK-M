@@ -82,7 +82,7 @@ export default class BasicInfoView extends Component<{}> {
                         </View>
                         <View>
                             <Text style={style.contentStyle}>
-                                {this.name}
+                                {this.user.name}
                             </Text>
                         </View>
                     </View>),

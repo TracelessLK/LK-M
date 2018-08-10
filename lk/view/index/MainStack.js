@@ -15,6 +15,8 @@ import DevView from '../mine/dev/DevView'
 import BasicInfoView from '../mine/BasicInfoView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
+import VersionView from '../mine/VersionView'
+import RenameView from '../mine/RenameView'
 const util = require('../util/navigatorUtil')
 const style = require('../style')
 
@@ -103,7 +105,9 @@ const MainStack = createStackNavigator({
     ExternalView,
     BasicInfoView,
     QrcodeView,
-    UidView
+    UidView,
+    VersionView,
+    RenameView
 },stackNavigatorConfig)
 
 export default MainStack
