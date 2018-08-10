@@ -12,6 +12,9 @@ import ChatView from '../chat/ChatView'
 import RecentView from '../chat/RecentView'
 import MineView from '../mine/MineView'
 import DevView from '../mine/dev/DevView'
+import BasicInfoView from '../mine/BasicInfoView'
+import QrcodeView from '../mine/QrcodeView'
+import UidView from '../mine/UidView'
 const util = require('../util/navigatorUtil')
 const style = require('../style')
 
@@ -97,7 +100,10 @@ const MainStack = createStackNavigator({
     FriendInfoView,
     ChatView,
     OrgView,
-    ExternalView
+    ExternalView,
+    BasicInfoView,
+    QrcodeView,
+    UidView
 },stackNavigatorConfig)
 
 export default MainStack

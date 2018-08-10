@@ -2,26 +2,24 @@
 import React, { Component } from 'react';
 import {
     Alert,
-    Image,
-    Modal,
-    ScrollView,Text,TextInput,TouchableOpacity,View
+    ScrollView,Text,
+    View
 } from 'react-native';
-const {debounceFunc} = require("../../../common/util/commonUtil")
+const common = require('@hfs/common')
+const {SearchBar,commonUtil} = common
+const {debounceFunc} = commonUtil
 const {getAvatarSource} = require("../../util")
-import { Avatar, Button,Card,Icon ,List,ListItem} from 'react-native-elements'
+import { Avatar, Icon ,ListItem} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker';
 
 import RNFetchBlob from 'react-native-fetch-blob'
 const versionLocal = require('../../../package.json').version
 const config = require("../config")
 const lkApp = require('../../LKApplication').getCurrentApp()
-const util = require('../util/navigatorUtil')
 
-const manifest = require('../../../Manifest')
-const LKContactProvider =   manifest.get('LKContactProvider')
 
 export default class MineView extends Component<{}> {
-    static navigationOptions =({ navigation, screenProps }) => {
+    static navigationOptions =() => {
         return {
             headerTitle:"我"
         }
@@ -37,12 +35,8 @@ export default class MineView extends Component<{}> {
         }
 
     }
-    componentWillMount(){
-        // Store.on("rename",this.update)
-    }
-    componentWillUnMount(){
-        // Store.un("rename",this.update)
-    }
+
+
 
     update = ()=>{
         this.setState({update:true})
@@ -73,18 +67,11 @@ export default class MineView extends Component<{}> {
             .then((data) => {
                 const uri = 'data:image/jpeg;base64,'+ data
 
-            //     WSChannel.setPersonalPic(uri,data=>{
-            //         this.setState({
-            //             avatarSource:{
-            //                 uri
-            //             }
-            //         })
-            //     },()=>{
-            //         console.log('timeout')
-            //         Alert.alert('连接服务器超时,请检查当前网络')
-            //     })
-            // }).catch(err=>{
-            // console.log(err)
+                this.setState({
+                    avatarSource:{
+                        uri
+                    }
+                })
         })
     }
 

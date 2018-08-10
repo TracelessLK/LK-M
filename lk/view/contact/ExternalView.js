@@ -7,7 +7,7 @@ import {
     Image
 } from 'react-native';
 const common = require('@hfs/common')
-const {SearchBar,commonUtil,List} = common
+const {SearchBar,commonUtil,List,LoadingView} = common
 const {debounceFunc} = commonUtil
 const lkApp = require('../../LKApplication').getCurrentApp()
 const style = require('../style')
@@ -24,7 +24,8 @@ export default class ExternalView extends Component<{}> {
     constructor(props){
         super(props);
         this.state = {
-            contentAry:[]
+            content:null,
+            loading:true
         }
     }
 
@@ -75,29 +76,6 @@ export default class ExternalView extends Component<{}> {
         ary.sort(sortFunc)
         dataAry = dataAry.concat(ary)
 
-        this.setState({
-            contentAry:(
-                <View>
-                    <View style={{padding:10}}>
-                        <Text style={{color:"#a0a0a0"}}>
-                            外部联系人
-                        </Text>
-                    </View>
-                    <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
-                    </View>
-                    <List data={dataAry}></List>
-                </View>
-            )
-        })
-    }
-
-
-    onChangeText = (t)=>{
-        t = t.trim()
-        this.asyncRender(t)
-    }
-
-    render() {
         const size = 120
         const noUser = (
             <View style={{display:'flex',flex:1,alignItems:'center',justifyContent:'flex-start',marginTop:200}}>
@@ -110,15 +88,39 @@ export default class ExternalView extends Component<{}> {
 
             </View>
         )
-        return this.state.contentAry.length?(
+        const content = this.state.contentAry.length?(
             <ScrollView>
                 <SearchBar
                     onChangeText={this.onChangeText}
                     clearIconStyle={{color:style.color.mainColor}}
                 />
-                {this.state.contentAry}
+                <View>
+                    <View style={{padding:10}}>
+                        <Text style={{color:"#a0a0a0"}}>
+                            外部联系人
+                        </Text>
+                    </View>
+                    <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
+                    </View>
+                    <List data={dataAry}></List>
+                </View>
             </ScrollView>
         ):noUser
+
+        this.setState({
+            content,
+            loading:false
+        })
+    }
+
+
+    onChangeText = (t)=>{
+        t = t.trim()
+        this.asyncRender(t)
+    }
+
+    render() {
+        return <LoadingView loading={this.state.loading} content={this.state.content}></LoadingView>
     }
 
 }

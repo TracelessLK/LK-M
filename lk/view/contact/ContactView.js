@@ -55,7 +55,7 @@ export default class ContactView extends Component<{}> {
     })
 
     go2OrgView = debounceFunc((org)=>{
-        this.props.navigation.navigate("LoadingView",{org});
+        this.props.navigation.navigate("OrgView",{org});
     })
 
 

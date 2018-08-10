@@ -10,7 +10,7 @@ const lkApp = require('../../LKApplication').getCurrentApp()
 const LKContactProvider =  require("../../logic/provider/LKContactProvider")
 const LKOrgProvider =  require("../../logic/provider/LKOrgProvider")
 const common = require('@hfs/common')
-const {SearchBar,commonUtil,List,commonStyle,ActivityIndicator} = common
+const {SearchBar,commonUtil,List,LoadingView} = common
 const {debounceFunc} = commonUtil
 const {getAvatarSource} = require("../../util")
 const style = require('../style')
@@ -152,12 +152,10 @@ export default class OrgView extends Component<{}> {
     }
 
     render() {
+
         return (
-            <View style={commonStyle.allCenter}>
-                {this.state.loading?(
-                    <ActivityIndicator/>
-                ):this.state.content}
-            </View>
+            <LoadingView loading={this.state.loading} content={this.state.content}></LoadingView>
+
         )
     }
 }

@@ -19,7 +19,6 @@ export default class LoadingView extends Component<{}> {
     }
 
     componentDidMount(){
-        this.asyncRender()
     }
 
     componentDidUpdate(){
@@ -30,9 +29,6 @@ export default class LoadingView extends Component<{}> {
 
     }
 
-    async asyncRender(filterText){
-
-    }
 
     render() {
         return (
@@ -50,6 +46,6 @@ LoadingView.defaultProps = {
 }
 
 LoadingView.propTypes = {
-    loading:PropTypes.boolean,
+    loading:PropTypes.bool,
     content:PropTypes.element
 }
