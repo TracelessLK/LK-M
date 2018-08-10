@@ -260,8 +260,8 @@ export default class ChatView extends Component<{}> {
         // Store.un("receiveGroupMessage",this.onReceiveMessage);
         // Store.un("sendGroupMessage",this.onSendMessage);
 
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
+        // this.keyboardDidShowListener.remove();
+        // this.keyboardDidHideListener.remove();
     }
 
 

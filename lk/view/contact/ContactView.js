@@ -4,14 +4,16 @@ import {
     Text,
     TouchableOpacity,
     View,
-    ScrollView
+    ScrollView,
 } from 'react-native';
-import { SearchBar} from 'react-native-elements'
-const {debounceFunc} = require("../../../common/util/commonUtil")
+const common = require('@hfs/common')
+const {SearchBar,commonUtil} = common
+const {debounceFunc} = commonUtil
 const lkApp = require('../../LKApplication').getCurrentApp()
 const LKContactProvider =  require("../../logic/provider/LKContactProvider")
 const LKOrgProvider =  require("../../logic/provider/LKOrgProvider")
 const {getAvatarSource} = require("../../util")
+const style = require('../style')
 
 
 
@@ -40,7 +42,6 @@ export default class ContactView extends Component<{}> {
         //     // Store.on(event,this.update);
         // }
         this.asyncRender()
-
     }
 
     componentWillUnmount =()=> {
@@ -50,7 +51,8 @@ export default class ContactView extends Component<{}> {
     }
 
     update = ()=>{
-        this.setState({update:true});
+
+        this.setState({update:true})
     }
 
     go2RequireListView=debounceFunc(()=>{
@@ -65,14 +67,25 @@ export default class ContactView extends Component<{}> {
         this.props.navigation.navigate("OrgView",{org});
     })
 
-    someMethod(){
-//
+    someMethod(content){
+       this.content = content
     }
 
-    async asyncRender(){
+    async asyncRender(filterText){
+        const contentAry = []
+
+        const _f = (item,content)=>{
+            if(filterText){
+                if(item.name.includes(filterText)){
+                    contentAry.push(content)
+                }
+            }else{
+                contentAry.push(content)
+            }
+        }
+
         const user = lkApp.getCurrentUser();
         const orgAry = await LKOrgProvider.asyGetChildren(null,user.id)
-        const contentAry = []
         for(let i=0;i<orgAry.length;i++){
             let org = orgAry[i];
             const content = (
@@ -91,7 +104,8 @@ export default class ContactView extends Component<{}> {
                 </View>
             )
 
-            contentAry.push(content)
+            _f(org,content)
+
         }
         const all = await LKContactProvider.asyGetAllMembers(user.id)
         for(let i=0;i<all.length;i++){
@@ -111,8 +125,7 @@ export default class ContactView extends Component<{}> {
                     </TouchableOpacity>
                 </View>
             )
-
-            contentAry.push(content)
+            _f(f,content)
         }
 
         this.setState({
@@ -120,22 +133,20 @@ export default class ContactView extends Component<{}> {
         })
     }
 
+
+    onChangeText = (t)=>{
+        t = t.trim()
+        this.asyncRender(t)
+    }
+
     render() {
+        console.log('render')
 
         return (
            <ScrollView>
-
                <SearchBar
-                   lightTheme
-                   clearIcon={{ color: 'red' }}
-                   onChangeText={this.someMethod}
-                   onClear={this.someMethod}
-                   placeholder='搜索'
-                   containerStyle={{backgroundColor:"#f0f0f0"}}
-                   inputStyle={ {
-                       backgroundColor:"white",display:'flex',
-                       alignItems:"center",justifyContent:"center",color:"black"
-                   }}
+                   onChangeText={this.onChangeText}
+                   clearIconStyle={{color:style.color.mainColor}}
                />
                <View>
                    <View style={{padding:10}}>
@@ -148,7 +159,7 @@ export default class ContactView extends Component<{}> {
                </View>
                <View style={{backgroundColor:"white"}}>
                    <TouchableOpacity  onPress={()=>{
-
+                       this.props.navigation.navigate("ExternalView")
                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
                                           alignItems:"center"}}>
                        <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../image/contact.png')} />

@@ -1,0 +1,11 @@
+{
+  "name": "@hfs/common",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "native-base": "^2.6.1",
+    "react-native-elements": "^0.19.1",
+    "react-native-vector-icons": "^4.6.0",
+    "uuid": "^3.3.2"
+  }
+}
