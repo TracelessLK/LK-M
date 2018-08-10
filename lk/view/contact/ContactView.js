@@ -1,21 +1,17 @@
 import React, { Component } from 'react';
 import {
-    Image,
     Text,
-    TouchableOpacity,
     View,
     ScrollView,
 } from 'react-native';
 const common = require('@hfs/common')
-const {SearchBar,commonUtil} = common
+const {SearchBar,commonUtil,List} = common
 const {debounceFunc} = commonUtil
 const lkApp = require('../../LKApplication').getCurrentApp()
 const LKContactProvider =  require("../../logic/provider/LKContactProvider")
 const LKOrgProvider =  require("../../logic/provider/LKOrgProvider")
 const {getAvatarSource} = require("../../util")
 const style = require('../style')
-
-
 
 export default class ContactView extends Component<{}> {
     static navigationOptions =() => {
@@ -51,88 +47,73 @@ export default class ContactView extends Component<{}> {
     }
 
     update = ()=>{
-
         this.setState({update:true})
     }
-
-    go2RequireListView=debounceFunc(()=>{
-        this.props.navigation.navigate("RequireListView",{ContactView:this});
-    })
 
     go2FriendInfoView=debounceFunc((f)=>{
         this.props.navigation.navigate("FriendInfoView",{friend:f});
     })
 
     go2OrgView = debounceFunc((org)=>{
-        this.props.navigation.navigate("OrgView",{org});
+        this.props.navigation.navigate("LoadingView",{org});
     })
 
-    someMethod(content){
-       this.content = content
-    }
 
     async asyncRender(filterText){
-        const contentAry = []
+        const user = lkApp.getCurrentUser();
+        let  orgAry = await LKOrgProvider.asyGetChildren(null,user.id)
+        const sortFunc = (ele1,ele2)=>{
+            const result = (ele2.title < ele1.title)
 
-        const _f = (item,content)=>{
+            return result
+        }
+        let dataAry = []
+
+        const _f = (item,content,ary)=>{
             if(filterText){
                 if(item.name.includes(filterText)){
-                    contentAry.push(content)
+                    ary.push(content)
                 }
             }else{
-                contentAry.push(content)
+                ary.push(content)
             }
         }
-
-        const user = lkApp.getCurrentUser();
-        const orgAry = await LKOrgProvider.asyGetChildren(null,user.id)
-        for(let i=0;i<orgAry.length;i++){
-            let org = orgAry[i];
-            const content = (
-                <View style={{backgroundColor:"white",borderBottomColor:"#f0f0f0",borderBottomWidth:1}} key={i+"org"}>
-                    <TouchableOpacity  onPress={()=>{
-                        this.go2OrgView(org)
-                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
-                        alignItems:"center",}} >
-                        <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../image/folder.png')} />
-                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
-                            <Text style={{fontSize:18,fontWeight:"500"}}>
-                                {org.name}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            )
-
-            _f(org,content)
-
+        let ary = []
+        for(let ele of orgAry){
+            const obj = {}
+            obj.onPress = ()=>{
+                this.go2OrgView(ele)
+            }
+            obj.title = ele.name
+            obj.image = require('../image/folder.png')
+            obj.key = ele.id
+            _f(ele,obj,ary)
         }
-        const all = await LKContactProvider.asyGetAllMembers(user.id)
-        for(let i=0;i<all.length;i++){
-            let f = all[i];
-            const content = (
-                <View style={{backgroundColor:"white",borderBottomColor:"#f0f0f0",borderBottomWidth:1}} key={i+'friend'}>
-                    <TouchableOpacity  onPress={()=>{
-                        this.go2FriendInfoView(f)
-                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
-                        alignItems:"center",}} >
-                        <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={getAvatarSource(f.pic)} />
-                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
-                            <Text style={{fontSize:18,fontWeight:"500"}}>
-                                {f.name}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            )
-            _f(f,content)
+        ary.sort(sortFunc)
+        dataAry = dataAry.concat(ary)
+        ary = []
+        const memberAry = await LKContactProvider.asyGetAllMembers(user.id)
+
+        for(let ele of memberAry){
+            const obj = {}
+            obj.onPress = ()=>{
+                this.go2FriendInfoView(ele)
+            }
+            obj.title = ele.name
+            obj.image = getAvatarSource(ele.pic)
+            obj.key = ele.id
+            _f(ele,obj,ary)
         }
+
+        ary.sort(sortFunc)
+        dataAry = dataAry.concat(ary)
 
         this.setState({
-            contentAry
+            contentAry:(
+                <List data={dataAry}></List>
+            )
         })
     }
-
 
     onChangeText = (t)=>{
         t = t.trim()
@@ -140,8 +121,6 @@ export default class ContactView extends Component<{}> {
     }
 
     render() {
-        console.log('render')
-
         return (
            <ScrollView>
                <SearchBar
@@ -157,19 +136,15 @@ export default class ContactView extends Component<{}> {
                    <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
                    </View>
                </View>
-               <View style={{backgroundColor:"white"}}>
-                   <TouchableOpacity  onPress={()=>{
+               <List data={[{
+                   onPress:()=>{
                        this.props.navigation.navigate("ExternalView")
-                   }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
-                                          alignItems:"center"}}>
-                       <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../image/contact.png')} />
-                       <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
-                           <Text style={{fontSize:18,fontWeight:"500"}}>
-                               外部联系人
-                           </Text>
-                       </View>
-                   </TouchableOpacity>
-               </View>
+                   },
+                   title:"外部联系人",
+                   image:require('../image/contact.png'),
+                   key:'ExternalView'
+               }]}></List>
+
                <View>
                    <View style={{padding:10}}>
                        <Text style={{color:"#a0a0a0"}}>

@@ -1,61 +1,55 @@
-import React, {Component} from 'react';
+
+import React, { Component } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    AsyncStorage,
-    Button,
-    NativeModules,
-    Platform,
-    StyleSheet, Text,
-    View, Modal, ScrollView
+    View,
 } from 'react-native';
+import ActivityIndicator from '../widget/ActivityIndicator'
+const style = require('./style')
 import PropTypes from 'prop-types'
 
-const style = require('./style')
 
 export default class LoadingView extends Component<{}> {
 
-    constructor(props) {
+    constructor(props){
         super(props);
-
-        const loadingView = (
-            <View style={style.allCenter} >
-                <ActivityIndicator size="large" />
-            </View>
-        )
-
         this.state = {
-            content:loadingView
+            content:null,
+            loading:true
         }
-
     }
 
-    componentDidMount = () => {
-        (async()=>{
-            const content =  await this.props.getContentAsync()
+    componentDidMount(){
+        this.asyncRender()
+    }
 
-            this.setState({
-                content
-            })
-        })()
+    componentDidUpdate(){
     }
 
 
-    componentWillUnmount = () => {
+    componentWillUnmount(){
+
+    }
+
+    async asyncRender(filterText){
 
     }
 
     render() {
-        this.props.getContentAsync()
-        return  this.state.content
+        return (
+            <View style={style.allCenter}>
+                {this.props.loading?(
+                    <ActivityIndicator/>
+                ):this.props.content}
+            </View>
+        )
     }
-
 }
 
 LoadingView.defaultProps = {
-
+    loading:true
 }
 
 LoadingView.propTypes = {
-    getContentAsync:PropTypes.func.isRequired,
+    loading:PropTypes.boolean,
+    content:PropTypes.element
 }

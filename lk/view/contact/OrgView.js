@@ -4,15 +4,16 @@ import {
     ScrollView,
     Text,
     View,
-    TouchableOpacity,
-    Image
+    Image,
 } from 'react-native';
-import { SearchBar} from 'react-native-elements'
 const lkApp = require('../../LKApplication').getCurrentApp()
 const LKContactProvider =  require("../../logic/provider/LKContactProvider")
 const LKOrgProvider =  require("../../logic/provider/LKOrgProvider")
-const {debounceFunc} = require("../../../common/util/commonUtil")
+const common = require('@hfs/common')
+const {SearchBar,commonUtil,List,commonStyle,ActivityIndicator} = common
+const {debounceFunc} = commonUtil
 const {getAvatarSource} = require("../../util")
+const style = require('../style')
 
 
 export default class OrgView extends Component<{}> {
@@ -25,7 +26,8 @@ export default class OrgView extends Component<{}> {
     constructor(props){
         super(props);
         this.state = {
-            contentAry:[]
+            content:null,
+            loading:true
         }
         this.org = this.props.navigation.state.params.org
     }
@@ -35,9 +37,7 @@ export default class OrgView extends Component<{}> {
         //     // Store.on(event,this.update);
         // }
         this.asyncRender()
-
     }
-
 
     componentDidUpdate(){
     }
@@ -45,6 +45,10 @@ export default class OrgView extends Component<{}> {
 
     componentWillUnmount(){
 
+    }
+    onChangeText = (t)=>{
+        t = t.trim()
+        this.asyncRender(t)
     }
 
     go2FriendInfoView=debounceFunc((f)=>{
@@ -56,87 +60,106 @@ export default class OrgView extends Component<{}> {
         this.props.navigation.navigate({routeName:"OrgView", params:{org}, key:org.id});
     })
 
-    async asyncRender(){
+    async asyncRender(filterText){
         const user = lkApp.getCurrentUser();
-        const orgAry = await LKOrgProvider.asyGetChildren(this.org.id,user.id)
-        const contentAry = []
-        for(let i=0;i<orgAry.length;i++){
-            let org = orgAry[i];
-            const content = (
-                <View style={{backgroundColor:"white",borderBottomColor:"#f0f0f0",borderBottomWidth:1}} key={i+"org"}>
-                    <TouchableOpacity  onPress={()=>{
-                        this.go2OrgView(org)
-                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
-                        alignItems:"center",}} >
-                        <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={require('../image/folder.png')} />
-                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
-                            <Text style={{fontSize:18,fontWeight:"500"}}>
-                                {org.name}
+        let  orgAry = await LKOrgProvider.asyGetChildren(this.org.id,user.id)
+        const sortFunc = (ele1,ele2)=>{
+            const result = (ele2.title < ele1.title)
+
+            return result
+        }
+        let dataAry = []
+
+        const _f = (item,content,ary)=>{
+            if(filterText){
+                if(item.name.includes(filterText)){
+                    ary.push(content)
+                }
+            }else{
+                ary.push(content)
+            }
+        }
+        let ary = []
+        for(let ele of orgAry){
+            const obj = {}
+            obj.onPress = ()=>{
+                this.go2OrgView(ele)
+            }
+            obj.title = ele.name
+            obj.image = require('../image/folder.png')
+            obj.key = ele.id
+            _f(ele,obj,ary)
+        }
+        ary.sort(sortFunc)
+        dataAry = dataAry.concat(ary)
+        ary = []
+        const memberAry = await LKContactProvider.asyGetMembersByOrg(user.id,this.org.id)
+
+        for(let ele of memberAry){
+            const obj = {}
+            obj.onPress = ()=>{
+                this.go2FriendInfoView(ele)
+            }
+            obj.title = ele.name
+            obj.image = getAvatarSource(ele.pic)
+            obj.key = ele.id
+            _f(ele,obj,ary)
+        }
+
+        ary.sort(sortFunc)
+        dataAry = dataAry.concat(ary)
+
+
+        const size = 120
+        const noUser = (
+            <View style={{display:'flex',flex:1,alignItems:'center',justifyContent:'flex-start',marginTop:200}}>
+                <Image source ={require('../image/noUser.png')} style={{width:size,height:size}} resizeMode='contain'/>
+                <View style={{margin:20}}>
+                    <Text style={{color:style.color.secondColor,fontSize:18}}>
+                        本部门没有成员
+                    </Text>
+                </View>
+
+            </View>
+        )
+        let content
+        if(dataAry.length){
+            content = (
+                <ScrollView>
+                    <SearchBar
+                        onChangeText={this.onChangeText}
+                        clearIconStyle={{color:style.color.mainColor}}
+                    />
+                    <View>
+                        <View style={{padding:10}}>
+                            <Text style={{color:"#a0a0a0"}}>
+                                组织通讯录
                             </Text>
                         </View>
-                    </TouchableOpacity>
-                </View>
-            )
-
-            contentAry.push(content)
-        }
-        let all = await LKContactProvider.asyGetMembersByOrg(user.id,this.org.id)
-        for(let i=0;i<all.length;i++){
-            let f = all[i];
-            const content = (
-                <View style={{backgroundColor:"white",borderBottomColor:"#f0f0f0",borderBottomWidth:1}} key={i+'friend'}>
-                    <TouchableOpacity  onPress={()=>{
-                        this.go2FriendInfoView(f)
-                    }} style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
-                        alignItems:"center",}} >
-                        <Image resizeMode="cover" style={{width:45,height:45,margin:5,borderRadius:5}} source={getAvatarSource(f.pic)} />
-                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
-                            <Text style={{fontSize:18,fontWeight:"500"}}>
-                                {f.name}
-                            </Text>
+                        <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
                         </View>
-                    </TouchableOpacity>
-                </View>
+                    </View>
+                    <List data={dataAry}></List>
+                </ScrollView>
             )
-
-            contentAry.push(content)
+        }else{
+            content = noUser
         }
-
         this.setState({
-            contentAry
+            content,
+            loading:false
         })
     }
 
     render() {
         return (
-            <ScrollView>
-
-                <SearchBar
-                    lightTheme
-                    clearIcon={{ color: 'red' }}
-                    onChangeText={this.someMethod}
-                    onClear={this.someMethod}
-                    placeholder='搜索'
-                    containerStyle={{backgroundColor:"#f0f0f0"}}
-                    inputStyle={ {
-                        backgroundColor:"white",display:'flex',
-                        alignItems:"center",justifyContent:"center",color:"black"
-                    }}
-                />
-                <View>
-                    <View style={{padding:10}}>
-                        <Text style={{color:"#a0a0a0"}}>
-                            组织通讯录
-                        </Text>
-                    </View>
-                    <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
-                    </View>
-                </View>
-                {this.state.contentAry}
-            </ScrollView>
+            <View style={commonStyle.allCenter}>
+                {this.state.loading?(
+                    <ActivityIndicator/>
+                ):this.state.content}
+            </View>
         )
     }
-
 }
 
 OrgView.defaultProps = {
