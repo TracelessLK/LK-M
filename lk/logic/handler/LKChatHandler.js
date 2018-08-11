@@ -1,10 +1,17 @@
 import Chat from '../../store/Chat'
+import Record from '../../store/Record'
 class LKChatHandler{
-    asyAddNewChat(chatId,name,newMsgNum){
-        return Chat.addNewChat(chatId,name,newMsgNum);
+    asyAddSingleChat(userId,chatId,newMsgNum){
+        return Chat.addSingleChat(userId,chatId,newMsgNum);
     }
-    asyAddNewMembers(chatId,members){
-        return Chat.addNemMembers(chatId,members);
+    asyAddGroupMembers(chatId,members){
+        return Chat.addGroupMembers(chatId,members);
+    }
+    asyAddMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state){
+        return Record.addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state);
+    }
+    asyUpdateMsgState(msgId,state){
+        return Record.updateMsgState(msgId,state)
     }
 }
 module.exports = new LKChatHandler();

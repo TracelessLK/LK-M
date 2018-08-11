@@ -2,14 +2,14 @@
 
 import Chat from '../../store/Chat'
 class LKChatProvider{
-    asyGetAll(){
-        return Chat.getAll();
+    asyGetAll(userId){
+        return Chat.getAll(userId);
     }
-    asyGetChat(chatId){
-        return Chat.getChat(chatId);
+    asyGetChat(userId,chatId){
+        return Chat.getChat(userId,chatId);
     }
-    asyGetChatMembers(chatId){
-        return Chat.getChatMembers(chatId);
+    asyGetGroupMembers(chatId){
+        return Chat.getGroupMembers(chatId);
     }
 }
 module.exports = new LKChatProvider();
