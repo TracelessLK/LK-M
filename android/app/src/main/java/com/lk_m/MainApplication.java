@@ -17,6 +17,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import cn.reactnative.modules.update.UpdateContext;
+import org.pgsqlite.SQLitePluginPackage;
 
 
 import java.util.Arrays;
@@ -46,7 +47,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNCameraPackage(),
             new RNDeviceInfo(),
             new VectorIconsPackage(),
-            new RNFSPackage()
+            new RNFSPackage(),
+            new SQLitePluginPackage()
       );
     }
 
