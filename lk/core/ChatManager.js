@@ -1,14 +1,29 @@
-import Application from '../LKApplication'
 import ContactManager from './ContactManager'
 import LKChatProvider from '../logic/provider/LKChatProvider'
+import LKContactProvider from '../logic/provider/LKContactProvider'
 import LKDeviceProvider from '../logic/provider/LKDeviceProvider'
+import LKChatHandler from '../logic/handler/LKChatHandler'
+import UUID from 'uuid/v4';
+import RSAKey from "react-native-rsa";
+import Application from '../LKApplication'
 class ChatManager{
-    //承担 chat->members基本信息的缓存管理
+    //承担 发送消息的random缓存
     _recentChats = [];//
     _recentChatsIndex={};
     _maxRecent = 6;
     _hotContacts = {};
 
+    //接收消息的random缓存
+    _hotChatRandomReceived = {}
+
+    MESSAGE_STATE_SENDING=0
+    MESSAGE_STATE_SERVER_NOT_RECEIVE=1
+    MESSAGE_STATE_SERVER_RECEIVE=2
+    MESSAGE_STATE_TARGET_RECEIVE=3
+    MESSAGE_STATE_TARGET_READ=4
+    MESSAGE_TYEP_TEXT=0
+    MESSAGE_TYPE_IMAGE=1
+    MESSAGE_TYPE_FILE=2
     constructor(){
         ContactManager.on("mCodeChanged",this._doContactMCodeChange);
         ContactManager.on("mCodeChanged",this._doContactMCodeChange);
@@ -35,82 +50,133 @@ class ChatManager{
 
     }
 
+    //发消息时用
     //TODO 删除无hot chat关联的contact
-    async asyGetChatMembers(chatId,checkChatKey){
+    /**
+     *
+     * _recentChatsIndex {chatId:int}
+     * _recentChats [chat]
+     * chat:id name, ... ,members,key,keyGenTime
+     * members[{id:contactId,devices:[{id:did,random:}]}]
+     *
+     * @param chatId
+     * @param checkChatKey
+     * @returns {Promise.<Array>}
+     */
+    async asyGetHotChatRandomSent(chatId){
+        let curUser = Application.getCurrentApp().getCurrentUser();
+        let userId = curUser.id;
         if(this._recentChatsIndex[chatId]===undefined){
             //chat&members
-            let p1 = LKChatProvider.asyGetChat(chatId);
-            let p2 = LKChatProvider.asyGetChatMembers(chatId);
-            let result = await Promise.all([p1,p2]);
-            if(this._recentChats.length>=this._maxRecent){
-                let oldChatId = this._recentChats[0].chatId;
-                delete this._recentChatsIndex[oldChatId];
-                this._recentChats.splice(0,1);
-            }
-            let chat = result[0];
-            let members = result[1];
-            if(checkChatKey){
+            let chat = await LKChatProvider.asyGetChat(userId,chatId);
+            if(chat){
+                let members=[];
+                if(chat.isGroup){
+                    let gm = await LKChatProvider.asyGetGroupMembers(chatId);
+                    gm.forEach(function (m) {
+                        members.push({id:m.id});
+                    });
+                    members.push({id:userId});
+                }else{
+                    let contact = await LKContactProvider.asyGet(chat.id);
+                    members.push({id:contact.id});
+                    members.push({id:userId});
+                }
+
+                //delete the oldest
+                if(this._recentChats.length>=this._maxRecent){
+                    let oldChatId = this._recentChats[0].chatId;
+                    delete this._recentChatsIndex[oldChatId];
+                    this._recentChats.splice(0,1);
+                }
                 chat.key = UUID();
                 chat.keyGenTime = Date.now();
-            }
 
 
-            chat.members = [];
-            this._recentChats.push(chat);
-            this._recentChatsIndex[chatId] = this._recentChats.length-1;
-            let ps = [];
-            members.forEach((contact)=>{
-                chat.members.push(contact.id);
-                let oldContact = this._hotContacts[contact.id];
-                if(!oldContact){
+                chat.members = members;
+                this._recentChats.push(chat);
+                this._recentChatsIndex[chatId] = this._recentChats.length-1;
+                let ps = [];
+                members.forEach((contact)=>{
                     ps.push(LKDeviceProvider.asyGetAll(contact.id));
-                    contact.devices=[];
-                }
-                this._hotContacts[contact.id] = contact;
-            });
-            //devices
-            let result2 = await Promise.all(ps);
-            result2.forEach((devices)=>{
-                if(checkChatKey){
-                    devices.forEach((device)=>{
+                });
+                //devices
+                let result = await Promise.all(ps);
+               for(let i=0;i<members.length;i++){
+                   let member = members[i];
+                   member.devices = [];
+                   let devices = result[i];
+                   devices.forEach((device)=>{
+                       if(member.id===userId&&device.id===curUser.deviceId){
+                           return;
+                       }
+                       let rsa = new RSAKey();
+                       rsa.setPublicString(device.publicKey);
+                       member.devices.push({id:device.id,random:rsa.encrypt(chat.key)});
+                   });
+               }
+            }
+        }
+        let time = Date.now();
+        let chat = this._recentChats[this._recentChatsIndex[chatId]];
+        if(chat){
+            if(!chat.key||time-chat.keyGenTime>3600000){
+                chat.key = UUID();
+                chat.keyGenTime = time;
+                let members = chat.members;
+                members.forEach((contact)=>{
+                    contact.devices.forEach((device)=>{
                         let rsa = new RSAKey();
                         rsa.setPublicString(device.publicKey);
                         device.random = rsa.encrypt(chat.key);
                     });
-                }
-                if(devices.length>0){
-                    let contact = this._hotContacts[devices[0].contactId];
-                    contact.devices = devices;
-                }
-            });
-        }
-        let time = Date.now();
-        let chat = this._recentChats[this._recentChatsIndex[chatId]];
-        if(checkChatKey&&(!chat.key||time-chat.keyGenTime>3600000)){
-            chat.key = UUID();
-            chat.keyGenTime = time;
-        }
-        let members = chat.members;
-        let result = [];
-        members.forEach((contactId)=>{
-            let contact = this._hotContacts[contactId];
-            if(checkChatKey&&chat.keyGenTime==time){
-                contact.devices.forEach((device)=>{
-                    let rsa = new RSAKey();
-                    rsa.setPublicString(device.publicKey);
-                    device.random = rsa.encrypt(chat.key);
                 });
             }
-            result.push(contact);
-        });
-        return result;
-    }
-
-    async asyGetChat(chatId){
-        await this.asyGetChatMembers(chaId);
-        let chat = this._recentChats[this._recentChatsIndex[chatId]];
+        }
         return chat;
     }
+
+    getHotChatKeyReceoved(chatId,senderUid,random){
+        let curApp = Application.getCurrentApp();
+        let randoms = this._hotChatRandomReceived[chatId];
+        if(!randoms){
+            randoms = {};
+
+            this._hotChatRandomReceived[chatId] = randoms;
+        }
+        let sentRandom = randoms.senderUid;
+        if(!sentRandom){
+            sentRandom = {random:random,key:curApp.getCurrentRSA().decrypt(random)};
+            randoms.senderUid = sentRandom;
+        }
+        if(sentRandom.random!==random){
+            sentRandom.random = random;
+            sentRandom.key = curApp.getCurrentRSA().decrypt(random);
+        }
+        return sentRandom.key;
+
+    }
+
+
+
+    // single chat
+    asyEnsureSingleChat(contactId){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        return new Promise((resovle)=>{
+            LKChatProvider.asyGetChat(userId,contactId).then((chat)=>{
+                if(chat){
+                    resovle();
+                }else{
+                    LKChatHandler.asyAddSingleChat(userId,contactId).then(()=>{
+                        resovle();
+                    });
+                }
+            })
+        });
+
+    }
+
+
 }
 
 

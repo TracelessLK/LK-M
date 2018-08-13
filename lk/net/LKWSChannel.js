@@ -6,6 +6,7 @@ import OrgManager from '../core/OrgManager'
 import ContactManager from "../core/ContactManager"
 import LKContactProvider from '../logic/provider/LKContactProvider'
 import LKContactHandler from '../logic/handler/LKContactHandler'
+import LKChatHandler from '../logic/handler/LKChatHandler'
 import CryptoJS from "crypto-js";
 
 class LKChannel extends WSChannel{
@@ -18,16 +19,44 @@ class LKChannel extends WSChannel{
         this._ping();
     }
 
-    _onmessage = (message)=>{
-        let msg = JSON.parse(message.data);
+    _handleMsg(msg){
         let header = msg.header;
         let isResponse = header.response;
+        let action = header.action;
         if(isResponse){
             let msgId = header.msgId;
             let callback = this._callbacks[msgId];
             if(callback){
                 callback(msg);
             }
+        }else if(action){
+            let handler = this[action+"Handler"];
+            if(handler){
+                handler(msg).then(()=>{
+                    this.applyChannel().then((channel)=>{
+                        let uid = Application.getCurrentApp().getCurrentUser().id;
+                        let did = Application.getCurrentApp().getCurrentUser().deviceId;
+                        channel.send(JSON.stringify({header:{
+                            version:"1.0",
+                            msgId:msg.id,
+                            uid:uid,
+                            did:did,
+                            response:true
+                        }}));
+                    });
+                });
+            }
+        }
+    }
+
+    _onmessage = (message)=>{
+        let msg = JSON.parse(message.data);
+        if(msg.forEach){
+            msg.forEach((m)=> {
+                this._handleMsg(m);
+            })
+        }else{
+            this._handleMsg(msg);
         }
     }
 
@@ -40,7 +69,7 @@ class LKChannel extends WSChannel{
         return UUID();
     }
 
-    async _asyNewRequest (action,content,targets,chatId,lastChatMsg,preSentChatMsg) {
+    async _asyNewRequest (action,content,targets,chatId,lastOppositeMsg) {
         let id = this._generateMsgId();
         let _content = null;
         let _targets = null;
@@ -51,12 +80,9 @@ class LKChannel extends WSChannel{
             did = Application.getCurrentApp().getCurrentUser().deviceId;
 
             if(chatId){
-                let ps = [];
-                ps.push(ChatManager.asyGetChat(chatId));
-                ps.push(ChatManager.asyGetChatMembers(chatId,true));
-                let result = await Promise.all(ps);
-                _content = CryptoJS.AES.encrypt(content, result[0].key).toString();
-                _targets = result[1];
+                let chat = await ChatManager.asyGetHotChatRandomSent(chatId);
+                _content = CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
+                _targets = chat.members;
             }
         }
         _content = _content?_content:content;
@@ -72,8 +98,7 @@ class LKChannel extends WSChannel{
                 uid:uid,
                 did:did,
                 chatId:chatId,
-                lastChatMsg:lastChatMsg,
-                preSentChatMsg:preSentChatMsg,
+                lastOppositeMsg:lastOppositeMsg,
                 targets:_targets,
                 time:Date.now(),
 
@@ -230,6 +255,67 @@ class LKChannel extends WSChannel{
     async asyUnRegister(){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("unRegister")]);
         return result[0]._sendMessage(result[1]);
+    }
+
+    sendText(target,text){
+        let content = {type:ChatManager.MESSAGE_TYEP_TEXT,data:text};
+        this._sendMsg(target,content);
+    }
+    async _sendMsg(target,content){
+        let curApp = Application.getCurrentApp();
+        let userId = curApp.getCurrentUser().id;
+        let did = curApp.getCurrentUser().deviceId;
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",content,target,target)]);
+        let msgId = result[1].header.id;
+        let time = result[1].header.time;
+        await LKChatHandler.asyAddMsg(userId,target,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING);
+        result[0]._sendMessage(result[1]).then((resp)=>{
+            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE);
+        }).catch(()=>{
+            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE);
+        });
+    }
+
+    async sendMsgHandler(msg){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        let header = msg.header;
+        let msgId = header.id;
+        let senderUid = header.uid;
+        let senderDid = header.did;
+        let target = header.target;
+        let random = target.random;
+        let key = ChatManager.getHotChatKeyReceoved(senderUid,senderUid,random);
+        let encrytedContent = msg.body.content;
+        var bytes  = CryptoJS.AES.decrypt(encrytedContent.toString(), key);
+        let content = bytes.toString(CryptoJS.enc.Utf8);
+        let time = header.time;
+
+        await ChatManager.asyEnsureSingleChat(senderUid);
+        await LKChatHandler.asyAddMsg(userId,senderUid,msgId,senderUid,senderDid,content.type,content.data,time);
+    }
+
+    async asySendOrgMsg(orgs){
+
+    }
+
+    async asyCreateGroupChat(chatId,name,members){
+
+    }
+
+    async asyAddChatMember(chatId,name,member){
+
+    }
+
+    async asyRemoveChatMember(){
+
+    }
+
+    async asyLeaveChat(chatId){
+
+    }
+
+    async asySendChatMessage(chatId){
+
     }
 }
 

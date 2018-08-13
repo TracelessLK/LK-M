@@ -1,20 +1,20 @@
 
 import db from '../../common/store/DataBase'
 db.transaction((tx)=>{
-    tx.executeSql("create table if not exists chat(id TEXT PRIMARY KEY NOT NULL,name TEXT,newMsgNum INTEGER,createTime INTEGER,topTime INTEGER,reserve1 TEXT)",[],function () {
+    tx.executeSql("create table if not exists chat(id TEXT,ownerUserId TEXT,name TEXT,newMsgNum INTEGER,createTime INTEGER,topTime INTEGER,isGroup INTEGER,reserve1 TEXT,PRIMARY KEY(ownerUserId,id))",[],function () {
     },function (err) {
     });
-    tx.executeSql("create table if not exists chatMember(chatId TEXT,contactId TEXT,reserve1 TEXT,primary key(chatId,contactId))",[],function () {
+    tx.executeSql("create table if not exists groupMember(chatId TEXT,contactId TEXT,reserve1 TEXT,primary key(chatId,contactId))",[],function () {
     },function (err) {
     });
 });
 //order默认创建时间 如果置顶order=当前时间&onTop=1
 class Chat{
-    getAll(){
+    getAll(userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from chat order by topTime desc,createTime desc";
-                tx.executeSql(sql,[],function (tx,results) {
+                let sql = "select * from chat where ownerUserId=? order by topTime desc,createTime desc";
+                tx.executeSql(sql,[userId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
                         ary.push(results.rows.item(i));
@@ -26,11 +26,11 @@ class Chat{
             });
         });
     }
-    getChat(chatId){
+    getChat(userId,chatId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from chat where id=?";
-                tx.executeSql(sql,[chatId],function (tx,results) {
+                let sql = "select * from chat where id=? and ownerUserId=?";
+                tx.executeSql(sql,[chatId,userId],function (tx,results) {
                     if(results.rows.length>0){
                         resolve(results.rows.item(0));
                     }else{
@@ -42,10 +42,10 @@ class Chat{
             });
         });
     }
-    getChatMembers(chatId){
+    getGroupMembers(chatId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select c.* from chatMember as m,contact as c where m.contactId=c.id and chatId=? ";
+                let sql = "select c.* from groupMember as m,contact as c where m.contactId=c.id and m.chatId=? ";
                 tx.executeSql(sql,[chatId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
@@ -59,12 +59,12 @@ class Chat{
         });
     }
 
-    addNewChat(chatId,name,newMsgNum){
+    addSingleChat(userId,chatId,newMsgNum){
 
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "insert into chat(id,name,newMsgNum,createTime,topTime) values (?,?,?,?,?)";
-                tx.executeSql(sql,[chatId,name,newMsgNum||0,Date.now(),0],function () {
+                let sql = "insert into chat(id,ownerUserId,newMsgNum,createTime,topTime,isGroup) values (?,?,?,?,?,?)";
+                tx.executeSql(sql,[chatId,userId,newMsgNum||0,Date.now(),0,0],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -73,10 +73,10 @@ class Chat{
         });
     }
 
-    addNemMembers(chatId,members){
+    addGroupMembers(chatId,members){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "insert into chatMember(chatId,contactId) values ";
+                let sql = "insert into groupMember(chatId,contactId) values ";
                 for(let i=0;i<members.length;i++){
                     sql += "('"+chatId+"',";
                     sql +="?)";

@@ -1,5 +1,6 @@
 import Application from '../engine/Application'
 import ConfigManager from '../common/core/ConfigManager'
+import RSAKey from "react-native-rsa";
 
 class LKApplication extends Application{
 
@@ -9,21 +10,34 @@ class LKApplication extends Application{
 
     setCurrentUser(user){
         super.setCurrentUser(user);
+
+        if(user){
+            let rsa = new RSAKey();
+            rsa.setPrivateString(user.privateKey);
+            this._rsa = rsa;
+        }else{
+            delete this._rsa;
+        }
+
         let url=user?'ws://'+user.serverIP+':'+user.serverPort:null;
-        if((!this._channel)||(this._channel.getUrl()!=url)){
+        if((!this._channel)||(this._channel.getUrl()!==url)){
             if(this._channel){
                 this._channel.close();
                 delete this._channel;
             }
-            if(url)
+            if(url){
                 this._channel = new (ConfigManager.getWSChannel())('ws://'+user.serverIP+':'+user.serverPort,true);
-
+            }
         }
         if(this._channel) {
             this._channel.applyChannel().then((channel)=>{
                 return channel.asyLogin(user.id,user.password);
             })
         }
+    }
+
+    getCurrentRSA(){
+        return this._rsa;
     }
 
     asyRegister(user,venderDid,checkCode,qrcode,description){
