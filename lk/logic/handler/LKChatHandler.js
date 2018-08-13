@@ -10,11 +10,14 @@ class LKChatHandler{
     asyAddMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state){
         return Record.addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state);
     }
-    asyUpdateMsgState(msgId,state){
-        return Record.updateMsgState(msgId,state)
+    asyUpdateMsgState(msgIds,state){
+        return Record.updateMsgState(msgIds,state)
     }
     asyUpdateNewMsgNum(userId,chatId,num){
         return Chat.updateNewMsgNum(userId,chatId,num);
+    }
+    asyUpdateReadState(msgIds,state){
+        return Record.updateReadState(msgIds,state);
     }
 }
 module.exports = new LKChatHandler();

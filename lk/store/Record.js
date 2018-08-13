@@ -1,7 +1,7 @@
 
 import db from '../../common/store/DataBase'
 db.transaction((tx)=>{
-    tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER)",[],function () {
+    tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER,readState INTEGER)",[],function () {
     },function (err) {
     });
     tx.executeSql("create table if not exists goup_record_state(msgId TEXT ,reporterUid TEXT NOT NULL,state INTEGER)",[],function () {
@@ -12,8 +12,8 @@ class Record{
     addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "insert into record(ownerUserId,chatId,id,senderUid,senderDid,type,content,sendTime,state) values (?,?,?,?,?,?,?,?,?)";
-                tx.executeSql(sql,[userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state],function () {
+                let sql = "insert into record(ownerUserId,chatId,id,senderUid,senderDid,type,content,sendTime,state,readState) values (?,?,?,?,?,?,?,?,?,?)";
+                tx.executeSql(sql,[userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,isNaN(state)?-1:state,-1],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -21,9 +21,9 @@ class Record{
             });
         });
     }
-    _exists(msgIds){
+    _allUpdate(msgIds,state){
         return new Promise((resolve,reject)=>{
-            let sql = "select id from record where msgId ";
+            let sql = "select id from record where state>=? msgId ";
             let num = 0;
             if(!msgIds.forEach){
                 sql += "='"
@@ -44,7 +44,7 @@ class Record{
                 sql+=")";
             }
             db.transaction((tx)=>{
-                tx.executeSql(sql,[],function (tx,results) {
+                tx.executeSql(sql,[state],function (tx,results) {
                     var len = results.rows.length;
                     if(len==num){
                         resolve(true);
@@ -60,39 +60,41 @@ class Record{
     }
     updateMsgState(msgIds,state){
        return new Promise((resolve,reject)=>{
-            this._exists(msgIds).then((exist)=>{
-                if(exist){
-                    let sql = "update record set state=? where state<? and msgId ";
-                    let update = false;
-                    if(!msgIds.forEach){
-                        sql += "='"
-                        sql += msgIds;
-                        sql += "'";
-                        update = true;
-                    }else{
-                        sql += "in (";
-                        for(var i=0;i<msgIds.length;i++){
-                            sql+="'";
-                            sql+=msgIds[i];
-                            sql+="'";
-                            if(i<msgIds.length-1){
-                                sql+=",";
-                            }
-                        }
-                        sql+=")";
-                        update = true;
-                    }
-                    if(update){
-                        db.transaction((tx)=>{
-                            tx.executeSql(sql,[state,state],function () {
-                                resolve();
-                            },function (err) {
-                                reject(err);
-                            });
-                        });
-                    }
-                }
-            });
+           let sql = "update record set state=? where state<? and msgId ";
+           let update = false;
+           if(!msgIds.forEach){
+               sql += "='"
+               sql += msgIds;
+               sql += "'";
+               update = true;
+           }else{
+               sql += "in (";
+               for(var i=0;i<msgIds.length;i++){
+                   sql+="'";
+                   sql+=msgIds[i];
+                   sql+="'";
+                   if(i<msgIds.length-1){
+                       sql+=",";
+                   }
+               }
+               sql+=")";
+               update = true;
+           }
+           if(update){
+               db.transaction((tx)=>{
+                   tx.executeSql(sql,[state,state], ()=> {
+                       this._allUpdate(msgIds).then((all)=>{
+                           if(all){
+                               resolve();
+                           }
+                       });
+                   },function (err) {
+                       reject(err);
+                   });
+               });
+           }
+
+
         });
 
     }
@@ -120,6 +122,31 @@ class Record{
                     });
                 });
             });
+        });
+    }
+
+    updateReadState(msgIds,state){
+        return new Promise((resolve,reject)=>{
+            let sql = "update record set readState=? where readState<? and msgId ";
+            sql += "in (";
+            for(var i=0;i<msgIds.length;i++){
+                sql+="'";
+                sql+=msgIds[i];
+                sql+="'";
+                if(i<msgIds.length-1){
+                    sql+=",";
+                }
+            }
+            sql+=")";
+            db.transaction((tx)=>{
+                tx.executeSql(sql,[state,state], ()=> {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+
+
         });
     }
 

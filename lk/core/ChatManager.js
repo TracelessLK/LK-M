@@ -25,9 +25,14 @@ class ChatManager extends EventTarget{
     MESSAGE_STATE_SERVER_RECEIVE=2
     MESSAGE_STATE_TARGET_RECEIVE=3
     MESSAGE_STATE_TARGET_READ=4
+
     MESSAGE_TYEP_TEXT=0
     MESSAGE_TYPE_IMAGE=1
     MESSAGE_TYPE_FILE=2
+
+    MESSAGE_READSTATE_READ=1
+    MESSAGE_READSTATE_READREPORT=2
+
     constructor(){
         super();
         // ContactManager.on("mCodeChanged",this._doContactMCodeChange);
@@ -184,15 +189,25 @@ class ChatManager extends EventTarget{
     }
 
     async asyReadMsgs(chatId,limit){
-        let newMsgNum = this._allChatNewMsgNums[chatId];
-        let limit = (newMsgNum?newMsgNum:0)+limit;
+        let newMsgNum = this._allChatNewMsgNums[chatId]?this._allChatNewMsgNums[chatId]:0;
+        let limit = newMsgNum+limit;
         let userId = Application.getCurrentApp().getCurrentUser().id;
-        let result = await LKChatProvider.asyGetMsgs(userId,chatId,limit);
+        let records = await LKChatProvider.asyGetMsgs(userId,chatId,limit);
         this._allChatNewMsgNums[chatId] = 0;
         LKChatHandler.asyUpdateNewMsgNum(userId,chatId,0);
-        //TODO report msg read
-        return result;
+        var readNewMsgs = [];
+        var n = 0;
+        for(var i=records.length-1;i>=0&&n<newMsgNum;i--){
+            if(records[i].senderUid!=userId){
+                readNewMsgs.push(records[i].id);
+                n++;
+            }
+        }
+        LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
+        return records;
     }
+
+    //TODO each 3 minutes check readstate and send readreport
 
     async _initAllChatNewMsgNums(userId){
         let chats = await LKChatProvider.asyGetAll(userId);
@@ -208,7 +223,9 @@ class ChatManager extends EventTarget{
 
     increaseNewMsgNum(chatId){
         let newMsgNum = this._allChatNewMsgNums[chatId];
-        this._allChatNewMsgNums[chatId ]= (newMsgNum?newMsgNum:0)+1;
+        this._allChatNewMsgNums[chatId]= (newMsgNum?newMsgNum:0)+1;
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        LKChatHandler.asyUpdateNewMsgNum(userId,chatId,this._allChatNewMsgNums[chatId]);
     }
 
 
