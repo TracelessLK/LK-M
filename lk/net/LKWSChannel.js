@@ -269,10 +269,15 @@ class LKChannel extends WSChannel{
         let msgId = result[1].header.id;
         let time = result[1].header.time;
         await LKChatHandler.asyAddMsg(userId,target,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING);
+        ChatManager.fire("msgChanged",target);
         result[0]._sendMessage(result[1]).then((resp)=>{
-            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE);
+            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
+                ChatManager.fire("msgChanged",target);
+            });
         }).catch(()=>{
-            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE);
+            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
+                ChatManager.fire("msgChanged",target);
+            });
         });
     }
 
@@ -284,14 +289,18 @@ class LKChannel extends WSChannel{
         let senderDid = header.did;
         let target = header.target;
         let random = target.random;
-        let key = ChatManager.getHotChatKeyReceoved(senderUid,senderUid,random);
+        let key = ChatManager.getHotChatKeyReceived(senderUid,senderUid,random);
         let encrytedContent = msg.body.content;
         var bytes  = CryptoJS.AES.decrypt(encrytedContent.toString(), key);
         let content = bytes.toString(CryptoJS.enc.Utf8);
         let time = header.time;
+        let chatId = userId===senderUid?header.chatId:senderUid;
 
-        await ChatManager.asyEnsureSingleChat(senderUid);
-        await LKChatHandler.asyAddMsg(userId,senderUid,msgId,senderUid,senderDid,content.type,content.data,time);
+        await ChatManager.asyEnsureSingleChat(chatId);
+        await LKChatHandler.asyAddMsg(userId,chatId,msgId,senderUid,senderDid,content.type,content.data,time);
+        await ChatManager.increaseNewMsgNum(chatId);
+        ChatManager.fire("msgChanged",chatId);
+        //TODO 处理排序 消息加order字段
     }
 
     async asySendOrgMsg(orgs){

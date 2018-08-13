@@ -21,7 +21,106 @@ class Record{
             });
         });
     }
-    updateMsgState(msgId,state){
-       // var sql = "update record set state=? where state<? and chatId=? and senderUid=? and msgId=? ";
+    _exists(msgIds){
+        return new Promise((resolve,reject)=>{
+            let sql = "select id from record where msgId ";
+            let num = 0;
+            if(!msgIds.forEach){
+                sql += "='"
+                sql += msgIds;
+                sql += "'";
+                num = 1;
+            }else{
+                sql += "in (";
+                for(var i=0;i<msgIds.length;i++){
+                    sql+="'";
+                    sql+=msgIds[i];
+                    sql+="'";
+                    if(i<msgIds.length-1){
+                        sql+=",";
+                    }
+                    num++;
+                }
+                sql+=")";
+            }
+            db.transaction((tx)=>{
+                tx.executeSql(sql,[],function (tx,results) {
+                    var len = results.rows.length;
+                    if(len==num){
+                        resolve(true);
+                    }else{
+                        resolve(false);
+                    }
+                },function (err) {
+                    reject(err)
+                });
+            });
+        });
+
     }
+    updateMsgState(msgIds,state){
+       return new Promise((resolve,reject)=>{
+            this._exists(msgIds).then((exist)=>{
+                if(exist){
+                    let sql = "update record set state=? where state<? and msgId ";
+                    let update = false;
+                    if(!msgIds.forEach){
+                        sql += "='"
+                        sql += msgIds;
+                        sql += "'";
+                        update = true;
+                    }else{
+                        sql += "in (";
+                        for(var i=0;i<msgIds.length;i++){
+                            sql+="'";
+                            sql+=msgIds[i];
+                            sql+="'";
+                            if(i<msgIds.length-1){
+                                sql+=",";
+                            }
+                        }
+                        sql+=")";
+                        update = true;
+                    }
+                    if(update){
+                        db.transaction((tx)=>{
+                            tx.executeSql(sql,[state,state],function () {
+                                resolve();
+                            },function (err) {
+                                reject(err);
+                            });
+                        });
+                    }
+                }
+            });
+        });
+
+    }
+    getMsgs(userId,chatId,limit){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                var sql = "select * from record where ownerUserId=? and chatId=? order by sendTime";
+                if(limit&&limit>0){
+                    sql += " desc limit ";
+                    sql += limit;
+                }
+                db.transaction((tx)=>{
+                    tx.executeSql(sql,[userId,chatId],function (tx,results) {
+                        var rs = [];
+                        var len = results.rows.length;
+                        for(var i=0;i<len;i++){
+                            rs.push(results.rows.item(i));
+                        }
+                        if(limit&&limit>0) {
+                            rs = rs.reverse()
+                        }
+                        resolve(rs);
+                    },function (err) {
+                        reject(err);
+                    });
+                });
+            });
+        });
+    }
+
 }

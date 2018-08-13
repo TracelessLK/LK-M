@@ -93,11 +93,24 @@ class Chat{
         });
     }
 
-    topChat(chatId){
+    topChat(userId,chatId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "update chat set topTime=? where id=?";
-                tx.executeSql(sql,[Date.now(),chatId],function () {
+                let sql = "update chat set topTime=? where id=? and ownerUserId=?";
+                tx.executeSql(sql,[Date.now(),chatId,userId],function () {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
+    updateNewMsgNum(userId,chatId,num){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "update chat set newMsgNum=? where id=? and ownerUserId=?";
+                tx.executeSql(sql,[num,chatId,userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);

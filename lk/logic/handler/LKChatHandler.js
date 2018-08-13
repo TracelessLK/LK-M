@@ -13,6 +13,9 @@ class LKChatHandler{
     asyUpdateMsgState(msgId,state){
         return Record.updateMsgState(msgId,state)
     }
+    asyUpdateNewMsgNum(userId,chatId,num){
+        return Chat.updateNewMsgNum(userId,chatId,num);
+    }
 }
 module.exports = new LKChatHandler();
 
