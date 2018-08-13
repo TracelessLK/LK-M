@@ -1,6 +1,6 @@
 const childProcess = require('child_process')
 const path = require('path')
-const coverage = path.resolve(__dirname,'../coverage')
+const coverage = path.resolve(__dirname,'../local/coverage')
 const coverageIndex = path.resolve(coverage,'lcov-report/index.html')
 const fs = require('fs')
 

@@ -3,13 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "npm run lint && jest --coverage",
+    "coverage":"node bin/coverage",
     "flow": "flow",
     "lint": "eslint --ext .js .",
-    "try": "jest --coverage",
     "postinstall": "node bin/postinstall",
-    "coverage":"node bin/coverage"
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start:android": "react-native run-android",
+    "test": "npm run lint && jest",
+    "try": "jest"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
