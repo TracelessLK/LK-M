@@ -1,7 +1,7 @@
 
 import db from '../../common/store/DataBase'
 db.transaction((tx)=>{
-    tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER)",[],function () {
+    tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER,readState INTEGER)",[],function () {
     },function (err) {
     });
     tx.executeSql("create table if not exists goup_record_state(msgId TEXT ,reporterUid TEXT NOT NULL,state INTEGER)",[],function () {
@@ -12,8 +12,8 @@ class Record{
     addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "insert into record(ownerUserId,chatId,id,senderUid,senderDid,type,content,sendTime,state) values (?,?,?,?,?,?,?,?,?)";
-                tx.executeSql(sql,[userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state],function () {
+                let sql = "insert into record(ownerUserId,chatId,id,senderUid,senderDid,type,content,sendTime,state,readState) values (?,?,?,?,?,?,?,?,?,?)";
+                tx.executeSql(sql,[userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,isNaN(state)?-1:state,-1],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -21,7 +21,133 @@ class Record{
             });
         });
     }
-    updateMsgState(msgId,state){
-       // var sql = "update record set state=? where state<? and chatId=? and senderUid=? and msgId=? ";
+    _allUpdate(msgIds,state){
+        return new Promise((resolve,reject)=>{
+            let sql = "select id from record where state>=? msgId ";
+            let num = 0;
+            if(!msgIds.forEach){
+                sql += "='"
+                sql += msgIds;
+                sql += "'";
+                num = 1;
+            }else{
+                sql += "in (";
+                for(var i=0;i<msgIds.length;i++){
+                    sql+="'";
+                    sql+=msgIds[i];
+                    sql+="'";
+                    if(i<msgIds.length-1){
+                        sql+=",";
+                    }
+                    num++;
+                }
+                sql+=")";
+            }
+            db.transaction((tx)=>{
+                tx.executeSql(sql,[state],function (tx,results) {
+                    var len = results.rows.length;
+                    if(len==num){
+                        resolve(true);
+                    }else{
+                        resolve(false);
+                    }
+                },function (err) {
+                    reject(err)
+                });
+            });
+        });
+
     }
+    updateMsgState(msgIds,state){
+       return new Promise((resolve,reject)=>{
+           let sql = "update record set state=? where state<? and msgId ";
+           let update = false;
+           if(!msgIds.forEach){
+               sql += "='"
+               sql += msgIds;
+               sql += "'";
+               update = true;
+           }else{
+               sql += "in (";
+               for(var i=0;i<msgIds.length;i++){
+                   sql+="'";
+                   sql+=msgIds[i];
+                   sql+="'";
+                   if(i<msgIds.length-1){
+                       sql+=",";
+                   }
+               }
+               sql+=")";
+               update = true;
+           }
+           if(update){
+               db.transaction((tx)=>{
+                   tx.executeSql(sql,[state,state], ()=> {
+                       this._allUpdate(msgIds).then((all)=>{
+                           if(all){
+                               resolve();
+                           }
+                       });
+                   },function (err) {
+                       reject(err);
+                   });
+               });
+           }
+
+
+        });
+
+    }
+    getMsgs(userId,chatId,limit){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                var sql = "select * from record where ownerUserId=? and chatId=? order by sendTime";
+                if(limit&&limit>0){
+                    sql += " desc limit ";
+                    sql += limit;
+                }
+                db.transaction((tx)=>{
+                    tx.executeSql(sql,[userId,chatId],function (tx,results) {
+                        var rs = [];
+                        var len = results.rows.length;
+                        for(var i=0;i<len;i++){
+                            rs.push(results.rows.item(i));
+                        }
+                        if(limit&&limit>0) {
+                            rs = rs.reverse()
+                        }
+                        resolve(rs);
+                    },function (err) {
+                        reject(err);
+                    });
+                });
+            });
+        });
+    }
+
+    updateReadState(msgIds,state){
+        return new Promise((resolve,reject)=>{
+            let sql = "update record set readState=? where readState<? and msgId ";
+            sql += "in (";
+            for(var i=0;i<msgIds.length;i++){
+                sql+="'";
+                sql+=msgIds[i];
+                sql+="'";
+                if(i<msgIds.length-1){
+                    sql+=",";
+                }
+            }
+            sql+=")";
+            db.transaction((tx)=>{
+                tx.executeSql(sql,[state,state], ()=> {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+
+
+        });
+    }
+
 }

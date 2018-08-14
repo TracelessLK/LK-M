@@ -1,3 +1,4 @@
+import EventTarget from '../../common/core/EventTarget'
 import ContactManager from './ContactManager'
 import LKChatProvider from '../logic/provider/LKChatProvider'
 import LKContactProvider from '../logic/provider/LKContactProvider'
@@ -6,7 +7,7 @@ import LKChatHandler from '../logic/handler/LKChatHandler'
 import UUID from 'uuid/v4';
 import RSAKey from "react-native-rsa";
 import Application from '../LKApplication'
-class ChatManager{
+class ChatManager extends EventTarget{
     //承担 发送消息的random缓存
     _recentChats = [];//
     _recentChatsIndex={};
@@ -16,19 +17,32 @@ class ChatManager{
     //接收消息的random缓存
     _hotChatRandomReceived = {}
 
+    //all chat newmsgnum
+    _allChatNewMsgNums = {}
+
     MESSAGE_STATE_SENDING=0
     MESSAGE_STATE_SERVER_NOT_RECEIVE=1
     MESSAGE_STATE_SERVER_RECEIVE=2
     MESSAGE_STATE_TARGET_RECEIVE=3
     MESSAGE_STATE_TARGET_READ=4
+
     MESSAGE_TYEP_TEXT=0
     MESSAGE_TYPE_IMAGE=1
     MESSAGE_TYPE_FILE=2
+
+    MESSAGE_READSTATE_READ=1
+    MESSAGE_READSTATE_READREPORT=2
+
     constructor(){
-        ContactManager.on("mCodeChanged",this._doContactMCodeChange);
-        ContactManager.on("mCodeChanged",this._doContactMCodeChange);
-        ContactManager.on("deviceAdded",this._doContactDeviceAdded);
-        ContactManager.on("deviceRemoved",this._doContactDeviceRemoved);
+        super();
+        // ContactManager.on("mCodeChanged",this._doContactMCodeChange);
+        // ContactManager.on("mCodeChanged",this._doContactMCodeChange);
+        // ContactManager.on("deviceAdded",this._doContactDeviceAdded);
+        // ContactManager.on("deviceRemoved",this._doContactDeviceRemoved);
+    }
+
+    start(userId){
+        this._initAllChatNewMsgNums(userId);
     }
 
     //TODO监听mcode的变化
@@ -136,7 +150,7 @@ class ChatManager{
         return chat;
     }
 
-    getHotChatKeyReceoved(chatId,senderUid,random){
+    getHotChatKeyReceived(chatId,senderUid,random){
         let curApp = Application.getCurrentApp();
         let randoms = this._hotChatRandomReceived[chatId];
         if(!randoms){
@@ -157,8 +171,6 @@ class ChatManager{
 
     }
 
-
-
     // single chat
     asyEnsureSingleChat(contactId){
         let userId = Application.getCurrentApp().getCurrentUser().id;
@@ -168,12 +180,52 @@ class ChatManager{
                     resovle();
                 }else{
                     LKChatHandler.asyAddSingleChat(userId,contactId).then(()=>{
+                        this.fire("recentChanged")
                         resovle();
                     });
                 }
             })
         });
+    }
 
+    async asyReadMsgs(chatId,limit){
+        let newMsgNum = this._allChatNewMsgNums[chatId]?this._allChatNewMsgNums[chatId]:0;
+        let limit = newMsgNum+limit;
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        let records = await LKChatProvider.asyGetMsgs(userId,chatId,limit);
+        this._allChatNewMsgNums[chatId] = 0;
+        LKChatHandler.asyUpdateNewMsgNum(userId,chatId,0);
+        var readNewMsgs = [];
+        var n = 0;
+        for(var i=records.length-1;i>=0&&n<newMsgNum;i--){
+            if(records[i].senderUid!=userId){
+                readNewMsgs.push(records[i].id);
+                n++;
+            }
+        }
+        LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
+        return records;
+    }
+
+    //TODO each 3 minutes check readstate and send readreport
+
+    async _initAllChatNewMsgNums(userId){
+        let chats = await LKChatProvider.asyGetAll(userId);
+        chats.forEach((chat)=>{
+            this._allChatNewMsgNums[chat.id] = chat.newMsgNum;
+        });
+    }
+
+    getNewMsgNum(chatId){
+        let newMsgNum = this._allChatNewMsgNums[chatId];
+        return newMsgNum?newMsgNum:0;
+    }
+
+    increaseNewMsgNum(chatId){
+        let newMsgNum = this._allChatNewMsgNums[chatId];
+        this._allChatNewMsgNums[chatId]= (newMsgNum?newMsgNum:0)+1;
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        LKChatHandler.asyUpdateNewMsgNum(userId,chatId,this._allChatNewMsgNums[chatId]);
     }
 
 
