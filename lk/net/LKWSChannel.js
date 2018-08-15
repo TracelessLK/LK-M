@@ -89,10 +89,13 @@ class LKChannel extends WSChannel{
                 // content:_content
             }
         };
-        let target = option.target;
-        if(target){
-            msg.header.target = target;
+        if(option){
+            let target = option.target;
+            if(target){
+                msg.header.target = target;
+            }
         }
+
         msg.body.content = content;
 
 
@@ -101,17 +104,20 @@ class LKChannel extends WSChannel{
             msg.header.uid = Application.getCurrentApp().getCurrentUser().id;
             msg.header.did = Application.getCurrentApp().getCurrentUser().deviceId;
 
-            let chatId = option.chatId;
-            let relativeMsg = option.relativeMsg;
-            if(chatId){
-                let chat = await ChatManager.asyGetHotChatRandomSent(chatId);
+            if(option){
+                let chatId = option.chatId;
+                let relativeMsg = option.relativeMsg;
+                if(chatId){
+                    let chat = await ChatManager.asyGetHotChatRandomSent(chatId);
 
-                msg.header.chatId = chatId;
-                msg.header.targets = chat.members;
-                msg.header.relativeMsg = relativeMsg;
-                msg.body.content = CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
+                    msg.header.chatId = chatId;
+                    msg.header.targets = chat.members;
+                    msg.header.relativeMsg = relativeMsg;
+                    msg.body.content = CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
 
+                }
             }
+
         }
 
         //let mCode = Application.getCurrentApp().getCurrentUser().mCode;
