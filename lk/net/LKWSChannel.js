@@ -278,14 +278,6 @@ class LKChannel extends WSChannel{
         this._sendMsg(contactId,content);
     }
 
-    // _getTargets(contactId){
-    //     let devices = await LKDeviceProvider.asyGetAll(contactId);
-    //     let targets = [];
-    //     let t = {id:contactId,devices:[]};
-    //     devices.forEach(function (device) {
-    //         t.devices.push(device.id);
-    //     });
-    // }
     async _sendMsg(contactId,content){
         let curApp = Application.getCurrentApp();
         let userId = curApp.getCurrentUser().id;

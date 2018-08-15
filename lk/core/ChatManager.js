@@ -189,22 +189,18 @@ class ChatManager extends EventTarget{
     }
 
     async asyReadMsgs(chatId,limit){
-        let newMsgNum = this._allChatNewMsgNums[chatId]?this._allChatNewMsgNums[chatId]:0;
-        let limit = newMsgNum+limit;
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let records = await LKChatProvider.asyGetMsgs(userId,chatId,limit);
         this._allChatNewMsgNums[chatId] = 0;
         LKChatHandler.asyUpdateNewMsgNum(userId,chatId,0);
-        var readNewMsgs = [];
-        var n = 0;
-        for(var i=records.length-1;i>=0&&n<newMsgNum;i--){
-            if(records[i].senderUid!=userId){
-                readNewMsgs.push(records[i].id);
-                n++;
-            }
-        }
+        let newMsgs = await LKChatProvider.asyGetMsgsNotRead(userId,chatId);
+        let readNewMsgs = [];
+        newMsgs.forEach((record)=>{
+            readNewMsgs.push(record.id);
+        });
         LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
-        return records;
+        Application.getCurrentApp().getLKWSChannel().readReport(chatId,readNewMsgs);
+        return {msgs:records,newMsgs:newMsgs};
     }
 
     //TODO each 3 minutes check readstate and send readreport

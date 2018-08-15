@@ -14,5 +14,8 @@ class LKChatProvider{
     asyGetMsgs(userId,chatId,limit){
         return Record.getMsgs(userId,chatId,limit)
     }
+    asyGetMsgsNotRead(userId,chatId){
+        return Record.getMsgsNotRead(userId,chatId)
+    }
 }
 module.exports = new LKChatProvider();
