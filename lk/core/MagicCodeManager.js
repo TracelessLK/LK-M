@@ -1,5 +1,6 @@
 import EventTarget from '../../common/core/EventTarget'
 import LKMagicCodeProvider from '../logic/provider/LKMagicCodeProvider'
+import Application from '../LKApplication'
 
 class MagicCodeManager extends EventTarget{
 
@@ -17,14 +18,18 @@ class MagicCodeManager extends EventTarget{
 
     async asyGetOrgMCode(){
         if (!this._orgMCode) {
-            this._orgMCode = await LKMagicCodeProvider.asyGetMagicCode(this.getCurrentUser().id).orgMCode;
+            let mc = await LKMagicCodeProvider.asyGetMagicCode(Application.getCurrentApp().getCurrentUser().id);
+            if(mc)
+                this._orgMCode = mc.orgMCode;
         }
         return this._orgMCode;
     }
 
     async asyGetMemberMCode(){
         if (!this._memberMCode) {
-            this._memberMCode = await LKMagicCodeProvider.asyGetMagicCode(this.getCurrentUser().id).memberMCode;
+            let mc = await LKMagicCodeProvider.asyGetMagicCode(Application.getCurrentApp().getCurrentUser().id);
+            if(mc)
+                this._memberMCode = mc.memberMCode;
         }
         return this._memberMCode;
     }
