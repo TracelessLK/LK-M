@@ -40,7 +40,7 @@ class LKApplication extends Application{
         return this._rsa;
     }
 
-    asyRegister(user,venderDid,checkCode,qrcode,description){
+    async asyRegister(user,venderDid,checkCode,qrcode,description){
         let channel = new (ConfigManager.getWSChannel())('ws://'+user.serverIP+':'+user.serverPort,true);
         return new Promise((resolve,reject)=>{
             channel.asyRegister(user.serverIP,user.serverPort,user.id,user.deviceId,venderDid,user.publicKey,checkCode,qrcode,description).then(function (msg) {
@@ -54,15 +54,16 @@ class LKApplication extends Application{
                     let memberMCode = content.memberMCode;
                     let members = content.members;
                     let friends = content.friends;
-                    ConfigManager.getOrgManager().asyResetOrgs(orgMCode,orgs,user.id).then(function () {
-                        return ConfigManager.getContactManager().asyResetContacts(memberMCode,members,friends,user.id)
+                    ConfigManager.getMagicCodeManager().asyReset(orgMCode,memberMCode,user.id).then(function () {
+                        return ConfigManager.getOrgManager().asyResetOrgs(orgMCode,orgs,user.id);
+                    }).then(function () {
+                        return ConfigManager.getContactManager().asyResetContacts(memberMCode,members,friends,user.id);
                     }).then(function () {
                         user.serverPublicKey = serverPK;
                         return ConfigManager.getUserManager().asyAddLKUser(user);
                     }).then(function () {
                         resolve(user);
-                    })
-
+                    });
                 }
 
 

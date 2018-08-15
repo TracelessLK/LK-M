@@ -1,5 +1,6 @@
 import EventTarget from '../../common/core/EventTarget'
 import LKMagicCodeProvider from '../logic/provider/LKMagicCodeProvider'
+import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
 import Application from '../LKApplication'
 
 class MagicCodeManager extends EventTarget{
@@ -32,6 +33,10 @@ class MagicCodeManager extends EventTarget{
                 this._memberMCode = mc.memberMCode;
         }
         return this._memberMCode;
+    }
+
+    asyReset(orgMCode,memberMCode,userId){
+       return LKMagicCodeHandler.asyReset(orgMCode,memberMCode,userId);
     }
 
 }
