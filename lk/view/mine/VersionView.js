@@ -8,8 +8,9 @@ import {Button, Icon, Text, Toast,Spinner} from 'native-base'
 const versionLocal = require('../../../package.json').version
 const config = require('../../config')
 const common = require('@hfs/common')
-const {SearchBar,commonUtil} = common
+const {SearchBar,commonUtil,updateUtil} = common
 const {debounceFunc} = commonUtil
+const lkApp = require('../../LKApplication').getCurrentApp()
 
 export default class VersionView extends Component<{}> {
 
@@ -22,6 +23,7 @@ export default class VersionView extends Component<{}> {
     constructor(props) {
         super(props);
         this.state = {};
+        this.user = lkApp.getCurrentUser()
     }
 
 
@@ -67,31 +69,31 @@ export default class VersionView extends Component<{}> {
                                     return Promise.resolve()
                                 }
 
-                                // updateUtil.checkUpdateGeneral({
-                                //     uid: Store.getCurrentUid(),
-                                //     name: Store.getCurrentName(),
-                                //     beforeUpdate:afterCheck,
-                                //     noUpdateCb:()=>{
-                                //         afterCheck().then(()=>{
-                                //             Toast.show({
-                                //                 text: '当前已是最新版本',
-                                //                 position: "top",
-                                //                 type:"success",
-                                //                 duration: 3000
-                                //             })
-                                //         })
-                                //     },
-                                //     errorCb:()=>{
-                                //         afterCheck().then(()=>{
-                                //             Toast.show({
-                                //                 text: '检查更新出错了',
-                                //                 position: "top",
-                                //                 type:"error",
-                                //                 duration: 3000
-                                //             })
-                                //         })
-                                //     }
-                                // })
+                                updateUtil.checkUpdateGeneral({
+                                    uid: this.user.id,
+                                    name: this.user.name,
+                                    beforeUpdate:afterCheck,
+                                    noUpdateCb:()=>{
+                                        afterCheck().then(()=>{
+                                            Toast.show({
+                                                text: '当前已是最新版本',
+                                                position: "top",
+                                                type:"success",
+                                                duration: 3000
+                                            })
+                                        })
+                                    },
+                                    errorCb:()=>{
+                                        afterCheck().then(()=>{
+                                            Toast.show({
+                                                text: '检查更新出错了',
+                                                position: "top",
+                                                type:"error",
+                                                duration: 3000
+                                            })
+                                        })
+                                    }
+                                })
                             })
                             }>
                                 <Icon name='refresh' />

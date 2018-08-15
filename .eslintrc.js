@@ -3,7 +3,8 @@ module.exports = {
         "es6": true,
         node: true,
         "jest/globals": true,
-        "browser": true
+        "browser": true,
+        "react-native":true,
     },
     "parser": "babel-eslint",
     "plugins": [
