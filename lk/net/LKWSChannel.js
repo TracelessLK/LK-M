@@ -4,6 +4,7 @@ import Application from '../LKApplication'
 import ChatManager from '../core/ChatManager'
 import OrgManager from '../core/OrgManager'
 import ContactManager from "../core/ContactManager"
+import MagicCodeManager from "../core/MagicCodeManager"
 import LKContactProvider from '../logic/provider/LKContactProvider'
 import LKContactHandler from '../logic/handler/LKContactHandler'
 import LKChatHandler from '../logic/handler/LKChatHandler'
@@ -203,7 +204,7 @@ class LKChannel extends WSChannel{
                 let memberMCode ;
                 let checkMCode = false;
                 if(curApp.getCurrentUser()){
-                    result = await Promise.all([curApp.asyGetOrgMCode(),curApp.asyGetMemberMCode()]);
+                    result = await Promise.all([MagicCodeManager.asyGetOrgMCode(),MagicCodeManager.asyGetMemberMCode()]);
                     orgMCode = result[0];
                     memberMCode = result[1];
                     result = await Promise.all([this.applyChannel(),this._asyNewRequest("ping",{orgMCode:orgMCode,memberMCode:memberMCode})]);
@@ -273,7 +274,7 @@ class LKChannel extends WSChannel{
         return result[0]._sendMessage(result[1]);
     }
 
-    sendText(contactId,text){
+    sendText(contactId,text,relativeMsg,preMsg){
         let content = {type:ChatManager.MESSAGE_TYEP_TEXT,data:text};
         this._sendMsg(contactId,content);
     }
