@@ -2,6 +2,7 @@ import Application from '../LKApplication'
 import EventTarget from '../../common/core/EventTarget'
 import LKContactHandler from '../logic/handler/LKContactHandler'
 import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
+import MagicCodeManager from './MagicCodeManager'
 class ContactManager extends EventTarget{
 
     start(){
@@ -28,7 +29,7 @@ class ContactManager extends EventTarget{
         return  LKContactHandler.asyResetContacts(members,friends,userId||curApp.getCurrentUser().id).then(function () {
             return LKMagicCodeHandler.asyUpdateMemberMagicCode(newMemberMCode,userId||curApp.getCurrentUser().id);
         }).then( ()=> {
-            curApp.setMemberMagicCode(newMemberMCode);
+            MagicCodeManager.setMemberMagicCode(newMemberMCode);
             this.fire("contactChanged");
         });
     }
@@ -38,7 +39,7 @@ class ContactManager extends EventTarget{
         LKContactHandler.asyRebuidMembers(ids,newMembers,curApp.getCurrentUser().id).then(function () {
             return LKMagicCodeHandler.asyUpdateMemberMagicCode(newMemberMCode,curApp.getCurrentUser().id);
         }).then(() =>{
-            curApp.setMemberMagicCode(newMemberMCode);
+            MagicCodeManager.setMemberMagicCode(newMemberMCode);
             this.fire("contactChanged");
         });
     }

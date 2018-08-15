@@ -2,6 +2,7 @@ import Application from '../LKApplication'
 import EventTarget from '../../common/core/EventTarget'
 import LKOrgHandler from '../logic/handler/LKOrgHandler'
 import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
+import MagicCodeManager from './MagicCodeManager'
 
 class OrgManager extends EventTarget{
 
@@ -10,11 +11,10 @@ class OrgManager extends EventTarget{
     }
 
     asyResetOrgs(newOrgMCode,orgs,userId){
-        let curApp = Application.getCurrentApp();
         return LKOrgHandler.asyResetOrgs(orgs,userId).then( () =>{
             return LKMagicCodeHandler.asyUpdateOrgMagicCode(newOrgMCode,userId);
         }).then( ()=>{
-            curApp.setOrgMagicCode(newOrgMCode);
+            MagicCodeManager.setOrgMagicCode(newOrgMCode);
             this.fire("orgChanged");
         });
     }
