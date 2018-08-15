@@ -79,7 +79,7 @@ class LKChannel extends WSChannel{
                 // uid:uid,
                 // did:did,
                 // chatId:chatId,
-                lastOppositeMsg:lastOppositeMsg,
+                // lastOppositeMsg:lastOppositeMsg,
                 //target:_target
                 // targets:_targets,
                 time:Date.now(),
@@ -102,13 +102,13 @@ class LKChannel extends WSChannel{
             msg.header.did = Application.getCurrentApp().getCurrentUser().deviceId;
 
             let chatId = option.chatId;
-            let lastOppositeMsg = option.lastOppositeMsg;
+            let relativeMsg = option.relativeMsg;
             if(chatId){
                 let chat = await ChatManager.asyGetHotChatRandomSent(chatId);
 
                 msg.header.chatId = chatId;
                 msg.header.targets = chat.members;
-                msg.header.lastOppositeMsg = lastOppositeMsg;
+                msg.header.relativeMsg = relativeMsg;
                 msg.body.content = CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
 
             }
