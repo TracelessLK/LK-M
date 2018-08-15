@@ -18,7 +18,16 @@ const commonUtil = {
     },
     getFolderId(filePath){
         return filePath.split('/')[6]
-    }
+    },
+    getAvatarSource(pic,defaultPic){
+        let result
+        if(pic){
+            result = {uri:pic}
+        }else{
+            result = defaultPic
+        }
+        return result
+    },
 }
 Object.freeze(commonUtil)
 
