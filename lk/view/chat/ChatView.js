@@ -24,40 +24,40 @@ const Constant = require('../state/Constant')
 const {MAX_INPUT_HEIGHT} = Constant
 const _ = require('lodash')
 const lkApp = require('../../LKApplication').getCurrentApp()
+const manifest = require('../../../Manifest')
+const chatManager = manifest.get("ChatManager")
+
 
 export default class ChatView extends Component<{}> {
-    // static navigationOptions =({ navigation }) => (
-    //
-    //     // {
-    //     //     headerTitle: navigation.state.params.friend?navigation.state.params.friend.name:navigation.state.params.group.name,
-    //     //     headerRight:(navigation.state.params.group?
-    //     //         <TouchableOpacity  onPress={debounceFunc(()=>{navigation.navigate("GroupInfoView",{group:navigation.state.params.group})})}
-    //     //                            style={{marginRight:20}}>
-    //     //             <Image source={require('../image/group.png')} style={{width:22,height:22}} resizeMode="contain"></Image>
-    //     //         </TouchableOpacity>
-    //     //         :null),
-    //     // }
-    // );
 
     static navigationOptions =({ navigation }) => {
-        const {friend} = navigation.state.params
-        return {
-            headerTitle:friend.name
+        const {friend,group} = navigation.state.params
+        let result
+        if(friend){
+            result = {
+                headerTitle:friend.name,
+                headerRight:(
+                    <TouchableOpacity  onPress={navigation.getParam('navigateToInfo')}
+                                       style={{marginRight:20}}>
+                        <Image source={require('../image/person.png')} style={{width:22,height:22}} resizeMode="contain"></Image>
+                    </TouchableOpacity>
+                ),
+            }
         }
+        return result
     }
 
 
     constructor(props){
         super(props);
         this.minHeight = 35
-        // this.isGroupChat = this.props.navigation.state.params.group?true:false;
+        this.isGroupChat = this.props.navigation.state.params.group?true:false
         this.state={
             biggerImageVisible:false,
             heightAnim: 0,
             height:this.minHeight,
             refreshing:false
         };
-
         this.otherSide = this.props.navigation.state.params.friend||this.props.navigation.state.params.group;
         if(this.isGroupChat){
             this.groupMemberInfo = this.getGroupMemberInfo(this.props.navigation.state.params.group)
@@ -235,15 +235,17 @@ export default class ChatView extends Component<{}> {
     update = ()=>{
         this.refreshRecord(this.limit);
     }
-    UNSAFE_componentWillMount =()=> {
+    componentWillMount =()=> {
         // Store.on("receiveMessage",this.onReceiveMessage);
-        // Store.on("sendMessage",this.onSendMessage);
+        chatManager.on("msgChanged",this.onSendMessage);
         // Store.on("updateMessageState",this.update);
         // Store.on("updateGroupMessageState",this.update);
         // Store.on("receiveGroupMessage",this.onReceiveMessage);
         // Store.on("sendGroupMessage",this.onSendMessage);
 
         if(Platform.OS==="ios"){
+            console.log('sdfs')
+
             this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardDidShow);
             this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardDidHide);
         }else{
@@ -260,8 +262,8 @@ export default class ChatView extends Component<{}> {
         // Store.un("receiveGroupMessage",this.onReceiveMessage);
         // Store.un("sendGroupMessage",this.onSendMessage);
 
-        // this.keyboardDidShowListener.remove();
-        // this.keyboardDidHideListener.remove();
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
     }
 
 
@@ -273,14 +275,19 @@ export default class ChatView extends Component<{}> {
 
     componentDidMount=()=>{
         this.refreshRecord(this.limit);
+        this.props.navigation.setParams({ navigateToInfo: debounceFunc(this._navigateToInfo )});
     }
 
-
+    _navigateToInfo = ()=>{
+        if(this.isGroupChat){
+        }else{
+            this.props.navigation.navigate("FriendInfoView",{friend:this.otherSide})
+        }
+    }
 
     send=()=>{
         // const callback = ()=>{
-        //     this.text="";
-        //     this.refs.text.clear();
+
         // };
         // if(this.text){
         //     if(this.isGroupChat){
@@ -290,8 +297,14 @@ export default class ChatView extends Component<{}> {
         //     }
         // }
 
+        const channel = lkApp.getLKWSChannel()
+        channel.sendText(this.otherSide.id,this.text)
+        this.text="";
+        this.refs.text.clear();
+
 
     }
+
 
     sendImage=(data)=>{
         // const callback = ()=>{

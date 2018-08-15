@@ -1,18 +1,13 @@
 
 import React, { Component } from 'react';
 import {
-    Alert,
-    AsyncStorage,
-    Linking,
-    NativeModules,Platform,
-    StyleSheet,Text,View,PushNotificationIOS,AppState
+    YellowBox,
+    StyleSheet,View
 } from 'react-native';
 import entryUtil from "./common/util/entryUtil"
-import {Root, Spinner, Toast} from "native-base"
-import {} from './Manifest'
+import {Root} from "native-base"
 
 import LKEntry from './lk/LKEntry'
-import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 
 entryUtil.init()
@@ -20,14 +15,6 @@ entryUtil.init()
 export default class Entry extends Component<{}> {
     constructor(props){
         super(props);
-    }
-
-    componentWillMount =()=> {
-
-    }
-
-    componentWillUnmount =()=> {
-
     }
 
     render() {

@@ -51,7 +51,7 @@ export default class ContactView extends Component<{}> {
     }
 
     go2FriendInfoView=debounceFunc((f)=>{
-        this.props.navigation.navigate("FriendInfoView",{friend:f});
+        this.props.navigation.navigate("FriendInfoView",{friend:f})
     })
 
     go2OrgView = debounceFunc((org)=>{
@@ -96,12 +96,20 @@ export default class ContactView extends Component<{}> {
 
         for(let ele of memberAry){
             const obj = {}
-            obj.onPress = ()=>{
-                this.go2FriendInfoView(ele)
-            }
-            obj.title = ele.name
+
             obj.image = getAvatarSource(ele.pic)
             obj.key = ele.id
+            if(ele.id === user.id){
+                obj.onPress = ()=>{
+                    this.props.navigation.navigate("MineTab")
+                }
+                obj.title = ele.name+" (我) "
+            }else{
+                obj.onPress = ()=>{
+                    this.go2FriendInfoView(ele)
+                }
+                obj.title = ele.name
+            }
             _f(ele,obj,ary)
         }
 

@@ -171,3 +171,4 @@ class Record{
     }
 
 }
+module.exports = new Record();
