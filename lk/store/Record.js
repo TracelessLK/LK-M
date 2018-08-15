@@ -150,4 +150,24 @@ class Record{
         });
     }
 
+    getMsgsNotRead(userId,chatId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                var sql = "select * from record where ownerUserId=? and chatId=? and senderUid!=? order by sendTime";
+                db.transaction((tx)=>{
+                    tx.executeSql(sql,[userId,chatId,userId],function (tx,results) {
+                        var rs = [];
+                        var len = results.rows.length;
+                        for(var i=0;i<len;i++){
+                            rs.push(results.rows.item(i));
+                        }
+                        resolve(rs);
+                    },function (err) {
+                        reject(err);
+                    });
+                });
+            });
+        });
+    }
+
 }
