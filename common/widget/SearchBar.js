@@ -17,18 +17,6 @@ export default class Bar extends Component<{}> {
         };
     }
 
-    componentDidMount(){
-
-    }
-
-    componentDidUpdate(){
-    }
-
-
-    componentWillUnmount(){
-
-    }
-
     onChangeText = (t)=>{
         t = t.trim()
         if(this.props.onChangeText){

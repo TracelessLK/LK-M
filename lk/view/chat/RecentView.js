@@ -14,6 +14,8 @@ const {alert} = Alert
 const LKChatProvider = require("../../logic/provider/LKChatProvider")
 const LKContactProvider = require("../../logic/provider/LKContactProvider")
 const lkApp = require('../../LKApplication').getCurrentApp()
+const manifest = require('../../../Manifest')
+const chatManager = manifest.get("ChatManager")
 
 export default class RecentView extends Component<{}> {
 
@@ -29,23 +31,22 @@ export default class RecentView extends Component<{}> {
         this.state = {
             contentAry : null,
         }
-        this.eventAry = ["sendMessage","receiveMessage","readChatRecords","readGroupChatRecords",
-            "addGroup","receiveGroupMessage","updateFriendPic","updateFriendName"]
+        this.eventAry = ["msgChanged"]
     }
 
-    update=(fromId)=>{
+    update=()=>{
         this.updateRecent()
     }
 
     componentWillMount =()=> {
         for(let event of this.eventAry){
-            // Store.on(event,this.update);
+            chatManager.on(event,this.update);
         }
     }
 
     componentWillUnmount =()=> {
         for(let event of this.eventAry){
-            // Store.un(event,this.update);
+            chatManager.un(event,this.update);
         }
     }
     componentDidMount=()=>{

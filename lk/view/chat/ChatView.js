@@ -25,8 +25,6 @@ const {MAX_INPUT_HEIGHT} = Constant
 const _ = require('lodash')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
-console.log(manifest)
-
 const chatManager = manifest.get("ChatManager")
 const LKChatProvider = require("../../logic/provider/LKChatProvider")
 import {Header} from 'react-navigation'
@@ -116,7 +114,7 @@ export default class ChatView extends Component<{}> {
              const  style = {
                  recordEleStyle:{flexDirection:"row",justifyContent:"flex-start",alignItems:(msg.type===chatManager.MESSAGE_TYPE_IMAGE?"flex-start":"flex-start"),width:"100%",marginTop:15}
              }
-             if(msg.senderUid){
+             if(msg.senderUid !== user.id){
                  let otherPicSource = getAvatarSource(this.otherSide.pic)
                  recordAry.push(  <View key={id} style={style.recordEleStyle}>
                      <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
@@ -136,10 +134,9 @@ export default class ChatView extends Component<{}> {
                  </View>)
              }else{
                  let iconName = this.getIconNameByState(msg.state);
-                 let msgId = msg.msgId;
-                 recordAry.push(<View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                     <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
-                         <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40,color:(msg.state === Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}/>
+                 recordAry.push(<View key={id} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
+                     <TouchableOpacity ChatView={this} msgId={id} onPress={this.doTouchMsgState}>
+                         <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40,color:(msg.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}/>
                      </TouchableOpacity>
                      <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10,overflow:"hidden"}}>
                          {this._getMessage(msg)}
@@ -196,7 +193,6 @@ export default class ChatView extends Component<{}> {
         this.refreshRecord(this.limit);
     }
 
-
     componentWillUnmount =()=> {
         // Store.un("receiveMessage",this.onReceiveMessage);
         // Store.un("sendMessage",this.onSendMessage);
@@ -209,15 +205,12 @@ export default class ChatView extends Component<{}> {
         this.keyboardDidHideListener.remove();
     }
 
-
     textChange=(v)=>{
         this.text = v;
-
     }
 
-
     componentDidMount=()=>{
-        chatManager.on("msgChanged",this.onSendMessage);
+        chatManager.on("msgChanged",this.onSendMessage)
 
         if(Platform.OS==="ios"){
             this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardDidShow);
@@ -239,12 +232,14 @@ export default class ChatView extends Component<{}> {
     }
 
     send=()=>{
+        setTimeout(()=>{
+            this.textInput.clear()
+        },0)
         const channel = lkApp.getLKWSChannel()
         channel.sendText(this.otherSide.id,this.text)
         this.text="";
-        this.refs.text.clear();
-    }
 
+    }
 
     sendImage=(data)=>{
         // const callback = ()=>{
@@ -445,9 +440,9 @@ export default class ChatView extends Component<{}> {
                     </ScrollView>
                     <View style={{width:"100%",flexDirection:"row",justifyContent:"center",alignItems:"flex-end",
                         borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
-                        <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
+                        <TextInput multiline ref={(ref)=>{this.textInput = ref}} style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
                             borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height:this.state.height}}
-                                   blurOnSubmit returnKeyType="send" enablesReturnKeyAutomatically
+                                   blurOnSubmit={false} returnKeyType="send" enablesReturnKeyAutomatically
                                    underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={debounceFunc(this.send)}
                                    onChangeText={this.textChange}   onContentSizeChange={(event) => {
                             let height = event.nativeEvent.contentSize.height
@@ -461,10 +456,8 @@ export default class ChatView extends Component<{}> {
                                     height = MAX_INPUT_HEIGHT
                                 }
                                 this.setState({height})
-
                             }
                         }}/>
-
                         <TouchableOpacity onPress={this.showImagePicker}
                                           style={{display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
                             <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5}}/>
