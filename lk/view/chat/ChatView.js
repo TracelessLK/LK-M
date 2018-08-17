@@ -25,8 +25,11 @@ const {MAX_INPUT_HEIGHT} = Constant
 const _ = require('lodash')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
-const chatManager = manifest.get("ChatManager")
+console.log(manifest)
 
+const chatManager = manifest.get("ChatManager")
+const LKChatProvider = require("../../logic/provider/LKChatProvider")
+import {Header} from 'react-navigation'
 
 export default class ChatView extends Component<{}> {
 
@@ -47,16 +50,17 @@ export default class ChatView extends Component<{}> {
         return result
     }
 
-
     constructor(props){
         super(props);
         this.minHeight = 35
         this.isGroupChat = this.props.navigation.state.params.group?true:false
+        this.originalContentHeight = Dimensions.get("window").height - Header.HEIGHT
         this.state={
             biggerImageVisible:false,
             heightAnim: 0,
             height:this.minHeight,
-            refreshing:false
+            refreshing:false,
+            msgViewHeight:this.originalContentHeight
         };
         this.otherSide = this.props.navigation.state.params.friend||this.props.navigation.state.params.group;
         if(this.isGroupChat){
@@ -64,7 +68,6 @@ export default class ChatView extends Component<{}> {
 
         }
         this.text="";
-        this._keySeed = 0;
         this.folderId  = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
         this.limit = Constant.MESSAGE_PER_REFRESH
         this.extra = {
@@ -73,6 +76,7 @@ export default class ChatView extends Component<{}> {
             count:0,
             isRefreshingControl:false
         }
+
     }
 
     getGroupMemberInfo(group){
@@ -85,134 +89,90 @@ export default class ChatView extends Component<{}> {
         return result
     }
 
-    refreshRecord = (limit)=>{
+     refreshRecord = async (limit)=>{
         const user = lkApp.getCurrentUser();
-        this.getAllRecord(limit).then(recordAry=>{
-            let records = _.cloneDeep(recordAry)
+        const msgAry = await LKChatProvider.asyGetMsgs(user.id,this.otherSide.id,limit)
+         console.log(msgAry)
 
-            const imageUrls = []
-            const imageIndexer = {}
-            let index = 0
-            for(let i=0;i < records.length;i++){
-                const record = records[i]
-                if(record.type===Constant.MESSAGE_TYPE_IMAGE){
-                    let img = JSON.parse(record.content);
+         const recordAry = []
+         let lastShowingTime
 
-                    img.data = this.getImageData(img)
-
-                    imageUrls.push({
-                        url: "file://"+img.data,
-                        props: {
-                        }
-                    })
-                    imageIndexer[record.msgId] = index
-                    index++
-                }
-            }
-            this.imageIndexer = imageIndexer
-
-
-            let recordEls = [];
-            if(records){
-                let lastSpTime;
-                let picSource = getAvatarSource(user.pic);
-                let now = new Date();
-                for(let i=0;i<records.length;i++){
-                    if(lastSpTime&&records[i].time-lastSpTime>10*60*1000||!lastSpTime){
-                        lastSpTime = records[i].time;
-                        if(lastSpTime){
-                            let timeStr="";
-                            let date = new Date();
-                            date.setTime(lastSpTime);
-                            if(now.getFullYear()===date.getFullYear()&&now.getMonth()===date.getMonth()&&now.getDate()===date.getDate()){
-                                timeStr+="今天 ";
-                            }else if(now.getFullYear()===date.getFullYear()){
-                                timeStr+=date.getMonth()+1+"月"+date.getDate()+"日 ";
-                            }
-                            timeStr+=date.getHours()+":"+(date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes());
-                            recordEls.push(<Text  style={{marginVertical:10,color:"#a0a0a0",fontSize:11}} key={timeStr}>{timeStr}</Text>);
-
-                        }
-                    }
-                    this._keySeed++;
-                    const  style = {
-                        recordEleStyle:{flexDirection:"row",justifyContent:"flex-start",alignItems:(records[i].type===Store.MESSAGE_TYPE_IMAGE?"flex-start":"flex-start"),width:"100%",marginTop:15}
-                    }
-                    if(records[i].senderUid){
-                        let otherPicSource = getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid)?Store.getMember(this.otherSide.id,records[i].senderUid).pic:null:this.otherSide.pic);
-                        recordEls.push(  <View key={this._keySeed} style={style.recordEleStyle}>
-                            <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
-                            <View style={{flexDirection:"column",justifyContent:"center",alignItems:"flex-start",}}>
-                                {this.isGroupChat?
-                                    <View style={{marginBottom:8,marginLeft:5}}>
-                                        <Text style={{color:"#808080",fontSize:13}}> {this.groupMemberInfo[records[i].senderUid].name}</Text>
-                                    </View>
-                                    :null}
-
-
-                                <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",}}>
-                                    <Image source={require('../image/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
-                                    <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
-                                        {this._getMessage(records[i])}
-                                    </View>
-                                </View>
-                            </View>
-                        </View>);
-                    }else{
-                        let iconName = this.getIconNameByState(records[i].state);
-                        let msgId = records[i].msgId;
-                        recordEls.push(<View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                            <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
-                                <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40,color:(records[i].state === Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}/>
-                            </TouchableOpacity>
-                            <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10,overflow:"hidden"}}>
-                                {this._getMessage(records[i])}
-                            </View>
-                            {/*<Text>  {name}  </Text>*/}
-                            <Image source={require('../image/chat-w-r.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
-                            <Image source={picSource} style={{width:40,height:40,marginRight:5,marginLeft:8}} resizeMode="contain"></Image>
-                        </View>);
-                    }
-                }
-            }
-            this.setState({
-                recordEls,
-                refreshing:false,
-                imageUrls
-            })
-        })
+         for(let msg of msgAry){
+             let picSource = getAvatarSource(user.pic);
+             const {sendTime,id} = msg
+             let now = new Date();
+             if((lastShowingTime&&sendTime-lastShowingTime>10*60*1000)||!lastShowingTime){
+                 lastShowingTime = sendTime
+                 let timeStr=""
+                 let date = new Date(lastShowingTime)
+                 if(now.getFullYear()===date.getFullYear()&&now.getMonth()===date.getMonth()&&now.getDate()===date.getDate()){
+                     timeStr+="今天 ";
+                 }else if(now.getFullYear()===date.getFullYear()){
+                     timeStr+=date.getMonth()+1+"月"+date.getDate()+"日 ";
+                 }
+                 timeStr+=date.getHours()+":"+(date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes());
+                 recordAry.push(<Text style={{marginVertical:10,color:"#a0a0a0",fontSize:11}} key={lastShowingTime}>{timeStr}</Text>);
+             }
+             const  style = {
+                 recordEleStyle:{flexDirection:"row",justifyContent:"flex-start",alignItems:(msg.type===chatManager.MESSAGE_TYPE_IMAGE?"flex-start":"flex-start"),width:"100%",marginTop:15}
+             }
+             if(msg.senderUid){
+                 let otherPicSource = getAvatarSource(this.otherSide.pic)
+                 recordAry.push(  <View key={id} style={style.recordEleStyle}>
+                     <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
+                     <View style={{flexDirection:"column",justifyContent:"center",alignItems:"flex-start",}}>
+                         {this.isGroupChat?
+                             <View style={{marginBottom:8,marginLeft:5}}>
+                                 <Text style={{color:"#808080",fontSize:13}}> {this.groupMemberInfo[msg.senderUid].name}</Text>
+                             </View>
+                             :null}
+                         <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",}}>
+                             <Image source={require('../image/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
+                             <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
+                                 {this._getMessage(msg)}
+                             </View>
+                         </View>
+                     </View>
+                 </View>)
+             }else{
+                 let iconName = this.getIconNameByState(msg.state);
+                 let msgId = msg.msgId;
+                 recordAry.push(<View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
+                     <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
+                         <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40,color:(msg.state === Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}/>
+                     </TouchableOpacity>
+                     <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10,overflow:"hidden"}}>
+                         {this._getMessage(msg)}
+                     </View>
+                     {/*<Text>  {name}  </Text>*/}
+                     <Image source={require('../image/chat-w-r.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
+                     <Image source={picSource} style={{width:40,height:40,marginRight:5,marginLeft:8}} resizeMode="contain"></Image>
+                 </View>);
+             }
+         }
+         this.setState({
+             recordEls: recordAry,
+             refreshing:false,
+         })
     }
-
-    getAllRecord = (limit)=>{
-        return new Promise(resolve=>{
-            // if(this.isGroupChat){
-            //     Store.readGroupChatRecords(this.otherSide.id,false,(recordAry)=>{
-            //         resolve(recordAry)
-            //     },limit);
-            //     Store.readGroupChatRecords(this.otherSide.id,false,(recordAry)=>{
-            //         this.extra.maxCount = recordAry.length
-            //     });
-            // }else{
-            //     Store.readAllChatRecords(this.otherSide.id,false,(recordAry)=>{
-            //         resolve(recordAry)
-            //     },limit);
-            //     Store.readAllChatRecords(this.otherSide.id,false,(recordAry)=>{
-            //         this.extra.maxCount = recordAry.length
-            //     });
-            // }
-        })
-
-    }
-
 
 
     _keyboardDidShow=(e)=>{
+        const {height} = Dimensions.get('window')
         let keyY = e.endCoordinates.screenY;
-        this.setState({heightAnim:Dimensions.get('window').height-keyY});
+        const headerHeight = Header.HEIGHT
+        let change = {}
 
+        if(this.extra.contentHeight + headerHeight < keyY){
+            change.msgViewHeight = keyY - headerHeight
+        }else{
+            change.heightAnim = height-keyY
+        }
+
+        this.setState(change)
     }
     _keyboardDidHide=()=>{
-        this.setState({heightAnim:0});
+        this.setState({heightAnim:0,msgViewHeight:this.originalContentHeight})
     }
 
     onReceiveMessage=(fromId)=>{
@@ -235,24 +195,7 @@ export default class ChatView extends Component<{}> {
     update = ()=>{
         this.refreshRecord(this.limit);
     }
-    componentWillMount =()=> {
-        // Store.on("receiveMessage",this.onReceiveMessage);
-        chatManager.on("msgChanged",this.onSendMessage);
-        // Store.on("updateMessageState",this.update);
-        // Store.on("updateGroupMessageState",this.update);
-        // Store.on("receiveGroupMessage",this.onReceiveMessage);
-        // Store.on("sendGroupMessage",this.onSendMessage);
 
-        if(Platform.OS==="ios"){
-            console.log('sdfs')
-
-            this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardDidShow);
-            this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardDidHide);
-        }else{
-            this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-            this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-        }
-    }
 
     componentWillUnmount =()=> {
         // Store.un("receiveMessage",this.onReceiveMessage);
@@ -274,6 +217,16 @@ export default class ChatView extends Component<{}> {
 
 
     componentDidMount=()=>{
+        chatManager.on("msgChanged",this.onSendMessage);
+
+        if(Platform.OS==="ios"){
+            this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardDidShow);
+            this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardDidHide);
+        }else{
+            this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+            this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+        }
+
         this.refreshRecord(this.limit);
         this.props.navigation.setParams({ navigateToInfo: debounceFunc(this._navigateToInfo )});
     }
@@ -286,23 +239,10 @@ export default class ChatView extends Component<{}> {
     }
 
     send=()=>{
-        // const callback = ()=>{
-
-        // };
-        // if(this.text){
-        //     if(this.isGroupChat){
-        //         WSChannel.sendGroupMessage(this.otherSide.id,this.otherSide.name,this.text,callback);
-        //     }else{
-        //         WSChannel.sendMessage(this.otherSide.id,this.text,callback);
-        //     }
-        // }
-
         const channel = lkApp.getLKWSChannel()
         channel.sendText(this.otherSide.id,this.text)
         this.text="";
         this.refs.text.clear();
-
-
     }
 
 
@@ -332,7 +272,6 @@ export default class ChatView extends Component<{}> {
         };
 
         ImagePicker.showImagePicker(options, (response) => {
-
 
             if (response.didCancel) {
             }
@@ -461,16 +400,13 @@ export default class ChatView extends Component<{}> {
             this.extra.isRefreshingControl = true
             this.refreshRecord(this.limit)
         }
-
-
-
     }
 
     onContentSizeChange=(contentWidth,contentHeight)=>{
-        this.extra.lastContentHeight = this.extra.contentHeight
+        this.extra.lastContentHeight = this.extra.msgViewHeight
         this.extra.contentHeight = contentHeight
         this.extra.count++
-        const offset = Math.floor(this.extra.contentHeight - this.extra.lastContentHeight)
+        const offset = Math.floor(this.extra.msgViewHeight - this.extra.lastContentHeight)
 
         if(this.extra.count === 2 ){
             this.refs.scrollView.scrollToEnd({animated: false})
@@ -487,11 +423,15 @@ export default class ChatView extends Component<{}> {
 
     }
 
+    closeImage = ()=>{
+        this.setState({biggerImageVisible:false,biggerImageUri:null})
+    }
+
     render() {
         return (
-            <View style={{flex:1,backgroundColor:"#f0f0f0"}}>
+            <View style={{backgroundColor:"#f0f0f0",height:this.state.msgViewHeight}}>
                 <View style={{flex:1,flexDirection:"column",justifyContent:"flex-end",alignItems:"center",bottom:Platform.OS==="ios"?this.state.heightAnim:0}}>
-                    <ScrollView ref="scrollView" style={{width:"100%",flex:1}}
+                    <ScrollView ref="scrollView" style={{width:"100%",backgroundColor:"#d5e0f2"}}
                                 refreshControl={
                                     <RefreshControl
                                         refreshing={this.state.refreshing}
@@ -520,7 +460,7 @@ export default class ChatView extends Component<{}> {
                                 if(height > MAX_INPUT_HEIGHT){
                                     height = MAX_INPUT_HEIGHT
                                 }
-                                this.setState({height:height})
+                                this.setState({height})
 
                             }
                         }}/>
@@ -533,9 +473,10 @@ export default class ChatView extends Component<{}> {
                 </View>
 
                 <Modal visible={this.state.biggerImageVisible} transparent={false}   animationType={"fade"}
+                       onRequestClose={this.closeImage}
                 >
                     <ImageViewer imageUrls={this.state.imageUrls}
-                                 onClick={()=>{this.setState({biggerImageVisible:false,biggerImageUri:null})}}
+                                 onClick={this.closeImage}
                                  onSave={(url)=>{
 
                                      CameraRoll.saveToCameraRoll(url)

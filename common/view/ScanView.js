@@ -14,8 +14,6 @@ export default class ScanView extends Component<{}> {
     }
     constructor(props) {
         super(props);
-        // const {onRead} = this.props.navigation.state.params
-        // this.onRead = onRead
     }
 
     render() {

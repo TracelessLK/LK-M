@@ -10,7 +10,9 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "start:android": "react-native run-android",
     "test": "npm run lint && jest",
-    "try": "jest"
+    "try": "jest",
+    "getAndroidData": "node bin/getAndroidData",
+    "showDevMenu": "adb shell input keyevent 82"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",

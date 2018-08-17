@@ -1,6 +1,7 @@
 const aesjs = require('aes-js')
 const config = require('../config')
-
+const {commonUtil} = require("@hfs/common")
+const {getAvatarSource} = commonUtil
 
 const util = {
     decryptAes(encryptData){
@@ -12,13 +13,7 @@ const util = {
         return decryptedText
     },
     getAvatarSource(pic){
-        let result
-        if(pic){
-            result = {uri:pic}
-        }else{
-            result = require('../view/image/defaultAvatar.png')
-        }
-        return result
+        return getAvatarSource(pic,require('../view/image/defaultAvatar.png'))
     },
 }
 

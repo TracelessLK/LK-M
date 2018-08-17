@@ -28,12 +28,6 @@ export default class ScanRegisterView extends React.Component {
 
     }
 
-    componentDidMount () {
-    }
-
-    componentWillUnmount () {
-    }
-
     showScanView=()=>{
         this.props.navigation.navigate("ScanView",{onRead:this.onRead
 
@@ -48,10 +42,8 @@ export default class ScanRegisterView extends React.Component {
 
     onRead = (e)=>{
         const {data} = e
-
         const decryptedText = util.decryptAes(data)
         const obj = JSON.parse(decryptedText)
-
 
         if(obj.action === 'registerForAdmin') {
             this.setState({
@@ -65,8 +57,6 @@ export default class ScanRegisterView extends React.Component {
                 obj,
                 qrcode:data
             })
-
-
         }else{
             Toast.show({
                 text: '该二维码无效',
