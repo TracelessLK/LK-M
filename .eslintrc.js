@@ -13,7 +13,8 @@ module.exports = {
     ],
     "extends": [
         "eslint:recommended",
-        "plugin:react/recommended"
+        "plugin:react/recommended",
+        'myconfig'
     ],
     "parserOptions": {
         "ecmaVersion": 2018,

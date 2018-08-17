@@ -28,6 +28,8 @@ const manifest = require('../../../Manifest')
 const chatManager = manifest.get("ChatManager")
 const LKChatProvider = require("../../logic/provider/LKChatProvider")
 import {Header} from 'react-navigation'
+console.log(3)
+
 
 export default class ChatView extends Component<{}> {
 
@@ -74,7 +76,6 @@ export default class ChatView extends Component<{}> {
             count:0,
             isRefreshingControl:false
         }
-
     }
 
     getGroupMemberInfo(group){
