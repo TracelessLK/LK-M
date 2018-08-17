@@ -22,29 +22,26 @@ import {
 import MessageText from './MessageText'
 const Constant = require('../state/Constant')
 const {MAX_INPUT_HEIGHT} = Constant
-const _ = require('lodash')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
 const chatManager = manifest.get("ChatManager")
 const LKChatProvider = require("../../logic/provider/LKChatProvider")
 import {Header} from 'react-navigation'
-console.log(3)
-
+const personImg = require('../image/person.png');
 
 export default class ChatView extends Component<{}> {
-
     static navigationOptions =({ navigation }) => {
         const {friend,group} = navigation.state.params
         let result
         if(friend){
             result = {
                 headerTitle:friend.name,
-                headerRight:(
+                headerRight:
                     <TouchableOpacity  onPress={navigation.getParam('navigateToInfo')}
                                        style={{marginRight:20}}>
-                        <Image source={require('../image/person.png')} style={{width:22,height:22}} resizeMode="contain"></Image>
+                        <Image source={personImg} style={{width:22,height:22}} resizeMode="contain"/>
                     </TouchableOpacity>
-                ),
+                ,
             }
         }
         return result
@@ -100,7 +97,7 @@ export default class ChatView extends Component<{}> {
              let picSource = getAvatarSource(user.pic);
              const {sendTime,id} = msg
              let now = new Date();
-             if((lastShowingTime&&sendTime-lastShowingTime>10*60*1000)||!lastShowingTime){
+             if(lastShowingTime&&sendTime-lastShowingTime>10*60*1000||!lastShowingTime){
                  lastShowingTime = sendTime
                  let timeStr=""
                  let date = new Date(lastShowingTime)
@@ -113,7 +110,7 @@ export default class ChatView extends Component<{}> {
                  recordAry.push(<Text style={{marginVertical:10,color:"#a0a0a0",fontSize:11}} key={lastShowingTime}>{timeStr}</Text>);
              }
              const  style = {
-                 recordEleStyle:{flexDirection:"row",justifyContent:"flex-start",alignItems:(msg.type===chatManager.MESSAGE_TYPE_IMAGE?"flex-start":"flex-start"),width:"100%",marginTop:15}
+                 recordEleStyle:{flexDirection:"row",justifyContent:"flex-start",alignItems:msg.type===chatManager.MESSAGE_TYPE_IMAGE?"flex-start":"flex-start",width:"100%",marginTop:15}
              }
              if(msg.senderUid !== user.id){
                  let otherPicSource = getAvatarSource(this.otherSide.pic)
@@ -137,7 +134,7 @@ export default class ChatView extends Component<{}> {
                  let iconName = this.getIconNameByState(msg.state);
                  recordAry.push(<View key={id} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
                      <TouchableOpacity ChatView={this} msgId={id} onPress={this.doTouchMsgState}>
-                         <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40,color:(msg.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}/>
+                         <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40,color:msg.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black"}}/>
                      </TouchableOpacity>
                      <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10,overflow:"hidden"}}>
                          {this._getMessage(msg)}
@@ -347,12 +344,12 @@ export default class ChatView extends Component<{}> {
 
     _getMessage=(rec)=>{
         if(rec.type===Constant.MESSAGE_TYEP_TEXT){
-            const text = (
+            const text =
                 <MessageText  currentMessage={
                     {text:rec.content}
-                } textStyle={{fontSize:16,lineHeight:19,color:(rec.state===Constant.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}
+                } textStyle={{fontSize:16,lineHeight:19,color:rec.state===Constant.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black"}}
                 ></MessageText>
-            )
+
 
             return text
 

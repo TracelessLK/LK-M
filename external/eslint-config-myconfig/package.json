@@ -1,5 +1,5 @@
 {
-  "name": "eslint-config-myconfig",
+  "name": "@external/eslint-config-myconfig",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
