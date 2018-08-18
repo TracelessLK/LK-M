@@ -11,15 +11,17 @@ class Org{
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 let sql = "select * from org where ownerUserId=? and ";
+                const param = [userId]
                 if(parentId){
                     sql+="parentId='";
                     sql+=parentId;
                     sql+="'";
+                    param.push(parentId)
                 }else{
                     sql+="parentId is null";
                 }
 
-                tx.executeSql(sql,[userId,parentId],function (tx,results) {
+                tx.executeSql(sql,param,function (tx,results) {
 
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){

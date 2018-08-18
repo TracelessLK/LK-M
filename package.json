@@ -3,12 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "npm run lint && jest --coverage",
+    "coverage": "node bin/coverage",
     "flow": "flow",
     "lint": "eslint --ext .js .",
-    "try": "jest --coverage",
-    "postinstall": "node bin/postinstall"
+    "postinstall": "node bin/postinstall",
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start:android": "react-native run-android",
+    "test": "npm run lint && jest",
+    "try": "jest"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
@@ -20,7 +22,7 @@
     "prop-types": "^15.6.2",
     "react": "16.2.0",
     "react-native": "0.53.0",
-    "react-native-camera": "^1.1.4",
+    "react-native-camera": "1.1.0",
     "react-native-communications": "^2.2.1",
     "react-native-device-info": "^0.22.0",
     "react-native-elements": "^0.19.1",
@@ -31,6 +33,7 @@
     "react-native-image-resizer": "^1.0.0",
     "react-native-image-zoom-viewer": "^2.2.13",
     "react-native-parsed-text": "0.0.20",
+    "react-native-restart": "0.0.6",
     "react-native-rsa": "0.0.3",
     "react-native-sqlite-storage": "^3.3.6",
     "react-native-update": "^5.1.0",

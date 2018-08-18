@@ -35,7 +35,7 @@ const stackNavigatorConfig = {
         headerBackground:(
             <StatusBar
                 barStyle="light-content"
-                backgroundColor="red"
+                backgroundColor={style.color.mainColor}
             />
         ),
         headerBackImage:(

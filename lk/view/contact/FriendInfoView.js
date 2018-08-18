@@ -7,6 +7,8 @@ import {
     View
 } from 'react-native';
 const {getAvatarSource} = require("../../util")
+const manifest = require('../../../Manifest')
+const ChatManager = manifest.get("ChatManager")
 
 
 export default class FriendInfoView extends Component<{}> {
@@ -23,7 +25,7 @@ export default class FriendInfoView extends Component<{}> {
     }
 
     sendMessage=()=>{
-
+        ChatManager.asyEnsureSingleChat(this.friend.id)
         this.props.navigation.navigate("ChatTab");
         this.props.navigation.navigate("ChatView",{friend:this.friend});
     }

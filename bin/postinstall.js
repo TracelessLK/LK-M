@@ -6,8 +6,5 @@ const fs = require('fs')
 if(fs.existsSync(filePath)){
     childProcess.execSync(`rm ${filePath}`)
 }
-childProcess.execSync(`npm install --production`,{
-    cwd:path.resolve(__dirname,'../common')
-})
 
 console.log('npm install finished successfully!')
