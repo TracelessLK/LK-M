@@ -12,10 +12,19 @@ class LKChatProvider{
         return Chat.getGroupMembers(chatId);
     }
     asyGetMsgs(userId,chatId,limit){
-        return Record.getMsgs(userId,chatId,limit)
+        return Record.getMsgs(userId,chatId,limit);
     }
     asyGetMsgsNotRead(userId,chatId){
-        return Record.getMsgsNotRead(userId,chatId)
+        return Record.getMsgsNotRead(userId,chatId);
+    }
+    asyGetMsg(userId,chatId,msgId){
+        return Record.getMsg(userId,chatId,msgId);
+    }
+    asyGetRelativePreSendMsg(userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder){
+        return Record.getRelativePreSendMsg(userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder);
+    }
+    asyGetRelativeNextSendMsg(userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder){
+        return Record.getRelativeNextSendMsg(userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder);
     }
 }
 module.exports = new LKChatProvider();

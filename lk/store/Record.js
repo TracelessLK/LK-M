@@ -1,7 +1,7 @@
 
 import db from '../../common/store/DataBase'
 db.transaction((tx)=>{
-    tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER,readState INTEGER)",[],function () {
+    tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER,readState INTEGER,relativeMsgId TEXT,relativeOrder INTEGER,receiveOrder INTEGER,sendOrder INTEGER)",[],function () {
     },function (err) {
     });
     tx.executeSql("create table if not exists goup_record_state(msgId TEXT ,reporterUid TEXT NOT NULL,state INTEGER)",[],function () {
@@ -9,11 +9,11 @@ db.transaction((tx)=>{
     });
 });
 class Record{
-    addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state){
+    addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state,relativeMsgId,relativeOrder,receiveOrder,sendOrder){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "insert into record(ownerUserId,chatId,id,senderUid,senderDid,type,content,sendTime,state,readState) values (?,?,?,?,?,?,?,?,?,?)";
-                tx.executeSql(sql,[userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,isNaN(state)?-1:state,-1],function () {
+                let sql = "insert into record(ownerUserId,chatId,id,senderUid,senderDid,type,content,sendTime,state,readState,relativeMsgId,relativeOrder,receiveOrder,sendOrder) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                tx.executeSql(sql,[userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,isNaN(state)?-1:state,-1,relativeMsgId,relativeOrder,receiveOrder,sendOrder],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -23,7 +23,7 @@ class Record{
     }
     _allUpdate(msgIds,state){
         return new Promise((resolve,reject)=>{
-            let sql = "select id from record where state>=? msgId ";
+            let sql = "select id from record where state>=? id ";
             let num = 0;
             if(!msgIds.forEach){
                 sql += "='"
@@ -60,7 +60,7 @@ class Record{
     }
     updateMsgState(msgIds,state){
        return new Promise((resolve,reject)=>{
-           let sql = "update record set state=? where state<? and msgId ";
+           let sql = "update record set state=? where state<? and id ";
            let update = false;
            if(!msgIds.forEach){
                sql += "='"
@@ -101,7 +101,7 @@ class Record{
     getMsgs(userId,chatId,limit){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                var sql = "select * from record where ownerUserId=? and chatId=? order by sendTime";
+                var sql = "select * from record where ownerUserId=? and chatId=? order by relativeOrder,receiveOrder,sendOrder";
                 if(limit&&limit>0){
                     sql += " desc limit ";
                     sql += limit;
@@ -153,7 +153,7 @@ class Record{
     getMsgsNotRead(userId,chatId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                var sql = "select * from record where ownerUserId=? and chatId=? and senderUid!=? order by sendTime";
+                var sql = "select * from record where ownerUserId=? and chatId=? and senderUid!=?";
                 db.transaction((tx)=>{
                     tx.executeSql(sql,[userId,chatId,userId],function (tx,results) {
                         var rs = [];
@@ -162,6 +162,62 @@ class Record{
                             rs.push(results.rows.item(i));
                         }
                         resolve(rs);
+                    },function (err) {
+                        reject(err);
+                    });
+                });
+            });
+        });
+    }
+
+    getMsg(userId,chatId,msgId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                var sql = "select * from record where ownerUserId=? and chatId=? and id=?";
+                db.transaction((tx)=>{
+                    tx.executeSql(sql,[userId,chatId,msgId],function (tx,results) {
+                        if(results.rows.length>0){
+                            resolve(results.rows.item(0));
+                        }else{
+                            resolve(null);
+                        }
+                    },function (err) {
+                        reject(err);
+                    });
+                });
+            });
+        });
+    }
+
+    getRelativePreSendMsg(userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                var sql = "select * from record where ownerUserId=? and chatId=? and relativeMsgId=? and senderUid=? and senderDid=? and sendOrder<? order by sendOrder";
+                db.transaction((tx)=>{
+                    tx.executeSql(sql,[userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder],function (tx,results) {
+                        if(results.rows.length>0){
+                            resolve(results.rows.item(rows.length-1));
+                        }else{
+                            resolve(null);
+                        }
+                    },function (err) {
+                        reject(err);
+                    });
+                });
+            });
+        });
+    }
+    getRelativeNextSendMsg(userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                var sql = "select * from record where ownerUserId=? and chatId=? and relativeMsgId=? and senderUid=? and senderDid=? and sendOrder>? order by sendOrder";
+                db.transaction((tx)=>{
+                    tx.executeSql(sql,[userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder],function (tx,results) {
+                        if(results.rows.length>0){
+                            resolve(results.rows.item(0));
+                        }else{
+                            resolve(null);
+                        }
                     },function (err) {
                         reject(err);
                     });

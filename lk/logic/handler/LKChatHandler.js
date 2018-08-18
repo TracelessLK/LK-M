@@ -7,8 +7,8 @@ class LKChatHandler{
     asyAddGroupMembers(chatId,members){
         return Chat.addGroupMembers(chatId,members);
     }
-    asyAddMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state){
-        return Record.addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state);
+    asyAddMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state,relativeMsgId,relativeOrder,receiveOrder,sendOrder){
+        return Record.addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state,relativeMsgId,relativeOrder,receiveOrder,sendOrder);
     }
     asyUpdateMsgState(msgIds,state){
         return Record.updateMsgState(msgIds,state)
