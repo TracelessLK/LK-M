@@ -33,6 +33,9 @@ class ChatManager extends EventTarget{
     MESSAGE_READSTATE_READ=1
     MESSAGE_READSTATE_READREPORT=2
 
+    _sendOrderSeed = Date.now()
+    _allChatSendOrder = {}
+
     constructor(){
         super();
         // ContactManager.on("mCodeChanged",this._doContactMCodeChange);
@@ -150,7 +153,7 @@ class ChatManager extends EventTarget{
         return chat;
     }
 
-    getHotChatKeyReceived(chatId,senderUid,random){
+    getHotChatKeyReceived(chatId,senderDid,random){
         let curApp = Application.getCurrentApp();
         let randoms = this._hotChatRandomReceived[chatId];
         if(!randoms){
@@ -158,10 +161,10 @@ class ChatManager extends EventTarget{
 
             this._hotChatRandomReceived[chatId] = randoms;
         }
-        let sentRandom = randoms.senderUid;
+        let sentRandom = randoms[senderDid];
         if(!sentRandom){
             sentRandom = {random:random,key:curApp.getCurrentRSA().decrypt(random)};
-            randoms.senderUid = sentRandom;
+            randoms[senderDid] = sentRandom;
         }
         if(sentRandom.random!==random){
             sentRandom.random = random;
@@ -222,6 +225,17 @@ class ChatManager extends EventTarget{
         this._allChatNewMsgNums[chatId]= (newMsgNum?newMsgNum:0)+1;
         let userId = Application.getCurrentApp().getCurrentUser().id;
         LKChatHandler.asyUpdateNewMsgNum(userId,chatId,this._allChatNewMsgNums[chatId]);
+        //TODO newmsgnum 不采用字段记录 而是通过记录readstate去计算 在启动时只会读取一次
+    }
+
+    getChatSendOrder(chatId){
+        let sendOrder = this._allChatSendOrder[chatId];
+        if(!sendOrder){
+            sendOrder = 0;
+        }
+        sendOrder++;
+        this._allChatSendOrder[chatId]=sendOrder;
+        return this._sendOrderSeed+sendOrder;
     }
 
 

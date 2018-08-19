@@ -34,6 +34,7 @@ class LKApplication extends Application{
                 return channel.asyLogin(user.id,user.password);
             })
         }
+        //TODO notify all managers to reset
     }
 
     getCurrentRSA(){

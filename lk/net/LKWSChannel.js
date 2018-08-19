@@ -9,12 +9,14 @@ import LKContactProvider from '../logic/provider/LKContactProvider'
 import LKContactHandler from '../logic/handler/LKContactHandler'
 import LKChatHandler from '../logic/handler/LKChatHandler'
 import LKDeviceProvider from '../logic/provider/LKDeviceProvider'
+import LKChatProvider from '../logic/provider/LKChatProvider'
 import CryptoJS from "crypto-js";
 
 class LKChannel extends WSChannel{
 
     _callbacks={}
     _timeout=60000
+    _chatMsgPool = new Map()
 
     constructor(url){
         super(url,true);
@@ -34,21 +36,23 @@ class LKChannel extends WSChannel{
         }else if(action){
             let handler = this[action+"Handler"];
             if(handler){
-                handler(msg).then(()=>{
-                    this.applyChannel().then((channel)=>{
-                        let uid = Application.getCurrentApp().getCurrentUser().id;
-                        let did = Application.getCurrentApp().getCurrentUser().deviceId;
-                        channel.send(JSON.stringify({header:{
-                            version:"1.0",
-                            msgId:msg.id,
-                            uid:uid,
-                            did:did,
-                            response:true
-                        }}));
-                    });
-                });
+                handler(msg);
             }
         }
+    }
+
+    _reportMsgHandled(msgId){
+        this.applyChannel().then((channel)=>{
+            let uid = Application.getCurrentApp().getCurrentUser().id;
+            let did = Application.getCurrentApp().getCurrentUser().deviceId;
+            channel.send(JSON.stringify({header:{
+                version:"1.0",
+                msgId:msgId,
+                uid:uid,
+                did:did,
+                response:true
+            }}));
+        });
     }
 
     _onmessage = (message)=>{
@@ -107,13 +111,14 @@ class LKChannel extends WSChannel{
 
             if(option){
                 let chatId = option.chatId;
-                let relativeMsg = option.relativeMsg;
+                let relativeMsgId = option.relativeMsgId;
                 if(chatId){
                     let chat = await ChatManager.asyGetHotChatRandomSent(chatId);
 
                     msg.header.chatId = chatId;
                     msg.header.targets = chat.members;
-                    msg.header.relativeMsg = relativeMsg;
+                    msg.header.relativeMsgId = relativeMsgId;
+                    msg.header.order=ChatManager.getChatSendOrder(chatId);
                     msg.body.content = CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
 
                 }
@@ -274,17 +279,17 @@ class LKChannel extends WSChannel{
         return result[0]._sendMessage(result[1]);
     }
 
-    sendText(contactId,text,relativeMsg,preMsg){
+    sendText(contactId,text,relativeMsgId){
         let content = {type:ChatManager.MESSAGE_TYEP_TEXT,data:text};
-        this._sendMsg(contactId,content);
+        this._sendMsg(contactId,content,relativeMsgId);
     }
 
-    async _sendMsg(contactId,content){
+    async _sendMsg(contactId,content,relativeMsgId){
         let curApp = Application.getCurrentApp();
         let userId = curApp.getCurrentUser().id;
         let did = curApp.getCurrentUser().deviceId;
         let chat = await ChatManager.asyGetHotChatRandomSent(contactId);
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",content,{chatId:contactId})]);
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",content,{chatId:contactId,relativeMsgId:relativeMsgId})]);
         let msgId = result[1].header.id;
         let time = result[1].header.time;
         await LKChatHandler.asyAddMsg(userId,contactId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING);
@@ -300,26 +305,84 @@ class LKChannel extends WSChannel{
         });
     }
 
+    _putChatMsgPool(chatId,msg){
+        let msgs = this._chatMsgPool.get(chatId);
+        if(!msgs){
+            msgs = [];
+            this._chatMsgPool.set(chatId,msgs);
+        }
+        msgs.get(msg.header.id,msg);
+    }
+    async _checkChatMsgPool(chatId,relativeMsgId,relativeOrder){
+        //获取所有relativeMsg是msg的消息
+        let msgs = this._chatMsgPool.get(chatId);
+        if(!msgs){
+           for(let i=0;i<msgs.length;i++){
+               let msg = msgs[i];
+               let header = msg.header;
+               if(header.relativeMsgId===relativeMsgId){
+                   let receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,header.uid,header.did,header.order);
+                   this._receiveMsg(msg,relativeOrder,receiveOrder);
+               }
+           }
+        }
+    }
+
+    async _receiveMsg(msg,relativeOrder,receiveOrder){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        let header = msg.header;
+        let chatId = userId===header.uid?header.chatId:header.uid;
+        let random = header.target.random;
+        let key = ChatManager.getHotChatKeyReceived(chatId,header.did,random);
+        var bytes  = CryptoJS.AES.decrypt(msg.body.content.toString(), key);
+        let content = bytes.toString(CryptoJS.enc.Utf8);
+
+        await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,header.relativeMsgId,relativeOrder,receiveOrder,header.order);
+        this._reportMsgHandled(header.id);
+        this._checkChatMsgPool(chatId,header.id,receiveOrder);
+        await ChatManager.increaseNewMsgNum(chatId);
+        ChatManager.fire("msgChanged",chatId);
+    }
+
+    async _getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        let nextMsg = await LKChatProvider.asyGetRelativeNextSendMsg(userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder);
+        let receiveOrder;
+        if(!nextMsg){
+            receiveOrder = Date.now();
+        }else {
+            receiveOrder = nextMsg.receiveOrder;
+        }
+        return receiveOrder;
+    }
+
     async sendMsgHandler(msg){
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
         let msgId = header.id;
         let senderUid = header.uid;
         let senderDid = header.did;
-        let target = header.target;
-        let random = target.random;
-        let key = ChatManager.getHotChatKeyReceived(senderUid,senderUid,random);
-        let encrytedContent = msg.body.content;
-        var bytes  = CryptoJS.AES.decrypt(encrytedContent.toString(), key);
-        let content = bytes.toString(CryptoJS.enc.Utf8);
-        let time = header.time;
         let chatId = userId===senderUid?header.chatId:senderUid;
-
         await ChatManager.asyEnsureSingleChat(chatId);
-        await LKChatHandler.asyAddMsg(userId,chatId,msgId,senderUid,senderDid,content.type,content.data,time);
-        await ChatManager.increaseNewMsgNum(chatId);
-        ChatManager.fire("msgChanged",chatId);
-        //TODO 处理排序 消息加order字段
+        let relativeMsgId = header.relativeMsgId;
+        let sendOrder = header.order;
+        let relativeOrder;
+        let receiveOrder;
+        if(relativeMsgId){
+            let relativeMsg = LKChatProvider.asyGetMsg(userId,chatId,relativeMsgId);
+            if(relativeMsg){
+                relativeOrder = relativeMsg.receiveOrder;
+                receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
+            }else{
+                this._putChatMsgPool(chatId,msg);
+            }
+        }else{
+            relativeOrder = Date.now();
+            receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
+        }
+        if(relativeOrder&&receiveOrder){
+            this._receiveMsg(msg,relativeOrder,receiveOrder,sendOrder)
+        }
     }
 
     async readReport(contactId,msgIds){
@@ -336,6 +399,7 @@ class LKChannel extends WSChannel{
     readReportHandler(msg){
         let msgIds = msg.body.content;
         LKChatHandler.asyUpdateMsgState(msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then(()=>{
+            this._reportMsgHandled(msg.header.id);
             ChatManager.fire("msgChanged",msg.header.id);
         });
     }
