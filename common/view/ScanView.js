@@ -1,5 +1,7 @@
 import React, { Component} from 'react';
-import { Button,Image,StyleSheet,Switch,Text,TextInput,TouchableOpacity,View} from 'react-native';
+import {
+    StyleSheet,Text,Vibration,TouchableOpacity,View
+} from 'react-native';
 import Camera from 'react-native-camera';
 // import {RNCamera} from 'react-native-camera';
 // const Camera = RNCamera
@@ -21,7 +23,11 @@ export default class ScanView extends Component<{}> {
             <View style={styles.container}>
                 <Camera
                     onBarCodeRead={debounceFunc((e)=>{
-                        this.props.navigation.state.params.onRead(e)
+                        const {onRead,notVibrate} = this.props.navigation.state.params
+                        if(!notVibrate){
+                            Vibration.vibrate()
+                        }
+                        onRead(e)
                     },1000*5)}
                     style={styles.preview}
                     aspect={Camera.constants.Aspect.full}>
@@ -54,6 +60,7 @@ export default class ScanView extends Component<{}> {
 }
 
 ScanView.propTypes = {
+
 }
 const styles = StyleSheet.create({
     container: {

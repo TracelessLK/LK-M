@@ -22,7 +22,7 @@ export default class RegisterView extends Component<{}> {
         super(props);
         const obj = this.props.navigation.state.params.obj
         console.log(obj)
-        
+
 
         this.state = {
             hasCheckCode:obj.hasCheckCode
@@ -83,7 +83,6 @@ export default class RegisterView extends Component<{}> {
                                     })
                                 }else{
                                     const {obj,qrcode} = this.props.navigation.state.params
-
                                     const bits = 1024;
                                     const exponent = '10001';
                                     let rsa = new RSAKey();
@@ -93,7 +92,6 @@ export default class RegisterView extends Component<{}> {
 
                                     (async()=>{
                                         const password = md5(this.password).toString()
-
                                         const user = {
                                             id:obj.id,
                                             name:obj.name,
@@ -106,12 +104,10 @@ export default class RegisterView extends Component<{}> {
                                             mCode:obj.mCode,
                                             password
                                         }
-
                                         const description = {
                                             brand:deviceInfo.getBrand(),
                                             device:deviceInfo.getDeviceId()
                                         }
-
                                         const venderDid = await pushUtil.getAPNDeviceId()
 
                                         lkApplication.asyRegister(user,venderDid,this.checkCode,qrcode,JSON.stringify(description,null,2)).then((user)=>{

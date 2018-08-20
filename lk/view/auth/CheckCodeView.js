@@ -1,16 +1,12 @@
 import React, {Component} from 'react';
 import {
     Alert,
-    AsyncStorage,
-    NativeModules,
-    Platform,
-    StyleSheet, Text,
-    View, Modal, ScrollView,TextInput
+    Text,
+    View,
 } from 'react-native';
 import PropTypes from 'prop-types'
-import { Container, Header, Content, Input, Item,Button ,Icon,Label,Toast} from 'native-base';
+import {  Input, Item,Button ,Label,Toast} from 'native-base';
 const {debounceFunc} = require('../../../common/util/commonUtil')
-const config = require('../../config')
 
 export default class CheckCodeView extends Component<{}> {
 
@@ -25,17 +21,7 @@ export default class CheckCodeView extends Component<{}> {
 
     }
 
-    componentDidMount = () => {
 
-    }
-
-    componentWillUnmount = () => {
-    }
-
-
-    componentWillUnmount = () => {
-
-    }
     onChangeText = (t)=>{
 
        this.text = t?t.trim():''
@@ -63,8 +49,9 @@ export default class CheckCodeView extends Component<{}> {
                                   })
                                 }else{
                                     const obj = this.props.navigation.state.params.obj
+                                    const {url} = obj
                                     obj.checkCode = this.text
-                                    fetch(`${config.url}api/user/${obj.action}`, {
+                                    fetch(`${url}/api/user/${obj.action}`, {
                                         method: 'POST',
                                         headers: {
                                             Accept: 'application/json',

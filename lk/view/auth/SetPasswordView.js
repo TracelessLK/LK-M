@@ -20,17 +20,6 @@ export default class CheckCodeView extends Component<{}> {
 
     }
 
-    componentDidMount = () => {
-
-    }
-
-    componentWillUnmount = () => {
-    }
-
-
-    componentWillUnmount = () => {
-
-    }
     onChangeText = (t)=>{
 
         this.text = t?t.trim():''
@@ -59,7 +48,8 @@ export default class CheckCodeView extends Component<{}> {
                                 }else{
                                     const obj = this.props.navigation.state.params.obj
                                     obj.checkCode = this.text
-                                    fetch(`${config.url}api/member/${obj.action}`, {
+                                    const {url} = obj
+                                    fetch(`${url}/api/member/${obj.action}`, {
                                         method: 'POST',
                                         headers: {
                                             Accept: 'application/json',

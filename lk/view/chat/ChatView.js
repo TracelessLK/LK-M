@@ -28,6 +28,7 @@ const chatManager = manifest.get("ChatManager")
 const LKChatProvider = require("../../logic/provider/LKChatProvider")
 import {Header} from 'react-navigation'
 const personImg = require('../image/person.png');
+const _ = require('lodash')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation }) => {
@@ -89,6 +90,13 @@ export default class ChatView extends Component<{}> {
         const user = lkApp.getCurrentUser();
         const msgAry = await LKChatProvider.asyGetMsgs(user.id,this.otherSide.id,limit)
          console.log(msgAry)
+         const {length:msgAryLength} = msgAry
+
+         if(msgAryLength){
+            this.relativeMsgId = _.last(msgAry).id
+         }else{
+            this.relativeMsgId = null
+         }
 
          const recordAry = []
          let lastShowingTime

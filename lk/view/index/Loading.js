@@ -34,32 +34,22 @@ export default class Loading extends Component<{}> {
     _bootstrapAsync = async () => {
         let routerName
         const currentUser = lkApplication.getCurrentUser()
-        console.log(1)
 
         if(currentUser){
             routerName = 'MainStack'
         }else{
-            console.log(4)
-
             const userAry = await userProvider.asyGetAll()
-            console.log(5)
-
             const {length} = userAry
 
             if(length === 0){
                 routerName = 'ScanRegisterView'
             }else if(length ===1){
-                console.log(2)
-
                 lkApplication.setCurrentUser(userAry[0])
-
                 routerName = 'MainStack'
             }else if(length > 1){
                 routerName = 'SelectUserView'
             }
         }
-        console.log(3)
-
         this.props.navigation.navigate(routerName);
     }
 
@@ -68,7 +58,6 @@ export default class Loading extends Component<{}> {
             <View style={styles.container}>
                 {/*<Image resizeMode='contain' style={{width:200}} source={require('../../image/1024x1024.png')}/>*/}
                 <ActivityIndicator size='large'/>
-
             </View>
         )
     }

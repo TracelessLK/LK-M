@@ -1,15 +1,12 @@
 
 import React from 'react';
-import { Image, Keyboard, Modal,StyleSheet,Text,TextInput,Alert,
+import {
+    Image, Keyboard,Text,
     TouchableOpacity,TouchableWithoutFeedback,View} from 'react-native';
 import {Toast} from 'native-base'
-import ScanView from '../../../common/view/ScanView'
 import Icon from 'react-native-vector-icons/FontAwesome'
 const versionLocal = require('../../../package').version
 const util = require('../../util')
-const config = require('../../config')
-// import CheckCodeView from './CheckCodeView'
-const lkApplication = require('../../LKApplication')
 const lkStyle = require('../style')
 
 export default class ScanRegisterView extends React.Component {
@@ -22,19 +19,14 @@ export default class ScanRegisterView extends React.Component {
         super(props);
 
         this.state={
-            checkCodeMode:false
         };
-
-
     }
 
     showScanView=()=>{
-        this.props.navigation.navigate("ScanView",{onRead:this.onRead
-
-            })
+        this.props.navigation.navigate("ScanView",{
+            onRead:this.onRead
+        })
     }
-
-
 
     dismissKeyboard=()=>{
         Keyboard.dismiss();
@@ -44,11 +36,9 @@ export default class ScanRegisterView extends React.Component {
         const {data} = e
         const decryptedText = util.decryptAes(data)
         const obj = JSON.parse(decryptedText)
+        console.log(obj)
 
         if(obj.action === 'registerForAdmin') {
-            this.setState({
-                scanVisible: false,
-            })
             this.props.navigation.navigate("CheckCodeView", {
                 obj
             })
@@ -98,11 +88,6 @@ export default class ScanRegisterView extends React.Component {
                 </View>
             </TouchableWithoutFeedback>
         )
-        if(this.state.checkCodeMode){
-            content = (
-                {/*<CheckCodeView decryptedText={this.decryptedText}></CheckCodeView>*/}
-            )
-        }
         return content;
 
     }
