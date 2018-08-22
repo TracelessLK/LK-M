@@ -23,7 +23,7 @@ class Record{
     }
     _allUpdate(msgIds,state){
         return new Promise((resolve,reject)=>{
-            let sql = "select id from record where state>=? id ";
+            let sql = "select id from record where state>=? and id ";
             let num = 0;
             if(!msgIds.forEach){
                 sql += "='"
@@ -113,9 +113,9 @@ class Record{
                         for(var i=0;i<len;i++){
                             rs.push(results.rows.item(i));
                         }
-                        if(limit&&limit>0) {
-                            rs = rs.reverse()
-                        }
+                        // if(limit&&limit>0) {
+                        //     rs = rs.reverse()
+                        // }
                         resolve(rs);
                     },function (err) {
                         reject(err);

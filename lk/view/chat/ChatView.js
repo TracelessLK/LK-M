@@ -407,7 +407,7 @@ export default class ChatView extends Component<{}> {
         this.extra.lastContentHeight = this.extra.msgViewHeight
         this.extra.contentHeight = contentHeight
         this.extra.count++
-        const offset = Math.floor(this.extra.msgViewHeight - this.extra.lastContentHeight)
+        const offset = Math.floor(this.extra.contentHeight - this.extra.lastContentHeight)
 
         if(this.extra.count === 2 ){
             this.refs.scrollView.scrollToEnd({animated: false})
