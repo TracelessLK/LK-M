@@ -17,6 +17,9 @@ const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
 const chatManager = manifest.get("ChatManager")
 
+process.env.DEBUG = 'debug'
+const debugLog = require('debug')("debug")
+
 export default class RecentView extends Component<{}> {
 
     static navigationOptions =( ) => {

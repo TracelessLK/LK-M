@@ -11,6 +11,7 @@ import LKEntry from './lk/LKEntry'
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 
 entryUtil.init()
+console.log()
 
 export default class Entry extends Component<{}> {
     constructor(props){
