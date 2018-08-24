@@ -79,7 +79,7 @@ class LKChannel extends WSChannel{
         let msg=  {
             header:{
                 version:"1.0",
-                id:this._generateMsgId(),
+                id:option.id||this._generateMsgId(),
                 action:action,
                 // uid:uid,
                 // did:did,
@@ -116,10 +116,10 @@ class LKChannel extends WSChannel{
                     let chat = await ChatManager.asyGetHotChatRandomSent(chatId);
 
                     msg.header.chatId = chatId;
-                    msg.header.targets = chat.members;
+                    msg.header.targets = option.targets||chat.members;
                     msg.header.relativeMsgId = relativeMsgId;
-                    msg.header.order=ChatManager.getChatSendOrder(chatId);
-                    msg.body.content = CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
+                    msg.header.order=option.order||ChatManager.getChatSendOrder(chatId);
+                    msg.body.content = option.content||CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
 
                 }
             }
@@ -233,6 +233,9 @@ class LKChannel extends WSChannel{
                             if(members) {
                                 this._checkMembersDiff(members).then((diff)=>{
                                     LKContactHandler.asyRemoveContacts(diff.removed,curApp.getCurrentUser().id);
+                                    //TODO delete contact's devices
+                                    //TODO delete chat with the contact
+                                    // TODO how to deal with the chat record if some contact deleted
                                     this._asyFetchMembers(content.memberMCode,diff.added,diff.modified);
                                 });
                             }
@@ -295,6 +298,15 @@ class LKChannel extends WSChannel{
         await LKChatHandler.asyAddMsg(userId,contactId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING);
         ChatManager.fire("msgChanged",contactId);
         result[0]._sendMessage(result[1]).then((resp)=>{
+            let diff = resp.body.content.diff;
+            if(diff){
+                let added = ChatManager.deviceChanged(contactId,diff);
+                if(added&&added.length>0){
+                    this._asyNewRequest("sendMsg",content,{chatId:contactId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
+                        this._sendMessage(req);
+                    });
+                }
+            }
             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
                 ChatManager.fire("msgChanged",contactId);
             });

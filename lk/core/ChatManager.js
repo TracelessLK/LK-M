@@ -4,6 +4,7 @@ import LKChatProvider from '../logic/provider/LKChatProvider'
 import LKContactProvider from '../logic/provider/LKContactProvider'
 import LKDeviceProvider from '../logic/provider/LKDeviceProvider'
 import LKChatHandler from '../logic/handler/LKChatHandler'
+import LKDeviceHandler from '../logic/handler/LKDeviceHandler'
 import UUID from 'uuid/v4';
 import RSAKey from "react-native-rsa";
 import Application from '../LKApplication'
@@ -137,7 +138,7 @@ class ChatManager extends EventTarget{
         let time = Date.now();
         let chat = this._recentChats[this._recentChatsIndex[chatId]];
         if(chat){
-            if(!chat.key||time-chat.keyGenTime>3600000){
+            if(time-chat.keyGenTime>3600000){
                 chat.key = UUID();
                 chat.keyGenTime = time;
                 let members = chat.members;
@@ -238,6 +239,43 @@ class ChatManager extends EventTarget{
         return this._sendOrderSeed+sendOrder;
     }
 
+    deviceChanged(chatId,changedMembers){
+        let returnAdded = [];
+        changedMembers.forEach(function(changed){
+            LKDeviceHandler.asyAddDevices(changed.id,changed.added);
+            LKDeviceHandler.asyRemoveDevices(changed.id,changed.removed);
+        });
+        let chat = this._recentChats[this._recentChatsIndex[chatId]];
+        if(chat){
+            let members = chat.members;
+            for(let i=0;i<members.length;i++){
+                let member = members[i];
+                for(let j=0;j<changedMembers.length;j++){
+                    let changedMember = changedMembers[j];
+                    if(member.id===changedMember.id){
+                        let localDevices = member.devices;
+                        let removed = changedMember.removed;
+                        let added = changedMember.added;
+                        for(let k=0;k<localDevices.length;k++){
+                            if(removed.indexOf(localDevices[k].id)){
+                                localDevices.splice(k,1);
+                                k--;
+                            }
+                        }
+                        added.forEach(function (addDevice) {
+                            let rsa = new RSAKey();
+                            rsa.setPublicString(addDevice.pk);
+                            let random = rsa.encrypt(chat.key);
+                            let newD = {id:addDevice.id,random:random};
+                            localDevices.push(newD);
+                            returnAdded.push(newD);
+                        });
+                    }
+                }
+            }
+        }
+        return returnAdded;
+    }
 
 }
 

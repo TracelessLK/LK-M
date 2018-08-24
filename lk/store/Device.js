@@ -38,5 +38,58 @@ class Device{
             });
         });
     }
+
+    addDevices(contactId,devices){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                if(devices&&devices.length>0){
+                    let sql = "insert into device(id,publicKey,contactId) values ";
+                    var params=[];
+                    for(var i=0;i<devices.length;i++){
+                        var device = devices[i];
+                        sql += "(?,?,?)";
+                        if(i<devices.length-1){
+                            sql +=",";
+                        }
+                        params.push(device.id);
+                        params.push(device.pk);
+                        params.push(contactId);
+                    }
+
+                    tx.executeSql(sql,params,function () {
+                        resolve();
+                    },function (err) {
+                        reject(err);
+                    });
+                }else{
+                    resolve();
+                }
+            });
+        });
+    }
+    removeDevices(contactId,devices){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                if(devices&&devices.length>0){
+                    let sql = "delete from device where contactId=? and id in( ";
+                    for(var i=0;i<devices.length;i++){
+                        sql += "?";
+                        if(i<devices.length-1){
+                            sql +=",";
+                        }
+                    }
+                    sql += ")";
+                    let param = [contactId];
+                    tx.executeSql(sql,param.concat(devices),function () {
+                        resolve();
+                    },function (err) {
+                        reject(err);
+                    });
+                }else{
+                    resolve();
+                }
+            });
+        });
+    }
 }
 module.exports = new Device();
