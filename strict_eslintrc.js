@@ -1,6 +1,5 @@
 module.exports = {
-    "extends": [
-        "@ys/eslint-config-strict"
-    ],
-
-};
+  'extends': [
+    '@ys/eslint-config-strict'
+  ]
+}
