@@ -5,6 +5,8 @@ import List from './widget/List'
 import MessageList from './widget/MessageList'
 import LoadingView from './view/LoadingView'
 const {ScanView, commonUtil} = require('@hfs/react-native-collection')
+console.log(ScanView)
+
 const updateUtil = require('./util/updateUtil')
 const commonStyle = require('./view/style')
 
