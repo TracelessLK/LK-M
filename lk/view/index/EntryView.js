@@ -3,7 +3,7 @@ import AuthStack from '../auth/AuthStack'
 import MainStack from './MainStack'
 import Loading from './Loading'
 import { createSwitchNavigator, createStackNavigator } from 'react-navigation'
-const manifest = require('../../../Manifest')
+const {ScanView} = require('@hfs/common')
 
 const switchNavigator = createSwitchNavigator({
     Loading,
@@ -14,7 +14,7 @@ const switchNavigator = createSwitchNavigator({
 
 const EntryView = createStackNavigator({
     SwitchView:switchNavigator,
-    ScanView:manifest.get("ScanView")
+    ScanView
 },{
     headerMode:"none"
 })

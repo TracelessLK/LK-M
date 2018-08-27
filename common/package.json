@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
+    "@hfs/react-native-collection": "git+https://github.com/spirit1453/hfs.git#publish",
     "native-base": "^2.6.1",
     "react-native-elements": "^0.19.1",
     "react-native-fast-image": "^4.0.14",
