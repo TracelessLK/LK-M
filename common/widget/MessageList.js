@@ -12,8 +12,6 @@ const dateTimeUtil = require('../util/dateTimeUtil')
 
 const debugLog = require('debug')('debug')
 
-
-
 export default class List extends Component<{}> {
   constructor (props) {
     super(props)
@@ -28,7 +26,6 @@ export default class List extends Component<{}> {
     for (const ele of data) {
       debugLog(ele)
       const {onPress, image, name, content: msgContent, time, newMsgNum, id, deletePress} = ele
-
       let content = (
         <TouchableOpacity onPress={onPress}
           style={{width: '100%',

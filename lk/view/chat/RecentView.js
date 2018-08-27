@@ -13,10 +13,9 @@ const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
 const chatManager = manifest.get('ChatManager')
 const _ = require('lodash')
+process.env.DEBUG = 'debug'
+const debugLog = require('debug')('debug')
 
-process.env.DEBUG = 'debug,info'
-
-// const debugLog = require('debug')('debug')
 // const infoLog = require('debug')('info')
 
 export default class RecentView extends Component<{}> {
@@ -52,13 +51,14 @@ export default class RecentView extends Component<{}> {
     }
 
     async getMsg (option) {
-      const obj = {}
+      let result
       const {userId, chatId, newMsgNum} = option
       const msgAry = await LKChatProvider.asyGetMsgs(userId, chatId)
       const {length} = msgAry
-      // debugLog({msgAry})
-
+      // debugLog(msgAry)
       if (length) {
+        const obj = {}
+
         const msg = _.last(msgAry)
         const {sendTime, content, id} = msg
 
@@ -78,9 +78,10 @@ export default class RecentView extends Component<{}> {
         obj.deletePress = () => {
           this.deleteRow(chatId)
         }
+        result = obj
       }
 
-      return obj
+      return result
     }
 
     async updateRecent () {
@@ -98,17 +99,15 @@ export default class RecentView extends Component<{}> {
         const msgPromise = this.getMsg(option)
         msgAryPromise.push(msgPromise)
       }
-      const recentAry = await Promise.all(msgAryPromise)
+      let recentAry = await Promise.all(msgAryPromise)
+      // debugLog(recentAry)
+      recentAry = recentAry.filter(ele => { return Boolean(ele) })
+
       recentAry.sort((obj1, obj2) => {
         return obj1.sendTime - obj2.sendTime
       })
-      process.env.DEBUG = 'debug'
-      const debugLog = require('debug')('debug')
-      console.log(recentAry)
-      console.log(process.env)
-      
-      debugLog('sdfsf')
-      debugLog(`recentAry ${recentAry}`)
+
+      debugLog(recentAry)
       const contentAry = <MessageList data={recentAry}/>
 
       this.setState({
