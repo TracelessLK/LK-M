@@ -36,7 +36,7 @@ class LKChannel extends WSChannel{
         }else if(action){
             let handler = this[action+"Handler"];
             if(handler){
-                handler(msg);
+                handler.call(this,msg);
             }
         }
     }
@@ -429,7 +429,7 @@ class LKChannel extends WSChannel{
         });
     }
 
-    applyMF(contactId){
+    async applyMF(contactId){
 
     }
 }
