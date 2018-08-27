@@ -79,7 +79,7 @@ class LKChannel extends WSChannel{
         let msg=  {
             header:{
                 version:"1.0",
-                id:option.id||this._generateMsgId(),
+                id:(option&&option.id)||this._generateMsgId(),
                 action:action,
                 // uid:uid,
                 // did:did,
@@ -303,13 +303,26 @@ class LKChannel extends WSChannel{
                 let added = ChatManager.deviceChanged(contactId,diff);
                 if(added&&added.length>0){
                     this._asyNewRequest("sendMsg",content,{chatId:contactId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
-                        this._sendMessage(req);
+                        this._sendMessage(req).then(()=>{
+                            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
+                                ChatManager.fire("msgChanged",contactId);
+                            });
+                        }).catch(()=>{
+                            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
+                                ChatManager.fire("msgChanged",contactId);
+                            });
+                        });
+                    });
+                }else{
+                    LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
+                        ChatManager.fire("msgChanged",contactId);
                     });
                 }
+            }else{
+                LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
+                    ChatManager.fire("msgChanged",contactId);
+                });
             }
-            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
-                ChatManager.fire("msgChanged",contactId);
-            });
         }).catch(()=>{
             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
                 ChatManager.fire("msgChanged",contactId);
@@ -416,27 +429,7 @@ class LKChannel extends WSChannel{
         });
     }
 
-    async asySendOrgMsg(orgs){
-
-    }
-
-    async asyCreateGroupChat(chatId,name,members){
-
-    }
-
-    async asyAddChatMember(chatId,name,member){
-
-    }
-
-    async asyRemoveChatMember(){
-
-    }
-
-    async asyLeaveChat(chatId){
-
-    }
-
-    async asySendChatMessage(chatId){
+    applyMF(contactId){
 
     }
 }
