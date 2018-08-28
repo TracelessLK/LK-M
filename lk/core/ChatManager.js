@@ -262,14 +262,19 @@ class ChatManager extends EventTarget{
                                 k--;
                             }
                         }
-                        added.forEach(function (addDevice) {
-                            let rsa = new RSAKey();
-                            rsa.setPublicString(addDevice.pk);
-                            let random = rsa.encrypt(chat.key);
-                            let newD = {id:addDevice.id,random:random};
-                            localDevices.push(newD);
-                            returnAdded.push(newD);
-                        });
+                        if(added.length>0){
+                            let addDevices = {id:member.id,devices:[]};
+                            added.forEach(function (addDevice) {
+                                let rsa = new RSAKey();
+                                rsa.setPublicString(addDevice.pk);
+                                let random = rsa.encrypt(chat.key);
+                                let newD = {id:addDevice.id,random:random};
+                                localDevices.push(newD);
+                                addDevices.devices.push(newD);
+                            });
+                            returnAdded.push(addDevices);
+                        }
+
                     }
                 }
             }
