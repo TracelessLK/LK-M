@@ -83,8 +83,7 @@ class LKChannel extends WSChannel{
                 action:action,
                 // uid:uid,
                 // did:did,
-                // chatId:chatId,
-                // lastOppositeMsg:lastOppositeMsg,
+
                 //target:_target
                 // targets:_targets,
                 time:Date.now(),
@@ -92,6 +91,9 @@ class LKChannel extends WSChannel{
             },
             body:{
                 // content:_content
+                // chatId:chatId,
+                // relativeMsgId:relativeMsgId,
+                // order:order
             }
         };
         if(option){
@@ -115,10 +117,10 @@ class LKChannel extends WSChannel{
                 if(chatId){
                     let chat = await ChatManager.asyGetHotChatRandomSent(chatId);
 
-                    msg.header.chatId = chatId;
                     msg.header.targets = option.targets||chat.members;
-                    msg.header.relativeMsgId = relativeMsgId;
-                    msg.header.order=option.order||ChatManager.getChatSendOrder(chatId);
+                    msg.body.chatId = chatId;
+                    msg.body.relativeMsgId = relativeMsgId;
+                    msg.body.order=option.order||ChatManager.getChatSendOrder(chatId);
                     msg.body.content = option.content||CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
 
                 }
@@ -336,7 +338,7 @@ class LKChannel extends WSChannel{
             msgs = [];
             this._chatMsgPool.set(chatId,msgs);
         }
-        msgs.get(msg.header.id,msg);
+        msgs.push(msg);
     }
     async _checkChatMsgPool(chatId,relativeMsgId,relativeOrder){
         //获取所有relativeMsg是msg的消息
@@ -345,8 +347,9 @@ class LKChannel extends WSChannel{
            for(let i=0;i<msgs.length;i++){
                let msg = msgs[i];
                let header = msg.header;
-               if(header.relativeMsgId===relativeMsgId){
-                   let receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,header.uid,header.did,header.order);
+               let body = msg.body;
+               if(body.relativeMsgId===relativeMsgId){
+                   let receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,header.uid,header.did,body.order);
                    this._receiveMsg(msg,relativeOrder,receiveOrder);
                }
            }
@@ -356,13 +359,14 @@ class LKChannel extends WSChannel{
     async _receiveMsg(msg,relativeOrder,receiveOrder){
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
-        let chatId = userId===header.uid?header.chatId:header.uid;
+        let body = msg.body;
+        let chatId = userId===header.uid?body.chatId:header.uid;
         let random = header.target.random;
         let key = ChatManager.getHotChatKeyReceived(chatId,header.did,random);
         var bytes  = CryptoJS.AES.decrypt(msg.body.content.toString(), key);
         let content = bytes.toString(CryptoJS.enc.Utf8);
 
-        await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,header.relativeMsgId,relativeOrder,receiveOrder,header.order);
+        await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.id);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
         await ChatManager.increaseNewMsgNum(chatId);
@@ -384,13 +388,14 @@ class LKChannel extends WSChannel{
     async sendMsgHandler(msg){
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
+        let body = msg.body;
         let msgId = header.id;
         let senderUid = header.uid;
         let senderDid = header.did;
-        let chatId = userId===senderUid?header.chatId:senderUid;
+        let chatId = userId===senderUid?body.chatId:senderUid;
         await ChatManager.asyEnsureSingleChat(chatId);
-        let relativeMsgId = header.relativeMsgId;
-        let sendOrder = header.order;
+        let relativeMsgId = body.relativeMsgId;
+        let sendOrder = body.order;
         let relativeOrder;
         let receiveOrder;
         if(relativeMsgId){
@@ -429,8 +434,16 @@ class LKChannel extends WSChannel{
         });
     }
 
-    async applyMF(contactId){
-
+    async applyMF(contactId,serverIP,serverPort){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",{
+                name:Application.getCurrentUser().name,
+                pk:Application.getCurrentUser().publicKey,
+                pic:Application.getCurrentUser().pic
+            },
+            {target:{id:contactId,serverIP:serverIP,serverPort:serverPort}})]);
+        result[0]._sendMessage(result[1]).then((resp)=>{
+            //TODO
+        });
     }
 }
 
