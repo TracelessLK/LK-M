@@ -34,6 +34,8 @@ class ContactManager extends EventTarget{
         });
     }
 
+    //TODO 如果基本信息变化的member包括自己，更新LKUser表以及缓存
+
     asyRebuildMembers(newMemberMCode,ids,newMembers){
         let curApp = Application.getCurrentApp();
         LKContactHandler.asyRebuidMembers(ids,newMembers,curApp.getCurrentUser().id).then(function () {

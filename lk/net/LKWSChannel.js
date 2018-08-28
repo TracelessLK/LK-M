@@ -399,7 +399,7 @@ class LKChannel extends WSChannel{
         let relativeOrder;
         let receiveOrder;
         if(relativeMsgId){
-            let relativeMsg = LKChatProvider.asyGetMsg(userId,chatId,relativeMsgId);
+            let relativeMsg = await LKChatProvider.asyGetMsg(userId,chatId,relativeMsgId);
             if(relativeMsg){
                 relativeOrder = relativeMsg.receiveOrder;
                 receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
@@ -435,15 +435,13 @@ class LKChannel extends WSChannel{
     }
 
     async applyMF(contactId,serverIP,serverPort){
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",{
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("applyMF",{
                 name:Application.getCurrentUser().name,
                 pk:Application.getCurrentUser().publicKey,
                 pic:Application.getCurrentUser().pic
             },
             {target:{id:contactId,serverIP:serverIP,serverPort:serverPort}})]);
-        result[0]._sendMessage(result[1]).then((resp)=>{
-            //TODO
-        });
+        return result[0]._sendMessage(result[1]);
     }
 }
 
