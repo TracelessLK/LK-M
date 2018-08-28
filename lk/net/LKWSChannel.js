@@ -14,9 +14,9 @@ import CryptoJS from "crypto-js";
 
 class LKChannel extends WSChannel{
 
-    _callbacks={}
-    _timeout=60000
-    _chatMsgPool = new Map()
+    _callbacks={};
+    _timeout=60000;
+    _chatMsgPool = new Map();
 
     constructor(url){
         super(url,true);
@@ -297,7 +297,15 @@ class LKChannel extends WSChannel{
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",content,{chatId:contactId,relativeMsgId:relativeMsgId})]);
         let msgId = result[1].header.id;
         let time = result[1].header.time;
-        await LKChatHandler.asyAddMsg(userId,contactId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING);
+        let curTime = Date.now();
+        let relativeOrder = curTime;
+        if(relativeMsgId){
+            let relativeMsg = await LKChatProvider.asyGetMsg(userId,contactId,relativeMsgId);
+            if(relativeMsg)
+                relativeOrder = relativeMsg.receiveOrder;
+        }
+
+        await LKChatHandler.asyAddMsg(userId,contactId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING,relativeMsgId,relativeOrder,curTime,result[1].body.order);
         ChatManager.fire("msgChanged",contactId);
         result[0]._sendMessage(result[1]).then((resp)=>{
             let diff = resp.body.content.diff;
