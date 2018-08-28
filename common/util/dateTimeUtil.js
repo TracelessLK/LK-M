@@ -21,7 +21,7 @@ const util = {
         } else if (hour === 12) {
           prefix = '中午'
         }
-        result = `${prefix} ${hour}:${String(minute).padStart(2, '0')}`
+        result = `${prefix} ${hour}:` + minute
       } else {
         result = `${commonUtil.pad(month + 1)}-${day}`
       }

@@ -89,10 +89,13 @@ export default class ChatView extends Component<{}> {
        const user = lkApp.getCurrentUser()
        const msgAry = await LKChatProvider.asyGetMsgs(user.id, this.otherSide.id, limit)
        console.log(msgAry)
-       const {length: msgAryLength} = msgAry
+       const msgOtherSideAry = msgAry.filter(msg => {
+         return msg.senderUid !== user.id
+       })
+       const {length: msgOtherSideAryLength} = msgOtherSideAry
 
-       if (msgAryLength) {
-         this.relativeMsgId = _.last(msgAry).id
+       if (msgOtherSideAryLength) {
+         this.relativeMsgId = _.last(msgOtherSideAry).id
        } else {
          this.relativeMsgId = null
        }
@@ -104,7 +107,7 @@ export default class ChatView extends Component<{}> {
          let picSource = getAvatarSource(user.pic)
          const {sendTime, id} = msg
          let now = new Date()
-         if (lastShowingTime && sendTime - lastShowingTime > 10 * 60 * 1000 || !lastShowingTime) {
+         if ((lastShowingTime && sendTime - lastShowingTime > 10 * 60 * 1000) || !lastShowingTime) {
            lastShowingTime = sendTime
            let timeStr = ''
            let date = new Date(lastShowingTime)
@@ -237,7 +240,7 @@ export default class ChatView extends Component<{}> {
         this.textInput.clear()
       }, 0)
       const channel = lkApp.getLKWSChannel()
-      channel.sendText(this.otherSide.id, this.text)
+      channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
       this.text = ''
     }
 

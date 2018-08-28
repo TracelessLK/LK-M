@@ -343,7 +343,7 @@ class LKChannel extends WSChannel{
     async _checkChatMsgPool(chatId,relativeMsgId,relativeOrder){
         //获取所有relativeMsg是msg的消息
         let msgs = this._chatMsgPool.get(chatId);
-        if(!msgs){
+        if(msgs){
            for(let i=0;i<msgs.length;i++){
                let msg = msgs[i];
                let header = msg.header;
