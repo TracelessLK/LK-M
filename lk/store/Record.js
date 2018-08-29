@@ -127,7 +127,7 @@ class Record{
 
     updateReadState(msgIds,state){
         return new Promise((resolve,reject)=>{
-            let sql = "update record set readState=? where readState<? and msgId ";
+            let sql = "update record set readState=? where readState<? and id ";
             sql += "in (";
             for(var i=0;i<msgIds.length;i++){
                 sql+="'";
