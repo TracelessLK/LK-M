@@ -83,7 +83,7 @@ class Record{
            if(update){
                db.transaction((tx)=>{
                    tx.executeSql(sql,[state,state], ()=> {
-                       this._allUpdate(msgIds, state).then((all)=>{
+                       this._allUpdate(msgIds,state).then((all)=>{
                            if(all){
                                resolve();
                            }
