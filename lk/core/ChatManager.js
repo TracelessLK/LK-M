@@ -81,6 +81,7 @@ class ChatManager extends EventTarget{
      * @param checkChatKey
      * @returns {Promise.<Array>}
      */
+    //TODO foreign target应该附带上其serverIP serverPort
     async asyGetHotChatRandomSent(chatId){
         let curUser = Application.getCurrentApp().getCurrentUser();
         let userId = curUser.id;

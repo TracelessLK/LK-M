@@ -424,12 +424,7 @@ class LKChannel extends WSChannel{
     }
 
     async readReport(contactId,msgIds){
-        let devices = await LKDeviceProvider.asyGetAll(contactId);
-        let target = {id:contactId,devices:[]};
-        devices.forEach(function (device) {
-            target.devices.push(device.id);
-        });
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",msgIds,{target:target})]);
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",msgIds,{target:contactId})]);
         result[0]._sendMessage(result[1]).then((resp)=>{
             LKChatHandler.asyUpdateReadState(msgIds,ChatManager.MESSAGE_READSTATE_READREPORT);
         });
