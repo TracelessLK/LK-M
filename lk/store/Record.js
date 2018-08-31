@@ -82,12 +82,15 @@ class Record{
            }
            if(update){
                db.transaction((tx)=>{
-                   tx.executeSql(sql,[state,state], ()=> {
-                       this._allUpdate(msgIds,state).then((all)=>{
-                           if(all){
-                               resolve();
-                           }
-                       });
+                   tx.executeSql(sql,[state,state], (tx,res)=> {
+                       if(res.rowsAffected>0){
+                           resolve();
+                       }
+                       // this._allUpdate(msgIds,state).then((all)=>{
+                       //     if(all){
+                       //         resolve();
+                       //     }
+                       // });
                    },function (err) {
                        reject(err);
                    });
