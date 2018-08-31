@@ -88,7 +88,6 @@ export default class ChatView extends Component<{}> {
      refreshRecord = async (limit) => {
        const user = lkApp.getCurrentUser()
        const msgAry = await LKChatProvider.asyGetMsgs(user.id, this.otherSide.id, limit)
-       console.log(msgAry)
        const msgOtherSideAry = msgAry.filter(msg => {
          return msg.senderUid !== user.id
        })
@@ -172,6 +171,7 @@ export default class ChatView extends Component<{}> {
       } else {
         change.heightAnim = height - keyY
       }
+      // console.log({change})
 
       this.setState(change)
     }
@@ -179,18 +179,13 @@ export default class ChatView extends Component<{}> {
       this.setState({heightAnim: 0, msgViewHeight: this.originalContentHeight})
     }
 
-    onReceiveMessage=(fromId) => {
-      if (fromId === this.otherSide.id) {
-        this.limit++
-        this.refreshRecord(this.limit)
-      }
-    }
-
-    onSendMessage=(targetId) => {
-      if (targetId === this.otherSide.id) {
-        this.limit++
-        this.refreshRecord(this.limit)
-      }
+    msgChange=(targetId) => {
+      // if (targetId === this.otherSide.id) {
+      //
+      // }
+      chatManager.asyReadMsgs(this.otherSide.id, 1)
+      this.limit++
+      this.refreshRecord(this.limit)
     }
 
     update = () => {
@@ -198,12 +193,6 @@ export default class ChatView extends Component<{}> {
     }
 
     componentWillUnmount =() => {
-      // Store.un("receiveMessage",this.onReceiveMessage);
-      // Store.un("sendMessage",this.onSendMessage);
-      // Store.un("updateMessageState",this.update);
-      // Store.un("updateGroupMessageState",this.update);
-      // Store.un("receiveGroupMessage",this.onReceiveMessage);
-      // Store.un("sendGroupMessage",this.onSendMessage);
 
       this.keyboardDidShowListener.remove()
       this.keyboardDidHideListener.remove()
@@ -214,7 +203,11 @@ export default class ChatView extends Component<{}> {
     }
 
     componentDidMount=() => {
-      chatManager.on('msgChanged', this.onSendMessage)
+      const num = chatManager.getNewMsgNum(this.otherSide.id)
+      if (num) {
+        chatManager.asyReadMsgs(this.otherSide.id, num)
+      }
+      chatManager.on('msgChanged', this.msgChange)
 
       if (Platform.OS === 'ios') {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardDidShow)
@@ -225,7 +218,7 @@ export default class ChatView extends Component<{}> {
       }
 
       this.refreshRecord(this.limit)
-      this.props.navigation.setParams({ navigateToInfo: debounceFunc(this._navigateToInfo)})
+      this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
     }
 
     _navigateToInfo = () => {
@@ -415,7 +408,7 @@ export default class ChatView extends Component<{}> {
     render () {
       return (
         <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}>
-          <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: Platform.OS === 'ios' ? this.state.heightAnim : 0}}>
+          <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}>
             <ScrollView ref="scrollView" style={{width: '100%', backgroundColor: '#d5e0f2'}}
               refreshControl={
                 <RefreshControl
@@ -451,7 +444,9 @@ export default class ChatView extends Component<{}> {
                 height: this.state.height}}
               blurOnSubmit={false} returnKeyType="send" enablesReturnKeyAutomatically
               underlineColorAndroid='transparent' defaultValue={''} onSubmitEditing={debounceFunc(this.send)}
-              onChangeText={this.textChange} onContentSizeChange={(event) => {
+              onChangeText={this.textChange}
+              returnKeyLabel='发送'
+              onContentSizeChange={(event) => {
                 let height = event.nativeEvent.contentSize.height
                 if (height < this.minHeight) {
                   height = this.minHeight

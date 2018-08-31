@@ -3,3 +3,5 @@ node_modules
 /lk/net
 /lk/logic
 /lk/core
+/common/net
+LKApplication.js

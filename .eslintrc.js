@@ -92,6 +92,8 @@ module.exports = {
         "no-duplicate-imports": 2,
         "radix": [2, "as-needed"],
     },
-    globals: {},
+    globals: {
+      "__DEV__": true,
+    },
 
 };
