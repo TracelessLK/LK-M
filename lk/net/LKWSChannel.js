@@ -41,15 +41,16 @@ class LKChannel extends WSChannel{
         }
     }
 
-    _reportMsgHandled(msgId){
+    _reportMsgHandled(flowId,msgId){
         this.applyChannel().then((channel)=>{
-            let uid = Application.getCurrentApp().getCurrentUser().id;
-            let did = Application.getCurrentApp().getCurrentUser().deviceId;
+            // let uid = Application.getCurrentApp().getCurrentUser().id;
+            // let did = Application.getCurrentApp().getCurrentUser().deviceId;
             channel.send(JSON.stringify({header:{
                 version:"1.0",
-                msgId:msgId,
-                uid:uid,
-                did:did,
+                flowId:flowId,
+                // msgId:msgId,
+                // uid:uid,
+                // did:did,
                 response:true
             }}));
         });
@@ -375,7 +376,7 @@ class LKChannel extends WSChannel{
         let content = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
 
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
-        this._reportMsgHandled(header.id);
+        this._reportMsgHandled(header.flowId,header.id);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
         await ChatManager.increaseNewMsgNum(chatId);
         ChatManager.fire("msgChanged",chatId);
@@ -432,7 +433,7 @@ class LKChannel extends WSChannel{
     readReportHandler(msg){
         let msgIds = msg.body.content;
         LKChatHandler.asyUpdateMsgState(msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then(()=>{
-            this._reportMsgHandled(msg.header.id);
+            this._reportMsgHandled(msg.header.flowId,msg.header.id);
             ChatManager.fire("msgChanged",msg.header.id);
         });
     }
