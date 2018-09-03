@@ -334,15 +334,15 @@ export default class ChatView extends Component<{}> {
     }
 
     _getMessage=(rec) => {
-      if (rec.type === Constant.MESSAGE_TYEP_TEXT) {
+      if (rec.type === chatManager.MESSAGE_TYEP_TEXT) {
         const text =
                 <MessageText currentMessage={
                   {text: rec.content}
-                } textStyle={{fontSize: 16, lineHeight: 19, color: rec.state === Constant.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}
+                } textStyle={{fontSize: 16, lineHeight: 19, color: rec.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}
                 ></MessageText>
 
         return text
-      } else if (rec.type === Constant.MESSAGE_TYPE_IMAGE) {
+      } else if (rec.type === chatManager.MESSAGE_TYPE_IMAGE) {
         let img = JSON.parse(rec.content)
 
         img.data = this.getImageData(img)
@@ -354,7 +354,7 @@ export default class ChatView extends Component<{}> {
           imgUri = 'file://' + img.data
         }
         return <TouchableOpacity onPress={() => { this.showBiggerImage(imgUri, rec.msgId) }}><Image source={{uri: imgUri}} style={{width: imgW, height: imgH}} resizeMode="contain"/></TouchableOpacity>
-      } else if (rec.type === Constant.MESSAGE_TYPE_FILE) {
+      } else if (rec.type === chatManager.MESSAGE_TYPE_FILE) {
         let file = JSON.parse(rec.content)
         return <TouchableOpacity><Ionicons name="ios-document-outline" size={40} style={{marginRight: 5, lineHeight: 40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>
       }
