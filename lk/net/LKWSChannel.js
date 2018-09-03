@@ -10,6 +10,7 @@ import LKContactHandler from '../logic/handler/LKContactHandler'
 import LKChatHandler from '../logic/handler/LKChatHandler'
 import LKDeviceProvider from '../logic/provider/LKDeviceProvider'
 import LKChatProvider from '../logic/provider/LKChatProvider'
+import MFApplyManager from '../core/MFApplyManager'
 import CryptoJS from "crypto-js";
 
 class LKChannel extends WSChannel{
@@ -441,11 +442,20 @@ class LKChannel extends WSChannel{
     async applyMF(contactId,serverIP,serverPort){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("applyMF",{
                 name:Application.getCurrentUser().name,
-                pk:Application.getCurrentUser().publicKey,
                 pic:Application.getCurrentUser().pic
             },
             {target:{id:contactId,serverIP:serverIP,serverPort:serverPort}})]);
         return result[0]._sendMessage(result[1]);
+    }
+    applyMFHandler(msg){
+        let contactId = msg.header.uid;
+        let name = msg.body.content.name;
+        let pic = msg.body.content.pic;
+        let serverIP = msg.header.serverIP;
+        let serverPort = msg.header.serverPort;
+        MFApplyManager.asyAddNewMFApply({contactId:contactId,name:name,pic:pic,serverIP:serverIP,serverPort:serverPort}).then(()=>{
+            this._reportMsgHandled(msg.header.flowId);
+        });
     }
 }
 
