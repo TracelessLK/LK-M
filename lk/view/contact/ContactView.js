@@ -4,7 +4,7 @@ import {
     View,
     ScrollView,
 } from 'react-native';
-const common = require('@hfs/common')
+const common = require('@external/common')
 const {SearchBar,commonUtil,List} = common
 const {debounceFunc} = commonUtil
 const lkApp = require('../../LKApplication').getCurrentApp()

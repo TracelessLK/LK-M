@@ -9,7 +9,7 @@ import {
 const lkApp = require('../../LKApplication').getCurrentApp()
 const LKContactProvider =  require("../../logic/provider/LKContactProvider")
 const LKOrgProvider =  require("../../logic/provider/LKOrgProvider")
-const common = require('@hfs/common')
+const common = require('@external/common')
 const {SearchBar,commonUtil,List,LoadingView} = common
 const {debounceFunc} = commonUtil
 const {getAvatarSource} = require("../../util")

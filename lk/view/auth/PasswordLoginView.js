@@ -11,7 +11,6 @@ import {
     Text,
     View,Modal,
 } from 'react-native';
-import PropTypes from 'prop-types'
 
 
 export default class PasswordLoginView extends Component<{}> {

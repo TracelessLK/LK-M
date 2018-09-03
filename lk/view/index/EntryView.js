@@ -3,7 +3,7 @@ import AuthStack from '../auth/AuthStack'
 import MainStack from './MainStack'
 import Loading from './Loading'
 import { createSwitchNavigator, createStackNavigator } from 'react-navigation'
-const {ScanView} = require('@hfs/common')
+const {ScanView} = require('@external/common')
 
 const switchNavigator = createSwitchNavigator({
   Loading,

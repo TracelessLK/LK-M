@@ -9,7 +9,7 @@ import { Avatar, Icon, ListItem} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker'
 
 import RNFetchBlob from 'react-native-fetch-blob'
-const common = require('@hfs/common')
+const common = require('@external/common')
 const {commonUtil} = common
 const {debounceFunc} = commonUtil
 const {getAvatarSource} = require('../../util')

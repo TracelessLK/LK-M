@@ -4,7 +4,7 @@ import {
   ScrollView,
   View
 } from 'react-native'
-const {GroupAvatar, commonUtil, MessageList} = require('@hfs/common')
+const {GroupAvatar, commonUtil, MessageList} = require('@external/common')
 const {debounceFunc} = commonUtil
 const {getAvatarSource} = require('../../util')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
