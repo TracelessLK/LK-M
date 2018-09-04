@@ -4,7 +4,7 @@ import {
   ScrollView,
   View
 } from 'react-native'
-const {GroupAvatar, commonUtil, MessageList} = require('@hfs/common')
+const {GroupAvatar, commonUtil, MessageList} = require('@external/common')
 const {debounceFunc} = commonUtil
 const {getAvatarSource} = require('../../util')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
@@ -57,10 +57,8 @@ export default class RecentView extends Component<{}> {
       // debugLog(msgAry)
       if (length) {
         const obj = {}
-
         const msg = _.last(msgAry)
         const {sendTime, content, id} = msg
-
         const person = await LKContactProvider.asyGet(chatId)
         const {name, pic} = person
         obj.time = new Date(sendTime)

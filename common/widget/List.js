@@ -3,10 +3,10 @@ import React, { Component } from 'react'
 import {
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native'
 import PropTypes from 'prop-types'
-import FastImage from 'react-native-fast-image'
 
 export default class List extends Component<{}> {
   constructor (props) {
@@ -26,7 +26,7 @@ export default class List extends Component<{}> {
             justifyContent: 'flex-start',
             height: 55,
             alignItems: 'center'}} >
-            <FastImage resizeMode="cover" style={{width: 45, height: 45, margin: 5, borderRadius: 5}} source={image} />
+            <Image resizeMode="cover" style={{width: 45, height: 45, margin: 5, borderRadius: 5}} source={image} />
             <View style={{flexDirection: 'row', width: '80%', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10}}>
               <Text style={{fontSize: 18, fontWeight: '500'}}>
                 {title}

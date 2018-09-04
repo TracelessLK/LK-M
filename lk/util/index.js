@@ -1,6 +1,6 @@
 const aesjs = require('aes-js')
 const config = require('../config')
-const {commonUtil} = require('@hfs/common')
+const {commonUtil} = require('@external/common')
 const {getAvatarSource} = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
 const util = {

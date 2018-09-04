@@ -6,7 +6,7 @@ import {
     TextInput
 } from 'react-native';
 import {Toast,Button} from "native-base";
-const common = require('@hfs/common')
+const common = require('@external/common')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const {SearchBar,commonUtil,List} = common
 const {debounceFunc} = commonUtil

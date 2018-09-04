@@ -8,3 +8,6 @@ if (fs.existsSync(filePath)) {
     rm ${filePath};
     `)
 }
+childProcess.execSync(`
+    npm i @ys/eslint-config-strict;
+`)

@@ -7,7 +7,7 @@ import { Avatar,Card ,List,ListItem,} from 'react-native-elements'
 import {Button, Icon, Text, Toast,Spinner} from 'native-base'
 const versionLocal = require('../../../package.json').version
 const config = require('../../config')
-const common = require('@hfs/common')
+const common = require('@external/common')
 const {SearchBar,commonUtil,updateUtil} = common
 const {debounceFunc} = commonUtil
 const lkApp = require('../../LKApplication').getCurrentApp()
