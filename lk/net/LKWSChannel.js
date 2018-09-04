@@ -295,7 +295,6 @@ class LKChannel extends WSChannel{
         let curApp = Application.getCurrentApp();
         let userId = curApp.getCurrentUser().id;
         let did = curApp.getCurrentUser().deviceId;
-        let chat = await ChatManager.asyGetHotChatRandomSent(contactId);
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",content,{chatId:contactId,relativeMsgId:relativeMsgId})]);
         let msgId = result[1].header.id;
         let time = result[1].header.time;
@@ -306,15 +305,18 @@ class LKChannel extends WSChannel{
             if(relativeMsg)
                 relativeOrder = relativeMsg.receiveOrder;
         }
-
+        console.info("send:");
+        console.info(JSON.stringify(result[1]));
         await LKChatHandler.asyAddMsg(userId,contactId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING,relativeMsgId,relativeOrder,curTime,result[1].body.order);
         ChatManager.fire("msgChanged",contactId);
         result[0]._sendMessage(result[1]).then((resp)=>{
             let diff = resp.body.content.diff;
             if(diff){
+                console.info("diff:");
+                console.info(JSON.stringify(diff));
                 let added = ChatManager.deviceChanged(contactId,diff);
                 if(added&&added.length>0){
-                    this._asyNewRequest("sendMsg",content,{chatId:contactId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
+                    this._asyNewRequest("sendMsg2",content,{chatId:contactId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
                         this._sendMessage(req).then(()=>{
                             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
                                 ChatManager.fire("msgChanged",contactId);
@@ -393,6 +395,10 @@ class LKChannel extends WSChannel{
             receiveOrder = nextMsg.receiveOrder;
         }
         return receiveOrder;
+    }
+
+    sendMsg2Handler(msg){
+        this.sendMsgHandler(msg);
     }
 
     async sendMsgHandler(msg){

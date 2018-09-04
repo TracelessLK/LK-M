@@ -258,7 +258,7 @@ class ChatManager extends EventTarget{
                         let removed = changedMember.removed;
                         let added = changedMember.added;
                         for(let k=0;k<localDevices.length;k++){
-                            if(removed.indexOf(localDevices[k].id)){
+                            if(removed.indexOf(localDevices[k].id)!=-1){
                                 localDevices.splice(k,1);
                                 k--;
                             }

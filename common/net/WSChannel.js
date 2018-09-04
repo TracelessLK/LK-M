@@ -19,6 +19,7 @@ class WSChannel extends EventTarget{
             if(this._ws){
                 this._ws.onmessage = this._onmessage;
                 this._ws.onerror = (event)=>{
+                    console.info(event);
                 };
                 this._ws.onclose = (event)=>{
                     if((!this._foreClosed)&&this._keepAlive){
