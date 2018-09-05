@@ -104,9 +104,9 @@ class Record{
     getMsgs(userId,chatId,limit){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                var sql = "select * from record where ownerUserId=? and chatId=? order by relativeOrder,receiveOrder,sendOrder";
+                var sql = "select * from record where ownerUserId=? and chatId=? order by relativeOrder desc,receiveOrder desc,sendOrder desc";
                 if(limit&&limit>0){
-                    sql += " desc limit ";
+                    sql += " limit ";
                     sql += limit;
                 }
                 db.transaction((tx)=>{
@@ -116,10 +116,9 @@ class Record{
                         for(var i=0;i<len;i++){
                             rs.push(results.rows.item(i));
                         }
-                        // if(limit&&limit>0) {
-                        //     rs = rs.reverse()
-                        // }
-                        resolve(rs);
+											rs = rs.reverse()
+
+											resolve(rs);
                     },function (err) {
                         reject(err);
                     });

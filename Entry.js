@@ -8,7 +8,7 @@ import entryUtil from './common/util/entryUtil'
 import {Root} from 'native-base'
 
 import LKEntry from './lk/LKEntry'
-YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader'])
+YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
 
 entryUtil.init()
 

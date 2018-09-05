@@ -29,10 +29,13 @@ const chatManager = manifest.get('ChatManager')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
 const personImg = require('../image/person.png')
 const _ = require('lodash')
+const {DelayIndicator} = require('@ys/react-native-collection')
+const chatLeft = require('../image/chat-y-l.png')
+const chatRight = require('../image/chat-w-r.png')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation }) => {
-      const {friend, group} = navigation.state.params
+      const {friend} = navigation.state.params
       let result
       if (friend) {
         result = {
@@ -58,7 +61,8 @@ export default class ChatView extends Component<{}> {
         heightAnim: 0,
         height: this.minHeight,
         refreshing: false,
-        msgViewHeight: this.originalContentHeight
+        msgViewHeight: this.originalContentHeight,
+        isInited: false
       }
       this.otherSide = this.props.navigation.state.params.friend || this.props.navigation.state.params.group
       if (this.isGroupChat) {
@@ -88,6 +92,7 @@ export default class ChatView extends Component<{}> {
      refreshRecord = async (limit) => {
        const user = lkApp.getCurrentUser()
        const msgAry = await LKChatProvider.asyGetMsgs(user.id, this.otherSide.id, limit)
+       // console.log(msgAry)
        const msgOtherSideAry = msgAry.filter(msg => {
          return msg.senderUid !== user.id
        })
@@ -116,6 +121,7 @@ export default class ChatView extends Component<{}> {
              timeStr += date.getMonth() + 1 + '月' + date.getDate() + '日 '
            }
            timeStr += date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
+           // console.log({lastShowingTime})
            recordAry.push(<Text style={{marginVertical: 10, color: '#a0a0a0', fontSize: 11}} key={lastShowingTime}>{timeStr}</Text>)
          }
          const style = {
@@ -123,6 +129,7 @@ export default class ChatView extends Component<{}> {
          }
          if (msg.senderUid !== user.id) {
            let otherPicSource = getAvatarSource(this.otherSide.pic)
+
            recordAry.push(<View key={id} style={style.recordEleStyle}>
              <Image source={otherPicSource} style={{width: 40, height: 40, marginLeft: 5, marginRight: 8}} resizeMode="contain"></Image>
              <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
@@ -132,7 +139,7 @@ export default class ChatView extends Component<{}> {
                  </View>
                  : null}
                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start'}}>
-                 <Image source={require('../image/chat-y-l.png')} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
+                 <Image source={chatLeft} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
                  <View style={{maxWidth: 200, borderWidth: 0, borderColor: '#e0e0e0', backgroundColor: '#f9e160', borderRadius: 5, marginLeft: -2, minHeight: 40, padding: 10, overflow: 'hidden'}}>
                    {this._getMessage(msg)}
                  </View>
@@ -149,14 +156,15 @@ export default class ChatView extends Component<{}> {
                {this._getMessage(msg)}
              </View>
              {/* <Text>  {name}  </Text> */}
-             <Image source={require('../image/chat-w-r.png')} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
+             <Image source={chatRight} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
              <Image source={picSource} style={{width: 40, height: 40, marginRight: 5, marginLeft: 8}} resizeMode="contain"></Image>
            </View>)
          }
        }
        this.setState({
          recordEls: recordAry,
-         refreshing: false
+         refreshing: false,
+         isInited: true
        })
      }
 
@@ -193,7 +201,6 @@ export default class ChatView extends Component<{}> {
     }
 
     componentWillUnmount =() => {
-
       this.keyboardDidShowListener.remove()
       this.keyboardDidHideListener.remove()
     }
@@ -406,7 +413,7 @@ export default class ChatView extends Component<{}> {
     }
 
     render () {
-      return (
+      const contentView =
         <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}>
           <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}>
             <ScrollView ref="scrollView" style={{width: '100%', backgroundColor: '#d5e0f2'}}
@@ -485,6 +492,7 @@ export default class ChatView extends Component<{}> {
             />
           </Modal>
         </View>
-      )
+      const loadingView = <DelayIndicator/>
+      return this.state.isInited ? contentView : loadingView
     }
 }
