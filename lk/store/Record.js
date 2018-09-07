@@ -4,7 +4,7 @@ db.transaction((tx)=>{
     tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER,readState INTEGER,relativeMsgId TEXT,relativeOrder INTEGER,receiveOrder INTEGER,sendOrder INTEGER)",[],function () {
     },function (err) {
     });
-    tx.executeSql("create table if not exists goup_record_state(msgId TEXT ,reporterUid TEXT NOT NULL,state INTEGER)",[],function () {
+    tx.executeSql("create table if not exists group_record_state(ownerUserId TEXT,msgId TEXT ,reporterUid TEXT NOT NULL,state INTEGER)",[],function () {
     },function (err) {
     });
 });
@@ -230,6 +230,5 @@ class Record{
             });
         });
     }
-
 }
 module.exports = new Record();

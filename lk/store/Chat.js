@@ -119,6 +119,38 @@ class Chat{
         });
     }
 
+    clear(userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "delete from chat where ownerUserId=? and isGroup=?";//removeAllSingleChats
+                tx.executeSql(sql,[userId,0],function () {
+
+                    let sql2 = "delete from record where ownerUserId=?";
+                    tx.executeSql(sql2,[userId],function () {
+                    },function (err) {
+                    });
+
+                    let sql3 = "update chat set newMsgNum=? where ownerUserId=? and isGroup=? and newMsgNum>?";
+                    tx.executeSql(sql3,[0,userId,1,0],function () {
+
+                        resolve();
+
+                        let sql4 = "delete from group_record_state where ownerUserId=?";
+                        tx.executeSql(sql4,[userId],function () {
+                        },function (err) {
+                        });
+
+                    },function (err) {
+                        reject(err);
+                    });
+
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
 
 }
 module.exports = new Chat();

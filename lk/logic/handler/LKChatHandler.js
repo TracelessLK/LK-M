@@ -19,6 +19,9 @@ class LKChatHandler{
     asyUpdateReadState(msgIds,state){
         return Record.updateReadState(msgIds,state);
     }
+    asyClear(userId){
+        return Chat.clear(userId);
+    }
 }
 module.exports = new LKChatHandler();
 

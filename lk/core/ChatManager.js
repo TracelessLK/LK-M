@@ -283,6 +283,13 @@ class ChatManager extends EventTarget{
         return returnAdded;
     }
 
+    clear(){
+        LKChatHandler.asyClear(Application.getCurrentApp().getCurrentUser().id).then(()=>{
+            this.fire("recentChanged");
+        });
+
+    }
+
 }
 
 
