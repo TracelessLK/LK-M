@@ -1,6 +1,7 @@
 import Application from '../LKApplication'
 import EventTarget from '../../common/core/EventTarget'
 import MFApply from '../store/MFApply'
+import ConfigManager from '../../common/core/ConfigManager'
 class MFApplyManager extends EventTarget{
 
     start(){
@@ -20,8 +21,12 @@ class MFApplyManager extends EventTarget{
         return MFApply.getAll(Application.getCurrentApp().getCurrentUser().id);
     }
 
-    accept(contactId){
-        return MFApply.accept(contactId,Application.getCurrentApp().getCurrentUser().id);
+    async accept(contactId){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        await MFApply.accept(contactId,userId);
+        let friend = await MFApply.get(contactId,userId);
+        ConfigManager.getContactManager().asyAddNewFriend(friend);
+        return Application.getCurrentApp().getLKWSChannel().acceptMF(contactId,friend.serverIP,friend.serverPort);
     }
 
 }

@@ -45,6 +45,11 @@ class ContactManager extends EventTarget{
             this.fire("contactChanged");
         });
     }
+
+    async asyAddNewFriend(friend){
+        await LKContactHandler.asyAddNewFriend(friend,Application.getCurrentApp().getCurrentUser().id);
+        this.fire("contactChanged");
+    }
 }
 
 

@@ -88,7 +88,7 @@ class LKChannel extends WSChannel{
 
                 //target:_target
                 // targets:_targets,
-                time:Date.now(),
+                time:option.time||Date.now(),
                 timeout:Application.getCurrentApp().getMessageTimeout()
             },
             body:{
@@ -305,18 +305,14 @@ class LKChannel extends WSChannel{
             if(relativeMsg)
                 relativeOrder = relativeMsg.receiveOrder;
         }
-        console.info("send:");
-        console.info(JSON.stringify(result[1]));
         await LKChatHandler.asyAddMsg(userId,contactId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING,relativeMsgId,relativeOrder,curTime,result[1].body.order);
         ChatManager.fire("msgChanged",contactId);
         result[0]._sendMessage(result[1]).then((resp)=>{
             let diff = resp.body.content.diff;
             if(diff){
-                console.info("diff:");
-                console.info(JSON.stringify(diff));
                 let added = ChatManager.deviceChanged(contactId,diff);
                 if(added&&added.length>0){
-                    this._asyNewRequest("sendMsg2",content,{chatId:contactId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
+                    this._asyNewRequest("sendMsg2",content,{time:time,chatId:contactId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
                         this._sendMessage(req).then(()=>{
                             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
                                 ChatManager.fire("msgChanged",contactId);
@@ -342,6 +338,27 @@ class LKChannel extends WSChannel{
                 ChatManager.fire("msgChanged",contactId);
             });
         });
+    }
+
+    async msgDeviceDiffReportHandler(msg){
+        let content = msg.body.content;
+        let msgId = content.msgId;
+        let chatId = content.chatId;
+        let diff = content.diff;
+        if(diff){
+            let added = ChatManager.deviceChanged(chatId,diff);
+            if(added&&added.length>0){
+                let oldMsg = await LKChatProvider.asyGetMsg(Application.getCurrentApp().getCurrentUser().id,chatId,msgId);
+                if(oldMsg){
+                    this._asyNewRequest("sendMsg2",{type:oldMsg.type,data:oldMsg.content},{time:oldMsg.sendTime,chatId:chatId,relativeMsgId:oldMsg.relativeMsgId,id:oldMsg.id,targets:added,order:oldMsg.order}).then((req)=>{
+                        this._sendMessage(req);
+                    });
+                }
+
+            }
+
+
+        }
     }
 
     _putChatMsgPool(chatId,msg){
@@ -459,8 +476,21 @@ class LKChannel extends WSChannel{
         let pic = msg.body.content.pic;
         let serverIP = msg.header.serverIP;
         let serverPort = msg.header.serverPort;
-        MFApplyManager.asyAddNewMFApply({contactId:contactId,name:name,pic:pic,serverIP:serverIP,serverPort:serverPort}).then(()=>{
+        MFApplyManager.asyAddNewMFApply({id:contactId,name:name,pic:pic,serverIP:serverIP,serverPort:serverPort}).then(()=>{
             this._reportMsgHandled(msg.header.flowId);
+        });
+    }
+    async acceptMF(contactId,serverIP,serverPort){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("acceptMF",null,
+            {target:{id:contactId,serverIP:serverIP,serverPort:serverPort}})]);
+        return result[0]._sendMessage(result[1]);
+    }
+    acceptMFHandler(msg){
+        let header = msg.header;
+        let content = msg.body.content;
+        let friend = {id:header.uid,serverIP:header.serverIP,serverPort:header.serverPort,name:content.name,pic:content.pic};
+        ContactManager.asyAddNewFriend(friend).then(()=>{
+            this._reportMsgHandled(header.flowId);
         });
     }
 }
