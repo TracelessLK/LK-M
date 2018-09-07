@@ -9,8 +9,8 @@ import {
   Alert, RefreshControl,
   CameraRoll
 } from 'react-native'
-import ImagePicker from 'react-native-image-picker'
-import ImageResizer from 'react-native-image-resizer'
+// import ImagePicker from 'react-native-image-picker'
+// import ImageResizer from 'react-native-image-resizer'
 import RNFetchBlob from 'react-native-fetch-blob'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import ImageViewer from 'react-native-image-zoom-viewer'
@@ -45,7 +45,6 @@ export default class ChatView extends Component<{}> {
                       style={{marginRight: 20}}>
                       <Image source={personImg} style={{width: 22, height: 22}} resizeMode="contain"/>
                     </TouchableOpacity>
-
         }
       }
       return result
@@ -187,7 +186,7 @@ export default class ChatView extends Component<{}> {
       this.setState({heightAnim: 0, msgViewHeight: this.originalContentHeight})
     }
 
-    msgChange=(targetId) => {
+    msgChange=() => {
       // if (targetId === this.otherSide.id) {
       //
       // }
@@ -230,6 +229,7 @@ export default class ChatView extends Component<{}> {
 
     _navigateToInfo = () => {
       if (this.isGroupChat) {
+        // this.props.navigation.navigate('FriendInfoView', {friend: this.otherSide})
       } else {
         this.props.navigation.navigate('FriendInfoView', {friend: this.otherSide})
       }
@@ -244,49 +244,49 @@ export default class ChatView extends Component<{}> {
       this.text = ''
     }
 
-    sendImage=(data) => {
-      // const callback = ()=>{
-      //     this.refs.scrollView.scrollToEnd();
-      // };
-      // if(this.isGroupChat){
-      //     WSChannel.sendGroupImage(this.otherSide.id,this.otherSide.name,data,callback);
-      // }else{
-      //     WSChannel.sendImage(this.otherSide.id,data,callback);
-      // }
-
-    }
+    // sendImage=(data) => {
+    //   const callback = ()=>{
+    //       this.scrollView.scrollToEnd();
+    //   };
+    //   if(this.isGroupChat){
+    //       WSChannel.sendGroupImage(this.otherSide.id,this.otherSide.name,data,callback);
+    //   }else{
+    //       WSChannel.sendImage(this.otherSide.id,data,callback);
+    //   }
+    //
+    // }
 
     showImagePicker=() => {
-      let options = {
-        title: '选择图片',
-        cancelButtonTitle: '取消',
-        takePhotoButtonTitle: '拍照',
-        chooseFromLibraryButtonTitle: '图片库',
-        mediaType: 'photo',
-        storageOptions: {
-          skipBackup: true,
-          path: 'images'
-        }
-      }
+      // let options = {
+      //   title: '选择图片',
+      //   cancelButtonTitle: '取消',
+      //   takePhotoButtonTitle: '拍照',
+      //   chooseFromLibraryButtonTitle: '图片库',
+      //   mediaType: 'photo',
+      //   storageOptions: {
+      //     skipBackup: true,
+      //     path: 'images'
+      //   }
+      // }
 
-      ImagePicker.showImagePicker(options, (response) => {
-        if (response.didCancel) {
-        } else if (response.error) {
-        } else if (response.customButton) {
-        } else {
-          let imageUri = response.uri
-
-          const maxWidth = 1000
-          const maxHeight = 1000
-          ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null).then((res) => {
-            RNFetchBlob.fs.readFile(res.path, 'base64').then((data) => {
-              this.sendImage({data, width: maxWidth, height: maxHeight})
-            })
-          }).catch((err) => {
-            console.log(err)
-          })
-        }
-      })
+      // ImagePicker.showImagePicker(options, (response) => {
+      //   if (response.didCancel) {
+      //   } else if (response.error) {
+      //   } else if (response.customButton) {
+      //   } else {
+      //     let imageUri = response.uri
+      //
+      //     const maxWidth = 1000
+      //     const maxHeight = 1000
+      //     ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null).then((res) => {
+      //       RNFetchBlob.fs.readFile(res.path, 'base64').then((data) => {
+      //         this.sendImage({data, width: maxWidth, height: maxHeight})
+      //       })
+      //     }).catch((err) => {
+      //       console.log(err)
+      //     })
+      //   }
+      // })
     }
 
     showBiggerImage= (imgUri, msgId) => {
@@ -341,6 +341,7 @@ export default class ChatView extends Component<{}> {
     }
 
     _getMessage=(rec) => {
+      let result
       if (rec.type === chatManager.MESSAGE_TYEP_TEXT) {
         const text =
                 <MessageText currentMessage={
@@ -348,7 +349,7 @@ export default class ChatView extends Component<{}> {
                 } textStyle={{fontSize: 16, lineHeight: 19, color: rec.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}
                 ></MessageText>
 
-        return text
+        result = text
       } else if (rec.type === chatManager.MESSAGE_TYPE_IMAGE) {
         let img = JSON.parse(rec.content)
 
@@ -360,11 +361,12 @@ export default class ChatView extends Component<{}> {
         if (img && img.data) {
           imgUri = 'file://' + img.data
         }
-        return <TouchableOpacity onPress={() => { this.showBiggerImage(imgUri, rec.msgId) }}><Image source={{uri: imgUri}} style={{width: imgW, height: imgH}} resizeMode="contain"/></TouchableOpacity>
+        result = <TouchableOpacity onPress={() => { this.showBiggerImage(imgUri, rec.msgId) }}><Image source={{uri: imgUri}} style={{width: imgW, height: imgH}} resizeMode="contain"/></TouchableOpacity>
       } else if (rec.type === chatManager.MESSAGE_TYPE_FILE) {
         let file = JSON.parse(rec.content)
-        return <TouchableOpacity><Ionicons name="ios-document-outline" size={40} style={{marginRight: 5, lineHeight: 40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>
+        result = <TouchableOpacity><Ionicons name="ios-document-outline" size={40} style={{marginRight: 5, lineHeight: 40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>
       }
+      return result
     }
 
     getImageData = (img) => {
@@ -389,21 +391,22 @@ export default class ChatView extends Component<{}> {
         this.refreshRecord(this.limit)
       }
     }
-
+    /* eslint-disable no-unused-vars */
     onContentSizeChange=(contentWidth, contentHeight) => {
       this.extra.lastContentHeight = this.extra.msgViewHeight
       this.extra.contentHeight = contentHeight
       this.extra.count++
       const offset = Math.floor(this.extra.contentHeight - this.extra.lastContentHeight)
 
-      if (this.extra.count === 2) {
-        this.refs.scrollView.scrollToEnd({animated: false})
-      } else if (this.extra.count > 2) {
+      const point = 1
+      if (this.extra.count === point) {
+        this.scrollView.scrollToEnd({animated: false})
+      } else if (this.extra.count > point) {
         if (this.extra.isRefreshingControl) {
-          this.refs.scrollView.scrollTo({x: 0, y: offset, animated: false})
+          this.scrollView.scrollTo({x: 0, y: offset, animated: false})
           this.extra.isRefreshingControl = false
         } else {
-          this.refs.scrollView.scrollToEnd({animated: false})
+          this.scrollView.scrollToEnd({animated: false})
         }
       }
     }
@@ -416,7 +419,7 @@ export default class ChatView extends Component<{}> {
       const contentView =
         <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}>
           <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}>
-            <ScrollView ref="scrollView" style={{width: '100%', backgroundColor: '#d5e0f2'}}
+            <ScrollView ref={(ref) => { this.scrollView = ref }} style={{width: '100%', backgroundColor: '#d5e0f2'}}
               refreshControl={
                 <RefreshControl
                   refreshing={this.state.refreshing}
