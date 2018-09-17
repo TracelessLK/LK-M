@@ -30,7 +30,7 @@ export default class MineView extends Component<{}> {
       super(props)
       this.user = lkApp.getCurrentUser()
 
-      let picUrl = this.user.picId
+      let picUrl = this.user.pic
       const avatarSource = getAvatarSource(picUrl)
       this.state = {
         avatarSource

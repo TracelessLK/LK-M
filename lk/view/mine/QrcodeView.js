@@ -7,15 +7,13 @@ import {
 import QRCode from 'react-native-qrcode-svg'
 const lkApp = require('../../LKApplication').getCurrentApp()
 const {getAvatarSource} = require('../../util')
+const defaultAvatar = require('../image/defaultAvatar.png')
 
 export default class QrcodeView extends Component<{}> {
   constructor (props) {
     super(props)
     this.state = {}
     this.user = lkApp.getCurrentUser()
-    let picUrl = this.user.picId
-    const avatarSource = getAvatarSource(picUrl)
-    this.avatarSource = avatarSource
   }
 
   render () {
@@ -29,6 +27,7 @@ export default class QrcodeView extends Component<{}> {
         <QRCode size={240}
           color='#393a3f'
           value={JSON.stringify({a: 12})}
+          logo={this.user.pic ? getAvatarSource(this.user.pic) : defaultAvatar}
           logoSize={60}
           logoBackgroundColor='transparent'
         />

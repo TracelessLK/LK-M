@@ -8,7 +8,6 @@ const util = {
     const encryptedBytes = aesjs.utils.hex.toBytes(encryptData)
     const aesCtr = new aesjs.ModeOfOperation.ctr(config.encrypt.aesKey, new aesjs.Counter(5))
     const decryptedBytes = aesCtr.decrypt(encryptedBytes)
-
     const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes)
     return decryptedText
   },
