@@ -5,6 +5,8 @@ import LKContactProvider from '../logic/provider/LKContactProvider'
 import LKDeviceProvider from '../logic/provider/LKDeviceProvider'
 import LKChatHandler from '../logic/handler/LKChatHandler'
 import LKDeviceHandler from '../logic/handler/LKDeviceHandler'
+import Chat from '../store/Chat'
+import Contact from '../store/Contact'
 import UUID from 'uuid/v4';
 import RSAKey from "react-native-rsa";
 import Application from '../LKApplication'
@@ -288,6 +290,21 @@ class ChatManager extends EventTarget{
             this.fire("recentChanged");
         });
 
+    }
+    //members:{id,name,pic,serverIP,serverPort}
+    async newGroupChat(name,members){
+        let chatId = UUID();
+        await this.addGroupChat(chatId,name,members,true);
+        return Application.getCurrentApp().getLKWSChannel().addGroupChat(chatId,name,members);
+    }
+
+    async addGroupChat(chatId,name,members,local){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        if(!local)
+            await Contact.addNewGroupContactIFNotExist(members,userId);
+        await Chat.addGroupChat(userId,chatId,name);
+        await Chat.addGroupMembers(chatId,members);
+        this.fire("recentChanged");
     }
 
 }

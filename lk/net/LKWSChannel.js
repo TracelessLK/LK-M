@@ -100,8 +100,12 @@ class LKChannel extends WSChannel{
         };
         if(option){
             let target = option.target;
+            let targets = option.targets;
             if(target){
                 msg.header.target = target;
+            }
+            if(targets){
+                msg.header.targets = targets;
             }
         }
 
@@ -492,6 +496,18 @@ class LKChannel extends WSChannel{
         ContactManager.asyAddNewFriend(friend).then(()=>{
             this._reportMsgHandled(header.flowId);
         });
+    }
+    //members:{id,name,pic,serverIP,serverPort}
+    async addGroupChat(chatId,name,members){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("addGroupChat",{chatId:chatId,name:name,members:members})]);
+        return result[0]._sendMessage(result[1]);
+    }
+    async addGroupChatHandler(msg){
+        let content = msg.body.content;
+        let chatId = content.chatId;
+        let name = content.name;
+        let members = content.members;
+        ChatManager.addGroupChat(chatId,name,members);
     }
 }
 
