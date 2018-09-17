@@ -3,6 +3,7 @@ package com.lk_m;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.horcrux.svg.SvgPackage;
 import com.imagepicker.ImagePickerPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
@@ -39,6 +40,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new SvgPackage(),
             new ImagePickerPackage(),
             new ImageResizerPackage(),
             new PickerPackage(),
