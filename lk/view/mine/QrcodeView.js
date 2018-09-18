@@ -14,6 +14,7 @@ export default class QrcodeView extends Component<{}> {
     super(props)
     this.state = {}
     this.user = lkApp.getCurrentUser()
+    // console.log(this.user)
   }
 
   render () {
@@ -26,7 +27,13 @@ export default class QrcodeView extends Component<{}> {
         </View>
         <QRCode size={240}
           color='#393a3f'
-          value={JSON.stringify({a: 12})}
+          value={JSON.stringify({
+            id: this.user.id,
+            ip: this.user.serverIp,
+            port: this.user.serverPort,
+            code: 'LK',
+            action: 'addFriend'
+          })}
           logo={this.user.pic ? getAvatarSource(this.user.pic) : defaultAvatar}
           logoSize={60}
           logoBackgroundColor='transparent'

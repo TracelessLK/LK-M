@@ -95,7 +95,7 @@ export default class MineView extends Component<{}> {
         },
 
         {
-          title: `授权其他设备`,
+          title: `扫码授权`,
           icon: 'crop-free',
           onPress: this.showScanView
         },

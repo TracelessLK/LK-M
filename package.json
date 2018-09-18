@@ -17,7 +17,7 @@
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
     "@external/common": "file:common",
-    "@ys/react-native-collection": "git+https://github.com/spirit1453/react_native_collection.git#publish",
+    "@ys/react-native-collection": "github:spirit1453/react_native_collection#publish",
     "aes-js": "^3.1.1",
     "crypto-js": "^3.1.9-1",
     "native-base": "^2.7.2",

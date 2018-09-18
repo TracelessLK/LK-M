@@ -190,7 +190,11 @@ export default class ChatView extends Component<{}> {
       // if (targetId === this.otherSide.id) {
       //
       // }
-      chatManager.asyReadMsgs(this.otherSide.id, 1)
+      // todo should have scroll and message pop up animation
+      const num = chatManager.getNewMsgNum(this.otherSide.id)
+      if (num) {
+        chatManager.asyReadMsgs(this.otherSide.id, num)
+      }
       this.limit++
       this.refreshRecord(this.limit)
     }
