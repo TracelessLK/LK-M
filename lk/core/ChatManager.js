@@ -83,7 +83,6 @@ class ChatManager extends EventTarget{
      * @param checkChatKey
      * @returns {Promise.<Array>}
      */
-    //TODO foreign target应该附带上其serverIP serverPort
     async asyGetHotChatRandomSent(chatId){
         let curUser = Application.getCurrentApp().getCurrentUser();
         let userId = curUser.id;
@@ -95,12 +94,21 @@ class ChatManager extends EventTarget{
                 if(chat.isGroup){
                     let gm = await LKChatProvider.asyGetGroupMembers(chatId);
                     gm.forEach(function (m) {
-                        members.push({id:m.id});
+                        let nm = {id:m.id};
+                        members.push(nm);
+                        if(m.serverIP){
+                            nm.serverIP = m.serverIP;
+                            nm.serverPort = m.serverPort;
+                        }
                     });
-                    members.push({id:userId});
                 }else{
                     let contact = await LKContactProvider.asyGet(chat.id);
-                    members.push({id:contact.id});
+                    let nm = {id:contact.id};
+                    if(contact.serverIP){
+                        nm.serverIP = contact.serverIP;
+                        nm.serverPort = contact.serverPort;
+                    }
+                    members.push(nm);
                     members.push({id:userId});
                 }
 
@@ -136,6 +144,14 @@ class ChatManager extends EventTarget{
                        member.devices.push({id:device.id,random:rsa.encrypt(chat.key)});
                    });
                }
+            }
+        }else{
+            let curIndex = this._recentChatsIndex[chatId];
+            if(curIndex!=this._recentChats.length-1){
+                let chat = this._recentChats[curIndex];
+                this._recentChats.splice(curIndex,1);
+                this._recentChats.push(chat);
+                this._recentChatsIndex[chatId] = this._recentChats.length-1;
             }
         }
         let time = Date.now();
@@ -202,11 +218,21 @@ class ChatManager extends EventTarget{
         LKChatHandler.asyUpdateNewMsgNum(userId,chatId,0);
         let newMsgs = await LKChatProvider.asyGetMsgsNotRead(userId,chatId);
         let readNewMsgs = [];
+        let targets = new Map();
         newMsgs.forEach((record)=>{
             readNewMsgs.push(record.id);
+            if(!targets.has(record.senderUid)){
+                targets.set(record.senderUid,[]);
+            }
+            targets.get(record.senderUid).push(record.id);
         });
         LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
-        Application.getCurrentApp().getLKWSChannel().readReport(chatId,readNewMsgs);
+        targets.forEach((v,k)=>{
+            Contact.get(k).then((contact)=>{
+                Application.getCurrentApp().getLKWSChannel().readReport(k,contact.serverIP,contact.serverPort,v);
+            });
+        });
+
         return {msgs:records,newMsgs:newMsgs};
     }
 
@@ -292,6 +318,7 @@ class ChatManager extends EventTarget{
 
     }
     //members:{id,name,pic,serverIP,serverPort}
+
     async newGroupChat(name,members){
         let chatId = UUID();
         await this.addGroupChat(chatId,name,members,true);
