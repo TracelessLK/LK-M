@@ -268,6 +268,7 @@ class ChatManager extends EventTarget{
         return this._sendOrderSeed+sendOrder;
     }
 
+    //TODO 其他包含了该成员的chat的缓存也需要更新
     deviceChanged(chatId,changedMembers){
         let returnAdded = [];
         changedMembers.forEach(function(changed){

@@ -124,6 +124,7 @@ class LKChannel extends WSChannel{
                     let chat = await ChatManager.asyGetHotChatRandomSent(chatId);
 
                     msg.header.targets = option.targets||chat.members;
+                    msg.body.isGroup = option.isGroup;
                     msg.body.chatId = chatId;
                     msg.body.relativeMsgId = relativeMsgId;
                     msg.body.order=option.order||ChatManager.getChatSendOrder(chatId);
@@ -290,16 +291,19 @@ class LKChannel extends WSChannel{
         return result[0]._sendMessage(result[1]);
     }
 
-    sendText(chatId,text,relativeMsgId){
+    sendText(chatId,text,relativeMsgId,isGroup){
         let content = {type:ChatManager.MESSAGE_TYEP_TEXT,data:text};
-        this._sendMsg(chatId,content,relativeMsgId);
+        this._sendMsg(chatId,content,relativeMsgId,isGroup);
+    }
+    sendGroupText(chatId,text,relativeMsgId){
+        this.sendText(chatId,text,relativeMsgId,true)
     }
 
-    async _sendMsg(chatId,content,relativeMsgId){
+    async _sendMsg(chatId,content,relativeMsgId,isGroup){
         let curApp = Application.getCurrentApp();
         let userId = curApp.getCurrentUser().id;
         let did = curApp.getCurrentUser().deviceId;
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",content,{chatId:chatId,relativeMsgId:relativeMsgId})]);
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",content,{isGroup:isGroup,chatId:chatId,relativeMsgId:relativeMsgId})]);
         let msgId = result[1].header.id;
         let time = result[1].header.time;
         let curTime = Date.now();
@@ -316,7 +320,7 @@ class LKChannel extends WSChannel{
             if(diff){
                 let added = ChatManager.deviceChanged(chatId,diff);
                 if(added&&added.length>0){
-                    this._asyNewRequest("sendMsg2",content,{time:time,chatId:chatId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
+                    this._asyNewRequest("sendMsg2",content,{isGroup:isGroup,time:time,chatId:chatId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
                         this._sendMessage(req).then(()=>{
                             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
                                 ChatManager.fire("msgChanged",chatId);
@@ -423,14 +427,16 @@ class LKChannel extends WSChannel{
     }
 
     async sendMsgHandler(msg){
+        //TODO 处理消息重入或前置未达如本地还没有群
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
         let body = msg.body;
-        let msgId = header.id;
         let senderUid = header.uid;
         let senderDid = header.did;
-        let chatId = userId===senderUid?body.chatId:senderUid;
-        await ChatManager.asyEnsureSingleChat(chatId);
+        let isGroup = body.isGroup;
+        let chatId = isGroup?body.chatId:(userId===senderUid?body.chatId:senderUid);
+        if(!isGroup)
+            await ChatManager.asyEnsureSingleChat(chatId);
         let relativeMsgId = body.relativeMsgId;
         let sendOrder = body.order;
         let relativeOrder;
