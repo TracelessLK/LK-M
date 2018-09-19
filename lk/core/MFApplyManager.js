@@ -27,7 +27,7 @@ class MFApplyManager extends EventTarget{
             
             MFApply.accept(contactId,userId).then(()=>{
                 MFApply.get(contactId,userId).then((friend)=>{
-                    Application.getCurrentApp().getLKWSChannel().acceptMF(contactId,friend.serverIP,friend.serverPort).then(()=>{
+                    Application.getCurrentApp().getLKWSChannel().acceptMF(contactId,friend.name,friend.pic,friend.serverIP,friend.serverPort,friend.mCode).then(()=>{
                         ConfigManager.getContactManager().asyAddNewFriend(friend).then(()=>{
                             resolve();
                         });

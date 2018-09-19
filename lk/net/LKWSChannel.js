@@ -473,7 +473,8 @@ class LKChannel extends WSChannel{
     async applyMF(contactId,serverIP,serverPort){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("applyMF",{
                 name:Application.getCurrentUser().name,
-                pic:Application.getCurrentUser().pic
+                pic:Application.getCurrentUser().pic,
+                mCode:Application.getCurrentUser().mCode
             },
             {target:{id:contactId,serverIP:serverIP,serverPort:serverPort}})]);
         return result[0]._sendMessage(result[1]);
@@ -482,21 +483,23 @@ class LKChannel extends WSChannel{
         let contactId = msg.header.uid;
         let name = msg.body.content.name;
         let pic = msg.body.content.pic;
+        let mCode = msg.body.content.mCode;
         let serverIP = msg.header.serverIP;
         let serverPort = msg.header.serverPort;
-        MFApplyManager.asyAddNewMFApply({id:contactId,name:name,pic:pic,serverIP:serverIP,serverPort:serverPort}).then(()=>{
+        MFApplyManager.asyAddNewMFApply({id:contactId,name:name,pic:pic,serverIP:serverIP,serverPort:serverPort,mCode:mCode}).then(()=>{
             this._reportMsgHandled(msg.header.flowId);
         });
     }
-    async acceptMF(contactId,serverIP,serverPort){
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("acceptMF",null,
+    async acceptMF(contactId,contactName,contactPic,serverIP,serverPort,contactMCode){
+        let user = Application.getCurrentApp().getCurrentUser();
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("acceptMF",{accepter:{name:user.name,pic:user.pic,mCode:user.mCode},applyer:{name:contactName,pic:contactPic,mCode:contactMCode}},
             {target:{id:contactId,serverIP:serverIP,serverPort:serverPort}})]);
         return result[0]._sendMessage(result[1]);
     }
     acceptMFHandler(msg){
         let header = msg.header;
         let content = msg.body.content;
-        let friend = {id:header.uid,serverIP:header.serverIP,serverPort:header.serverPort,name:content.name,pic:content.pic};
+        let friend = {id:header.uid,serverIP:header.serverIP,serverPort:header.serverPort,name:content.accepter.name,pic:content.accepter.pic,mCode:content.accepter.mCode};
         ContactManager.asyAddNewFriend(friend).then(()=>{
             this._reportMsgHandled(header.flowId);
         });
