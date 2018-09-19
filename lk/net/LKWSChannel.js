@@ -242,9 +242,7 @@ class LKChannel extends WSChannel{
                             if(members) {
                                 this._checkMembersDiff(members).then((diff)=>{
                                     LKContactHandler.asyRemoveContacts(diff.removed,curApp.getCurrentUser().id);
-                                    //TODO delete contact's devices
-                                    //TODO delete chat with the contact
-                                    // TODO how to deal with the chat record if some contact deleted
+                                    //TODO mark the contact has been unregistered
                                     this._asyFetchMembers(content.memberMCode,diff.added,diff.modified);
                                 });
                             }

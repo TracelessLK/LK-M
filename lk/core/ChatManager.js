@@ -71,7 +71,6 @@ class ChatManager extends EventTarget{
     }
 
     //发消息时用
-    //TODO 删除无hot chat关联的contact
     /**
      *
      * _recentChatsIndex {chatId:int}
