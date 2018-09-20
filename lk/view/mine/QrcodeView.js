@@ -29,7 +29,7 @@ export default class QrcodeView extends Component<{}> {
           color='#393a3f'
           value={JSON.stringify({
             id: this.user.id,
-            ip: this.user.serverIp,
+            ip: this.user.serverIP,
             port: this.user.serverPort,
             code: 'LK',
             action: 'addFriend'

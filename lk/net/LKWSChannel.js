@@ -464,8 +464,8 @@ class LKChannel extends WSChannel{
 
     async applyMF(contactId,serverIP,serverPort){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("applyMF",{
-                name:Application.getCurrentUser().name,
-                pic:Application.getCurrentUser().pic
+                name:Application.getCurrentApp().getCurrentUser().name,
+                pic:Application.getCurrentApp().getCurrentUser().pic
             },
             {target:{id:contactId,serverIP:serverIP,serverPort:serverPort}})]);
         return result[0]._sendMessage(result[1]);

@@ -25,8 +25,8 @@ export default class RequestView extends Component<{}> {
 
   componentDidMount () {
     (async () => {
-      const requrestAry = await MFApplyManager.asyGetAll()
-      console.log({requrestAry})
+      const requestAry = await MFApplyManager.asyGetAll()
+      console.log({requestAry})
     })()
   }
 

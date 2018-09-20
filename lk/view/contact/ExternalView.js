@@ -7,6 +7,7 @@ import {
   Image
 } from 'react-native'
 import {Toast} from 'native-base'
+import { ListItem } from 'react-native-elements'
 const common = require('@external/common')
 const {SearchBar, commonUtil, List, LoadingView} = common
 const {debounceFunc} = commonUtil
@@ -15,8 +16,6 @@ const style = require('../style')
 const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const {getAvatarSource} = require('../../util')
 const {HeaderRightButton} = require('@ys/react-native-collection')
-const lKWSChannel = lkApp.getLKWSChannel()
-import { Avatar, Icon, ListItem } from 'react-native-elements'
 
 export default class ExternalView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -27,10 +26,10 @@ export default class ExternalView extends Component<{}> {
           navigation.navigate('ScanView', {
             onRead (e) {
               const {data} = e
-              const {action, code, contactId, ip: serverIp, port: serverPort} = JSON.parse(data)
+              const {action, code, ip, port, id} = JSON.parse(data)
               console.log(data)
               if (code === 'LK' && action === 'addFriend') {
-                lKWSChannel.applyMF(contactId, serverIp, serverPort)
+                lkApp.getLKWSChannel().applyMF(id, ip, port)
                 Toast.show({
                   text: '好友请求已成功发送!',
                   position: 'top',

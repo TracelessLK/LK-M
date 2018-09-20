@@ -45,7 +45,7 @@
     "react-navigation": "2.5.5"
   },
   "devDependencies": {
-    "@ys/eslint-config-rn": "git+https://github.com/spirit1453/codebase.git#react_native_eslint",
+    "@ys/eslint-config-rn": "github:spirit1453/codebase#react_native_eslint",
     "babel-jest": "23.4.2",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "babel-preset-react-native": "4.0.0",

@@ -15,7 +15,7 @@ if (fs.existsSync(indexPath)) {
   fs.writeFileSync(indexPath, fs.readFileSync(indexPath, 'utf8').replace('var argv = process.argv;', 'var argv = process.argv || [];'))
 }
 
-childProcess.execSync(`
-     npm i @ys/eslint-config-rn -D;
-     npm i @ys/react-native-collection
-    `)
+const {ModuleUtil} = require('@ys/collection')
+const {installGit} = ModuleUtil
+
+installGit(rootPath)
