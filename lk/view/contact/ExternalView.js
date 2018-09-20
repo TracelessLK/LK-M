@@ -15,7 +15,8 @@ const style = require('../style')
 const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const {getAvatarSource} = require('../../util')
 const {HeaderRightButton} = require('@ys/react-native-collection')
-const lKWSChannel = require('../../net/LKWSChannel')
+const lKWSChannel = lkApp.getLKWSChannel()
+import { Avatar, Icon, ListItem } from 'react-native-elements'
 
 export default class ExternalView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -26,10 +27,16 @@ export default class ExternalView extends Component<{}> {
           navigation.navigate('ScanView', {
             onRead (e) {
               const {data} = e
-              const {action, code, contactId, ip: serverIp, port: serverPort} = data
-
+              const {action, code, contactId, ip: serverIp, port: serverPort} = JSON.parse(data)
+              console.log(data)
               if (code === 'LK' && action === 'addFriend') {
                 lKWSChannel.applyMF(contactId, serverIp, serverPort)
+                Toast.show({
+                  text: '好友请求已成功发送!',
+                  position: 'top',
+                  type: 'success',
+                  duration: 3000
+                })
               } else {
                 Toast.show({
                   text: '该二维码无效,请核对后重试!',
@@ -142,7 +149,35 @@ export default class ExternalView extends Component<{}> {
     }
 
     render () {
-      return <LoadingView loading={this.state.loading} content={this.state.content}></LoadingView>
+      const list = [
+        {
+          title: `好友请求`,
+          icon: 'contacts',
+          onPress: debounceFunc(() => {
+            this.props.navigation.navigate('RequestView')
+          })
+        }]
+      return (
+        <View>
+          <View style={style.listStyle}>
+            {
+              list.map((item, i) =>
+                <ListItem
+                  key={i}
+                  title={item.title}
+
+                  rightIcon={item.rightIconColor ? {style: {color: item.rightIconColor}} : {}}
+                  leftIcon={{name: item.icon, style: {}}}
+                  subtitle={item.subtitle}
+                  onPress={item.onPress}
+                />
+              )
+            }
+          </View>
+          <LoadingView loading={this.state.loading} content={this.state.content}></LoadingView>
+
+        </View>
+      )
     }
 }
 
