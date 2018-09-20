@@ -5,9 +5,11 @@ import {
   ScrollView, Text,
   View
 } from 'react-native'
-import { Avatar, Icon, ListItem} from 'react-native-elements'
+import { Avatar, Icon, ListItem } from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker'
-
+import {
+  Toast
+} from 'native-base'
 import RNFetchBlob from 'react-native-fetch-blob'
 const common = require('@external/common')
 const {commonUtil} = common
@@ -16,6 +18,7 @@ const {getAvatarSource} = require('../../util')
 const versionLocal = require('../../../package.json').version
 const config = require('../config')
 const lkApp = require('../../LKApplication').getCurrentApp()
+const chatManager = require('../../core/ChatManager')
 
 export default class MineView extends Component<{}> {
     static navigationOptions =() => {
@@ -27,7 +30,7 @@ export default class MineView extends Component<{}> {
       super(props)
       this.user = lkApp.getCurrentUser()
 
-      let picUrl = this.user.picId
+      let picUrl = this.user.pic
       const avatarSource = getAvatarSource(picUrl)
       this.state = {
         avatarSource
@@ -46,9 +49,13 @@ export default class MineView extends Component<{}> {
           {text: '取消', style: 'cancel'},
           {text: '确认',
             onPress: () => {
-            // Store.clear(function () {
-            //     AppUtil.reset();
-            // });
+              chatManager.clear()
+              Toast.show({
+                text: '聊天记录已经全部清空!',
+                position: 'top',
+                type: 'success',
+                duration: 1000
+              })
             }}
         ],
         { cancelable: false }
@@ -88,7 +95,7 @@ export default class MineView extends Component<{}> {
         },
 
         {
-          title: `授权其他设备`,
+          title: `扫码授权`,
           icon: 'crop-free',
           onPress: this.showScanView
         },

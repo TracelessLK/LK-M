@@ -30,7 +30,7 @@ export default class RecentView extends Component<{}> {
       this.state = {
         contentAry: null
       }
-      this.eventAry = ['msgChanged']
+      this.eventAry = ['msgChanged', 'recentChanged']
     }
 
     update=() => {

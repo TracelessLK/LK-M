@@ -88,7 +88,7 @@ class LKChannel extends WSChannel{
 
                 //target:_target
                 // targets:_targets,
-                time:option.time||Date.now(),
+                time:option&&option.time||Date.now(),
                 timeout:Application.getCurrentApp().getMessageTimeout()
             },
             body:{

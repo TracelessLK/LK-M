@@ -10,6 +10,7 @@ import OrgView from '../contact/OrgView'
 import ExternalView from '../contact/ExternalView'
 import ChatView from '../chat/ChatView'
 import RecentView from '../chat/RecentView'
+import RequestView from '../contact/RequestView'
 import MineView from '../mine/MineView'
 import DevView from '../mine/dev/DevView'
 import InfoView from '../mine/dev/InfoView'
@@ -108,7 +109,8 @@ const MainStack = createStackNavigator({
   UidView,
   VersionView,
   RenameView,
-  InfoView
+  InfoView,
+  RequestView
 }, stackNavigatorConfig)
 
 export default MainStack

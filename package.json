@@ -17,12 +17,13 @@
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
     "@external/common": "file:common",
-    "@ys/react-native-collection": "git+https://github.com/spirit1453/react_native_collection.git#publish",
+    "@ys/react-native-collection": "github:spirit1453/react_native_collection#publish",
     "aes-js": "^3.1.1",
     "crypto-js": "^3.1.9-1",
     "native-base": "^2.7.2",
     "react": "16.2.0",
     "react-native": "0.53.0",
+    "react-native-camera": "1.1.0",
     "react-native-communications": "^2.2.1",
     "react-native-device-info": "^0.22.0",
     "react-native-elements": "^0.19.1",
@@ -34,9 +35,11 @@
     "react-native-image-zoom-viewer": "^2.2.13",
     "react-native-keyboard-aware-scroll-view": "^0.7.2",
     "react-native-parsed-text": "0.0.20",
+    "react-native-qrcode-svg": "^5.1.1",
     "react-native-restart": "0.0.6",
     "react-native-rsa": "0.0.3",
     "react-native-sqlite-storage": "^3.3.6",
+    "react-native-svg": "^7.0.2",
     "react-native-update": "^5.1.0",
     "react-native-vector-icons": "^4.6.0",
     "react-navigation": "2.5.5"
@@ -48,5 +51,6 @@
     "babel-preset-react-native": "4.0.0",
     "jest": "23.4.2",
     "react-test-renderer": "16.2.0"
-  }
+  },
+  "repository": "https://github.com/tracelessman/LK-M.git"
 }

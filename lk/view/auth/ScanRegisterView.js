@@ -6,8 +6,9 @@ import {
 import {Toast} from 'native-base'
 import Icon from 'react-native-vector-icons/FontAwesome'
 const versionLocal = require('../../../package').version
-const util = require('../../util')
 const lkStyle = require('../style')
+const {CryptoUtil} = require('@ys/vanilla')
+const {decryptAES} = CryptoUtil
 
 export default class ScanRegisterView extends React.Component {
     static navigationOptions =() => {
@@ -34,7 +35,7 @@ export default class ScanRegisterView extends React.Component {
 
     onRead = (e) => {
       const {data} = e
-      const decryptedText = util.decryptAes(data)
+      const decryptedText = decryptAES(data)
       const obj = JSON.parse(decryptedText)
 
       if (obj.action === 'registerForAdmin') {
