@@ -55,10 +55,14 @@ class LKApplication extends Application{
                     let memberMCode = content.memberMCode;
                     let members = content.members;
                     let friends = content.friends;
+                    let groupContacts = content.groupContacts;
+                    let groups = content.groups;
                     ConfigManager.getMagicCodeManager().asyReset(orgMCode,memberMCode,user.id).then(function () {
                         return ConfigManager.getOrgManager().asyResetOrgs(orgMCode,orgs,user.id);
                     }).then(function () {
-                        return ConfigManager.getContactManager().asyResetContacts(memberMCode,members,friends,user.id);
+                        return ConfigManager.getContactManager().asyResetContacts(memberMCode,members,friends,groupContacts,user.id);
+                    }).then(function(){
+                        return ConfigManager.getChatManager().asyResetGroups(groups);
                     }).then(function () {
                         user.serverPublicKey = serverPK;
                         return ConfigManager.getUserManager().asyAddLKUser(user);

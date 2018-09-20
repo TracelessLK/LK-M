@@ -8,9 +8,9 @@ class ContactManager extends EventTarget{
     start(){
 
     }
-    asyResetContacts(newMemberMCode,members,friends,userId){
+    asyResetContacts(newMemberMCode,members,friends,groupContacts,userId){
         let curApp = Application.getCurrentApp();
-        return  LKContactHandler.asyResetContacts(members,friends,userId||curApp.getCurrentUser().id).then(function () {
+        return  LKContactHandler.asyResetContacts(members,friends,groupContacts,userId||curApp.getCurrentUser().id).then(function () {
             return LKMagicCodeHandler.asyUpdateMemberMagicCode(newMemberMCode,userId||curApp.getCurrentUser().id);
         }).then( ()=> {
             MagicCodeManager.setMemberMagicCode(newMemberMCode);

@@ -1,7 +1,7 @@
 import Contact from '../../store/Contact'
 class LKContactHandler{
-    asyResetContacts(members,friends,userId){
-        return Contact.resetContacts(members,friends,userId);
+    asyResetContacts(members,friends,groupContacts,userId){
+        return Contact.resetContacts(members,friends,groupContacts,userId);
     }
 
     asyRemoveContacts(ids,userId){
