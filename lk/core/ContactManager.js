@@ -8,22 +8,6 @@ class ContactManager extends EventTarget{
     start(){
 
     }
-
-    notifyContactMCodeChanged(detail){
-        //TODO change database
-        this.fire("mCodeChanged",detail);
-    }
-
-    notifyContactDeviceAdded(detail){
-        //TODO
-        this.fire("deviceAdded",detail);
-    }
-
-    notifyContactDeviceRemoved(detail){
-        //TODO
-        this.fire("deviceRemoved",detail);
-    }
-
     asyResetContacts(newMemberMCode,members,friends,userId){
         let curApp = Application.getCurrentApp();
         return  LKContactHandler.asyResetContacts(members,friends,userId||curApp.getCurrentUser().id).then(function () {

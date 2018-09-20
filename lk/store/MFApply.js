@@ -1,7 +1,7 @@
 
 import db from '../../common/store/DataBase'
 db.transaction((tx)=>{
-    tx.executeSql("create table if not exists mfapply(ownerUserId TEXT,id TEXT NOT NULL,name TEXT,pic TEXT,serverIP TEXT,serverPort INTEGER,time INTEGER,state INTEGER,PRIMARY KEY(ownerUserId,id))",[],function () {
+    tx.executeSql("create table if not exists mfapply(ownerUserId TEXT,id TEXT NOT NULL,name TEXT,pic TEXT,serverIP TEXT,serverPort INTEGER,mCode TEXT,time INTEGER,state INTEGER,PRIMARY KEY(ownerUserId,id))",[],function () {
     },function (err) {
       console.log(err)
     });
@@ -10,8 +10,8 @@ class MFApply{
     add(apply,userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "insert into mfapply(ownerUserId,id,name,pic,serverIP,serverPort,time,state) values(?,?,?,?,?,?,?,?)";
-                tx.executeSql(sql,[userId,apply.id,apply.name,apply.pic,apply.serverIP,apply.serverPort,Date.now(),-1],function (tx,results) {
+                let sql = "insert into mfapply(ownerUserId,id,name,pic,serverIP,serverPort,mCode,time,state) values(?,?,?,?,?,?,?,?)";
+                tx.executeSql(sql,[userId,apply.id,apply.name,apply.pic,apply.serverIP,apply.serverPort,apply.mCode,Date.now(),-1],function (tx,results) {
                     resolve(true);
                 },function (err) {
                     //reject(err);

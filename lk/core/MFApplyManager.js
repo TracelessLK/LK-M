@@ -22,11 +22,20 @@ class MFApplyManager extends EventTarget{
     }
 
     async accept(contactId){
-        let userId = Application.getCurrentApp().getCurrentUser().id;
-        await MFApply.accept(contactId,userId);
-        let friend = await MFApply.get(contactId,userId);
-        ConfigManager.getContactManager().asyAddNewFriend(friend);
-        return Application.getCurrentApp().getLKWSChannel().acceptMF(contactId,friend.serverIP,friend.serverPort);
+        return new Promise((resolve,reject)=>{
+            let userId = Application.getCurrentApp().getCurrentUser().id;
+            
+            MFApply.accept(contactId,userId).then(()=>{
+                MFApply.get(contactId,userId).then((friend)=>{
+                    Application.getCurrentApp().getLKWSChannel().acceptMF(contactId,friend.name,friend.pic,friend.serverIP,friend.serverPort,friend.mCode).then(()=>{
+                        ConfigManager.getContactManager().asyAddNewFriend(friend).then(()=>{
+                            resolve();
+                        });
+                    });
+                });
+            });
+        });
+
     }
 
 }

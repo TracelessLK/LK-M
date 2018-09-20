@@ -1,8 +1,8 @@
 
 import db from '../../common/store/DataBase'
 db.transaction((tx)=>{
-    //include org members & foreign contacts
-    let sql ="create table if not exists contact(id TEXT,name TEXT,pic TEXT,serverIP TEXT,serverPort INTEGER,isFriend INTEGER,orgId TEXT,mCode TEXT,ownerUserId TEXT,reserve1 TEXT,PRIMARY KEY(id,ownerUserId))";
+    //include org members 0 & foreign contacts 1 & group contacts 2
+    let sql ="create table if not exists contact(id TEXT,name TEXT,pic TEXT,serverIP TEXT,serverPort INTEGER,relation INTEGER,orgId TEXT,mCode TEXT,ownerUserId TEXT,reserve1 TEXT,PRIMARY KEY(id,ownerUserId))";
     tx.executeSql(sql,[],function () {
     },function (err) {
     });
@@ -29,7 +29,7 @@ class Contact{
     getMembersByOrg(userId,orgId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from contact where ownerUserId=? and isFriend=0 and orgId=? ";
+                let sql = "select * from contact where ownerUserId=? and relation=0 and orgId=? ";
                 tx.executeSql(sql,[userId,orgId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
@@ -43,14 +43,14 @@ class Contact{
         });
     }
 
-    getAll(userId,isFriend){
+    getAll(userId,relation){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 let sql = "select * from contact where ownerUserId=?";
-                if(isFriend==0){
-                    sql += " and isFriend=0";
-                }else if(isFriend==1){
-                    sql += " and isFriend=1";
+                if(relation==0){
+                    sql += " and relation=0";
+                }else if(relation==1){
+                    sql += " and relation=1";
                 }
                 tx.executeSql(sql,[userId],function (tx,results) {
                     let ary = [];
@@ -93,7 +93,7 @@ class Contact{
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 if(members&&members.length>0){
-                    let sql = "insert into contact(id,name,pic,serverIP,serverPort,isFriend,orgId,mCode,ownerUserId) values ";
+                    let sql = "insert into contact(id,name,pic,serverIP,serverPort,relation,orgId,mCode,ownerUserId) values ";
                     var params=[];
                     for(var i=0;i<members.length;i++){
                         var member = members[i];
@@ -128,7 +128,7 @@ class Contact{
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 if(friends&&friends.length>0){
-                    let sql = "insert into contact(id,name,pic,serverIP,serverPort,isFriend,orgId,mCode,ownerUserId) values ";
+                    let sql = "insert into contact(id,name,pic,serverIP,serverPort,relation,orgId,mCode,ownerUserId) values ";
                     var params=[];
                     for(var i=0;i<friends.length;i++){
                         var friend = friends[i];
@@ -142,6 +142,41 @@ class Contact{
                         params.push(friend.serverIP);
                         params.push(friend.serverPort);
                         params.push(1);
+                        params.push(null);
+                        params.push(friend.mCode);
+                        params.push(userId);
+                    }
+
+                    tx.executeSql(sql,params,function () {
+                        resolve();
+                    },function (err) {
+                        reject(err);
+                    });
+                }else{
+                    resolve();
+                }
+            });
+        });
+    }
+
+    addNewGroupContacts(contacts,userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                if(contacts&&contacts.length>0){
+                    let sql = "insert into contact(id,name,pic,serverIP,serverPort,relation,orgId,mCode,ownerUserId) values ";
+                    var params=[];
+                    for(var i=0;i<contacts.length;i++){
+                        var friend = contacts[i];
+                        sql += "(?,?,?,?,?,?,?,?,?)";
+                        if(i<contacts.length-1){
+                            sql +=",";
+                        }
+                        params.push(friend.id);
+                        params.push(friend.name);
+                        params.push(friend.pic);
+                        params.push(friend.serverIP);
+                        params.push(friend.serverPort);
+                        params.push(2);
                         params.push(null);
                         params.push(friend.mCode);
                         params.push(userId);
@@ -202,6 +237,22 @@ class Contact{
 
         });
 
+    }
+
+    async addNewGroupContactIFNotExist(members,userId){
+        let ps = [];
+        for(let i=0;i<members.length;i++){
+            let member = members[i];
+            ps.push(this.get(member.id));
+        }
+        let res = await Promise.all(ps);
+        let contacts = [];
+        for(let j=0;j<res.length;j++){
+            if(!res[j]){
+                contacts.push(members[j]);
+            }
+        }
+        return this.addNewGroupContacts(contacts,userId);
     }
 
 }

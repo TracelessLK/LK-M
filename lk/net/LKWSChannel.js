@@ -100,8 +100,12 @@ class LKChannel extends WSChannel{
         };
         if(option){
             let target = option.target;
+            let targets = option.targets;
             if(target){
                 msg.header.target = target;
+            }
+            if(targets){
+                msg.header.targets = targets;
             }
         }
 
@@ -120,6 +124,7 @@ class LKChannel extends WSChannel{
                     let chat = await ChatManager.asyGetHotChatRandomSent(chatId);
 
                     msg.header.targets = option.targets||chat.members;
+                    msg.body.isGroup = option.isGroup;
                     msg.body.chatId = chatId;
                     msg.body.relativeMsgId = relativeMsgId;
                     msg.body.order=option.order||ChatManager.getChatSendOrder(chatId);
@@ -237,9 +242,7 @@ class LKChannel extends WSChannel{
                             if(members) {
                                 this._checkMembersDiff(members).then((diff)=>{
                                     LKContactHandler.asyRemoveContacts(diff.removed,curApp.getCurrentUser().id);
-                                    //TODO delete contact's devices
-                                    //TODO delete chat with the contact
-                                    // TODO how to deal with the chat record if some contact deleted
+                                    //TODO mark the contact has been unregistered
                                     this._asyFetchMembers(content.memberMCode,diff.added,diff.modified);
                                 });
                             }
@@ -286,56 +289,59 @@ class LKChannel extends WSChannel{
         return result[0]._sendMessage(result[1]);
     }
 
-    sendText(contactId,text,relativeMsgId){
+    sendText(chatId,text,relativeMsgId,isGroup){
         let content = {type:ChatManager.MESSAGE_TYEP_TEXT,data:text};
-        this._sendMsg(contactId,content,relativeMsgId);
+        this._sendMsg(chatId,content,relativeMsgId,isGroup);
+    }
+    sendGroupText(chatId,text,relativeMsgId){
+        this.sendText(chatId,text,relativeMsgId,true)
     }
 
-    async _sendMsg(contactId,content,relativeMsgId){
+    async _sendMsg(chatId,content,relativeMsgId,isGroup){
         let curApp = Application.getCurrentApp();
         let userId = curApp.getCurrentUser().id;
         let did = curApp.getCurrentUser().deviceId;
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",content,{chatId:contactId,relativeMsgId:relativeMsgId})]);
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",content,{isGroup:isGroup,chatId:chatId,relativeMsgId:relativeMsgId})]);
         let msgId = result[1].header.id;
         let time = result[1].header.time;
         let curTime = Date.now();
         let relativeOrder = curTime;
         if(relativeMsgId){
-            let relativeMsg = await LKChatProvider.asyGetMsg(userId,contactId,relativeMsgId);
+            let relativeMsg = await LKChatProvider.asyGetMsg(userId,chatId,relativeMsgId);
             if(relativeMsg)
                 relativeOrder = relativeMsg.receiveOrder;
         }
-        await LKChatHandler.asyAddMsg(userId,contactId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING,relativeMsgId,relativeOrder,curTime,result[1].body.order);
-        ChatManager.fire("msgChanged",contactId);
+        await LKChatHandler.asyAddMsg(userId,chatId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING,relativeMsgId,relativeOrder,curTime,result[1].body.order);
+        ChatManager.fire("msgChanged",chatId);
         result[0]._sendMessage(result[1]).then((resp)=>{
             let diff = resp.body.content.diff;
             if(diff){
-                let added = ChatManager.deviceChanged(contactId,diff);
+                let added = ChatManager.deviceChanged(chatId,diff);
                 if(added&&added.length>0){
-                    this._asyNewRequest("sendMsg2",content,{time:time,chatId:contactId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
+                    this._asyNewRequest("sendMsg2",content,{isGroup:isGroup,time:time,chatId:chatId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
                         this._sendMessage(req).then(()=>{
                             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
-                                ChatManager.fire("msgChanged",contactId);
+                                ChatManager.fire("msgChanged",chatId);
                             });
                         }).catch(()=>{
                             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
-                                ChatManager.fire("msgChanged",contactId);
+                                ChatManager.fire("msgChanged",chatId);
                             });
                         });
                     });
                 }else{
                     LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
-                        ChatManager.fire("msgChanged",contactId);
+                        ChatManager.fire("msgChanged",chatId);
                     });
                 }
             }else{
                 LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
-                    ChatManager.fire("msgChanged",contactId);
+                    ChatManager.fire("msgChanged",chatId);
                 });
             }
         }).catch(()=>{
             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
-                ChatManager.fire("msgChanged",contactId);
+                ChatManager.fire("msgChanged",chatId);
             });
         });
     }
@@ -419,14 +425,16 @@ class LKChannel extends WSChannel{
     }
 
     async sendMsgHandler(msg){
+        //TODO 处理消息重入或前置未达如本地还没有群
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
         let body = msg.body;
-        let msgId = header.id;
         let senderUid = header.uid;
         let senderDid = header.did;
-        let chatId = userId===senderUid?body.chatId:senderUid;
-        await ChatManager.asyEnsureSingleChat(chatId);
+        let isGroup = body.isGroup;
+        let chatId = isGroup?body.chatId:(userId===senderUid?body.chatId:senderUid);
+        if(!isGroup)
+            await ChatManager.asyEnsureSingleChat(chatId);
         let relativeMsgId = body.relativeMsgId;
         let sendOrder = body.order;
         let relativeOrder;
@@ -448,8 +456,8 @@ class LKChannel extends WSChannel{
         }
     }
 
-    async readReport(contactId,msgIds){
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",msgIds,{target:contactId})]);
+    async readReport(chatId,serverIP,serverPort,msgIds){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",msgIds,{target:{id:contactId,serverIP:serverIP,serverPort:serverPort}})]);
         result[0]._sendMessage(result[1]).then((resp)=>{
             LKChatHandler.asyUpdateReadState(msgIds,ChatManager.MESSAGE_READSTATE_READREPORT);
         });
@@ -465,7 +473,8 @@ class LKChannel extends WSChannel{
     async applyMF(contactId,serverIP,serverPort){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("applyMF",{
                 name:Application.getCurrentApp().getCurrentUser().name,
-                pic:Application.getCurrentApp().getCurrentUser().pic
+                pic:Application.getCurrentApp().getCurrentUser().pic,
+                mCode:Application.getCurrentApp().getCurrentUser().mCode
             },
             {target:{id:contactId,serverIP:serverIP,serverPort:serverPort}})]);
         return result[0]._sendMessage(result[1]);
@@ -474,24 +483,38 @@ class LKChannel extends WSChannel{
         let contactId = msg.header.uid;
         let name = msg.body.content.name;
         let pic = msg.body.content.pic;
+        let mCode = msg.body.content.mCode;
         let serverIP = msg.header.serverIP;
         let serverPort = msg.header.serverPort;
-        MFApplyManager.asyAddNewMFApply({id:contactId,name:name,pic:pic,serverIP:serverIP,serverPort:serverPort}).then(()=>{
+        MFApplyManager.asyAddNewMFApply({id:contactId,name:name,pic:pic,serverIP:serverIP,serverPort:serverPort,mCode:mCode}).then(()=>{
             this._reportMsgHandled(msg.header.flowId);
         });
     }
-    async acceptMF(contactId,serverIP,serverPort){
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("acceptMF",null,
+    async acceptMF(contactId,contactName,contactPic,serverIP,serverPort,contactMCode){
+        let user = Application.getCurrentApp().getCurrentUser();
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("acceptMF",{accepter:{name:user.name,pic:user.pic,mCode:user.mCode},applyer:{name:contactName,pic:contactPic,mCode:contactMCode}},
             {target:{id:contactId,serverIP:serverIP,serverPort:serverPort}})]);
         return result[0]._sendMessage(result[1]);
     }
     acceptMFHandler(msg){
         let header = msg.header;
         let content = msg.body.content;
-        let friend = {id:header.uid,serverIP:header.serverIP,serverPort:header.serverPort,name:content.name,pic:content.pic};
+        let friend = {id:header.uid,serverIP:header.serverIP,serverPort:header.serverPort,name:content.accepter.name,pic:content.accepter.pic,mCode:content.accepter.mCode};
         ContactManager.asyAddNewFriend(friend).then(()=>{
             this._reportMsgHandled(header.flowId);
         });
+    }
+    //members:{id,name,pic,serverIP,serverPort}
+    async addGroupChat(chatId,name,members){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("addGroupChat",{chatId:chatId,name:name,members:members})]);
+        return result[0]._sendMessage(result[1]);
+    }
+    async addGroupChatHandler(msg){
+        let content = msg.body.content;
+        let chatId = content.chatId;
+        let name = content.name;
+        let members = content.members;
+        ChatManager.addGroupChat(chatId,name,members);
     }
 }
 

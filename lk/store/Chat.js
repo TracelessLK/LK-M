@@ -72,19 +72,32 @@ class Chat{
             });
         });
     }
+    addGroupChat(userId,chatId,name,newMsgNum){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "insert into chat(id,ownerUserId,name,newMsgNum,createTime,topTime,isGroup) values (?,?,?,?,?,?)";
+                tx.executeSql(sql,[chatId,userId,name,newMsgNum||0,Date.now(),0,1],function () {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
 
     addGroupMembers(chatId,members){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 let sql = "insert into groupMember(chatId,contactId) values ";
                 for(let i=0;i<members.length;i++){
-                    sql += "('"+chatId+"',";
-                    sql +="?)";
+                    sql += "('"+chatId+"','";
+                    sql += members[i].id;
+                    sql +="')";
                     if(i<members.length-1){
                         sql += ",";
                     }
                 }
-                tx.executeSql(sql,members,function () {
+                tx.executeSql(sql,[],function () {
                     resolve();
                 },function (err) {
                     reject(err);
