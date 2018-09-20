@@ -333,6 +333,16 @@ class ChatManager extends EventTarget{
         await Chat.addGroupMembers(chatId,members);
         this.fire("recentChanged");
     }
+    async asyResetGroups(groups){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        let ps = [];
+        groups.forEach(function (group) {
+            ps.push(Chat.addGroupChat(userId,group.id,group.name));
+            ps.push(Chat.addGroupMembers(group.id,group.members));
+        })
+        await Promise.all(ps);
+
+    }
 
 }
 

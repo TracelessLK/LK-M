@@ -195,12 +195,12 @@ class Contact{
     }
 
 
-    resetContacts(members,friends,userId){
+    resetContacts(members,friends,groupContacts,userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 let sql = "delete from contact where ownerUserId=?";
                 tx.executeSql(sql,[userId], (tx,results) =>{
-                    Promise.all([this.addNewMembers(members,userId),this.addNewFriends(friends,userId)]).then(function () {
+                    Promise.all([this.addNewMembers(members,userId),this.addNewFriends(friends,userId),this.addNewGroupContacts(groupContacts,userId)]).then(function () {
                         resolve();
                     }).then(function (err) {
                         reject(err);
