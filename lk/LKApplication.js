@@ -62,7 +62,7 @@ class LKApplication extends Application{
                     }).then(function () {
                         return ConfigManager.getContactManager().asyResetContacts(memberMCode,members,friends,groupContacts,user.id);
                     }).then(function(){
-                        return ConfigManager.getChatManager().asyResetGroups(groups);
+                        return ConfigManager.getChatManager().asyResetGroups(groups,user.id);
                     }).then(function () {
                         user.serverPublicKey = serverPK;
                         return ConfigManager.getUserManager().asyAddLKUser(user);
