@@ -255,5 +255,18 @@ class Contact{
         return this.addNewGroupContacts(contacts,userId);
     }
 
+    updateGroupContact2Friend(contactId,userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "update contact set relation=1 where id=? and ownerUserId=?";
+                tx.executeSql(sql,[contactId,userId],function () {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
 }
 module.exports = new Contact();

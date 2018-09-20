@@ -3,6 +3,7 @@ import EventTarget from '../../common/core/EventTarget'
 import LKContactHandler from '../logic/handler/LKContactHandler'
 import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
 import MagicCodeManager from './MagicCodeManager'
+import Contact from '../store/Contact'
 class ContactManager extends EventTarget{
 
     start(){
@@ -31,7 +32,12 @@ class ContactManager extends EventTarget{
     }
 
     async asyAddNewFriend(friend){
-        await LKContactHandler.asyAddNewFriend(friend,Application.getCurrentApp().getCurrentUser().id);
+        let curContact = Contact.get(friend.id);
+        if(!curContact)
+            await LKContactHandler.asyAddNewFriend(friend,Application.getCurrentApp().getCurrentUser().id);
+        else if(curContact.relation==2){
+            await Contact.updateGroupContact2Friend(friend.id,Application.getCurrentApp().getCurrentUser().id);
+        }
         this.fire("contactChanged");
     }
 }
