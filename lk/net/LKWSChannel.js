@@ -499,7 +499,14 @@ class LKChannel extends WSChannel{
     acceptMFHandler(msg){
         let header = msg.header;
         let content = msg.body.content;
-        let friend = {id:header.uid,serverIP:header.serverIP,serverPort:header.serverPort,name:content.accepter.name,pic:content.accepter.pic,mCode:content.accepter.mCode};
+        let user = Application.getCurrentApp().getCurrentUser();
+        let friend;
+        if(header.uid===user.id){
+            let target = content.target;
+            friend = {id:target.id,serverIP:target.serverIP,serverPort:target.serverPort,name:content.applyer.name,pic:content.applyer.pic,mCode:content.applyer.mCode};
+        }else{
+            friend = {id:header.uid,serverIP:header.serverIP,serverPort:header.serverPort,name:content.accepter.name,pic:content.accepter.pic,mCode:content.accepter.mCode};
+        }
         ContactManager.asyAddNewFriend(friend).then(()=>{
             this._reportMsgHandled(header.flowId);
         });
