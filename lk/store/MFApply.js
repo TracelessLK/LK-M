@@ -10,11 +10,11 @@ class MFApply{
     add(apply,userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "insert into mfapply(ownerUserId,id,name,pic,serverIP,serverPort,mCode,time,state) values(?,?,?,?,?,?,?,?)";
+                let sql = "insert into mfapply(ownerUserId,id,name,pic,serverIP,serverPort,mCode,time,state) values(?,?,?,?,?,?,?,?,?)";
                 tx.executeSql(sql,[userId,apply.id,apply.name,apply.pic,apply.serverIP,apply.serverPort,apply.mCode,Date.now(),-1],function (tx,results) {
                     resolve(true);
                 },function (err) {
-                    //reject(err);
+                    console.log(err)
                     resolve(false);
                 });
             });
