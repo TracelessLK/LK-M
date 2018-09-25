@@ -64,5 +64,29 @@ class LKUser{
             });
         });
     }
+    setUserName(name,id){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "update lkuser set name=? where id=?";
+                tx.executeSql(sql,[name,id],function () {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+    setUserPic(pic,id){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "update lkuser set pic=? where id=?";
+                tx.executeSql(sql,[pic,id],function () {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
 }
 module.exports = new LKUser();

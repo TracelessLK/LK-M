@@ -4,6 +4,7 @@ import LKContactHandler from '../logic/handler/LKContactHandler'
 import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
 import MagicCodeManager from './MagicCodeManager'
 import Contact from '../store/Contact'
+import ConfigManager from '../../common/core/ConfigManager'
 class ContactManager extends EventTarget{
 
     start(){
@@ -19,16 +20,26 @@ class ContactManager extends EventTarget{
         });
     }
 
-    //TODO 如果基本信息变化的member包括自己，更新LKUser表以及缓存
-
     asyRebuildMembers(newMemberMCode,ids,newMembers){
         let curApp = Application.getCurrentApp();
-        LKContactHandler.asyRebuidMembers(ids,newMembers,curApp.getCurrentUser().id).then(function () {
-            return LKMagicCodeHandler.asyUpdateMemberMagicCode(newMemberMCode,curApp.getCurrentUser().id);
-        }).then(() =>{
-            MagicCodeManager.setMemberMagicCode(newMemberMCode);
-            this.fire("contactChanged");
-        });
+        if(ids&&ids.length>0){
+            let userId = curApp.getCurrentUser().id;
+            for(let i=0;i<newMembers.length;i++){
+                let m = newMembers[i];
+                if(m.id===userId){
+                    ConfigManager.getUserManager().setUserName(m.name);
+                    ConfigManager.getUserManager().setUserPic(m.pic);
+                    break;
+                }
+            }
+            LKContactHandler.asyRebuidMembers(ids,newMembers,curApp.getCurrentUser().id).then(function () {
+                return LKMagicCodeHandler.asyUpdateMemberMagicCode(newMemberMCode,curApp.getCurrentUser().id);
+            }).then(() =>{
+                MagicCodeManager.setMemberMagicCode(newMemberMCode);
+                this.fire("contactChanged");
+            });
+        }
+
     }
 
     async asyAddNewFriend(friend){

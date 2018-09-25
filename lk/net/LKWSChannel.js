@@ -523,6 +523,14 @@ class LKChannel extends WSChannel{
         let members = content.members;
         ChatManager.addGroupChat(chatId,name,members);
     }
+    async setUserName(name){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("setUserName",{name:name})]);
+        return result[0]._sendMessage(result[1]);
+    }
+    async setUserPic(pic){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("setUserPic",{pic:pic})]);
+        return result[0]._sendMessage(result[1]);
+    }
 }
 
 module.exports=LKChannel;
