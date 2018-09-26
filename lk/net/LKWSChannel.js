@@ -524,7 +524,9 @@ class LKChannel extends WSChannel{
         let chatId = content.chatId;
         let name = content.name;
         let members = content.members;
-        ChatManager.addGroupChat(chatId,name,members);
+        ChatManager.addGroupChat(chatId,name,members).then( ()=> {
+            this._reportMsgHandled(msg.header.flowId);
+        });
     }
     async addGroupMembers(chatId,newMembers){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("addGroupMembers",{chatId:chatId,members:newMembers})]);
