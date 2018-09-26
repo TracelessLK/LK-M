@@ -4,6 +4,11 @@ db.transaction((tx)=>{
     },function (err) {
     });
 });
+function showAll () {
+
+}
+
+
 class Device{
     getAll(contactId){
         return new Promise((resolve,reject)=>{
@@ -55,6 +60,7 @@ class Device{
                         params.push(device.pk);
                         params.push(contactId);
                     }
+                    console.log({params})
 
                     tx.executeSql(sql,params,function () {
                         resolve();

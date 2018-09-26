@@ -143,9 +143,11 @@ class LKChannel extends WSChannel{
     }
 
     _sendMessage(req){
+        console.log({sendMsg: req})
         return new Promise((resolve,reject)=>{
             let msgId = req.header.id;
             this._callbacks[msgId] = (msg)=>{
+              console.log({responseCallbackMsg: msg})
                 delete this._callbacks[msgId];
                 resolve(msg);
             }
@@ -316,6 +318,7 @@ class LKChannel extends WSChannel{
         result[0]._sendMessage(result[1]).then((resp)=>{
             let diff = resp.body.content.diff;
             if(diff){
+                console.log({diff})
                 let added = ChatManager.deviceChanged(chatId,diff);
                 if(added&&added.length>0){
                     this._asyNewRequest("sendMsg2",content,{isGroup:isGroup,time:time,chatId:chatId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
@@ -352,6 +355,7 @@ class LKChannel extends WSChannel{
         let chatId = content.chatId;
         let diff = content.diff;
         if(diff){
+            console.log({diff})
             let added = ChatManager.deviceChanged(chatId,diff);
             if(added&&added.length>0){
                 let oldMsg = await LKChatProvider.asyGetMsg(Application.getCurrentApp().getCurrentUser().id,chatId,msgId);
