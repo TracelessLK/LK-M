@@ -193,7 +193,11 @@ class ChatManager extends EventTarget{
 
     }
 
-    // single chat
+    /**
+     *  ensure single chat exist
+     * @param contactId
+     * @returns {Promise}
+     */
     asyEnsureSingleChat(contactId){
         let userId = Application.getCurrentApp().getCurrentUser().id;
         return new Promise((resovle)=>{
@@ -210,6 +214,13 @@ class ChatManager extends EventTarget{
         });
     }
 
+
+    /**
+     * read chat msg
+     * @param chatId
+     * @param limit
+     * @returns {Promise.<{msgs: *, newMsgs: *}>}
+     */
     async asyReadMsgs(chatId,limit){
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let records = await LKChatProvider.asyGetMsgs(userId,chatId,limit);
@@ -244,6 +255,11 @@ class ChatManager extends EventTarget{
         });
     }
 
+    /**
+     * get new msg num
+     * @param chatId
+     * @returns {number}
+     */
     getNewMsgNum(chatId){
         let newMsgNum = this._allChatNewMsgNums[chatId];
         return newMsgNum?newMsgNum:0;
@@ -311,13 +327,22 @@ class ChatManager extends EventTarget{
         return returnAdded;
     }
 
+    /**
+     * clear recent list
+     */
     clear(){
         LKChatHandler.asyClear(Application.getCurrentApp().getCurrentUser().id).then(()=>{
             this.fire("recentChanged");
         });
 
     }
-    //members:{id,name,pic,serverIP,serverPort}
+
+    /**
+     * create new group chat
+     * @param name
+     * @param members members:{id,name,pic,serverIP,serverPort}
+     * @returns {Promise.<Promise|*>}
+     */
 
     async newGroupChat(name,members){
         let chatId = UUID();
@@ -333,6 +358,29 @@ class ChatManager extends EventTarget{
         await Chat.addGroupMembers(chatId,members);
         this.fire("recentChanged");
     }
+
+    /**
+     * add new group members
+     * @param chatId
+     * @param newMembers
+     * @returns {Promise.<void>}
+     */
+    async newGroupMembers(chatId,newMembers){
+        // let oldMembers = await LKChatProvider.asyGetGroupMembers(chatId);
+        // let curMembers = [];
+        // oldMembers.forEach(function (m) {
+        //     curMembers.push(m.id);
+        // });
+        await Application.getCurrentApp().getLKWSChannel().addGroupMembers(chatId,newMembers);
+        return Chat.addGroupMembers(chatId,newMembers);
+
+    }
+    async addGroupMembers(chatId,newMembers){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        await Contact.addNewGroupContactIFNotExist(newMembers,userId);
+        await Chat.addGroupMembers(chatId,newMembers);
+
+    }
     async asyResetGroups(groups,userId){
         let ps = [];
         groups.forEach(function (group) {
@@ -340,6 +388,10 @@ class ChatManager extends EventTarget{
             ps.push(Chat.addGroupMembers(group.id,group.members));
         })
         await Promise.all(ps);
+
+    }
+
+    leaveGroup(chatId){
 
     }
 

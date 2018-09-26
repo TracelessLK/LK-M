@@ -347,10 +347,13 @@ class LKChannel extends WSChannel{
     }
 
     async msgDeviceDiffReportHandler(msg){
+        let header = msg.header;
         let content = msg.body.content;
         let msgId = content.msgId;
         let chatId = content.chatId;
         let diff = content.diff;
+        //TODO 记录人员设备更新是由服务端的哪个flowid引起，同一个人的设备的diff只处理上个flowid后的diff
+        this._reportMsgHandled(header.flowId,header.id);
         if(diff){
             let added = ChatManager.deviceChanged(chatId,diff);
             if(added&&added.length>0){
@@ -522,6 +525,33 @@ class LKChannel extends WSChannel{
         let name = content.name;
         let members = content.members;
         ChatManager.addGroupChat(chatId,name,members);
+    }
+    async addGroupMembers(chatId,newMembers){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("addGroupMembers",{chatId:chatId,members:newMembers})]);
+        return result[0]._sendMessage(result[1]);
+    }
+    async addGroupMembersHandler(msg){
+        let content = msg.body.content;
+        let newMembers = content.members;
+        let chatId = content.chatId;
+        let user = Application.getCurrentApp().getCurrentUser();
+        let inNewMembers = false;
+        for(let i=0;i<newMembers.length;i++){
+            let member = newMembers[i];
+            if(member.id===user.id){
+                inNewMembers = true;
+                break;
+            }
+        }
+        if(inNewMembers){
+            let name = content.name;
+            ChatManager.addGroupChat(chatId,name,newMembers);
+        }else{
+            let chat = await LKChatProvider.asyGetChat(user.id,chatId);
+            if(chat){
+                ChatManager.addGroupMembers(chatId,newMembers);
+            }
+        }
     }
     async setUserName(name){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("setUserName",{name:name})]);
