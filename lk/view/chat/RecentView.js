@@ -15,18 +15,14 @@ const _ = require('lodash')
 process.env.DEBUG = 'debug'
 const debugLog = require('debug')('debug')
 
-// const infoLog = require('debug')('info')
-
 export default class RecentView extends Component<{}> {
     static navigationOptions =() => {
       return {
         headerTitle: '消息'
       }
     }
-
     constructor (props) {
       super(props)
-
       this.state = {
         contentAry: null
       }

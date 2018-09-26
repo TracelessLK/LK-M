@@ -5,9 +5,9 @@ import {
   Text,
   View
 } from 'react-native'
+import ChatManager from '../../core/ChatManager'
 const {getAvatarSource} = require('../../util')
 const MFApplyManager = require('../../core/MFApplyManager')
-const lkApp = require('../../LKApplication').getCurrentApp()
 export default class RequestView extends Component<{}> {
   constructor (props) {
     super(props)
@@ -17,11 +17,11 @@ export default class RequestView extends Component<{}> {
   }
 
   accept= async (req) => {
-    const {pic, id, serverIP, serverPort, mCode, name} = req
-    const channel = lkApp.getLKWSChannel()
-    await channel.acceptMF(id, name, pic, serverIP, serverPort, mCode)
-    const text = '我们已经是好友了,一起LK吧!'
-    channel.sendText(id, text)
+    const {id} = req
+    await ChatManager.asyEnsureSingleChat(id)
+    await MFApplyManager.accept(id)
+    // const text = '我们已经是好友了,一起LK吧!'
+    // channel.sendText(id, text)
   }
 
   componentDidMount () {

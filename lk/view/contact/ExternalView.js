@@ -90,7 +90,7 @@ export default class ExternalView extends Component<{}> {
       let ary = []
 
       const friendAry = await LKContactProvider.asyGetAllFriends(user.id)
-
+      console.log({friendAry})
       for (let ele of friendAry) {
         const obj = {}
         obj.onPress = () => {
@@ -117,12 +117,13 @@ export default class ExternalView extends Component<{}> {
 
         </View>
       )
+      console.log({dataAry})
       const content = dataAry.length ? (
-        <ScrollView>
-          <SearchBar
-            onChangeText={this.onChangeText}
-            clearIconStyle={{color: style.color.mainColor}}
-          />
+        <View>
+          {/*<SearchBar*/}
+            {/*onChangeText={this.onChangeText}*/}
+            {/*clearIconStyle={{color: style.color.mainColor}}*/}
+          {/*/>*/}
           <View>
             <View style={{padding: 10}}>
               <Text style={{color: '#a0a0a0'}}>
@@ -133,9 +134,8 @@ export default class ExternalView extends Component<{}> {
             </View>
             <List data={dataAry}></List>
           </View>
-        </ScrollView>
+        </View>
       ) : noUser
-
       this.setState({
         content,
         loading: false
@@ -157,7 +157,7 @@ export default class ExternalView extends Component<{}> {
           })
         }]
       return (
-        <View>
+        <ScrollView>
           <View style={style.listStyle}>
             {
               list.map((item, i) =>
@@ -174,8 +174,7 @@ export default class ExternalView extends Component<{}> {
             }
           </View>
           <LoadingView loading={this.state.loading} content={this.state.content}></LoadingView>
-
-        </View>
+        </ScrollView>
       )
     }
 }
