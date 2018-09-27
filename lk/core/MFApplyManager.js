@@ -9,10 +9,18 @@ class MFApplyManager extends EventTarget{
     }
     asyAddNewMFApply(apply){
         return new Promise((resolve,reject)=>{
-            MFApply.add(apply,Application.getCurrentApp().getCurrentUser().id).then(()=>{
-                this.fire("receiveMFApply");
-                resolve();
-            });
+            let userId = Application.getCurrentApp().getCurrentUser().id;
+            MFApply.get(apply.id,userId).then((app)=>{
+                if(!app){
+                    MFApply.add(apply,userId).then(()=>{
+                        this.fire("receiveMFApply");
+                        resolve();
+                    });
+                }else{
+                    resolve();
+                }
+            })
+
         });
 
     }
