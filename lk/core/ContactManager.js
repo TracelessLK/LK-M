@@ -43,13 +43,12 @@ class ContactManager extends EventTarget{
     }
 
     async asyAddNewFriend(friend){
-        let curContact = await Contact.get(friend.id);
-        console.log({curContact})
-        if(!curContact) {
-          await LKContactHandler.asyAddNewFriend(friend,Application.getCurrentApp().getCurrentUser().id);
-        }
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        let curContact = Contact.get(friend.id,userId);
+        if(!curContact)
+            await LKContactHandler.asyAddNewFriend(friend,userId);
         else if(curContact.relation==2){
-            await Contact.updateGroupContact2Friend(friend.id,Application.getCurrentApp().getCurrentUser().id);
+            await Contact.updateGroupContact2Friend(friend.id,userId);
         }
         this.fire("contactChanged");
     }
