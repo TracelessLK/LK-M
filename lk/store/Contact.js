@@ -47,17 +47,6 @@ class Contact{
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
               let sql = "select * from contact where ownerUserId=?";
-
-              tx.executeSql(sql,[userId],function (tx,results) {
-                let ary = [];
-                for(let i=0;i<results.rows.length;i++){
-                  ary.push(results.rows.item(i));
-                }
-                console.log(ary)
-              },function (err) {
-              });
-
-                 sql = "select * from contact where ownerUserId=?";
                 if(relation==0){
                     sql += " and relation=0";
                 }else if(relation==1){

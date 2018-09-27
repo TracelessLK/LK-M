@@ -105,10 +105,17 @@ export default class ChatView extends Component<{}> {
 
        const recordAry = []
        let lastShowingTime
+       const msgSet = new Set()
 
        for (let msg of msgAry) {
          let picSource = getAvatarSource(user.pic)
          const {sendTime, id} = msg
+         if (msgSet.has(id)) {
+           continue
+         } else {
+           msgSet.add(id)
+         }
+         msgSet.add(id)
          let now = new Date()
          if ((lastShowingTime && sendTime - lastShowingTime > 10 * 60 * 1000) || !lastShowingTime) {
            lastShowingTime = sendTime
