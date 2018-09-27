@@ -105,10 +105,17 @@ export default class ChatView extends Component<{}> {
 
        const recordAry = []
        let lastShowingTime
+       const msgSet = new Set()
 
        for (let msg of msgAry) {
          let picSource = getAvatarSource(user.pic)
          const {sendTime, id} = msg
+         if (msgSet.has(id)) {
+           continue
+         } else {
+           msgSet.add(id)
+         }
+         msgSet.add(id)
          let now = new Date()
          if ((lastShowingTime && sendTime - lastShowingTime > 10 * 60 * 1000) || !lastShowingTime) {
            lastShowingTime = sendTime
@@ -168,19 +175,30 @@ export default class ChatView extends Component<{}> {
      }
 
     _keyboardDidShow=(e) => {
+      // console.log({e})
       const {height} = Dimensions.get('window')
       let keyY = e.endCoordinates.screenY
-      const headerHeight = Header.HEIGHT
-      let change = {}
+      const _f = () => {
+        const headerHeight = Header.HEIGHT
+        let change = {}
 
-      if (this.extra.contentHeight + headerHeight < keyY) {
-        change.msgViewHeight = keyY - headerHeight
-      } else {
-        change.heightAnim = height - keyY
+        if (this.extra.contentHeight + headerHeight < keyY) {
+          change.msgViewHeight = keyY - headerHeight
+        } else {
+          change.heightAnim = height - keyY
+        }
+        // console.log({change})
+
+        this.setState(change)
       }
-      // console.log({change})
-
-      this.setState(change)
+      if (Platform.OS === 'ios') {
+        const {screenY: screenYStart} = e.startCoordinates
+        if (screenYStart === height) {
+          _f()
+        }
+      } else {
+        _f()
+      }
     }
     _keyboardDidHide=() => {
       this.setState({heightAnim: 0, msgViewHeight: this.originalContentHeight})
@@ -218,14 +236,8 @@ export default class ChatView extends Component<{}> {
         chatManager.asyReadMsgs(this.otherSide.id, num)
       }
       chatManager.on('msgChanged', this.msgChange)
-
-      if (Platform.OS === 'ios') {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardDidShow)
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardDidHide)
-      } else {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
-      }
+      this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
+      this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
       this.refreshRecord(this.limit)
       this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})

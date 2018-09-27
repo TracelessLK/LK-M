@@ -6,11 +6,24 @@ import {
 } from 'react-native'
 import entryUtil from './common/util/entryUtil'
 import {Root} from 'native-base'
+import Promise from 'bluebird'
 
 import LKEntry from './lk/LKEntry'
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
 
 entryUtil.init()
+
+global.Promise = Promise
+
+global.onunhandledrejection = function onunhandledrejection (error) {
+  // Warning: when running in "remote debug" mode (JS environment is Chrome browser),
+  // this handler is called a second time by Bluebird with a custom "dom-event".
+  // We need to filter this case out:
+  if (error instanceof Error) {
+    // logError(error)
+  }
+  console.log(error)
+}
 
 export default class Entry extends Component<{}> {
   render () {

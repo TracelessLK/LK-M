@@ -46,7 +46,7 @@ class Contact{
     getAll(userId,relation){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from contact where ownerUserId=?";
+              let sql = "select * from contact where ownerUserId=?";
                 if(relation==0){
                     sql += " and relation=0";
                 }else if(relation==1){

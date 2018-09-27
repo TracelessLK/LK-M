@@ -3,9 +3,11 @@ const path = require('path')
 const filePath = path.resolve(__dirname, '../node_modules/react-native/local-cli/core/__fixtures__/files/package.json')
 const fs = require('fs')
 const rootPath = path.resolve(__dirname, '../')
+const {CliUtil, ModuleUtil} = require('@ys/collection')
+const {execSync} = CliUtil
 
 if (fs.existsSync(filePath)) {
-  childProcess.execSync(`
+  execSync(`
     rm ${filePath};
     `)
 }
@@ -15,7 +17,9 @@ if (fs.existsSync(indexPath)) {
   fs.writeFileSync(indexPath, fs.readFileSync(indexPath, 'utf8').replace('var argv = process.argv;', 'var argv = process.argv || [];'))
 }
 
-const {ModuleUtil} = require('@ys/collection')
+// print error sql
+execSync('node bin/log.js')
+
 const {installGit} = ModuleUtil
 
 installGit(rootPath)
