@@ -8,11 +8,11 @@ db.transaction((tx)=>{
     });
 });
 class Contact{
-    get(contactId){
+    get(contactId,userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from contact where id=?";
-                tx.executeSql(sql,[contactId],function (tx,results) {
+                let sql = "select * from contact where id=? and ownerUserId";
+                tx.executeSql(sql,[contactId,userId],function (tx,results) {
                     if(results.rows.length>0){
                         resolve(results.rows.item(0));
                     }else{
