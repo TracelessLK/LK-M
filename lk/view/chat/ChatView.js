@@ -243,6 +243,10 @@ export default class ChatView extends Component<{}> {
       this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
     }
 
+    componentWillUnmount = () => {
+      chatManager.un('msgChanged', this.msgChange)
+    }
+
     _navigateToInfo = () => {
       if (this.isGroupChat) {
         // this.props.navigation.navigate('FriendInfoView', {friend: this.otherSide})

@@ -60,13 +60,16 @@ export default class ExternalView extends Component<{}> {
         content: null,
         loading: true
       }
-      ContactManager.on('contactChanged', () => {
-        this.setState({update: true})
-      })
     }
-
+    update = () => {
+      this.setState({update: true})
+    }
     componentDidMount () {
       this.asyncRender()
+      ContactManager.on('contactChanged', this.update)
+    }
+    componentWillUnmount () {
+      ContactManager.un('contactChanged', this.update)
     }
 
     go2FriendInfoView=debounceFunc((f) => {

@@ -109,7 +109,7 @@ export default class RegisterView extends Component<{}> {
                     })
                   })()
                 }
-              })}>
+              }, 1000 * 10)}>
               <Text style={{color: 'white'}}>注册</Text>
             </Button>
           </View>

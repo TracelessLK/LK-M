@@ -52,6 +52,10 @@ class Contact{
                 }else if(relation==1){
                     sql += " and relation=1";
                 }
+                console.log({
+                  contactSql: sql,
+                  userId
+                })
                 tx.executeSql(sql,[userId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
@@ -125,6 +129,7 @@ class Contact{
     }
 
     addNewFriends(friends,userId){
+        console.log('contact.addNewFriends')
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 if(friends&&friends.length>0){

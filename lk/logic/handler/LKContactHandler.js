@@ -13,6 +13,7 @@ class LKContactHandler{
     }
 
     asyAddNewFriend(friend,userId){
+        console.log('LKContactHandler asyAddNewFriend')
         return Contact.addNewFriends([friend],userId);
     }
 }
