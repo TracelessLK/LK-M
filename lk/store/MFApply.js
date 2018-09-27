@@ -41,7 +41,7 @@ class MFApply{
     get(id,userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from mfapply where ownerUserId=? and id=?";
+                let sql = "select * from mfapply where id=? and ownerUserId=?";
                 tx.executeSql(sql,[id,userId],function (tx,results) {
                     resolve(results.rows.item(0));
                 },function (err) {
