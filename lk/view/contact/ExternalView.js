@@ -16,6 +16,7 @@ const style = require('../style')
 const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const {getAvatarSource} = require('../../util')
 const {HeaderRightButton} = require('@ys/react-native-collection')
+const ContactManager = require('../../core/ContactManager')
 
 export default class ExternalView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -59,6 +60,9 @@ export default class ExternalView extends Component<{}> {
         content: null,
         loading: true
       }
+      ContactManager.on('contactChanged', () => {
+        this.setState({update: true})
+      })
     }
 
     componentDidMount () {
@@ -120,10 +124,10 @@ export default class ExternalView extends Component<{}> {
       console.log({dataAry})
       const content = dataAry.length ? (
         <View>
-          {/*<SearchBar*/}
-            {/*onChangeText={this.onChangeText}*/}
-            {/*clearIconStyle={{color: style.color.mainColor}}*/}
-          {/*/>*/}
+          {/* <SearchBar */}
+          {/* onChangeText={this.onChangeText} */}
+          {/* clearIconStyle={{color: style.color.mainColor}} */}
+          {/* /> */}
           <View>
             <View style={{padding: 10}}>
               <Text style={{color: '#a0a0a0'}}>

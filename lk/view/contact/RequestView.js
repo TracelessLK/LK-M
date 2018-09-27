@@ -8,12 +8,20 @@ import {
 import ChatManager from '../../core/ChatManager'
 const {getAvatarSource} = require('../../util')
 const MFApplyManager = require('../../core/MFApplyManager')
+const ContactManager = require('../../core/ContactManager')
+
 export default class RequestView extends Component<{}> {
   constructor (props) {
     super(props)
     this.state = {
       content: null
     }
+    ContactManager.on('contactChanged', () => {
+      this.setState({update: true})
+    })
+    MFApplyManager.on('receiveMFApply', () => {
+      this.setState({update: true})
+    })
   }
 
   accept= async (req) => {
