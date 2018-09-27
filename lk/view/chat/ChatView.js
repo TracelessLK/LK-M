@@ -175,19 +175,23 @@ export default class ChatView extends Component<{}> {
      }
 
     _keyboardDidShow=(e) => {
+      // console.log({e})
       const {height} = Dimensions.get('window')
       let keyY = e.endCoordinates.screenY
-      const headerHeight = Header.HEIGHT
-      let change = {}
+      const {screenY: screenYStart} = e.startCoordinates
+      if (screenYStart === height) {
+        const headerHeight = Header.HEIGHT
+        let change = {}
 
-      if (this.extra.contentHeight + headerHeight < keyY) {
-        change.msgViewHeight = keyY - headerHeight
-      } else {
-        change.heightAnim = height - keyY
+        if (this.extra.contentHeight + headerHeight < keyY) {
+          change.msgViewHeight = keyY - headerHeight
+        } else {
+          change.heightAnim = height - keyY
+        }
+        // console.log({change})
+
+        this.setState(change)
       }
-      // console.log({change})
-
-      this.setState(change)
     }
     _keyboardDidHide=() => {
       this.setState({heightAnim: 0, msgViewHeight: this.originalContentHeight})
@@ -227,8 +231,8 @@ export default class ChatView extends Component<{}> {
       chatManager.on('msgChanged', this.msgChange)
 
       if (Platform.OS === 'ios') {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardDidShow)
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardDidHide)
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
       } else {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)

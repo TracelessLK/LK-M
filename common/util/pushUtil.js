@@ -50,12 +50,12 @@ const pushUtil = {
                 const {alert,sound,badge} = permissions
 
                 if(alert === 0 && sound === 0 && badge === 0){
-                    Toast.show({
-                        text: '请在通知中心中允许LK发送通知',
-                        position: "top",
-                        type:"warning",
-                        duration: 10000
-                    })
+                    // Toast.show({
+                    //     text: '请在通知中心中允许LK发送通知',
+                    //     position: "top",
+                    //     type:"warning",
+                    //     duration: 10000
+                    // })
 
                 }else{
 
