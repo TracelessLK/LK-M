@@ -178,8 +178,7 @@ export default class ChatView extends Component<{}> {
       // console.log({e})
       const {height} = Dimensions.get('window')
       let keyY = e.endCoordinates.screenY
-      const {screenY: screenYStart} = e.startCoordinates
-      if (screenYStart === height) {
+      const _f = () => {
         const headerHeight = Header.HEIGHT
         let change = {}
 
@@ -191,6 +190,14 @@ export default class ChatView extends Component<{}> {
         // console.log({change})
 
         this.setState(change)
+      }
+      if (Platform.OS === 'ios') {
+        const {screenY: screenYStart} = e.startCoordinates
+        if (screenYStart === height) {
+          _f()
+        }
+      } else {
+        _f()
       }
     }
     _keyboardDidHide=() => {
@@ -229,14 +236,8 @@ export default class ChatView extends Component<{}> {
         chatManager.asyReadMsgs(this.otherSide.id, num)
       }
       chatManager.on('msgChanged', this.msgChange)
-
-      if (Platform.OS === 'ios') {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
-      } else {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
-      }
+      this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
+      this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
       this.refreshRecord(this.limit)
       this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
