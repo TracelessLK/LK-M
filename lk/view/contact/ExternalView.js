@@ -62,7 +62,7 @@ export default class ExternalView extends Component<{}> {
       }
     }
     update = () => {
-      this.setState({update: true})
+      this.asyncRender()
     }
     componentDidMount () {
       this.asyncRender()

@@ -11,7 +11,7 @@ class Contact{
     get(userId,contactId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select * from contact where id=? and ownerUserId";
+                let sql = "select * from contact where id=? and ownerUserId=?";
                 tx.executeSql(sql,[contactId,userId],function (tx,results) {
                     if(results.rows.length>0){
                         resolve(results.rows.item(0));
