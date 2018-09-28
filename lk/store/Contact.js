@@ -248,7 +248,7 @@ class Contact{
         let ps = [];
         for(let i=0;i<members.length;i++){
             let member = members[i];
-            ps.push(this.get(member.id));
+            ps.push(this.get(userId,member.id));
         }
         let res = await Promise.all(ps);
         let contacts = [];
