@@ -55,7 +55,7 @@ export default class RecentView extends Component<{}> {
         const obj = {}
         const msg = _.last(msgAry)
         const {sendTime, content, id} = msg
-        const person = await LKContactProvider.asyGet(chatId)
+        const person = await LKContactProvider.asyGet(userId,chatId)
         const {name, pic} = person
         obj.time = new Date(sendTime)
         obj.content = content
