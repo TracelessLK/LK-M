@@ -4,9 +4,6 @@ import MFApply from '../store/MFApply'
 import ConfigManager from '../../common/core/ConfigManager'
 class MFApplyManager extends EventTarget{
 
-    start(){
-
-    }
     asyAddNewMFApply(apply){
         return new Promise((resolve,reject)=>{
             let userId = Application.getCurrentApp().getCurrentUser().id;
