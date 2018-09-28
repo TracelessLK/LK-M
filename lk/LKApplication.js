@@ -34,7 +34,6 @@ class LKApplication extends Application{
                 return channel.asyLogin(user.id,user.password);
             })
         }
-        //TODO notify all managers to reset
         ConfigManager.getChatManager().init(user);
         ConfigManager.getMagicCodeManager().init(user);
     }
