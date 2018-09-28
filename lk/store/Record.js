@@ -230,5 +230,26 @@ class Record{
             });
         });
     }
+    removeAll(userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "delete from record where ownerUserId=? ";
+                tx.executeSql(sql,[userId],function () {
+
+                    let sql2 = "delete from group_record_state where ownerUserId=? ";
+                    tx.executeSql(sql2,[userId],function () {
+                        resolve();
+                    },function (err) {
+                        reject(err);
+                    });
+
+
+
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
 }
 module.exports = new Record();

@@ -7,6 +7,7 @@ import LKChatHandler from '../logic/handler/LKChatHandler'
 import LKDeviceHandler from '../logic/handler/LKDeviceHandler'
 import Chat from '../store/Chat'
 import Contact from '../store/Contact'
+import Record from '../store/Record'
 import UUID from 'uuid/v4';
 import RSAKey from "react-native-rsa";
 import Application from '../LKApplication'
@@ -391,8 +392,10 @@ class ChatManager extends EventTarget{
 
     }
 
-    leaveGroup(chatId){
-
+    async removeAll(){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        await Chat.removeAll(userId);
+        await Record.removeAll(userId);
     }
 
 }

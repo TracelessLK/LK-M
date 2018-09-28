@@ -69,5 +69,17 @@ class MagicCode{
             });
         });
     }
+    removeAll(userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "delete from magicCode where ownerUserId=?";
+                tx.executeSql(sql,[userId],function (tx,results) {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
 }
 module.exports = new MagicCode();

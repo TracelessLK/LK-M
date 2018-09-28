@@ -46,6 +46,11 @@ class MFApplyManager extends EventTarget{
 
     }
 
+    async removeAll(){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        await MFApply.removeAll(userId);
+    }
+
 }
 
 

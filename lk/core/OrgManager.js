@@ -3,6 +3,7 @@ import EventTarget from '../../common/core/EventTarget'
 import LKOrgHandler from '../logic/handler/LKOrgHandler'
 import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
 import MagicCodeManager from './MagicCodeManager'
+import Org from '../store/Org'
 
 class OrgManager extends EventTarget{
 
@@ -17,6 +18,10 @@ class OrgManager extends EventTarget{
             MagicCodeManager.setOrgMagicCode(newOrgMCode);
             this.fire("orgChanged");
         });
+    }
+    async removeAll(){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        await Org.removeAll(userId);
     }
 
 }

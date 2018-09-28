@@ -67,5 +67,17 @@ class Org{
             });
         });
     }
+    removeAll(userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "delete from org where ownerUserId=?";
+                tx.executeSql(sql,[userId],function (tx,results) {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
 }
 module.exports = new Org();

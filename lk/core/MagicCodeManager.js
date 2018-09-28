@@ -2,6 +2,7 @@ import EventTarget from '../../common/core/EventTarget'
 import LKMagicCodeProvider from '../logic/provider/LKMagicCodeProvider'
 import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
 import Application from '../LKApplication'
+import MagicCode from '../store/MagicCode'
 
 class MagicCodeManager extends EventTarget{
 
@@ -37,6 +38,11 @@ class MagicCodeManager extends EventTarget{
 
     asyReset(orgMCode,memberMCode,userId){
        return LKMagicCodeHandler.asyReset(orgMCode,memberMCode,userId);
+    }
+
+    async removeAll(){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        await MagicCode.removeAll(userId);
     }
 
 }
