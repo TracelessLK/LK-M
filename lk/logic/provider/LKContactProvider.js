@@ -1,8 +1,8 @@
 
 import Contact from '../../store/Contact'
 class LKContactProvider{
-    asyGet(contactId){
-        return Contact.get(contactId);
+    asyGet(userId,contactId){
+        return Contact.get(userId,contactId);
     }
 
     asyGetAll(userId){

@@ -101,7 +101,7 @@ class ChatManager extends EventTarget{
                         }
                     });
                 }else{
-                    let contact = await LKContactProvider.asyGet(chat.id);
+                    let contact = await LKContactProvider.asyGet(userId,chat.id);
                     let nm = {id:contact.id};
                     if(contact.serverIP){
                         nm.serverIP = contact.serverIP;
@@ -238,7 +238,7 @@ class ChatManager extends EventTarget{
         });
         LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
         targets.forEach((v,k)=>{
-            Contact.get(k).then((contact)=>{
+            Contact.get(userId,k).then((contact)=>{
                 Application.getCurrentApp().getLKWSChannel().readReport(k,contact.serverIP,contact.serverPort,v);
             });
         });

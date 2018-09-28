@@ -8,7 +8,7 @@ db.transaction((tx)=>{
     });
 });
 class Contact{
-    get(contactId,userId){
+    get(userId,contactId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 let sql = "select * from contact where id=? and ownerUserId";
