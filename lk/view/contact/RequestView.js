@@ -16,12 +16,9 @@ export default class RequestView extends Component<{}> {
     this.state = {
       content: null
     }
-    ContactManager.on('contactChanged', () => {
-      this.setState({update: true})
-    })
-    MFApplyManager.on('receiveMFApply', () => {
-      this.setState({update: true})
-    })
+  }
+  update = () => {
+    this.setState({update: true})
   }
 
   accept= async (req) => {
@@ -56,7 +53,14 @@ export default class RequestView extends Component<{}> {
       this.setState({
         content: result
       })
+      ContactManager.on('contactChanged', this.update)
+      MFApplyManager.on('receiveMFApply', this.update)
     })()
+  }
+
+  componentWillUnmount () {
+    ContactManager.un('contactChanged', this.update)
+    MFApplyManager.un('receiveMFApply', this.update)
   }
 
   render () {
