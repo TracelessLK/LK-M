@@ -6,8 +6,9 @@ import MagicCode from '../store/MagicCode'
 
 class MagicCodeManager extends EventTarget{
 
-    start(){
-
+    init(user){
+        this._orgMCode = null;
+        this._memberMCode = null;
     }
 
     setOrgMagicCode(code){

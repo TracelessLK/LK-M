@@ -35,6 +35,8 @@ class LKApplication extends Application{
             })
         }
         //TODO notify all managers to reset
+        ConfigManager.getChatManager().init(user);
+        ConfigManager.getMagicCodeManager().init(user);
     }
 
     getCurrentRSA(){
