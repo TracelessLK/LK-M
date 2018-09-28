@@ -164,6 +164,28 @@ class Chat{
         });
     }
 
+    removeAll(userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "delete from chat where ownerUserId=? ";
+                tx.executeSql(sql,[userId],function () {
+
+                    let sql2 = "delete from groupMember where chatId not in (select id from chat where ownerUserId=? )";
+                    tx.executeSql(sql2,[userId],function () {
+                        resolve();
+                    },function (err) {
+                        reject(err);
+                    });
+
+
+
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
 
 }
 module.exports = new Chat();

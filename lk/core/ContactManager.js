@@ -4,6 +4,7 @@ import LKContactHandler from '../logic/handler/LKContactHandler'
 import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
 import MagicCodeManager from './MagicCodeManager'
 import Contact from '../store/Contact'
+import Device from '../store/Device'
 import ConfigManager from '../../common/core/ConfigManager'
 class ContactManager extends EventTarget{
 
@@ -51,6 +52,11 @@ class ContactManager extends EventTarget{
             await Contact.updateGroupContact2Friend(friend.id,userId);
         }
         this.fire("contactChanged");
+    }
+    async removeAll(){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        await Contact.removeAll(userId);
+        await Device.removeAll(userId);
     }
 }
 

@@ -77,15 +77,16 @@ class LKApplication extends Application{
 
     }
 
-    asyUnRegister(){
-        const p = this._channel.asyUnRegister()
-         const p2 = p.then( ()=> {
-            //TODO 删除数据、清除缓存
-            ConfigManager.getUserManager().asyRemoveLKUser(this.getCurrentUser().id);
-            this.setCurrentUser(null);
-            return null
-        })
-        return p2
+    async asyUnRegister(){
+        await this._channel.asyUnRegister()
+        let userId = this.getCurrentUser().id;
+        await ConfigManager.getChatManager().removeAll(userId);
+        await ConfigManager.getContactManager().removeAll(userId);
+        await ConfigManager.getMagicCodeManager().removeAll(userId);
+        await ConfigManager.getMFApplyManager().removeAll(userId);
+        await ConfigManager.getOrgManager().removeAll(userId);
+        await ConfigManager.getUserManager().asyRemoveLKUser(userId);
+        this.setCurrentUser(null);
     }
 
 
