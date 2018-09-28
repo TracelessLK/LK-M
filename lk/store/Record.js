@@ -155,6 +155,26 @@ class Record{
         });
     }
 
+    getReadNotReportMsgs(userId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                var sql = "select * from record where ownerUserId=? and senderUid<>? and readState=1";
+                db.transaction((tx)=>{
+                    tx.executeSql(sql,[userId,chatId,userId],function (tx,results) {
+                        var rs = [];
+                        var len = results.rows.length;
+                        for(var i=0;i<len;i++){
+                            rs.push(results.rows.item(i));
+                        }
+                        resolve(rs);
+                    },function (err) {
+                        reject(err);
+                    });
+                });
+            });
+        });
+    }
+
     getMsgsNotRead(userId,chatId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
