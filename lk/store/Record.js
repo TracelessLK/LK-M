@@ -158,7 +158,7 @@ class Record{
     getMsgsNotRead(userId,chatId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                var sql = "select * from record where ownerUserId=? and chatId=? and senderUid!=?";
+                var sql = "select * from record where ownerUserId=? and chatId=? and senderUid<>? and readState<1";
                 db.transaction((tx)=>{
                     tx.executeSql(sql,[userId,chatId,userId],function (tx,results) {
                         var rs = [];

@@ -27,10 +27,6 @@ class UserManager extends EventTarget{
         user.pic = pic;
     }
 
-    async removeUser(){
-
-    }
-
 }
 
 

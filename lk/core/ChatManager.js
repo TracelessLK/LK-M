@@ -16,13 +16,12 @@ class ChatManager extends EventTarget{
     _recentChats = [];//
     _recentChatsIndex={};
     _maxRecent = 6;
-    _hotContacts = {};
 
     //接收消息的random缓存
     _hotChatRandomReceived = {}
 
     //all chat newmsgnum
-    _allChatNewMsgNums = {}
+    // _allChatNewMsgNums = {}
 
     MESSAGE_STATE_SENDING=0
     MESSAGE_STATE_SERVER_NOT_RECEIVE=1
@@ -42,14 +41,15 @@ class ChatManager extends EventTarget{
 
     constructor(){
         super();
-        // ContactManager.on("mCodeChanged",this._doContactMCodeChange);
-        // ContactManager.on("mCodeChanged",this._doContactMCodeChange);
-        // ContactManager.on("deviceAdded",this._doContactDeviceAdded);
-        // ContactManager.on("deviceRemoved",this._doContactDeviceRemoved);
     }
 
-    start(userId){
-        this._initAllChatNewMsgNums(userId);
+    init(userId){
+        this._recentChats = [];//
+        this._recentChatsIndex={};
+        this._hotChatRandomReceived = {};
+        // this._allChatNewMsgNums = {};
+        this._sendOrderSeed = Date.now();
+        this._allChatSendOrder = {};
     }
 
     //TODO监听mcode的变化
@@ -225,8 +225,8 @@ class ChatManager extends EventTarget{
     async asyReadMsgs(chatId,limit){
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let records = await LKChatProvider.asyGetMsgs(userId,chatId,limit);
-        this._allChatNewMsgNums[chatId] = 0;
-        LKChatHandler.asyUpdateNewMsgNum(userId,chatId,0);
+        // this._allChatNewMsgNums[chatId] = 0;
+        // LKChatHandler.asyUpdateNewMsgNum(userId,chatId,0);
         let newMsgs = await LKChatProvider.asyGetMsgsNotRead(userId,chatId);
         let readNewMsgs = [];
         let targets = new Map();
@@ -249,30 +249,33 @@ class ChatManager extends EventTarget{
 
     //TODO each 3 minutes check readstate and send readreport
 
-    async _initAllChatNewMsgNums(userId){
-        let chats = await LKChatProvider.asyGetAll(userId);
-        chats.forEach((chat)=>{
-            this._allChatNewMsgNums[chat.id] = chat.newMsgNum;
-        });
-    }
+    // async _initAllChatNewMsgNums(userId){
+    //     let chats = await LKChatProvider.asyGetAll(userId);
+    //     chats.forEach((chat)=>{
+    //         this._allChatNewMsgNums[chat.id] = chat.newMsgNum;
+    //     });
+    // }
 
     /**
      * get new msg num
      * @param chatId
      * @returns {number}
      */
-    getNewMsgNum(chatId){
-        let newMsgNum = this._allChatNewMsgNums[chatId];
-        return newMsgNum?newMsgNum:0;
+    async asyGetNewMsgNum(chatId){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        let newMsgs = await LKChatProvider.asyGetMsgsNotRead(userId,chatId);
+        return newMsgs.length;
+        // let newMsgNum = this._allChatNewMsgNums[chatId];
+        // return newMsgNum?newMsgNum:0;
     }
 
-    increaseNewMsgNum(chatId){
-        let newMsgNum = this._allChatNewMsgNums[chatId];
-        this._allChatNewMsgNums[chatId]= (newMsgNum?newMsgNum:0)+1;
-        let userId = Application.getCurrentApp().getCurrentUser().id;
-        LKChatHandler.asyUpdateNewMsgNum(userId,chatId,this._allChatNewMsgNums[chatId]);
-        //TODO newmsgnum 不采用字段记录 而是通过记录readstate去计算 在启动时只会读取一次
-    }
+    // increaseNewMsgNum(chatId){
+    //     let newMsgNum = this._allChatNewMsgNums[chatId];
+    //     this._allChatNewMsgNums[chatId]= (newMsgNum?newMsgNum:0)+1;
+    //     let userId = Application.getCurrentApp().getCurrentUser().id;
+    //     // LKChatHandler.asyUpdateNewMsgNum(userId,chatId,this._allChatNewMsgNums[chatId]);
+    //
+    // }
 
     getChatSendOrder(chatId){
         let sendOrder = this._allChatSendOrder[chatId];
@@ -396,6 +399,7 @@ class ChatManager extends EventTarget{
         let userId = Application.getCurrentApp().getCurrentUser().id;
         await Chat.removeAll(userId);
         await Record.removeAll(userId);
+
     }
 
 }

@@ -8,9 +8,7 @@ import Device from '../store/Device'
 import ConfigManager from '../../common/core/ConfigManager'
 class ContactManager extends EventTarget{
 
-    start(){
 
-    }
     asyResetContacts(newMemberMCode,members,friends,groupContacts,userId){
         let curApp = Application.getCurrentApp();
         return  LKContactHandler.asyResetContacts(members,friends,groupContacts,userId||curApp.getCurrentUser().id).then(function () {
