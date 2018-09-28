@@ -222,6 +222,8 @@ export default class ChatView extends Component<{}> {
     }
 
     componentWillUnmount =() => {
+      chatManager.un('msgChanged', this.msgChange)
+
       this.keyboardDidShowListener.remove()
       this.keyboardDidHideListener.remove()
     }
@@ -232,6 +234,7 @@ export default class ChatView extends Component<{}> {
 
     componentDidMount=() => {
       const num = chatManager.getNewMsgNum(this.otherSide.id)
+      console.log({num})
       if (num) {
         chatManager.asyReadMsgs(this.otherSide.id, num)
       }
@@ -241,10 +244,6 @@ export default class ChatView extends Component<{}> {
 
       this.refreshRecord(this.limit)
       this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
-    }
-
-    componentWillUnmount = () => {
-      chatManager.un('msgChanged', this.msgChange)
     }
 
     _navigateToInfo = () => {

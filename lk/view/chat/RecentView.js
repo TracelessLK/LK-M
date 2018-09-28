@@ -2,7 +2,8 @@
 import React, { Component } from 'react'
 import {
   ScrollView,
-  View
+  View,
+  Image
 } from 'react-native'
 const {GroupAvatar, commonUtil, MessageList} = require('@external/common')
 const {debounceFunc} = commonUtil
@@ -14,11 +15,13 @@ const chatManager = require('../../core/ChatManager')
 const _ = require('lodash')
 process.env.DEBUG = 'debug'
 const debugLog = require('debug')('debug')
+const addPng = require('../image/add.png')
 
 export default class RecentView extends Component<{}> {
     static navigationOptions =() => {
       return {
-        headerTitle: '消息'
+        headerTitle: '消息',
+        headerRight: <Image source={addPng} style={{width: 20}} resizeMode='cover'/>
       }
     }
     constructor (props) {
@@ -81,7 +84,7 @@ export default class RecentView extends Component<{}> {
       const user = lkApp.getCurrentUser()
       const allChat = await LKChatProvider.asyGetAll(user.id)
       const msgAryPromise = []
-
+      console.log({allChat})
       for (let chat of allChat) {
         const {newMsgNum} = chat
         const option = {

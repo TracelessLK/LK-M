@@ -78,7 +78,9 @@ class LKChannel extends WSChannel{
     }
 
     async _asyNewRequest (action,content,option) {
-        console.log(option)
+        if (option) {
+          console.log(option)
+        }
         let msg=  {
             header:{
                 version:"1.0",

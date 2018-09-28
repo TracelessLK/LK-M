@@ -60,15 +60,21 @@ export default class ExternalView extends Component<{}> {
         content: null,
         loading: true
       }
+      this.mounted = false
     }
     update = () => {
-      this.asyncRender()
+      if (this.mounted) {
+        console.log('update externalView')
+        this.asyncRender()
+      }
     }
     componentDidMount () {
+      this.mounted = true
       this.asyncRender()
       ContactManager.on('contactChanged', this.update)
     }
     componentWillUnmount () {
+      this.mounted = false
       ContactManager.un('contactChanged', this.update)
     }
 
