@@ -15,7 +15,6 @@ const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const chatManager = require('../../core/ChatManager')
 const _ = require('lodash')
-process.env.DEBUG = 'debug'
 const debugLog = require('debug')('debug')
 const addPng = require('../image/add.png')
 
@@ -110,7 +109,7 @@ export default class RecentView extends Component<{}> {
       const msgAryPromise = []
       console.log({allChat})
       for (let chat of allChat) {
-        const {newMsgNum} = chat
+        const {newMsgNum, isGroup} = chat
         const option = {
           userId: user.id,
           chatId: chat.id,
@@ -120,14 +119,12 @@ export default class RecentView extends Component<{}> {
         msgAryPromise.push(msgPromise)
       }
       let recentAry = await Promise.all(msgAryPromise)
-      // debugLog(recentAry)
       recentAry = recentAry.filter(ele => { return Boolean(ele) })
 
       recentAry.sort((obj1, obj2) => {
         return obj1.sendTime - obj2.sendTime
       })
 
-      debugLog(recentAry)
       const contentAry = <MessageList data={recentAry}/>
 
       this.setState({

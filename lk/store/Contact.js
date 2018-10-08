@@ -52,10 +52,10 @@ class Contact{
                 }else if(relation==1){
                     sql += " and relation=1";
                 }
-                console.log({
-                  contactSql: sql,
-                  userId
-                })
+                // console.log({
+                //   contactSql: sql,
+                //   userId
+                // })
                 tx.executeSql(sql,[userId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){

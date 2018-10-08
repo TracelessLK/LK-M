@@ -1,5 +1,5 @@
 import React, { Component} from 'react'
-import {Button, Image, ScrollView, Switch, Text, TextInput, TouchableOpacity, View} from 'react-native'
+import {Button, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native'
 const common = require('@external/common')
 const {List} = common
 const {FuncUtil} = require('@ys/vanilla')
@@ -7,6 +7,8 @@ const {debounceFunc} = FuncUtil
 const lkApp = require('../../LKApplication').getCurrentApp()
 const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const {getAvatarSource} = require('../../util')
+const _ = require('lodash')
+const chatManager = require('../../core/ChatManager')
 
 export default class AddGroupView extends Component<{}> {
   static navigationOptions =({ navigation }) => (
@@ -34,7 +36,7 @@ export default class AddGroupView extends Component<{}> {
     this.name = v
   }
 
-  createGroup=() => {
+  createGroup= async () => {
     if (!this.name) {
       alert('请填写群名称')
       return
@@ -42,7 +44,9 @@ export default class AddGroupView extends Component<{}> {
     if (this.selectedAry.length === 0) {
       alert('请选择群成员')
     } else {
-      console.log({name:this.name, ary:this.selectedAry})
+      // console.log({selectedAry: this.selectedAry})
+      await chatManager.newGroupChat(this.name, this.selectedAry)
+      this.props.navigation.goBack()
     }
   }
 
@@ -67,7 +71,6 @@ export default class AddGroupView extends Component<{}> {
     let ary = []
 
     const memberAry = await LKContactProvider.asyGetAllMembers(user.id)
-
     for (let ele of memberAry) {
       if (ele.id !== user.id) {
         const obj = {}
@@ -76,11 +79,20 @@ export default class AddGroupView extends Component<{}> {
         obj.key = ele.id
         obj.onPress = null
         obj.title = ele.name
+        obj.extra = {
+          id: ele.id,
+          name: ele.name,
+          pic: ele.pic,
+          serverIP: ele.serverIP ? ele.serverIP : user.serverIP,
+          serverPort: ele.serverPort ? ele.serverPort : user.serverPort
+        }
         _f(ele, obj, ary)
       }
     }
 
     const friendAry = await LKContactProvider.asyGetAllFriends(user.id)
+    // console.log({memberAry, friendAry})
+
     for (let ele of friendAry) {
       const obj = {}
       obj.onPress = null
@@ -100,8 +112,8 @@ export default class AddGroupView extends Component<{}> {
     })
   }
 
-  onSelectedChange = (selectedAry) => {
-    this.selectedAry = selectedAry
+  onSelectedChange = (selectedObj) => {
+    this.selectedAry = _.values(selectedObj)
   }
 
   componentDidMount () {

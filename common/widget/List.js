@@ -15,18 +15,19 @@ export default class List extends Component<{}> {
     this.state = {
       selected: {}
     }
+    this.selectedObj = {}
   }
 
-  select = (key) => {
+  select = (value, key, extra) => {
+    // console.log(value, key, extra)
     const selected = this.state.selected
-    selected[key] = !this.state.selected[key]
-    let ary = []
-    for (let innnerKey in selected) {
-      if (selected[innnerKey]) {
-        ary.push(key)
-      }
+    selected[key] = value
+    if (value) {
+      this.selectedObj[key] = extra
+    } else {
+      delete this.selectedObj[key]
     }
-    this.props.onSelectedChange(ary)
+    this.props.onSelectedChange(this.selectedObj)
     this.setState({
       selected
     })
@@ -36,7 +37,7 @@ export default class List extends Component<{}> {
     const contentAry = []
     const {data, showSwitch} = this.props
     for (let ele of data) {
-      const {onPress, image, title, key} = ele
+      const {onPress, image, title, key, extra} = ele
       const content = (
         <View style={{backgroundColor: 'white', borderBottomColor: '#f0f0f0', borderBottomWidth: 1}} key={key}>
           <TouchableOpacity onPress={onPress} style={{width: '100%',
@@ -49,7 +50,7 @@ export default class List extends Component<{}> {
               <Text style={{fontSize: 18, fontWeight: '500'}}>
                 {title}
               </Text>
-              {showSwitch ? <Switch onValueChange={() => { this.select(key) }} value={this.state.selected[key]} ios_backgroundColor='#5077AA'></Switch>: null}
+              {showSwitch ? <Switch onValueChange={(value) => { this.select(value, key, extra) }} value={this.state.selected[key]} ios_backgroundColor='#5077AA'></Switch>: null}
             </View>
           </TouchableOpacity>
         </View>

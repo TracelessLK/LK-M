@@ -255,7 +255,7 @@ class ChatManager extends EventTarget{
     async _ckReportReadstate(){
         let user = Application.getCurrentApp().getCurrentUser();
         if(user){
-            let msgs = await Chat.getReadNotReportMsgs(user.id);
+            let msgs = await Record.getReadNotReportMsgs(user.id);
             let targets = new Map();
             msgs.forEach((record)=>{
                 if(!targets.has(record.senderUid)){

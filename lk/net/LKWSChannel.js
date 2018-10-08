@@ -162,7 +162,7 @@ class LKChannel extends WSChannel{
 
             setTimeout(()=>{
                 if(this._callbacks[msgId]){
-                    reject({error:"timeout"});
+                    reject({error:"timeout", req});
                 }
 
             },this._timeout);

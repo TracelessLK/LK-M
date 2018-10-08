@@ -75,7 +75,7 @@ class Chat{
     addGroupChat(userId,chatId,name,newMsgNum){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "insert into chat(id,ownerUserId,name,newMsgNum,createTime,topTime,isGroup) values (?,?,?,?,?,?)";
+                let sql = "insert into chat(id,ownerUserId,name,newMsgNum,createTime,topTime,isGroup) values (?,?,?,?,?,?,?)";
                 tx.executeSql(sql,[chatId,userId,name,newMsgNum||0,Date.now(),0,1],function () {
                     resolve();
                 },function (err) {
