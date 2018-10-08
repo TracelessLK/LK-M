@@ -1,50 +1,46 @@
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
-    Alert,
-    AsyncStorage,
-    Button,
-    NativeModules,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,Modal,
-} from 'react-native';
+  Alert,
+  AsyncStorage,
+  Button,
+  NativeModules,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View, Modal
+} from 'react-native'
 import PropTypes from 'prop-types'
 
-
 export default class AddContactView extends Component<{}> {
+  constructor (props) {
+    super(props)
+    this.state = {}
+  }
 
-    constructor(props){
-        super(props);
-        this.state={};
-    }
+  componentDidMount () {
 
-    componentDidMount(){
+  }
 
-    }
+  componentDidUpdate () {
+  }
 
-    componentDidUpdate(){
-    }
+  componentWillUnmount () {
 
+  }
 
-    componentWillUnmount(){
-
-    }
-
-    render() {
-        return (
-           <View>
-               <Text>AddContactView</Text>
-           </View>
-        )
-    }
-
+  render () {
+    return (
+      <View>
+        <Text>AddContactView</Text>
+      </View>
+    )
+  }
 }
 
 AddContactView.defaultProps = {
-    
+
 }
 
 AddContactView.propTypes = {

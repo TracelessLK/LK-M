@@ -9,6 +9,7 @@
     "postinstall": "node bin/postinstall",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "start:android": "react-native run-android",
+    "start:ios": "react-native run-ios",
     "test": "npm run lint && jest",
     "try": "jest",
     "getAndroidData": "node bin/getAndroidData",

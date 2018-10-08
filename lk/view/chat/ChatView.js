@@ -204,12 +204,12 @@ export default class ChatView extends Component<{}> {
       this.setState({heightAnim: 0, msgViewHeight: this.originalContentHeight})
     }
 
-    msgChange=() => {
+    msgChange= async () => {
       // if (targetId === this.otherSide.id) {
       //
       // }
       // todo should have scroll and message pop up animation
-      const num = chatManager.getNewMsgNum(this.otherSide.id)
+      const num = await chatManager.asyGetNewMsgNum(this.otherSide.id)
       if (num) {
         chatManager.asyReadMsgs(this.otherSide.id, num)
       }
@@ -233,7 +233,7 @@ export default class ChatView extends Component<{}> {
     }
 
     componentDidMount=() => {
-      const num = chatManager.getNewMsgNum(this.otherSide.id)
+      const num = chatManager.asyGetNewMsgNum(this.otherSide.id)
       console.log({num})
       if (num) {
         chatManager.asyReadMsgs(this.otherSide.id, num)

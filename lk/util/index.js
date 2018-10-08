@@ -31,7 +31,7 @@ const util = {
   }
 }
 
-const tableAry = ['device', 'mfapply', 'contact']
+const tableAry = ['device', 'mfapply', 'contact', 'record']
 for (let ele of tableAry) {
   util.showAll(ele)
 }

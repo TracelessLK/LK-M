@@ -3,8 +3,10 @@ import React, { Component } from 'react'
 import {
   ScrollView,
   View,
-  Image
+  Image,
+  TouchableOpacity
 } from 'react-native'
+import {ActionSheet} from 'native-base'
 const {GroupAvatar, commonUtil, MessageList} = require('@external/common')
 const {debounceFunc} = commonUtil
 const {getAvatarSource} = require('../../util')
@@ -18,10 +20,14 @@ const debugLog = require('debug')('debug')
 const addPng = require('../image/add.png')
 
 export default class RecentView extends Component<{}> {
-    static navigationOptions =() => {
+    static navigationOptions =({navigation}) => {
+      const size = 20
       return {
         headerTitle: '消息',
-        headerRight: <Image source={addPng} style={{width: 20}} resizeMode='cover'/>
+        headerRight:
+        <TouchableOpacity onPress={navigation.getParam('optionToChoose')}>
+          <Image source={addPng} style={{width: size, height: size, marginHorizontal: 10}} resizeMode='contain'/>
+        </TouchableOpacity>
       }
     }
     constructor (props) {
@@ -31,6 +37,23 @@ export default class RecentView extends Component<{}> {
       }
       this.eventAry = ['msgChanged', 'recentChanged']
     }
+
+  optionToChoose = () => {
+    let BUTTONS = ['发起群聊', '添加好友', '取消']
+    let CANCEL_INDEX = BUTTONS.length - 1
+    ActionSheet.show(
+      {
+        options: BUTTONS,
+        cancelButtonIndex: CANCEL_INDEX,
+        title: ''
+      },
+      buttonIndex => {
+        if (buttonIndex === 0) {
+          this.props.navigation.navigate('AddGroupView')
+        }
+      }
+    )
+  }
 
     update=() => {
       this.updateRecent()
@@ -46,6 +69,7 @@ export default class RecentView extends Component<{}> {
         chatManager.on(event, this.update)
       }
       this.updateRecent()
+      this.props.navigation.setParams({optionToChoose: this.optionToChoose})
     }
 
     async getMsg (option) {
@@ -58,7 +82,7 @@ export default class RecentView extends Component<{}> {
         const obj = {}
         const msg = _.last(msgAry)
         const {sendTime, content, id} = msg
-        const person = await LKContactProvider.asyGet(userId,chatId)
+        const person = await LKContactProvider.asyGet(userId, chatId)
         const {name, pic} = person
         obj.time = new Date(sendTime)
         obj.content = content
