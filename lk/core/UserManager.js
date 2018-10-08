@@ -4,9 +4,6 @@ import LKUserHandler from '../logic/handler/LKUserHandler'
 
 class UserManager extends EventTarget{
 
-    start(){
-
-    }
 
     asyAddLKUser(user){
        return LKUserHandler.asyAddLKUser(user);

@@ -7,9 +7,6 @@ import Org from '../store/Org'
 
 class OrgManager extends EventTarget{
 
-    start(){
-
-    }
 
     asyResetOrgs(newOrgMCode,orgs,userId){
         return LKOrgHandler.asyResetOrgs(orgs,userId).then( () =>{

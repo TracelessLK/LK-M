@@ -43,13 +43,16 @@ class ChatManager extends EventTarget{
         super();
     }
 
-    init(userId){
+    init(user){
         this._recentChats = [];//
         this._recentChatsIndex={};
         this._hotChatRandomReceived = {};
         // this._allChatNewMsgNums = {};
         this._sendOrderSeed = Date.now();
         this._allChatSendOrder = {};
+        if(user){
+            this._ckReportReadstate();
+        }
     }
 
     //TODO监听mcode的变化
@@ -247,7 +250,27 @@ class ChatManager extends EventTarget{
         return {msgs:records,newMsgs:newMsgs};
     }
 
-    //TODO each 3 minutes check readstate and send readreport
+    //each 5 minutes check readstate and send readreport
+
+    async _ckReportReadstate(){
+        let user = Application.getCurrentApp().getCurrentUser();
+        if(user){
+            let msgs = await Chat.getReadNotReportMsgs(user.id);
+            let targets = new Map();
+            msgs.forEach((record)=>{
+                if(!targets.has(record.senderUid)){
+                    targets.set(record.senderUid,[]);
+                }
+                targets.get(record.senderUid).push(record.id);
+            });
+            targets.forEach((v,k)=>{
+                Contact.get(user.id,k).then((contact)=>{
+                    Application.getCurrentApp().getLKWSChannel().readReport(k,contact.serverIP,contact.serverPort,v);
+                });
+            });
+            setTimeout(()=>{this._ckReportReadstate()},5*60*1000);
+        }
+    }
 
     // async _initAllChatNewMsgNums(userId){
     //     let chats = await LKChatProvider.asyGetAll(userId);
