@@ -313,6 +313,7 @@ class ChatManager extends EventTarget{
     //TODO 其他包含了该成员的chat的缓存也需要更新
     deviceChanged(chatId,changedMembers){
         let returnAdded = [];
+        console.log({changedMembers})
         changedMembers.forEach(function(changed){
             LKDeviceHandler.asyAddDevices(changed.id,changed.added);
             LKDeviceHandler.asyRemoveDevices(changed.id,changed.removed);

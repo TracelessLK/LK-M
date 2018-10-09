@@ -146,7 +146,11 @@ class LKChannel extends WSChannel{
     }
 
     _sendMessage(req){
+        const {header} = req
+        const {action} = header
+      if (action !== 'ping') {
         console.log({sendMsg: req})
+      }
         return new Promise((resolve,reject)=>{
             let msgId = req.header.id;
             this._callbacks[msgId] = (msg)=>{

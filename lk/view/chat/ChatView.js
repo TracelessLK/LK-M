@@ -220,8 +220,8 @@ export default class ChatView extends Component<{}> {
       this.text = v
     }
 
-    componentDidMount=() => {
-      const num = chatManager.asyGetNewMsgNum(this.otherSide.id)
+    componentDidMount= async () => {
+      const num = await chatManager.asyGetNewMsgNum(this.otherSide.id)
       console.log({num})
       if (num) {
         chatManager.asyReadMsgs(this.otherSide.id, num)
@@ -247,7 +247,11 @@ export default class ChatView extends Component<{}> {
         this.textInput.clear()
       }, 0)
       const channel = lkApp.getLKWSChannel()
-      channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
+      if (this.isGroupChat) {
+        channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
+      } else {
+        channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
+      }
       this.text = ''
       this.textInput.clear()
     }

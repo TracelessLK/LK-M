@@ -92,11 +92,8 @@ export default class RecentView extends Component<{}> {
         obj.name = name
         obj.person = person
         obj.id = chatId
-        if (isGroup) {
-          // obj.image = <GroupAvatar defaultPic={defaultAvatar} picAry={}></GroupAvatar>
-        } else {
-          obj.image = getAvatarSource(pic)
-        }
+        obj.image = getAvatarSource(pic)
+
         obj.onPress = () => {
           this.chat({
             otherSide: person,
@@ -120,6 +117,7 @@ export default class RecentView extends Component<{}> {
           const param = {
             isGroup: true,
             otherSide: {
+              id: chatId,
               memberAry,
               name: chatName
             }
