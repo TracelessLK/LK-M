@@ -16,7 +16,7 @@ const lkApp = require('../../LKApplication').getCurrentApp()
 const chatManager = require('../../core/ChatManager')
 const _ = require('lodash')
 const addPng = require('../image/add.png')
-const defaultAvatar = require('../image/defaultAvatar.png')
+
 
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -112,7 +112,9 @@ export default class RecentView extends Component<{}> {
         obj.name = chatName
         obj.time = new Date(createTime)
         const memberAry = await LKChatProvider.asyGetGroupMembers(chatId)
-        console.log({memberAry})
+        const picAry = memberAry.map(ele => ele.pic)
+        obj.image = picAry
+        // console.log({picAry})
         result.item = obj
       }
 

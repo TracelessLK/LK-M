@@ -8,9 +8,10 @@ import {
 import PropTypes from 'prop-types'
 import { Badge, Button, Icon as NBIcon, Text, SwipeRow
 } from 'native-base'
+import GroupAvatar from './GroupAvatar'
 const dateTimeUtil = require('../util/dateTimeUtil')
-
 const debugLog = require('debug')('debug')
+const defaultAvatar = require('../image/defaultAvatar.png')
 
 export default class MessageList extends Component<{}> {
   constructor (props) {
@@ -27,6 +28,7 @@ export default class MessageList extends Component<{}> {
       debugLog(ele)
       const {onPress, image, name, content: msgContent, time, newMsgNum, id, deletePress} = ele
       // console.log({id})
+      const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
       let content = (
         <TouchableOpacity onPress={onPress}
           style={{width: '100%',
@@ -34,7 +36,7 @@ export default class MessageList extends Component<{}> {
             justifyContent: 'flex-start',
             height: 55,
             alignItems: 'center'}}>
-          <Image resizeMode="cover" style={{width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}} source={image} />
+          {Array.isArray(image) ? <GroupAvatar defaultPic={defaultAvatar} avatarStyle={avatarStyle} picAry={image}></GroupAvatar> : <Image resizeMode="cover" style={avatarStyle} source={image} />}
           <View style={{flexDirection: 'row', width: '80%', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10}}>
             <View style={{flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start', height: '100%'}}>
               <View >
