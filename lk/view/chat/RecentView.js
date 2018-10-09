@@ -79,7 +79,36 @@ export default class RecentView extends Component<{}> {
       // console.log({msgAry})
       // console.log({createTime})
       const {length} = msgAry
-      if (length) {
+      if (isGroup) {
+        let obj = {}
+        obj.id = chatId
+        obj.name = chatName
+        if (length) {
+          const lastMsg = _.last(msgAry)
+          obj.content = lastMsg.content
+          obj.time = new Date(lastMsg.sendTime)
+        } else {
+          obj.content = '一起群聊吧'
+          obj.time = new Date(createTime)
+        }
+
+        const memberAry = await LKChatProvider.asyGetGroupMembers(chatId)
+        const picAry = memberAry.map(ele => ele.pic)
+        obj.image = picAry
+        obj.onPress = () => {
+          const param = {
+            isGroup: true,
+            otherSide: {
+              id: chatId,
+              memberAry,
+              name: chatName
+            }
+          }
+          this.chat(param)
+        }
+        // console.log({picAry})
+        result.item = obj
+      } else if (length) {
         const obj = {}
         const msg = _.last(msgAry)
         const {sendTime, content} = msg
@@ -103,28 +132,6 @@ export default class RecentView extends Component<{}> {
         obj.deletePress = () => {
           this.deleteRow(chatId)
         }
-        result.item = obj
-      } else if (isGroup) {
-        let obj = {}
-        obj.id = chatId
-        obj.content = '一起群聊吧'
-        obj.name = chatName
-        obj.time = new Date(createTime)
-        const memberAry = await LKChatProvider.asyGetGroupMembers(chatId)
-        const picAry = memberAry.map(ele => ele.pic)
-        obj.image = picAry
-        obj.onPress = () => {
-          const param = {
-            isGroup: true,
-            otherSide: {
-              id: chatId,
-              memberAry,
-              name: chatName
-            }
-          }
-          this.chat(param)
-        }
-        // console.log({picAry})
         result.item = obj
       }
 
