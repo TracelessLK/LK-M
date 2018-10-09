@@ -7,7 +7,7 @@ import {
   TouchableOpacity
 } from 'react-native'
 import {ActionSheet} from 'native-base'
-const {GroupAvatar, commonUtil, MessageList} = require('@external/common')
+const {commonUtil, MessageList} = require('@external/common')
 const {debounceFunc} = commonUtil
 const {getAvatarSource} = require('../../util')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
@@ -16,7 +16,6 @@ const lkApp = require('../../LKApplication').getCurrentApp()
 const chatManager = require('../../core/ChatManager')
 const _ = require('lodash')
 const addPng = require('../image/add.png')
-
 
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -99,7 +98,10 @@ export default class RecentView extends Component<{}> {
           obj.image = getAvatarSource(pic)
         }
         obj.onPress = () => {
-          this.chat(person)
+          this.chat({
+            otherSide: person,
+            isGroup: false
+          })
         }
         obj.deletePress = () => {
           this.deleteRow(chatId)
@@ -114,6 +116,16 @@ export default class RecentView extends Component<{}> {
         const memberAry = await LKChatProvider.asyGetGroupMembers(chatId)
         const picAry = memberAry.map(ele => ele.pic)
         obj.image = picAry
+        obj.onPress = () => {
+          const param = {
+            isGroup: true,
+            otherSide: {
+              memberAry,
+              name: chatName
+            }
+          }
+          this.chat(param)
+        }
         // console.log({picAry})
         result.item = obj
       }
@@ -155,12 +167,8 @@ export default class RecentView extends Component<{}> {
       })
     }
 
-    chat = debounceFunc((person) => {
-      this.props.navigation.navigate('ChatView', {friend: person})
-    })
-
-    groupChat = debounceFunc((group) => {
-      this.props.navigation.navigate('ChatView', {group})
+    chat = debounceFunc((option) => {
+      this.props.navigation.navigate('ChatView', option)
     })
 
     deleteRow (data) {
@@ -175,7 +183,7 @@ export default class RecentView extends Component<{}> {
           {/* <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:50,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}> */}
           {/* <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text> */}
           {/* </TouchableOpacity> */}
-          <ScrollView ref="scrollView" style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always">
+          <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always">
             {this.state.contentAry}
           </ScrollView>
         </View>

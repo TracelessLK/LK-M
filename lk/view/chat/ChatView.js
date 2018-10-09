@@ -35,11 +35,11 @@ const chatRight = require('../image/chat-w-r.png')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation }) => {
-      const {friend} = navigation.state.params
+      const {otherSide} = navigation.state.params
       let result
-      if (friend) {
+      if (otherSide) {
         result = {
-          headerTitle: friend.name,
+          headerTitle: otherSide.name,
           headerRight:
                     <TouchableOpacity onPress={navigation.getParam('navigateToInfo')}
                       style={{marginRight: 20}}>
@@ -53,7 +53,8 @@ export default class ChatView extends Component<{}> {
     constructor (props) {
       super(props)
       this.minHeight = 35
-      this.isGroupChat = !!this.props.navigation.state.params.group
+      const {isGroup, otherSide} = this.props.navigation.state.params
+      this.isGroupChat = isGroup
       this.originalContentHeight = Dimensions.get('window').height - Header.HEIGHT
       this.state = {
         biggerImageVisible: false,
@@ -63,10 +64,7 @@ export default class ChatView extends Component<{}> {
         msgViewHeight: this.originalContentHeight,
         isInited: false
       }
-      this.otherSide = this.props.navigation.state.params.friend || this.props.navigation.state.params.group
-      if (this.isGroupChat) {
-        this.groupMemberInfo = this.getGroupMemberInfo(this.props.navigation.state.params.group)
-      }
+      this.otherSide = otherSide
       this.text = ''
       this.folderId = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
       this.limit = Constant.MESSAGE_PER_REFRESH
@@ -76,16 +74,6 @@ export default class ChatView extends Component<{}> {
         count: 0,
         isRefreshingControl: false
       }
-    }
-
-    getGroupMemberInfo (group) {
-      let result = {}
-      if (group) {
-        for (let member of group.members) {
-          result[member.uid] = member
-        }
-      }
-      return result
     }
 
      refreshRecord = async (limit) => {
@@ -261,6 +249,7 @@ export default class ChatView extends Component<{}> {
       const channel = lkApp.getLKWSChannel()
       channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
       this.text = ''
+      this.textInput.clear()
     }
 
     // sendImage=(data) => {

@@ -26,13 +26,15 @@ export default class FriendInfoView extends Component<{}> {
     sendMessage=() => {
       ChatManager.asyEnsureSingleChat(this.friend.id)
       this.props.navigation.navigate('ChatTab')
-      this.props.navigation.navigate('ChatView', {friend: this.friend})
+      this.props.navigation.navigate('ChatView', {
+        otherSide: this.friend,
+        isGroup: false
+      })
     }
 
     render () {
       let friend = this.friend
       return (
-
         <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff', paddingTop: 20}}>
           <Image source={getAvatarSource(this.friend.pic)}
             style={{margin: 10, width: 100, height: 100, borderRadius: 5}} resizeMode="contain"></Image>
