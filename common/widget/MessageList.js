@@ -12,7 +12,7 @@ const dateTimeUtil = require('../util/dateTimeUtil')
 
 const debugLog = require('debug')('debug')
 
-export default class List extends Component<{}> {
+export default class MessageList extends Component<{}> {
   constructor (props) {
     super(props)
     this.state = {
@@ -26,6 +26,7 @@ export default class List extends Component<{}> {
     for (const ele of data) {
       debugLog(ele)
       const {onPress, image, name, content: msgContent, time, newMsgNum, id, deletePress} = ele
+      // console.log({id})
       let content = (
         <TouchableOpacity onPress={onPress}
           style={{width: '100%',
@@ -49,7 +50,7 @@ export default class List extends Component<{}> {
             </View>
             <View style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', height: '100%'}}>
               <Text style={{fontSize: 15, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
-                {dateTimeUtil.getDisplayTime(time)}
+                {time ? dateTimeUtil.getDisplayTime(time) : null}
               </Text>
               <View>
                 {newMsgNum
@@ -85,11 +86,11 @@ export default class List extends Component<{}> {
   }
 }
 
-List.defaultProps = {
+MessageList.defaultProps = {
 
 }
 
-List.propTypes = {
+MessageList.propTypes = {
   /*
      * [{
      *  onPress:(ele)=>{},

@@ -38,6 +38,7 @@ export default class List extends Component<{}> {
     const {data, showSwitch} = this.props
     for (let ele of data) {
       const {onPress, image, title, key, extra} = ele
+      // console.log({key})
       const content = (
         <View style={{backgroundColor: 'white', borderBottomColor: '#f0f0f0', borderBottomWidth: 1}} key={key}>
           <TouchableOpacity onPress={onPress} style={{width: '100%',

@@ -15,8 +15,8 @@ const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const chatManager = require('../../core/ChatManager')
 const _ = require('lodash')
-const debugLog = require('debug')('debug')
 const addPng = require('../image/add.png')
+const defaultAvatar = require('../image/defaultAvatar.png')
 
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -72,15 +72,18 @@ export default class RecentView extends Component<{}> {
     }
 
     async getMsg (option) {
-      let result
-      const {userId, chatId, newMsgNum} = option
+      const {userId, chatId, newMsgNum, isGroup, chatName, createTime} = option
+      let result = {
+        isGroup
+      }
       const msgAry = await LKChatProvider.asyGetMsgs(userId, chatId)
+      // console.log({msgAry})
+      // console.log({createTime})
       const {length} = msgAry
-      // debugLog(msgAry)
       if (length) {
         const obj = {}
         const msg = _.last(msgAry)
-        const {sendTime, content, id} = msg
+        const {sendTime, content} = msg
         const person = await LKContactProvider.asyGet(userId, chatId)
         const {name, pic} = person
         obj.time = new Date(sendTime)
@@ -89,15 +92,28 @@ export default class RecentView extends Component<{}> {
         obj.newMsgNum = newMsgNum
         obj.name = name
         obj.person = person
-        obj.id = id
-        obj.image = getAvatarSource(pic)
+        obj.id = chatId
+        if (isGroup) {
+          // obj.image = <GroupAvatar defaultPic={defaultAvatar} picAry={}></GroupAvatar>
+        } else {
+          obj.image = getAvatarSource(pic)
+        }
         obj.onPress = () => {
           this.chat(person)
         }
         obj.deletePress = () => {
           this.deleteRow(chatId)
         }
-        result = obj
+        result.item = obj
+      } else if (isGroup) {
+        let obj = {}
+        obj.id = chatId
+        obj.content = '一起群聊吧'
+        obj.name = chatName
+        obj.time = new Date(createTime)
+        const memberAry = await LKChatProvider.asyGetGroupMembers(chatId)
+        console.log({memberAry})
+        result.item = obj
       }
 
       return result
@@ -109,23 +125,28 @@ export default class RecentView extends Component<{}> {
       const msgAryPromise = []
       console.log({allChat})
       for (let chat of allChat) {
-        const {newMsgNum, isGroup} = chat
+        const {newMsgNum, isGroup, name, createTime} = chat
         const option = {
           userId: user.id,
           chatId: chat.id,
-          newMsgNum
+          newMsgNum,
+          isGroup,
+          chatName: name,
+          createTime
         }
         const msgPromise = this.getMsg(option)
         msgAryPromise.push(msgPromise)
       }
       let recentAry = await Promise.all(msgAryPromise)
-      recentAry = recentAry.filter(ele => { return Boolean(ele) })
-
-      recentAry.sort((obj1, obj2) => {
-        return obj1.sendTime - obj2.sendTime
+      recentAry = recentAry.filter(ele => {
+        return ele.item || ele.isGroup
       })
 
-      const contentAry = <MessageList data={recentAry}/>
+      // recentAry.sort((obj1, obj2) => {
+      //   return obj1.sendTime - obj2.sendTime
+      // })
+
+      const contentAry = <MessageList data={recentAry.map(ele => ele.item)}/>
 
       this.setState({
         contentAry

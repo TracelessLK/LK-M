@@ -45,7 +45,7 @@ class Chat{
     getGroupMembers(chatId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select c.* from groupMember as m,contact as c where m.contactId=c.id and m.chatId=? ";
+                let sql = "select c.* from groupMember as m,contact as c where m.contactId=c.id and m.chatId=? group by c.id";
                 tx.executeSql(sql,[chatId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){

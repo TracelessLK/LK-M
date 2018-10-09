@@ -28,16 +28,28 @@ const util = {
         })
       })
     })
+  },
+  async removeAllGroup () {
+    let sql = `delete  from chat`
+    await this.query(sql)
+    sql = 'delete from groupMember'
+    await this.query(sql)
+    console.log('all group chat deleted')
   }
 }
 
-const tableAry = ['device', 'mfapply', 'contact', 'record']
-for (let ele of tableAry) {
-  util.showAll(ele)
-}
-(async () => {
-  const friendAry = await util.query('select * from contact where relation=1')
-  console.log({friendAry})
+const tableAry = [
+  // 'device', 'mfapply', 'contact', 'record',
+  'chat', 'groupMember'
+]
+
+;(async () => {
+  // const friendAry = await util.query('select * from contact where relation=1')
+  // console.log({friendAry})
+  // await util.removeAllGroup()
+  for (let ele of tableAry) {
+    util.showAll(ele)
+  }
 })()
 
 Object.freeze(util)
