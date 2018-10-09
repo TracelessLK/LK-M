@@ -22,6 +22,7 @@ const util = {
           prefix = '中午'
         }
         result = `${prefix} ${hour}:` + minute
+          // .toString() ? minute.toString().padStart(2, 0) : ''
       } else {
         result = `${commonUtil.pad(month + 1)}-${day}`
       }

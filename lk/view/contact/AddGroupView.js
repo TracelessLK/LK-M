@@ -74,7 +74,6 @@ export default class AddGroupView extends Component<{}> {
     for (let ele of memberAry) {
       if (ele.id !== user.id) {
         const obj = {}
-
         obj.image = getAvatarSource(ele.pic)
         obj.key = ele.id
         obj.onPress = null
@@ -127,7 +126,7 @@ export default class AddGroupView extends Component<{}> {
         <View>
           <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', width: '96%', height: 40, marginTop: 10, marginLeft: 10}}>
             <Text style={{color: '#a0a0a0'}}>群名称：</Text>
-            <TextInput style={{flex: 1}} underlineColorAndroid='transparent' defaultValue={''} onChangeText={this.nameTextChange} />
+            <TextInput autoFocus style={{flex: 1}} underlineColorAndroid='transparent' defaultValue={''} onChangeText={this.nameTextChange} />
           </View>
           <View style={{width: '100%', height: 0, borderTopWidth: 1, borderColor: '#f0f0f0'}}>
           </View>
