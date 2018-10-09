@@ -82,8 +82,8 @@ export default class AddGroupView extends Component<{}> {
           id: ele.id,
           name: ele.name,
           pic: ele.pic,
-          serverIP: ele.serverIP ? ele.serverIP : user.serverIP,
-          serverPort: ele.serverPort ? ele.serverPort : user.serverPort
+          serverIP: user.serverIP,
+          serverPort: user.serverPort
         }
         _f(ele, obj, ary)
       }
@@ -98,6 +98,13 @@ export default class AddGroupView extends Component<{}> {
       obj.title = ele.name
       obj.image = getAvatarSource(ele.pic)
       obj.key = ele.id
+      obj.extra = {
+        id: ele.id,
+        name: ele.name,
+        pic: ele.pic,
+        serverIP: ele.serverIP,
+        serverPort: ele.serverPort
+      }
       _f(ele, obj, ary)
     }
 
