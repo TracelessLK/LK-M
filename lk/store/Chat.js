@@ -102,6 +102,8 @@ class Chat{
                 },function (err) {
                     reject(err);
                 });
+            },function (err) {
+              reject(err);
             });
         });
     }
