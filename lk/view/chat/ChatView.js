@@ -122,6 +122,7 @@ export default class ChatView extends Component<{}> {
            recordEleStyle: {flexDirection: 'row', justifyContent: 'flex-start', alignItems: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? 'flex-start' : 'flex-start', width: '100%', marginTop: 15}
          }
          if (msg.senderUid !== user.id) {
+           // message received
            let otherPicSource = getAvatarSource(this.otherSide.pic)
 
            recordAry.push(<View key={id} style={style.recordEleStyle}>
@@ -141,6 +142,8 @@ export default class ChatView extends Component<{}> {
              </View>
            </View>)
          } else {
+           // message sent
+           console.log({sentMsg: msg})
            let iconName = this.getIconNameByState(msg.state)
            recordAry.push(<View key={id} style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10}}>
              <TouchableOpacity ChatView={this} msgId={id} onPress={this.doTouchMsgState}>

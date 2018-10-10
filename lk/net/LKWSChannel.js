@@ -132,7 +132,7 @@ class LKChannel extends WSChannel{
                     msg.body.relativeMsgId = relativeMsgId;
                     msg.body.order=option.order||ChatManager.getChatSendOrder(chatId);
                     msg.body.content = option.content||CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
-
+                    console.log({content: msg.body.content})
                 }
             }
 
@@ -150,7 +150,7 @@ class LKChannel extends WSChannel{
         const {action} = header
       const excludeAry = ['ping', 'login']
       if (!excludeAry.includes(action)) {
-        console.log({sendMsg: req})
+        console.log({sendMsg: req, action})
       }
         return new Promise((resolve,reject)=>{
             let msgId = req.header.id;
@@ -328,8 +328,10 @@ class LKChannel extends WSChannel{
         await LKChatHandler.asyAddMsg(userId,chatId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING,relativeMsgId,relativeOrder,curTime,result[1].body.order);
         ChatManager.fire("msgChanged",chatId);
         result[0]._sendMessage(result[1]).then((resp)=>{
-            let diff = resp.body.content.diff;
-            if(diff){
+            console.log({resp})
+            const {content} = resp.body
+            if(content && content.diff){
+                const {diff} = content
                 console.log({diff})
                 let added = ChatManager.deviceChanged(chatId,diff);
                 if(added&&added.length>0){
@@ -338,7 +340,8 @@ class LKChannel extends WSChannel{
                             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
                                 ChatManager.fire("msgChanged",chatId);
                             });
-                        }).catch(()=>{
+                        }).catch((error)=>{
+                          console.log(error)
                             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
                                 ChatManager.fire("msgChanged",chatId);
                             });
@@ -354,7 +357,8 @@ class LKChannel extends WSChannel{
                     ChatManager.fire("msgChanged",chatId);
                 });
             }
-        }).catch(()=>{
+        }).catch((error)=>{
+          console.log(error)
             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
                 ChatManager.fire("msgChanged",chatId);
             });
