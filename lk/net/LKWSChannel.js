@@ -448,6 +448,8 @@ class LKChannel extends WSChannel{
     }
 
     async sendMsgHandler(msg){
+        console.log({receivedMsg: msg})
+
         //TODO 处理消息重入或前置未达如本地还没有群
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
