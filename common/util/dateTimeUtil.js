@@ -8,7 +8,7 @@ const util = {
     const month = date.getMonth()
     const day = date.getDate()
     const hour = date.getHours()
-    const minute = date.getMinutes()
+    let minute = date.getMinutes()
     const dayDiff = Math.floor(now.getTime() / (1000 * 60 * 60 * 24)) - Math.floor(date.getTime() / (1000 * 60 * 60 * 24))
 
     if (year === now.getFullYear()) {
@@ -21,7 +21,10 @@ const util = {
         } else if (hour === 12) {
           prefix = '中午'
         }
-        result = `${prefix} ${hour}:` + minute.toString().padStart(2, 0)
+        if (minute < 10) {
+          minute = '0' + minute
+        }
+        result = `${prefix} ${hour}:` + minute
       } else {
         result = `${commonUtil.pad(month + 1)}-${day}`
       }
