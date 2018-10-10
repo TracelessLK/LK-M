@@ -85,6 +85,8 @@ class Record{
                    tx.executeSql(sql,[state,state], (tx,res)=> {
                        if(res.rowsAffected>0){
                            resolve();
+                       } else {
+                         reject(new Error('no rowsAffected'))
                        }
                        // this._allUpdate(msgIds,state).then((all)=>{
                        //     if(all){
@@ -95,6 +97,8 @@ class Record{
                        reject(err);
                    });
                });
+           } else {
+             reject(new Error('update is false'))
            }
 
 
