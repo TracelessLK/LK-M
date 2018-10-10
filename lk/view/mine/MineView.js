@@ -19,6 +19,7 @@ const versionLocal = require('../../../package.json').version
 const config = require('../config')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const chatManager = require('../../core/ChatManager')
+const userManager = require('../../core/UserManager')
 
 export default class MineView extends Component<{}> {
     static navigationOptions =() => {
@@ -35,9 +36,23 @@ export default class MineView extends Component<{}> {
       this.state = {
         avatarSource
       }
+      this.eventAry = ['nameChanged', 'picChanged']
+    }
+
+    componentDidMount () {
+      for (let ele of this.eventAry) {
+        userManager.on(ele, this.update)
+      }
+    }
+
+    componentWillUnmount () {
+      for (let ele of this.eventAry) {
+        userManager.un(ele, this.update)
+      }
     }
 
     update = () => {
+      this.user = lkApp.getCurrentUser()
       this.setState({update: true})
     }
 

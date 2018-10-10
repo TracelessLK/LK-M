@@ -9,6 +9,7 @@ const lkApp = require('../../LKApplication').getCurrentApp()
 const common = require('@external/common')
 const { commonUtil } = common
 const {debounceFunc} = commonUtil
+const userManager = require('../../core/UserManager')
 
 export default class BasicInfoView extends Component<{}> {
     static navigationOptions = () => {
@@ -22,6 +23,18 @@ export default class BasicInfoView extends Component<{}> {
       this.state = {}
       this.user = lkApp.getCurrentUser()
       console.log(this.user)
+    }
+    componentDidMount () {
+      userManager.on('nameChanged', this.update)
+    }
+
+    update = () => {
+      this.user = lkApp.getCurrentUser()
+      this.setState({update: true})
+    }
+
+    componentWillUnmount () {
+      userManager.un('nameChanged', this.update)
     }
 
     render () {

@@ -16,12 +16,14 @@ class UserManager extends EventTarget{
         let user = Application.getCurrentApp().getCurrentUser();
         await LKUserHandler.asySetUserName(name,user.id);
         user.name = name;
+      this.fire("nameChanged");
     }
     async setUserPic(pic){
         await Application.getCurrentApp().getLKWSChannel().setUserPic(pic);
         let user = Application.getCurrentApp().getCurrentUser();
         await LKUserHandler.asySetUserPic(pic,user.id);
         user.pic = pic;
+      this.fire("picChanged");
     }
 
 }

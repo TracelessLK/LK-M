@@ -8,15 +8,17 @@ import {Toast} from 'native-base'
 const lkApp = require('../../LKApplication').getCurrentApp()
 const style = require('../style')
 const {HeaderRightButton} = require('@ys/react-native-collection')
+const userManager = require('../../core/UserManager')
+const {FuncUtil} = require('@ys/vanilla')
+const {debounceFunc} = FuncUtil
 
 export default class RenameView extends Component<{}> {
-    static navigationOptions = (navigation) => {
+    static navigationOptions = ({navigation}) => {
+      // console.log(navigation.getParam('save'))
       const prop = {
         title: '保存',
         color: style.color.mainColor,
-        onPress: () => {
-          navigation.state.params.save()
-        }
+        onPress: navigation.getParam('save')
       }
       return {
         headerTitle: '修改昵称',
@@ -33,7 +35,7 @@ export default class RenameView extends Component<{}> {
     }
 
     componentDidMount () {
-      this.props.navigation.setParams({ save: () => {
+      this.props.navigation.setParams({ save: debounceFunc(async () => {
         if (typeof this.refs.input._lastNativeText === 'undefined') {
           Toast.show({
             text: '请修改昵称后保存',
@@ -45,9 +47,10 @@ export default class RenameView extends Component<{}> {
             position: 'top'
           })
         } else {
-
+          await userManager.setUserName(this.refs.input._lastNativeText)
+          this.props.navigation.goBack()
         }
-      } })
+      }) })
     }
 
     onChangeText = (t) => {
