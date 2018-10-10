@@ -225,7 +225,7 @@ export default class ChatView extends Component<{}> {
 
     componentDidMount= async () => {
       const num = await chatManager.asyGetNewMsgNum(this.otherSide.id)
-      console.log({num})
+      console.log({otherSide: this.otherSide, num})
       if (num) {
         chatManager.asyReadMsgs(this.otherSide.id, num)
       }

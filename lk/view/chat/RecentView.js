@@ -144,11 +144,11 @@ export default class RecentView extends Component<{}> {
       const msgAryPromise = []
       console.log({allChat})
       for (let chat of allChat) {
-        const {newMsgNum, isGroup, name, createTime} = chat
+        const {isGroup, name, createTime} = chat
         const option = {
           userId: user.id,
           chatId: chat.id,
-          newMsgNum,
+          newMsgNum: await chatManager.asyGetNewMsgNum(chat.id),
           isGroup,
           chatName: name,
           createTime
