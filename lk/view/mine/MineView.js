@@ -11,6 +11,7 @@ import {
   Toast
 } from 'native-base'
 import RNFetchBlob from 'react-native-fetch-blob'
+import ImageResizer from 'react-native-image-resizer'
 const common = require('@external/common')
 const {commonUtil} = common
 const {debounceFunc} = commonUtil
@@ -34,14 +35,15 @@ export default class MineView extends Component<{}> {
       let picUrl = this.user.pic
       const avatarSource = getAvatarSource(picUrl)
       this.state = {
-        avatarSource
+        avatarSource,
+        name: this.user.name
       }
       this.eventAry = ['nameChanged', 'picChanged']
     }
 
     componentDidMount () {
       for (let ele of this.eventAry) {
-        userManager.on(ele, this.update)
+        userManager.on(ele, this.update.bind(this, ele))
       }
     }
 
@@ -51,9 +53,11 @@ export default class MineView extends Component<{}> {
       }
     }
 
-    update = () => {
+    update = (ele) => {
+      console.log({event: ele})
       this.user = lkApp.getCurrentUser()
-      this.setState({update: true})
+      const {name, pic} = this.user
+      this.setState({name, avatarSource: getAvatarSource(pic)})
     }
 
     clear=() => {
@@ -83,14 +87,14 @@ export default class MineView extends Component<{}> {
 
     setAvatar (image) {
       RNFetchBlob.fs.readFile(image.path, 'base64')
-        .then((data) => {
+        .then(async (data) => {
           const uri = 'data:image/jpeg;base64,' + data
-
-          this.setState({
-            avatarSource: {
-              uri
-            }
-          })
+          const maxSize = 500
+          const resized = await ImageResizer.createResizedImage(uri, maxSize, maxSize, 'JPEG', 70, 0, null)
+          let resizedUri = await RNFetchBlob.fs.readFile(resized.path, 'base64')
+          resizedUri = 'data:image/jpeg;base64,' + resizedUri
+          // console.log({resizedUri, uri})
+          await userManager.setUserPic(resizedUri)
         })
     }
 
@@ -148,10 +152,10 @@ export default class MineView extends Component<{}> {
       }
 
       return (
-        <ScrollView >
+        <ScrollView>
           <View style={style.listStyle}>
             <ListItem
-              title={this.user.name}
+              title={this.state.name}
               rightIcon={
                 <Icon name='qrcode' type="font-awesome" iconStyle={{margin: 10}} color='gray'
                   raised
