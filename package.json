@@ -7,7 +7,7 @@
     "flow": "flow",
     "lint": "eslint --ext .js .",
     "postinstall": "node bin/postinstall",
-    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start": "export BLUEBIRD_W_FORGOTTEN_RETUR=false && node node_modules/react-native/local-cli/cli.js start",
     "start:android": "react-native run-android",
     "start:ios": "react-native run-ios",
     "test": "npm run lint && jest",
@@ -18,6 +18,7 @@
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
     "@external/common": "file:common",
+    "@ys/collection": "github:spirit1453/node_collection#publish",
     "@ys/react-native-collection": "github:spirit1453/react_native_collection#publish",
     "aes-js": "^3.1.1",
     "bluebird": "^3.5.2",
@@ -49,6 +50,7 @@
   "devDependencies": {
     "@ys/eslint-config-rn": "github:spirit1453/codebase#react_native_eslint",
     "babel-jest": "23.4.2",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "babel-preset-react-native": "4.0.0",
     "jest": "23.4.2",

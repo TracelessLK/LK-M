@@ -1,3 +1,10 @@
 {
-  "presets": ["react-native"]
+  "presets": ["react-native"],
+  "plugins": [
+    ["transform-inline-environment-variables", {
+      "include": [
+        "BLUEBIRD_W_FORGOTTEN_RETURN"
+      ]
+    }]
+  ]
 }

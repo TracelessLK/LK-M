@@ -1,9 +1,9 @@
-const childProcess = require('child_process')
 const path = require('path')
 const filePath = path.resolve(__dirname, '../node_modules/react-native/local-cli/core/__fixtures__/files/package.json')
 const fs = require('fs')
 const rootPath = path.resolve(__dirname, '../')
-const {CliUtil, ModuleUtil} = require('@ys/collection')
+const collection = require('@ys/react-native-collection')
+const {CliUtil, ModuleUtil} = collection
 const {execSync} = CliUtil
 
 if (fs.existsSync(filePath)) {
@@ -22,4 +22,4 @@ execSync('node bin/log.js')
 
 const {installGit} = ModuleUtil
 
-installGit(rootPath)
+// installGit(rootPath)

@@ -86,7 +86,7 @@ class Record{
                        if(res.rowsAffected>0){
                            resolve();
                        } else {
-                         reject(new Error('no rowsAffected'))
+                         resolve()
                        }
                        // this._allUpdate(msgIds,state).then((all)=>{
                        //     if(all){

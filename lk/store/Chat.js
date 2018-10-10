@@ -73,38 +73,52 @@ class Chat{
         });
     }
     addGroupChat(userId,chatId,name,newMsgNum){
-        return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+        return new Promise(async (resolve,reject)=>{
+            const chat = await this.getChat(userId,chatId)
+            if (chat) {
+              resolve()
+            } else {
+              db.transaction((tx)=>{
                 let sql = "insert into chat(id,ownerUserId,name,newMsgNum,createTime,topTime,isGroup) values (?,?,?,?,?,?,?)";
                 tx.executeSql(sql,[chatId,userId,name,newMsgNum||0,Date.now(),0,1],function () {
-                    resolve();
+                  resolve();
                 },function (err) {
-                    reject(err);
+                  reject(err);
                 });
-            });
+              });
+            }
         });
     }
 
     addGroupMembers(chatId,members){
-        return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+        return new Promise(async (resolve,reject)=>{
+            const memberAry = await this.getGroupMembers(chatId)
+           members =members.filter(ele => {
+              return !memberAry.some((eleInner) => {return eleInner.id === ele.id})
+            })
+            // console.log({memberAry,members})
+            if (members.length) {
+              db.transaction((tx)=>{
                 let sql = "insert into groupMember(chatId,contactId) values ";
                 for(let i=0;i<members.length;i++){
-                    sql += "('"+chatId+"','";
-                    sql += members[i].id;
-                    sql +="')";
-                    if(i<members.length-1){
-                        sql += ",";
-                    }
+                  sql += "('"+chatId+"','";
+                  sql += members[i].id;
+                  sql +="')";
+                  if(i<members.length-1){
+                    sql += ",";
+                  }
                 }
                 tx.executeSql(sql,[],function () {
-                    resolve();
+                  resolve();
                 },function (err) {
-                    reject(err);
+                  reject(err);
                 });
-            },function (err) {
-              reject(err);
-            });
+              },function (err) {
+                reject(err);
+              });
+            } else {
+              resolve()
+            }
         });
     }
 

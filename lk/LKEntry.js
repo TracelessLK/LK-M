@@ -9,8 +9,10 @@ YellowBox.ignoreWarnings([
   'Module RCTHotUpdate requires',
   'Method `jumpToIndex` is deprecated',
   'Module RNFetchBlob',
-  'Failed prop type: Invalid props.style key `NativeBase` supplied to `View`.'
+  'Failed prop type: Invalid props.style key `NativeBase` supplied to `View`.',
+  'a promise was rejected with a non-error'
 ])
+// console.log(process.env)
 
 export default class LKEntry extends Component<{}> {
   render () {
