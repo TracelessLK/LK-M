@@ -11,6 +11,7 @@ import LKChatHandler from '../logic/handler/LKChatHandler'
 import LKDeviceProvider from '../logic/provider/LKDeviceProvider'
 import LKChatProvider from '../logic/provider/LKChatProvider'
 import MFApplyManager from '../core/MFApplyManager'
+import FlowCursor from '../store/FlowCursor'
 import CryptoJS from "crypto-js";
 
 class LKChannel extends WSChannel{
@@ -18,10 +19,34 @@ class LKChannel extends WSChannel{
     _callbacks={};
     _timeout=60000;
     _chatMsgPool = new Map();
+    _flowPool = new Map();
+
 
     constructor(url){
         super(url,true);
         this._ping();
+    }
+
+    _putFlowPool(preFlowId,msg){
+        let ary = this._flowPool.get(preFlowId);
+        if(!ary){
+            ary = [];
+            this._flowPool.set(preFlowId,ary);
+        }
+        ary.push(msg);
+    }
+
+    _resolveFlowPool(lastFlowId){
+        let ary = this._flowPool.get(lastFlowId);
+        if(ary){
+            ary.forEach((msg)=>{
+                let action = msg.header.action;
+                let handler = this[action+"Handler"];
+                if(handler){
+                    handler.call(this,msg);
+                }
+            });
+        }
     }
 
     _handleMsg(msg){
@@ -37,12 +62,34 @@ class LKChannel extends WSChannel{
         }else if(action){
             let handler = this[action+"Handler"];
             if(handler){
-                handler.call(this,msg);
+                if(header.preFlowId){
+                    let userId = Application.getCurrentApp().getCurrentUser().id;
+                    FlowCursor.getLastFlowId(userId,header.flowType).then((lastFlowId)=>{
+                        if(lastFlowId){
+                            if(header.preFlowId===lastFlowId){
+                                handler.call(this,msg);
+                            }else{
+                                this._putFlowPool(header.preFlowId,msg);
+                            }
+                        }else{
+                            handler.call(this,msg);
+                        }
+                    });
+                }else{
+                    handler.call(this,msg);
+                }
             }
         }
     }
 
-    _reportMsgHandled(flowId,msgId){
+    _reportMsgHandled(flowId,flowType){
+        if(flowType){
+            let userId = Application.getCurrentApp().getCurrentUser().id;
+            FlowCursor.setLastFlowId(userId,flowType,flowId).then(()=>{
+                this._resolveFlowPool(flowId);
+            });
+        }
+
         this.applyChannel().then((channel)=>{
             // let uid = Application.getCurrentApp().getCurrentUser().id;
             // let did = Application.getCurrentApp().getCurrentUser().deviceId;
@@ -316,32 +363,32 @@ class LKChannel extends WSChannel{
         await LKChatHandler.asyAddMsg(userId,chatId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING,relativeMsgId,relativeOrder,curTime,result[1].body.order);
         ChatManager.fire("msgChanged",chatId);
         result[0]._sendMessage(result[1]).then((resp)=>{
-            let diff = resp.body.content.diff;
-            if(diff){
-                console.log({diff})
-                let added = ChatManager.deviceChanged(chatId,diff);
-                if(added&&added.length>0){
-                    this._asyNewRequest("sendMsg2",content,{isGroup:isGroup,time:time,chatId:chatId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
-                        this._sendMessage(req).then(()=>{
-                            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
-                                ChatManager.fire("msgChanged",chatId);
-                            });
-                        }).catch(()=>{
-                            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
-                                ChatManager.fire("msgChanged",chatId);
-                            });
-                        });
-                    });
-                }else{
-                    LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
-                        ChatManager.fire("msgChanged",chatId);
-                    });
-                }
-            }else{
+            // let diff = resp.body.content.hasDiff;
+            // if(diff){
+            //     console.log({diff})
+                // let added = ChatManager.deviceChanged(chatId,diff);
+                // if(added&&added.length>0){
+                //     this._asyNewRequest("sendMsg2",content,{isGroup:isGroup,time:time,chatId:chatId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
+                //         this._sendMessage(req).then(()=>{
+                //             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
+                //                 ChatManager.fire("msgChanged",chatId);
+                //             });
+                //         }).catch(()=>{
+                //             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
+                //                 ChatManager.fire("msgChanged",chatId);
+                //             });
+                //         });
+                //     });
+                // }else{
+                //     LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
+                //         ChatManager.fire("msgChanged",chatId);
+                //     });
+                // }
+            // }else{
                 LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
                     ChatManager.fire("msgChanged",chatId);
                 });
-            }
+            // }
         }).catch(()=>{
             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
                 ChatManager.fire("msgChanged",chatId);
@@ -355,8 +402,7 @@ class LKChannel extends WSChannel{
         let msgId = content.msgId;
         let chatId = content.chatId;
         let diff = content.diff;
-        //TODO 记录人员设备更新是由服务端的哪个flowid引起，同一个人的设备的diff只处理上个flowid后的diff
-        this._reportMsgHandled(header.flowId,header.id);
+        this._reportMsgHandled(header.flowId,header.flowType);
         if(diff){
             console.log({diff})
             let added = ChatManager.deviceChanged(chatId,diff);
@@ -369,8 +415,6 @@ class LKChannel extends WSChannel{
                 }
 
             }
-
-
         }
     }
 
@@ -392,24 +436,24 @@ class LKChannel extends WSChannel{
                let body = msg.body;
                if(body.relativeMsgId===relativeMsgId){
                    let receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,header.uid,header.did,body.order);
-                   this._receiveMsg(msg,relativeOrder,receiveOrder);
+                   this._receiveMsg(chatId,msg,relativeOrder,receiveOrder);
                }
            }
         }
     }
 
-    async _receiveMsg(msg,relativeOrder,receiveOrder){
+    async _receiveMsg(chatId,msg,relativeOrder,receiveOrder){
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
         let body = msg.body;
-        let chatId = userId===header.uid?body.chatId:header.uid;
+        // let chatId = userId===header.uid?body.chatId:header.uid;
         let random = header.target.random;
         let key = ChatManager.getHotChatKeyReceived(chatId,header.did,random);
         var bytes  = CryptoJS.AES.decrypt(msg.body.content.toString(), key);
         let content = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
 
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
-        this._reportMsgHandled(header.flowId,header.id);
+        this._reportMsgHandled(header.flowId,header.flowType);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
         //await ChatManager.increaseNewMsgNum(chatId);
         ChatManager.fire("msgChanged",chatId);
@@ -459,7 +503,7 @@ class LKChannel extends WSChannel{
             receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
         }
         if(relativeOrder&&receiveOrder){
-            this._receiveMsg(msg,relativeOrder,receiveOrder,sendOrder)
+            this._receiveMsg(chatId,msg,relativeOrder,receiveOrder)
         }
     }
 
@@ -472,7 +516,7 @@ class LKChannel extends WSChannel{
     readReportHandler(msg){
         let msgIds = msg.body.content;
         LKChatHandler.asyUpdateMsgState(msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then(()=>{
-            this._reportMsgHandled(msg.header.flowId,msg.header.id);
+            this._reportMsgHandled(msg.header.flowId,msg.header.flowType);
             ChatManager.fire("msgChanged",msg.header.id);
         });
     }
@@ -494,7 +538,7 @@ class LKChannel extends WSChannel{
         let serverIP = msg.header.serverIP;
         let serverPort = msg.header.serverPort;
         MFApplyManager.asyAddNewMFApply({id:contactId,name:name,pic:pic,serverIP:serverIP,serverPort:serverPort,mCode:mCode}).then(()=>{
-            this._reportMsgHandled(msg.header.flowId);
+            this._reportMsgHandled(msg.header.flowId,msg.header.flowType);
         });
     }
     async acceptMF(contactId,contactName,contactPic,serverIP,serverPort,contactMCode){
@@ -515,7 +559,7 @@ class LKChannel extends WSChannel{
             friend = {id:header.uid,serverIP:header.serverIP,serverPort:header.serverPort,name:content.accepter.name,pic:content.accepter.pic,mCode:content.accepter.mCode};
         }
         ContactManager.asyAddNewFriend(friend).then(()=>{
-            this._reportMsgHandled(header.flowId);
+            this._reportMsgHandled(header.flowId,header.flowType);
         });
     }
     //members:{id,name,pic,serverIP,serverPort}
@@ -529,7 +573,7 @@ class LKChannel extends WSChannel{
         let name = content.name;
         let members = content.members;
         ChatManager.addGroupChat(chatId,name,members).then( ()=> {
-            this._reportMsgHandled(msg.header.flowId);
+            this._reportMsgHandled(msg.header.flowId,msg.header.flowType);
         });
     }
     async addGroupMembers(chatId,newMembers){
