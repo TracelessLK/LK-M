@@ -28,6 +28,7 @@ const manifest = require('../../../Manifest')
 const chatManager = manifest.get('ChatManager')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
 const personImg = require('../image/person.png')
+const groupImg = require('../image/group.png')
 const _ = require('lodash')
 const {DelayIndicator} = require('@ys/react-native-collection')
 const chatLeft = require('../image/chat-y-l.png')
@@ -36,7 +37,7 @@ const uuid = require('uuid')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation }) => {
-      const {otherSide} = navigation.state.params
+      const {otherSide, isGroup} = navigation.state.params
       let result
       if (otherSide) {
         result = {
@@ -44,7 +45,7 @@ export default class ChatView extends Component<{}> {
           headerRight:
                     <TouchableOpacity onPress={navigation.getParam('navigateToInfo')}
                       style={{marginRight: 20}}>
-                      <Image source={personImg} style={{width: 22, height: 22}} resizeMode="contain"/>
+                      <Image source={isGroup ? groupImg : personImg} style={{width: 22, height: 22}} resizeMode="contain"/>
                     </TouchableOpacity>
         }
       }
@@ -75,6 +76,10 @@ export default class ChatView extends Component<{}> {
         count: 0,
         isRefreshingControl: false
       }
+      if (this.isGroupChat) {
+        const {memberInfoObj} = otherSide
+        this.groupMemberInfo = memberInfoObj
+      }
     }
 
      refreshRecord = async (limit) => {
@@ -95,7 +100,6 @@ export default class ChatView extends Component<{}> {
        const recordAry = []
        let lastShowingTime
        const msgSet = new Set()
-
        for (let msg of msgAry) {
          let picSource = getAvatarSource(user.pic)
          const {sendTime, id} = msg
@@ -126,6 +130,7 @@ export default class ChatView extends Component<{}> {
          const style = {
            recordEleStyle: {flexDirection: 'row', justifyContent: 'flex-start', alignItems: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? 'flex-start' : 'flex-start', width: '100%', marginTop: 15}
          }
+         // console.log({msg, senderUid: msg.senderUid, groupMemberInfo: this.groupMemberInfo})
          if (msg.senderUid !== user.id) {
            // message received
            let otherPicSource = getAvatarSource(this.otherSide.pic)
@@ -244,7 +249,7 @@ export default class ChatView extends Component<{}> {
 
     _navigateToInfo = () => {
       if (this.isGroupChat) {
-        // this.props.navigation.navigate('FriendInfoView', {friend: this.otherSide})
+        this.props.navigation.navigate('GroupInfoView', {group: this.otherSide})
       } else {
         this.props.navigation.navigate('FriendInfoView', {friend: this.otherSide})
       }

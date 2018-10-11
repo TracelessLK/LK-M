@@ -93,6 +93,11 @@ export default class RecentView extends Component<{}> {
         }
 
         const memberAry = await LKChatProvider.asyGetGroupMembers(chatId)
+        console.log({memberAry})
+        const memberInfoObj = {}
+        for (let ele of memberAry) {
+          memberInfoObj[ele.id] = ele
+        }
         const picAry = memberAry.map(ele => ele.pic)
         obj.image = picAry
         obj.onPress = () => {
@@ -100,7 +105,7 @@ export default class RecentView extends Component<{}> {
             isGroup: true,
             otherSide: {
               id: chatId,
-              memberAry,
+              memberInfoObj,
               name: chatName
             }
           }

@@ -6,6 +6,7 @@ import {
 import ContactView from '../contact/ContactView'
 import AddContactView from '../contact/AddContactView'
 import FriendInfoView from '../contact/FriendInfoView'
+import GroupInfoView from '../contact/GroupInfoView'
 import OrgView from '../contact/OrgView'
 import ExternalView from '../contact/ExternalView'
 import ChatView from '../chat/ChatView'
@@ -112,7 +113,8 @@ const MainStack = createStackNavigator({
   RenameView,
   InfoView,
   RequestView,
-  AddGroupView
+  AddGroupView,
+  GroupInfoView
 }, stackNavigatorConfig)
 
 export default MainStack
