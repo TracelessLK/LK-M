@@ -1,7 +1,7 @@
 node_modules
-/lk/store
-/lk/net
-/lk/logic
-/lk/core
-/common/net
+store
+net
+logic
+core
 LKApplication.js
+

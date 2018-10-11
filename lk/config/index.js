@@ -6,8 +6,12 @@ const config = {
   devLogPath: RNFS.DocumentDirectoryPath + '/devLog.txt',
   errorLogPath: RNFS.DocumentDirectoryPath + '/errorLog.txt',
   isDevMode: true,
-  isPreviewVersion: false
+  isPreviewVersion: false,
+  isEncrypted: true
 }
+
+// config in production
+config.isEncrypted = true
 
 Object.freeze(config)
 module.exports = config
