@@ -30,6 +30,7 @@ export default class AddGroupView extends Component<{}> {
       contentAry: []
     }
     this.selectedAry = []
+    this.user = lkApp.getCurrentUser()
   }
 
   nameTextChange=(v) => {
@@ -44,8 +45,8 @@ export default class AddGroupView extends Component<{}> {
     if (this.selectedAry.length === 0) {
       alert('请选择群成员')
     } else {
-      // console.log({selectedAry: this.selectedAry})
-      await chatManager.newGroupChat(this.name, this.selectedAry)
+      // console.log({selectedAry: this.selectedAry, user: this.user})
+      await chatManager.newGroupChat(this.name, [this.user].concat(this.selectedAry))
       this.props.navigation.goBack()
     }
   }

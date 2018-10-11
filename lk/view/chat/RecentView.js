@@ -93,7 +93,7 @@ export default class RecentView extends Component<{}> {
         }
 
         const memberAry = await LKChatProvider.asyGetGroupMembers(chatId)
-        console.log({memberAry})
+        // console.log({memberAry})
         const memberInfoObj = {}
         for (let ele of memberAry) {
           memberInfoObj[ele.id] = ele

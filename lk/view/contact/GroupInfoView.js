@@ -1,21 +1,15 @@
 
 import React, { Component } from 'react'
 import {
-  Image,
-  Text,
-  TouchableOpacity,
   View
 } from 'react-native'
 const {getAvatarSource} = require('../../util')
-const manifest = require('../../../Manifest')
-const ChatManager = manifest.get('ChatManager')
+const lkApp = require('../../LKApplication').getCurrentApp()
 const common = require('@external/common')
 const {List} = common
 
 export default class GroupInfoView extends Component<{}> {
-  static navigationOptions =({ navigation }) => {
-    const {group} = navigation.state.params
-    const {name} = group
+  static navigationOptions =() => {
     return {
       headerTitle: '成员信息'
     }
@@ -24,6 +18,7 @@ export default class GroupInfoView extends Component<{}> {
     super(props)
     this.state = {}
     this.group = this.props.navigation.state.params.group
+    this.user = lkApp.getCurrentUser()
   }
 
   render () {
@@ -36,6 +31,11 @@ export default class GroupInfoView extends Component<{}> {
         image: getAvatarSource(pic),
         key: id,
         title: name
+      }
+      if (id === this.user.id) {
+        obj.title = name + ' (我) '
+      } else {
+        obj.title = name
       }
       dataAry.push(obj)
     }
