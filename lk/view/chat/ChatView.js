@@ -32,6 +32,7 @@ const _ = require('lodash')
 const {DelayIndicator} = require('@ys/react-native-collection')
 const chatLeft = require('../image/chat-y-l.png')
 const chatRight = require('../image/chat-w-r.png')
+const uuid = require('uuid')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation }) => {
@@ -98,9 +99,13 @@ export default class ChatView extends Component<{}> {
        for (let msg of msgAry) {
          let picSource = getAvatarSource(user.pic)
          const {sendTime, id} = msg
+         if (!id) {
+           console.log({noId: msg})
+         }
          if (msgSet.has(id)) {
            continue
          } else {
+           // console.log({id})
            msgSet.add(id)
          }
          msgSet.add(id)
@@ -116,7 +121,7 @@ export default class ChatView extends Component<{}> {
            }
            timeStr += date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
            // console.log({lastShowingTime})
-           recordAry.push(<Text style={{marginVertical: 10, color: '#a0a0a0', fontSize: 11}} key={lastShowingTime}>{timeStr}</Text>)
+           recordAry.push(<Text style={{marginVertical: 10, color: '#a0a0a0', fontSize: 11}} key={lastShowingTime || uuid()}>{timeStr}</Text>)
          }
          const style = {
            recordEleStyle: {flexDirection: 'row', justifyContent: 'flex-start', alignItems: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? 'flex-start' : 'flex-start', width: '100%', marginTop: 15}
@@ -143,7 +148,7 @@ export default class ChatView extends Component<{}> {
            </View>)
          } else {
            // message sent
-           console.log({sentMsg: msg})
+           // console.log({sentMsg: msg})
            let iconName = this.getIconNameByState(msg.state)
            recordAry.push(<View key={id} style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10}}>
              <TouchableOpacity ChatView={this} msgId={id} onPress={this.doTouchMsgState}>

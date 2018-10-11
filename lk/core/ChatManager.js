@@ -55,24 +55,7 @@ class ChatManager extends EventTarget{
         }
     }
 
-    //TODO监听mcode的变化
-    _doContactMCodeChange(detail){
-
-    }
-    _doContactDeviceAdded(detail){
-
-    }
-    _doContactDeviceRemoved(detail){
-
-    }
-    //TODO监听chat下的成员列表的变化
-    notifyChatMemberAdded(detail){
-
-    }
-
-    notifyChatMemberRemoved(detail){
-
-    }
+    //TODO 在chat的成员变化后更新缓存
 
     //发消息时用
     /**
@@ -310,7 +293,6 @@ class ChatManager extends EventTarget{
         return this._sendOrderSeed+sendOrder;
     }
 
-    //TODO 其他包含了该成员的chat的缓存也需要更新
     deviceChanged(chatId,changedMembers){
         let returnAdded = [];
         console.log({changedMembers})
@@ -318,8 +300,8 @@ class ChatManager extends EventTarget{
             LKDeviceHandler.asyAddDevices(changed.id,changed.added);
             LKDeviceHandler.asyRemoveDevices(changed.id,changed.removed);
         });
-        let chat = this._recentChats[this._recentChatsIndex[chatId]];
-        if(chat){
+        // let chat = this._recentChats[this._recentChatsIndex[chatId]];
+        this._recentChats.forEach((chat)=>{
             let members = chat.members;
             for(let i=0;i<members.length;i++){
                 let member = members[i];
@@ -336,22 +318,25 @@ class ChatManager extends EventTarget{
                             }
                         }
                         if(added.length>0){
-                            let addDevices = {id:member.id,devices:[]};
+                            let addDevices = [];
                             added.forEach(function (addDevice) {
                                 let rsa = new RSAKey();
                                 rsa.setPublicString(addDevice.pk);
                                 let random = rsa.encrypt(chat.key);
                                 let newD = {id:addDevice.id,random:random};
                                 localDevices.push(newD);
-                                addDevices.devices.push(newD);
+                                if(chat.id===chatId)
+                                    addDevices.push(newD);
                             });
-                            returnAdded.push(addDevices);
+                            if(chat.id===chatId)
+                                returnAdded.push({id:member.id,serverIP:member.serverIP,serverPort:member.serverPort,devices:addDevices});
                         }
 
                     }
                 }
             }
-        }
+        });
+
         return returnAdded;
     }
 
