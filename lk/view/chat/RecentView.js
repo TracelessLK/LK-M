@@ -83,6 +83,7 @@ export default class RecentView extends Component<{}> {
         let obj = {}
         obj.id = chatId
         obj.name = chatName
+        obj.newMsgNum = newMsgNum
         if (length) {
           const lastMsg = _.last(msgAry)
           obj.content = lastMsg.content
@@ -149,11 +150,13 @@ export default class RecentView extends Component<{}> {
       const msgAryPromise = []
       console.log({allChat})
       for (let chat of allChat) {
-        const {isGroup, name, createTime} = chat
+        const {isGroup, name, createTime, id: chatId} = chat
+        const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
+        console.log({newMsgNum, chatId})
         const option = {
           userId: user.id,
-          chatId: chat.id,
-          newMsgNum: await chatManager.asyGetNewMsgNum(chat.id),
+          chatId,
+          newMsgNum,
           isGroup,
           chatName: name,
           createTime
@@ -169,8 +172,9 @@ export default class RecentView extends Component<{}> {
       // recentAry.sort((obj1, obj2) => {
       //   return obj1.sendTime - obj2.sendTime
       // })
-
-      const contentAry = <MessageList data={recentAry.map(ele => ele.item)}/>
+      const data = recentAry.map(ele => ele.item)
+      console.log({data})
+      const contentAry = <MessageList data={data}/>
 
       this.setState({
         contentAry

@@ -224,6 +224,7 @@ class ChatManager extends EventTarget{
             targets.get(record.senderUid).push(record.id);
         });
         LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
+        this.fire('recentChanged')
         targets.forEach((v,k)=>{
             Contact.get(userId,k).then((contact)=>{
                 Application.getCurrentApp().getLKWSChannel().readReport(k,contact.serverIP,contact.serverPort,v);

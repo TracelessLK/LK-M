@@ -40,7 +40,8 @@ const util = {
 
 const tableAry = [
   // 'device', 'mfapply', 'contact', 'record',
-  'chat', 'groupMember'
+  // 'chat', 'groupMember'
+  'record'
 ]
 
 ;(async () => {
