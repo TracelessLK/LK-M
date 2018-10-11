@@ -179,7 +179,7 @@ class LKChannel extends WSChannel{
                     msg.body.relativeMsgId = relativeMsgId;
                     msg.body.order=option.order||ChatManager.getChatSendOrder(chatId);
                     msg.body.content = option.content||CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
-                    console.log({content: msg.body.content})
+                    // console.log({content: msg.body.content})
                 }
             }
 
