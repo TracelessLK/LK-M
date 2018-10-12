@@ -464,6 +464,7 @@ class LKChannel extends WSChannel{
         let key = ChatManager.getHotChatKeyReceived(chatId,header.did,random);
         var bytes  = CryptoJS.AES.decrypt(msg.body.content.toString(), key);
         let content = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+        console.log({receivedMsg: msg})
 
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
@@ -489,9 +490,9 @@ class LKChannel extends WSChannel{
     }
 
     async sendMsgHandler(msg){
-        console.log({receivedMsg: msg})
+      console.log({receivedMsgEncrypted: msg})
 
-        //TODO 处理消息重入或前置未达如本地还没有群
+      //TODO 处理消息重入或前置未达如本地还没有群
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
         let body = msg.body;
@@ -507,6 +508,7 @@ class LKChannel extends WSChannel{
         let receiveOrder;
         if(relativeMsgId){
             let relativeMsg = await LKChatProvider.asyGetMsg(userId,chatId,relativeMsgId);
+            console.log({relativeMsg})
             if(relativeMsg){
                 relativeOrder = relativeMsg.receiveOrder;
                 receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
@@ -517,6 +519,7 @@ class LKChannel extends WSChannel{
             relativeOrder = Date.now();
             receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
         }
+        console.log({relativeOrder, receiveOrder})
         if(relativeOrder&&receiveOrder){
             this._receiveMsg(chatId,msg,relativeOrder,receiveOrder)
         }

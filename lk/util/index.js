@@ -49,7 +49,7 @@ const tableAry = [
   // console.log({friendAry})
   // await util.removeAllGroup()
   for (let ele of tableAry) {
-    // util.showAll(ele)
+    util.showAll(ele)
   }
 })()
 

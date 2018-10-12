@@ -152,7 +152,7 @@ export default class RecentView extends Component<{}> {
       for (let chat of allChat) {
         const {isGroup, name, createTime, id: chatId} = chat
         const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
-        console.log({newMsgNum, chatId})
+        // console.log({newMsgNum, chatId})
         const option = {
           userId: user.id,
           chatId,
@@ -173,7 +173,7 @@ export default class RecentView extends Component<{}> {
       //   return obj1.sendTime - obj2.sendTime
       // })
       const data = recentAry.map(ele => ele.item)
-      console.log({data})
+      // console.log({data})
       const contentAry = <MessageList data={data}/>
 
       this.setState({
