@@ -178,7 +178,8 @@ class LKChannel extends WSChannel{
                     msg.body.chatId = chatId;
                     msg.body.relativeMsgId = relativeMsgId;
                     msg.body.order=option.order||ChatManager.getChatSendOrder(chatId);
-                    msg.body.content = option.content||CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
+                    // msg.body.content = option.content||CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
+                    msg.body.content = option.content||JSON.stringify(content);
                     // console.log({content: msg.body.content})
                 }
             }
@@ -459,13 +460,12 @@ class LKChannel extends WSChannel{
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
         let body = msg.body;
-        // let chatId = userId===header.uid?body.chatId:header.uid;
         let random = header.target.random;
         let key = ChatManager.getHotChatKeyReceived(chatId,header.did,random);
-        var bytes  = CryptoJS.AES.decrypt(msg.body.content.toString(), key);
-        let content = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-        console.log({receivedMsg: msg})
-
+        // var bytes  = CryptoJS.AES.decrypt(msg.body.content.toString(), key);
+        // let content = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+        let content = JSON.parse(bytes.toString(msg.body.content));
+      console.log({receivedMsg: msg})
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
@@ -492,7 +492,7 @@ class LKChannel extends WSChannel{
     async sendMsgHandler(msg){
       console.log({receivedMsgEncrypted: msg})
 
-      //TODO 处理消息重入或前置未达如本地还没有群
+        //TODO 处理消息重入或前置未达如本地还没有群
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
         let body = msg.body;
