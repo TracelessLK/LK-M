@@ -80,6 +80,8 @@ export default class ChatView extends Component<{}> {
         const {memberInfoObj} = otherSide
         this.groupMemberInfo = memberInfoObj
       }
+      // keyboard fix
+      this.keyBoardShowCount = 0
     }
 
      refreshRecord = async (limit) => {
@@ -177,6 +179,7 @@ export default class ChatView extends Component<{}> {
 
     _keyboardDidShow=(e) => {
       // console.log({e})
+      this.keyBoardShowCount++
       const {height} = Dimensions.get('window')
       let keyY = e.endCoordinates.screenY
       const _f = () => {
@@ -186,6 +189,7 @@ export default class ChatView extends Component<{}> {
         if (this.extra.contentHeight + headerHeight < keyY) {
           change.msgViewHeight = keyY - headerHeight
         } else {
+          // console.log({height, keyY})
           change.heightAnim = height - keyY
         }
         // console.log({change})
@@ -194,7 +198,8 @@ export default class ChatView extends Component<{}> {
       }
       if (Platform.OS === 'ios') {
         const {screenY: screenYStart} = e.startCoordinates
-        if (screenYStart === height) {
+        // fix keyboard, in ios, event emits 3 times
+        if (screenYStart === height || this.keyBoardShowCount === 3) {
           _f()
         }
       } else {
@@ -464,7 +469,7 @@ export default class ChatView extends Component<{}> {
               overflow: 'hidden',
               paddingVertical: 5,
               marginBottom: 0}}>
-              <TextInput ref='text2' style={{height:0,width:0,backgroundColor: 'red'}}></TextInput>
+              <TextInput ref='text2' style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
               <TextInputWrapper onChangeText={this.textChange} onSubmitEditing={this.send} ref='text'></TextInputWrapper>
               <TouchableOpacity onPress={this.showImagePicker}
                 style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'center'}}>
