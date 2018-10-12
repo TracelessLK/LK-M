@@ -30,7 +30,7 @@ const LKChatProvider = require('../../logic/provider/LKChatProvider')
 const personImg = require('../image/person.png')
 const groupImg = require('../image/group.png')
 const _ = require('lodash')
-const {DelayIndicator} = require('@ys/react-native-collection')
+const {DelayIndicator, TextInputWrapper} = require('@ys/react-native-collection')
 const chatLeft = require('../image/chat-y-l.png')
 const chatRight = require('../image/chat-w-r.png')
 const uuid = require('uuid')
@@ -256,9 +256,8 @@ export default class ChatView extends Component<{}> {
     }
 
     send=() => {
-      setTimeout(() => {
-        this.textInput.clear()
-      }, 0)
+      this.refs.text2.focus()
+      this.refs.text.reload()
       const channel = lkApp.getLKWSChannel()
       if (this.isGroupChat) {
         channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
@@ -465,36 +464,8 @@ export default class ChatView extends Component<{}> {
               overflow: 'hidden',
               paddingVertical: 5,
               marginBottom: 0}}>
-              <TextInput multiline ref={(ref) => { this.textInput = ref }} style={{flex: 1,
-                color: 'black',
-                fontSize: 16,
-                paddingHorizontal: 4,
-                borderWidth: 1,
-                borderColor: '#d0d0d0',
-                borderRadius: 5,
-                marginHorizontal: 5,
-                minHeight: this.minHeight,
-                backgroundColor: '#f0f0f0',
-                marginBottom: 5,
-                height: this.state.height}}
-              blurOnSubmit={false} returnKeyType="send" enablesReturnKeyAutomatically
-              underlineColorAndroid='transparent' defaultValue={''} onSubmitEditing={debounceFunc(this.send)}
-              onChangeText={this.textChange}
-              returnKeyLabel='发送'
-              onContentSizeChange={(event) => {
-                let height = event.nativeEvent.contentSize.height
-                if (height < this.minHeight) {
-                  height = this.minHeight
-                } else {
-                  height += 10
-                }
-                if (this.state.height !== height) {
-                  if (height > MAX_INPUT_HEIGHT) {
-                    height = MAX_INPUT_HEIGHT
-                  }
-                  this.setState({height})
-                }
-              }}/>
+              <TextInput ref='text2' style={{height:0,width:0,backgroundColor: 'red'}}></TextInput>
+              <TextInputWrapper onChangeText={this.textChange} onSubmitEditing={this.send} ref='text'></TextInputWrapper>
               <TouchableOpacity onPress={this.showImagePicker}
                 style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'center'}}>
                 <Ionicons name="ios-camera-outline" size={38} style={{marginRight: 5}}/>

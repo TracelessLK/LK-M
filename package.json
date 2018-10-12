@@ -6,7 +6,6 @@
     "coverage": "node bin/coverage",
     "flow": "flow",
     "lint": "eslint --ext .js .",
-    "postinstall": "node bin/postinstall",
     "start": "export BLUEBIRD_W_FORGOTTEN_RETUR=false && node node_modules/react-native/local-cli/cli.js start",
     "start:android": "react-native run-android",
     "start:ios": "react-native run-ios",

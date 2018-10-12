@@ -29,12 +29,23 @@ const util = {
       })
     })
   },
-  async removeAllGroup () {
-    let sql = `delete  from chat`
-    await this.query(sql)
-    sql = 'delete from groupMember'
-    await this.query(sql)
-    console.log('all group chat deleted')
+  removeAllGroup () {
+    return this.deleteTable([''])
+  },
+  deleteTable (tableName) {
+    if (Array.isArray(tableName)) {
+      const promiseAry = []
+      for (let ele of tableName) {
+        promiseAry.push(this._deleteTable(ele))
+      }
+      return Promise.all(promiseAry)
+    } else {
+      return this._deleteTable(tableName)
+    }
+  },
+  _deleteTable (tableName) {
+    const sql = `delete from ${tableName}`
+    return this.query(sql)
   }
 }
 
