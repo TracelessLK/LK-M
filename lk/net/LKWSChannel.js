@@ -629,6 +629,10 @@ class LKChannel extends WSChannel{
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("setUserPic",{pic:pic})]);
         return result[0]._sendMessage(result[1]);
     }
+  _onerror (event) {
+
+      this.fire('connectionFail', event)
+  }
 }
 
 module.exports=LKChannel;

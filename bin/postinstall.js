@@ -3,7 +3,7 @@ const filePath = path.resolve(__dirname, '../node_modules/react-native/local-cli
 const fs = require('fs')
 const rootPath = path.resolve(__dirname, '../')
 const collection = require('@ys/react-native-collection')
-const {CliUtil, ModuleUtil} = collection
+const {CliUtil} = collection
 const {execSync} = CliUtil
 
 if (fs.existsSync(filePath)) {
@@ -20,6 +20,3 @@ if (fs.existsSync(indexPath)) {
 // print error sql
 execSync('node bin/log.js')
 
-const {installGit} = ModuleUtil
-
-// installGit(rootPath)

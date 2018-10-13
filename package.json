@@ -19,6 +19,7 @@
     "@external/common": "file:common",
     "@ys/collection": "github:spirit1453/node_collection#publish",
     "@ys/react-native-collection": "github:spirit1453/react_native_collection#publish",
+    "@ys/vanilla": "github:spirit1453/vanilla_js#publish",
     "aes-js": "^3.1.1",
     "bluebird": "^3.5.2",
     "crypto-js": "^3.1.9-1",

@@ -4,15 +4,23 @@ import {
   YellowBox,
   StyleSheet, View
 } from 'react-native'
-import entryUtil from './common/util/entryUtil'
 import {Root} from 'native-base'
 import Promise from 'bluebird'
-
 import LKEntry from './lk/LKEntry'
+const ErrorUtilRN = require('ErrorUtils')
+
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
 
-entryUtil.init()
+const {ErrorUtil} = require('@ys/react-native-collection')
+const {processError} = ErrorUtil
+const option = {
+  // todo error upload
+  productionProcess: () => {
 
+  },
+  ErrorUtilRN
+}
+processError(option)
 global.Promise = Promise
 
 global.onunhandledrejection = function onunhandledrejection (error) {
