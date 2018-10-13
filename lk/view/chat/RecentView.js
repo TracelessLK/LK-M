@@ -5,7 +5,8 @@ import {
   View,
   Image,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  NetInfo
 } from 'react-native'
 import {
   ActionSheet,
@@ -73,6 +74,7 @@ export default class RecentView extends Component<{}> {
       this.channel.un('connectionFail', this.connectionFail)
       this.channel.un('connectionOpen', this.connectionOpen)
     }
+
     componentDidMount=() => {
       const {navigation} = this.props
 
@@ -84,7 +86,30 @@ export default class RecentView extends Component<{}> {
 
       this.channel.on('connectionFail', this.connectionFail.bind(this))
       this.channel.on('connectionOpen', this.connectionOpen.bind(this))
+
+      NetInfo.addEventListener('connectionChange', (connectionInfo) => {
+        const {type} = connectionInfo
+        if (type === 'none' || type === 'unknown') {
+          navigation.setParams({
+            headerTitle: '消息(未连接)'
+          })
+          this.setState({
+            connectionOK: false,
+            msg: '当前网络不可用,请检查您的网络设置',
+            type: 'networkFail'
+          })
+        } else {
+          navigation.setParams({
+            headerTitle: '消息'
+          })
+          this.setState({
+            connectionOK: true
+          })
+        }
+      }
+      )
     }
+
     connectionFail () {
       const {navigation} = this.props
 
@@ -92,7 +117,9 @@ export default class RecentView extends Component<{}> {
         headerTitle: '消息(未连接)'
       })
       this.setState({
-        connectionOK: false
+        connectionOK: false,
+        msg: '与服务器的连接已断开',
+        type: 'connectionFail'
       })
     }
     connectionOpen () {
@@ -231,9 +258,11 @@ export default class RecentView extends Component<{}> {
       return (
         <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
           {this.state.connectionOK ? null
-            : <View style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
-              <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>当前网络不可用,请检查您的网络设置</Text>
-            </View>
+            : <TouchableOpacity style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}
+              onPress={() => { this.props.navigation.navigate('ConnectionFailView', {type: this.state.type}) }}
+            >
+              <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>{this.state.msg}</Text>
+            </TouchableOpacity>
           }
           {/* <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:50,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}> */}
           {/* <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text> */}
