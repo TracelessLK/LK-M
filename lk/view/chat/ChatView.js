@@ -22,7 +22,6 @@ import {Header} from 'react-navigation'
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 const {getAvatarSource} = require('../../util')
 const Constant = require('../state/Constant')
-const {MAX_INPUT_HEIGHT} = Constant
 const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
 const chatManager = manifest.get('ChatManager')

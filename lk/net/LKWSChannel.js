@@ -630,7 +630,6 @@ class LKChannel extends WSChannel{
         return result[0]._sendMessage(result[1]);
     }
   _onerror (event) {
-
       this.fire('connectionFail', event)
   }
 }

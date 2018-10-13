@@ -4,9 +4,13 @@ import {
   ScrollView,
   View,
   Image,
+  Text,
   TouchableOpacity
 } from 'react-native'
-import {ActionSheet} from 'native-base'
+import {
+  ActionSheet,
+  Icon
+} from 'native-base'
 const {commonUtil, MessageList} = require('@external/common')
 const {debounceFunc} = commonUtil
 const {getAvatarSource} = require('../../util')
@@ -20,8 +24,10 @@ const addPng = require('../image/add.png')
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
       const size = 20
+      let headerTitle = navigation.getParam('headerTitle')
+      headerTitle = headerTitle || '消息'
       return {
-        headerTitle: '消息',
+        headerTitle,
         headerRight:
         <TouchableOpacity onPress={navigation.getParam('optionToChoose')}>
           <Image source={addPng} style={{width: size, height: size, marginHorizontal: 10}} resizeMode='contain'/>
@@ -31,9 +37,12 @@ export default class RecentView extends Component<{}> {
     constructor (props) {
       super(props)
       this.state = {
-        contentAry: null
+        contentAry: null,
+        connectionOK: true
       }
       this.eventAry = ['msgChanged', 'recentChanged']
+      // todo: store all not undefined value
+      this.channel = lkApp.getLKWSChannel()
     }
 
   optionToChoose = () => {
@@ -61,13 +70,40 @@ export default class RecentView extends Component<{}> {
       for (let event of this.eventAry) {
         chatManager.un(event, this.update)
       }
+      this.channel.un('connectionFail', this.connectionFail)
+      this.channel.un('connectionOpen', this.connectionOpen)
     }
     componentDidMount=() => {
+      const {navigation} = this.props
+
       for (let event of this.eventAry) {
         chatManager.on(event, this.update)
       }
       this.updateRecent()
-      this.props.navigation.setParams({optionToChoose: this.optionToChoose})
+      navigation.setParams({optionToChoose: this.optionToChoose})
+
+      this.channel.on('connectionFail', this.connectionFail.bind(this))
+      this.channel.on('connectionOpen', this.connectionOpen.bind(this))
+    }
+    connectionFail () {
+      const {navigation} = this.props
+
+      navigation.setParams({
+        headerTitle: '消息(未连接)'
+      })
+      this.setState({
+        connectionOK: false
+      })
+    }
+    connectionOpen () {
+      const {navigation} = this.props
+
+      navigation.setParams({
+        headerTitle: '消息'
+      })
+      this.setState({
+        connectionOK: true
+      })
     }
 
     async getMsg (option) {
@@ -194,6 +230,11 @@ export default class RecentView extends Component<{}> {
     render () {
       return (
         <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
+          {this.state.connectionOK ? null
+            : <View style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
+              <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>当前网络不可用,请检查您的网络设置</Text>
+            </View>
+          }
           {/* <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:50,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}> */}
           {/* <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text> */}
           {/* </TouchableOpacity> */}
