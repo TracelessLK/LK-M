@@ -1,10 +1,37 @@
 import db from '../../common/store/DataBase'
+import {Toast} from 'native-base'
 const {commonUtil} = require('@external/common')
+const lkApp = require('../LKApplication').getCurrentApp()
 const {getAvatarSource} = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
 const util = {
   getAvatarSource (pic) {
     return getAvatarSource(pic, defaultAvatar)
+  },
+  addExternalFriend ({navigation}) {
+    navigation.navigate('ScanView', {
+      onRead (e) {
+        const {data} = e
+        const {action, code, ip, port, id} = JSON.parse(data)
+        console.log(data)
+        if (code === 'LK' && action === 'addFriend') {
+          lkApp.getLKWSChannel().applyMF(id, ip, port)
+          Toast.show({
+            text: '好友请求已成功发送!',
+            position: 'top',
+            type: 'success',
+            duration: 3000
+          })
+        } else {
+          Toast.show({
+            text: '该二维码无效,请核对后重试!',
+            position: 'top',
+            type: 'warning',
+            duration: 3000
+          })
+        }
+      }
+    })
   },
   async showAll (tableName) {
     let sql = `select * from ${tableName}`

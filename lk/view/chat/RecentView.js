@@ -14,7 +14,7 @@ import {
 } from 'native-base'
 const {commonUtil, MessageList} = require('@external/common')
 const {debounceFunc} = commonUtil
-const {getAvatarSource} = require('../../util')
+const {getAvatarSource, addExternalFriend} = require('../../util')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
 const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const lkApp = require('../../LKApplication').getCurrentApp()
@@ -47,7 +47,8 @@ export default class RecentView extends Component<{}> {
     }
 
   optionToChoose = () => {
-    let BUTTONS = ['发起群聊', '添加好友', '取消']
+    const {navigation} = this.props
+    let BUTTONS = ['发起群聊', '添加外部好友', '取消']
     let CANCEL_INDEX = BUTTONS.length - 1
     ActionSheet.show(
       {
@@ -58,6 +59,8 @@ export default class RecentView extends Component<{}> {
       buttonIndex => {
         if (buttonIndex === 0) {
           this.props.navigation.navigate('AddGroupView')
+        } else if (buttonIndex === 1){
+          addExternalFriend({navigation})
         }
       }
     )
@@ -265,9 +268,12 @@ export default class RecentView extends Component<{}> {
               <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>{this.state.msg}</Text>
             </TouchableOpacity>
           }
-          {/* <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:50,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}> */}
-          {/* <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text> */}
-          {/* </TouchableOpacity> */}
+          {this.state.contentAry && !this.state.contentAry.length
+            ? <TouchableOpacity onPress={() => { this.props.navigation.navigate('ContactTab') }} style={{marginTop: 30, width: '90%', height: 50, borderColor: 'gray', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={{fontSize: 18, textAlign: 'center', color: 'gray'}}>开始和好友聊天吧!</Text>
+            </TouchableOpacity>
+            : null}
+
           <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always">
             {this.state.contentAry}
           </ScrollView>
