@@ -20,7 +20,6 @@ export default class Loading extends Component<{}> {
   constructor (props) {
     super(props)
     this.state = {}
-    this._bootstrapAsync()
   }
 
     _bootstrapAsync = async () => {
@@ -43,6 +42,10 @@ export default class Loading extends Component<{}> {
         }
       }
       this.props.navigation.navigate(routerName)
+    }
+
+    componentDidMount () {
+      this._bootstrapAsync()
     }
 
     render () {
