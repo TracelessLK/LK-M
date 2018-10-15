@@ -22,7 +22,8 @@ export default class RegisterView extends Component<{}> {
     console.log(obj)
 
     this.state = {
-      hasCheckCode: obj.hasCheckCode
+      hasCheckCode: obj.hasCheckCode,
+      buttonDisabled: false
     }
   }
 
@@ -33,7 +34,7 @@ export default class RegisterView extends Component<{}> {
       this.checkCode = t ? t.trim() : ''
     }
     onChangeText3 = (t) => {
-      this.password = t ? t.trim() : ''
+      this.password = t
     }
 
     render () {
@@ -48,13 +49,20 @@ export default class RegisterView extends Component<{}> {
 
             ) : null}
             <Item floatingLabel >
-              <Label>请为您的密钥设置密码</Label>
-              <Input ref='input' onChangeText={this.onChangeText3}></Input>
+              <Label>请为您的账户设置密码</Label>
+              <Input ref='input' onChangeText={this.onChangeText3} secureTextEntry></Input>
+            </Item>
+            <Item floatingLabel >
+              <Label>请再次输入密码确认</Label>
+              <Input ref='input' onChangeText={t => {
+                this.passwordAgain = t
+              }} secureTextEntry></Input>
             </Item>
           </View>
           <View style={{ alignItems: 'center', justifyContent: 'center'}}>
-            <Button ref='button' iconLeft info style={{width: Dimensions.get('window').width - 30, alignItems: 'center', justifyContent: 'center', marginTop: 30}}
-              onPress={debounceFunc(() => {
+            <Button disabled={this.state.buttonDisabled} ref='button' iconLeft info style={{width: Dimensions.get('window').width - 30, alignItems: 'center', justifyContent: 'center', marginTop: 30}}
+              onPress={() => {
+                console.log('set password')
                 if (!this.checkCode && this.state.hasCheckCode) {
                   Toast.show({
                     text: '请输入验证码',
@@ -69,7 +77,20 @@ export default class RegisterView extends Component<{}> {
                     type: 'warning',
                     duration: 3000
                   })
+                } else if (!this.passwordAgain) {
+                  Toast.show({
+                    text: '请再次输入密码确认',
+                    position: 'top',
+                    duration: 3000
+                  })
+                } else if (this.passwordAgain !== this.password) {
+                  Toast.show({
+                    text: '两次输入的密码不一致,请确认后重试',
+                    position: 'top',
+                    duration: 3000
+                  })
                 } else {
+                  this.setState({buttonDisabled: true})
                   const {obj, qrcode} = this.props.navigation.state.params
                   const bits = 1024
                   const exponent = '10001'
@@ -109,7 +130,7 @@ export default class RegisterView extends Component<{}> {
                     })
                   })()
                 }
-              }, 1000 * 10)}>
+              }}>
               <Text style={{color: 'white'}}>注册</Text>
             </Button>
           </View>

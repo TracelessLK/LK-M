@@ -51,20 +51,33 @@ export default class ScanRegisterView extends React.Component {
       Keyboard.dismiss()
     }
 
-    onRead = (e) => {
+    onRead = async (e) => {
       const {data} = e
       const decryptedText = decryptAES(data)
       const obj = JSON.parse(decryptedText)
-
-      if (obj.action === 'registerForAdmin') {
+      const userAry = await userProvider.asyGetAll()
+      const {action, serverPort, serverIp} = obj
+      if (action === 'registerForAdmin') {
         this.props.navigation.navigate('CheckCodeView', {
           obj
         })
-      } else if (obj.action === 'register') {
-        this.props.navigation.navigate('RegisterView', {
-          obj,
-          qrcode: data
+      } else if (action === 'register') {
+        const user = userAry.find(ele => {
+          return ele.serverPort === serverPort && ele.serverIp === serverIp
         })
+        if (user) {
+          const {name} = user
+          Toast.show({
+            text: `已经在服务器有注册用户:${name}`,
+            position: 'top',
+            duration: 5000
+          })
+        } else {
+          this.props.navigation.navigate('RegisterView', {
+            obj,
+            qrcode: data
+          })
+        }
       } else {
         Toast.show({
           text: '该二维码无效',
