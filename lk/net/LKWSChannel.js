@@ -321,7 +321,7 @@ class LKChannel extends WSChannel{
     }
 
     async _asyFetchMembers(remoteMemberMCode,added,modified){
-       let ids = added.contact(modified);
+       let ids = added.concat(modified);
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("fetchMembers",{members:ids})]);
         return new Promise((resolve,reject)=>{
             result[0]._sendMessage(result[1]).then((msg)=> {
