@@ -3,10 +3,8 @@ import React, { Component } from 'react'
 import {
   Text,
   View,
-  ScrollView,
-  Image
+  ScrollView
 } from 'react-native'
-import {Toast} from 'native-base'
 import { ListItem } from 'react-native-elements'
 const common = require('@external/common')
 const {SearchBar, commonUtil, List, LoadingView} = common
@@ -15,8 +13,9 @@ const lkApp = require('../../LKApplication').getCurrentApp()
 const style = require('../style')
 const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const {getAvatarSource, addExternalFriend} = require('../../util')
-const {HeaderRightButton} = require('@ys/react-native-collection')
+const {HeaderRightButton, CenterLayout} = require('@ys/react-native-collection')
 const ContactManager = require('../../core/ContactManager')
+const noUserImg = require('../image/noUser.png')
 
 export default class ExternalView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -96,19 +95,13 @@ export default class ExternalView extends Component<{}> {
       ary.sort(sortFunc)
       dataAry = dataAry.concat(ary)
 
-      const size = 120
-      const noUser = (
-        <View style={{display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'flex-start', marginTop: 200}}>
-          <Image source ={require('../image/noUser.png')} style={{width: size, height: size}} resizeMode='contain'/>
-          <View style={{margin: 20}}>
-            <Text style={{color: style.color.secondColor, fontSize: 18}}>
-                        无外部联系人,请扫描二维码添加好友
-            </Text>
-          </View>
-
-        </View>
-      )
-      console.log({dataAry})
+      const prop = {
+        text: '无外部联系人,请扫描二维码添加好友',
+        textStyle: {color: style.color.secondColor, fontSize: 18},
+        img: noUserImg
+      }
+      const noUser = <CenterLayout {...prop}></CenterLayout>
+      // console.log({dataAry})
       const content = dataAry.length ? (
         <View>
           {/* <SearchBar */}

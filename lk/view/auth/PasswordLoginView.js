@@ -30,8 +30,30 @@ export default class PasswordLoginView extends Component<{}> {
     this.t = ''
   }
 
-  render () {
+  login = () => {
     const {navigation} = this.props
+
+    console.log({t: this.t})
+    if (!this.t) {
+      Toast.show({
+        text: '请输入密码',
+        position: 'top'
+      })
+    } else {
+      const password = md5(this.t).toString()
+      if (password === this.user.password) {
+        lkApplication.setCurrentUser(this.user)
+        navigation.navigate('MainStack')
+      } else {
+        Toast.show({
+          text: '密码错误,请重试',
+          position: 'top'
+        })
+      }
+    }
+  }
+
+  render () {
     return (
       <View style={{alignItems: 'center', marginVertical: 40}}>
         <Card style={{width: '90%'}}>
@@ -54,28 +76,9 @@ export default class PasswordLoginView extends Component<{}> {
                 marginBottom: 5
               }} autoFocus secureTextEntry onChangeText={t => {
                 this.t = t
-              }}
+              }} onSubmitEditing={this.login}
               ></TextInput>
-              <Button block info style={{width: 60, height: 40}} onPress={() => {
-                console.log({t:this.t})
-                if (!this.t) {
-                  Toast.show({
-                    text: '请输入密码',
-                    position: 'top'
-                  })
-                } else {
-                  const password = md5(this.t).toString()
-                  if (password === this.user.password) {
-                    lkApplication.setCurrentUser(this.user)
-                    navigation.navigate('MainStack')
-                  } else {
-                    Toast.show({
-                      text: '密码错误,请重试',
-                      position: 'top'
-                    })
-                  }
-                }
-              }}>
+              <Button block info style={{width: 60, height: 40}} onPress={this.login}>
                 <Text style={{color: 'white'}}>确认</Text>
               </Button>
             </View>

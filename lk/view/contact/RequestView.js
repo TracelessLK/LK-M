@@ -65,6 +65,7 @@ export default class RequestView extends Component<{}> {
   render () {
     return (
       <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
+
         {this.state.content}
       </View>
     )
