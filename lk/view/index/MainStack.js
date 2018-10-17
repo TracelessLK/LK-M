@@ -106,7 +106,11 @@ const MainStack = createStackNavigator({
   FriendInfoView,
   ChatView,
   OrgView,
-  ExternalView,
+  // todo:  path not working
+  ExternalView: {
+    screen: ExternalView,
+    path: 'external'
+  },
   BasicInfoView,
   QrcodeView,
   UidView,

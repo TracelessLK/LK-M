@@ -24,10 +24,13 @@ export default class LKEntry extends Component<{}> {
         console.log('Initial url is: ' + url);
       }
     }).catch(err => console.error('An error occurred', err));
+    Linking.addEventListener('url', event => {
+      console.log({linkEvent: event})
+    })
   }
   render () {
     return (
-      <EntryView></EntryView>
+      <EntryView uriPrefix='lkapp'></EntryView>
     )
   }
 }

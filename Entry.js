@@ -11,8 +11,8 @@ const ErrorUtilRN = require('ErrorUtils')
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
 
-const {ErrorUtil} = require('@ys/react-native-collection')
-const {processError} = ErrorUtil
+const {ErrorUtil, ErrorStock} = require('@ys/react-native-collection')
+const {setGlobalErrorHandler} = ErrorUtil
 const option = {
   // todo error upload
   productionProcess: () => {
@@ -20,12 +20,13 @@ const option = {
   },
   ErrorUtilRN
 }
-processError(option)
+setGlobalErrorHandler(option)
 global.Promise = Promise
 
+const errorStock = new ErrorStock()
 global.onunhandledrejection = function onunhandledrejection (error) {
   if (error instanceof Error) {
-    console.log(error)
+    errorStock.processError({error})
   }
 }
 
