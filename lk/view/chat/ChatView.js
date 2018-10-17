@@ -269,7 +269,6 @@ export default class ChatView extends Component<{}> {
         channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
       }
       this.text = ''
-      this.textInput.clear()
     }
 
     // sendImage=(data) => {

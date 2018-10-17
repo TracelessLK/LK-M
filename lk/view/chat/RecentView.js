@@ -6,7 +6,7 @@ import {
   Image,
   Text,
   TouchableOpacity,
-  NetInfo
+  NetInfo, RefreshControl
 } from 'react-native'
 import {
   ActionSheet,
@@ -39,7 +39,8 @@ export default class RecentView extends Component<{}> {
       super(props)
       this.state = {
         contentAry: null,
-        connectionOK: true
+        connectionOK: true,
+        refreshing: false
       }
       this.eventAry = ['msgChanged', 'recentChanged']
       // todo: store all not undefined value
@@ -59,7 +60,7 @@ export default class RecentView extends Component<{}> {
       buttonIndex => {
         if (buttonIndex === 0) {
           this.props.navigation.navigate('AddGroupView')
-        } else if (buttonIndex === 1){
+        } else if (buttonIndex === 1) {
           addExternalFriend({navigation})
         }
       }
@@ -215,33 +216,44 @@ export default class RecentView extends Component<{}> {
       const user = lkApp.getCurrentUser()
       const allChat = await LKChatProvider.asyGetAll(user.id)
       const msgAryPromise = []
+      let contentAry
       console.log({allChat})
-      for (let chat of allChat) {
-        const {isGroup, name, createTime, id: chatId} = chat
-        const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
-        // console.log({newMsgNum, chatId})
-        const option = {
-          userId: user.id,
-          chatId,
-          newMsgNum,
-          isGroup,
-          chatName: name,
-          createTime
+      const {length} = allChat
+      if (length) {
+        for (let chat of allChat) {
+          const {isGroup, name, createTime, id: chatId} = chat
+          const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
+          // console.log({newMsgNum, chatId})
+          const option = {
+            userId: user.id,
+            chatId,
+            newMsgNum,
+            isGroup,
+            chatName: name,
+            createTime
+          }
+          const msgPromise = this.getMsg(option)
+          msgAryPromise.push(msgPromise)
         }
-        const msgPromise = this.getMsg(option)
-        msgAryPromise.push(msgPromise)
-      }
-      let recentAry = await Promise.all(msgAryPromise)
-      recentAry = recentAry.filter(ele => {
-        return ele.item || ele.isGroup
-      })
+        let recentAry = await Promise.all(msgAryPromise)
+        recentAry = recentAry.filter(ele => {
+          return ele.item || ele.isGroup
+        })
 
-      // recentAry.sort((obj1, obj2) => {
-      //   return obj1.sendTime - obj2.sendTime
-      // })
-      const data = recentAry.map(ele => ele.item)
-      // console.log({data})
-      const contentAry = <MessageList data={data}/>
+        // recentAry.sort((obj1, obj2) => {
+        //   return obj1.sendTime - obj2.sendTime
+        // })
+        const data = recentAry.map(ele => ele.item)
+        // console.log({data})
+        contentAry = <MessageList data={data}/>
+      } else {
+        contentAry =
+          <View style={{justifyContent: 'flex-start', alignItems: 'center'}}>
+            <TouchableOpacity onPress={() => { this.props.navigation.navigate('ContactTab') }} style={{marginTop: 30, width: '90%', height: 50, borderColor: 'gray', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={{fontSize: 18, textAlign: 'center', color: 'gray'}}>开始和好友聊天吧!</Text>
+            </TouchableOpacity>
+          </View>
+      }
 
       this.setState({
         contentAry
@@ -258,7 +270,15 @@ export default class RecentView extends Component<{}> {
       // })
     }
 
+    resetHeaderTitle = () => {
+      const {navigation} = this.props
+      navigation.setParams({
+        headerTitle: '消息'
+      })
+    }
+
     render () {
+      const {navigation} = this.props
       return (
         <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
           {this.state.connectionOK ? null
@@ -268,13 +288,32 @@ export default class RecentView extends Component<{}> {
               <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>{this.state.msg}</Text>
             </TouchableOpacity>
           }
-          {this.state.contentAry && !this.state.contentAry.length
-            ? <TouchableOpacity onPress={() => { this.props.navigation.navigate('ContactTab') }} style={{marginTop: 30, width: '90%', height: 50, borderColor: 'gray', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{fontSize: 18, textAlign: 'center', color: 'gray'}}>开始和好友聊天吧!</Text>
-            </TouchableOpacity>
-            : null}
-
-          <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always">
+          <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always"
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={async () => {
+                  this.setState({
+                    refreshing: true
+                  })
+                  navigation.setParams({
+                    headerTitle: '消息(正在接受消息...)'
+                  })
+                  const minTime = 1000 * 1
+                  const start = Date.now()
+                  await this.channel.asyGetAllDetainedMsg()
+                  const reset = () => {
+                    this.resetHeaderTitle()
+                    this.setState({
+                      refreshing: false
+                    })
+                  }
+                  let diff = minTime - (Date.now() - start)
+                  diff = diff > 0 ? diff : 0
+                  setTimeout(reset, diff)
+                }}
+              />}
+          >
             {this.state.contentAry}
           </ScrollView>
         </View>

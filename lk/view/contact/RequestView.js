@@ -21,9 +21,8 @@ export default class RequestView extends Component<{}> {
     }
   }
   update = async () => {
-    console.log('update requestView')
     const list = await MFApplyManager.asyGetAll()
-    console.log({list})
+    // console.log({list})
     let result = []
     const prop = {
       text: '没有好友请求',

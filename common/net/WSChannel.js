@@ -8,6 +8,7 @@ class WSChannel extends EventTarget{
         this._url = url;
         this._keepAlive = keepAlive;
     }
+    // todo: applyChannel 要先判断网络情况
     applyChannel(){
         if(!this._openPromise){
             try{

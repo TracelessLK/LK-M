@@ -3,8 +3,7 @@ import React, { Component } from 'react'
 import {
   ScrollView,
   Text,
-  View,
-  Image
+  View
 } from 'react-native'
 const lkApp = require('../../LKApplication').getCurrentApp()
 const LKContactProvider = require('../../logic/provider/LKContactProvider')
