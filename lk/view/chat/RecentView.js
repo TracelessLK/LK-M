@@ -257,6 +257,7 @@ export default class RecentView extends Component<{}> {
       this.setState({
         contentAry
       })
+      this.resetHeaderTitle()
     }
 
     chat = debounceFunc((option) => {
@@ -268,10 +269,11 @@ export default class RecentView extends Component<{}> {
       this.update()
     }
 
-    resetHeaderTitle = () => {
+    resetHeaderTitle = async () => {
       const {navigation} = this.props
+      const num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
       navigation.setParams({
-        headerTitle: '消息'
+        headerTitle: '消息' + (num ? `(${num})` : '')
       })
     }
 

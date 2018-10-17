@@ -20,6 +20,9 @@ class LKChatProvider{
     asyGetMsgsNotRead(userId,chatId){
         return Record.getMsgsNotRead(userId,chatId);
     }
+    asyGetAllMsgNotReadNum(userId){
+      return Record.getAllMsgNotReadNum(userId)
+    }
     asyGetMsg(userId,chatId,msgId){
         return Record.getMsg(userId,chatId,msgId);
     }
