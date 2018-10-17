@@ -325,7 +325,7 @@ class LKChannel extends WSChannel{
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("fetchMembers",{members:ids})]);
         return new Promise((resolve,reject)=>{
             result[0]._sendMessage(result[1]).then((msg)=> {
-                let members = msg.content.members;
+                let members = msg.body.content.members;
                 return ContactManager.asyRebuildMembers(remoteMemberMCode,ids,members);
             }).then(()=>{
                 resolve();

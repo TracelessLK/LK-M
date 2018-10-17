@@ -59,6 +59,7 @@ export default class ContactView extends Component<{}> {
     async asyncRender (filterText) {
       const user = lkApp.getCurrentUser()
       let orgAry = await LKOrgProvider.asyGetChildren(null, user.id)
+      console.log({orgAry})
       const sortFunc = (ele1, ele2) => {
         const result = (ele2.title < ele1.title)
 

@@ -1,7 +1,8 @@
 
 import React, { Component } from 'react'
 import {
-  YellowBox
+  YellowBox,
+  Linking
 } from 'react-native'
 import EntryView from './view/index/EntryView'
 YellowBox.ignoreWarnings([
@@ -15,7 +16,15 @@ YellowBox.ignoreWarnings([
 ])
 // console.log(process.env)
 
+
 export default class LKEntry extends Component<{}> {
+  componentDidMount() {
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        console.log('Initial url is: ' + url);
+      }
+    }).catch(err => console.error('An error occurred', err));
+  }
   render () {
     return (
       <EntryView></EntryView>

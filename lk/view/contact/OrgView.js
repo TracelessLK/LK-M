@@ -14,7 +14,8 @@ const {SearchBar,commonUtil,List,LoadingView} = common
 const {debounceFunc} = commonUtil
 const {getAvatarSource} = require("../../util")
 const style = require('../style')
-
+const noUserImg = require('../image/noUser.png')
+// const {HeaderRightButton, CenterLayout} = require('@ys/react-native-collection')
 
 export default class OrgView extends Component<{}> {
     static navigationOptions =({ navigation }) => {
@@ -115,20 +116,13 @@ export default class OrgView extends Component<{}> {
 
         ary.sort(sortFunc)
         dataAry = dataAry.concat(ary)
+      const prop = {
+        text: '本部门没有成员',
+        textStyle: {color: style.color.secondColor},
+        img: noUserImg
+      }
+      const noUser = <CenterLayout {...prop}></CenterLayout>
 
-
-        const size = 120
-        const noUser = (
-            <View style={{display:'flex',flex:1,alignItems:'center',justifyContent:'flex-start',marginTop:200}}>
-                <Image source ={require('../image/noUser.png')} style={{width:size,height:size}} resizeMode='contain'/>
-                <View style={{margin:20}}>
-                    <Text style={{color:style.color.secondColor,fontSize:18}}>
-                        本部门没有成员
-                    </Text>
-                </View>
-
-            </View>
-        )
         let content
         if(dataAry.length){
             content = (
@@ -160,10 +154,7 @@ export default class OrgView extends Component<{}> {
 
     render() {
 
-        return (
-            <LoadingView loading={this.state.loading} content={this.state.content}></LoadingView>
-
-        )
+        return <LoadingView loading={this.state.loading} content={this.state.content}></LoadingView>
     }
 }
 
