@@ -103,9 +103,7 @@ export default class RecentView extends Component<{}> {
             type: 'networkFail'
           })
         } else {
-          navigation.setParams({
-            headerTitle: '消息'
-          })
+          this.resetHeaderTitle()
           this.setState({
             connectionOK: true
           })

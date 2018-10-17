@@ -2,7 +2,8 @@
 import React, { Component } from 'react'
 import {
   StyleSheet,
-  View, ActivityIndicator
+  View, ActivityIndicator,
+  AsyncStorage
 } from 'react-native'
 import userProvider from '../../logic/provider/LKUserProvider'
 const Application = require('../../LKApplication')
@@ -38,7 +39,18 @@ export default class Loading extends Component<{}> {
           lkApplication.setCurrentUser(userAry[0])
           routerName = 'MainStack'
         } else if (length > 1) {
-          routerName = 'SelectUserView'
+          if (__DEV__) {
+            const user = await AsyncStorage.getItem('user')
+
+            if (user) {
+              lkApplication.setCurrentUser(JSON.parse(user))
+              routerName = 'MainStack'
+            } else {
+              routerName = 'SelectUserView'
+            }
+          } else {
+            routerName = 'SelectUserView'
+          }
         }
       }
       this.props.navigation.navigate(routerName)

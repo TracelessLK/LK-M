@@ -1,6 +1,9 @@
 import Application from '../engine/Application'
 import ConfigManager from '../common/core/ConfigManager'
 import RSAKey from "react-native-rsa";
+import{
+  AsyncStorage
+} from 'react-native'
 
 class LKApplication extends Application{
 
@@ -10,12 +13,13 @@ class LKApplication extends Application{
 
     setCurrentUser(user){
         super.setCurrentUser(user);
-
         if(user){
-            let rsa = new RSAKey();
+          AsyncStorage.setItem('user', JSON.stringify(user))
+          let rsa = new RSAKey();
             rsa.setPrivateString(user.privateKey);
             this._rsa = rsa;
         }else{
+          AsyncStorage.removeItem('user')
             delete this._rsa;
         }
 
