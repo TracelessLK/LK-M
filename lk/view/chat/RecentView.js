@@ -45,6 +45,7 @@ export default class RecentView extends Component<{}> {
       this.eventAry = ['msgChanged', 'recentChanged']
       // todo: store all not undefined value
       this.channel = lkApp.getLKWSChannel()
+      this.user = lkApp.getCurrentUser()
     }
 
   optionToChoose = () => {
@@ -262,10 +263,9 @@ export default class RecentView extends Component<{}> {
       this.props.navigation.navigate('ChatView', option)
     })
 
-    deleteRow (data) {
-      // Store.deleteRecent(data.id,()=>{
-      //     this.update()
-      // })
+    async deleteRow (chatId) {
+      await LKChatProvider.asyDeleteChat(this.user.id, chatId)
+      this.update()
     }
 
     resetHeaderTitle = () => {

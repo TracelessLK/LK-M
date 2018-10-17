@@ -29,7 +29,7 @@ global.onunhandledrejection = function onunhandledrejection (error) {
     errorStock.processError({error})
   }
 }
-
+// console.log(global)
 export default class Entry extends Component<{}> {
   render () {
     return (

@@ -16,14 +16,13 @@ YellowBox.ignoreWarnings([
 ])
 // console.log(process.env)
 
-
 export default class LKEntry extends Component<{}> {
-  componentDidMount() {
+  componentDidMount () {
     Linking.getInitialURL().then((url) => {
       if (url) {
-        console.log('Initial url is: ' + url);
+        console.log('Initial url is: ' + url)
       }
-    }).catch(err => console.error('An error occurred', err));
+    }).catch(err => console.error('An error occurred', err))
     Linking.addEventListener('url', event => {
       console.log({linkEvent: event})
     })
