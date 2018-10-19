@@ -6,11 +6,12 @@ import {
   Image,
   Text,
   TouchableOpacity,
-  NetInfo, RefreshControl
+  RefreshControl
 } from 'react-native'
 import {
   ActionSheet,
-  Icon
+  Icon,
+  Toast
 } from 'native-base'
 const {commonUtil, MessageList} = require('@external/common')
 const {debounceFunc} = commonUtil
@@ -99,20 +100,32 @@ export default class RecentView extends Component<{}> {
       navigation.setParams({
         headerTitle: '消息(未连接)'
       })
+      const msg = this.getConnectionMsg()
       if (NetInfoUtil.online) {
         this.setState({
           connectionOK: false,
-          msg: '与服务器的连接已断开',
+          msg,
           type: 'connectionFail'
         })
       } else {
         this.setState({
           connectionOK: false,
-          msg: '当前网络不可用,请检查您的网络设置',
+          msg,
           type: 'networkFail'
         })
       }
     }
+
+    getConnectionMsg () {
+      let result
+      if (NetInfoUtil.online) {
+        result = '与服务器的连接已断开'
+      } else {
+        result = '当前网络不可用,请检查您的网络设置'
+      }
+      return result
+    }
+
     connectionOpen () {
       this.resetHeaderTitle()
       this.setState({
@@ -279,24 +292,31 @@ export default class RecentView extends Component<{}> {
               <RefreshControl
                 refreshing={this.state.refreshing}
                 onRefresh={async () => {
-                  this.setState({
-                    refreshing: true
-                  })
-                  navigation.setParams({
-                    headerTitle: '消息(正在接受消息...)'
-                  })
-                  const minTime = 1000 * 1
-                  const start = Date.now()
-                  await this.channel.asyGetAllDetainedMsg()
-                  const reset = () => {
-                    this.resetHeaderTitle()
+                  if (this.state.connectionOK) {
                     this.setState({
-                      refreshing: false
+                      refreshing: true
+                    })
+                    navigation.setParams({
+                      headerTitle: '消息(正在接受消息...)'
+                    })
+                    const minTime = 1000 * 1
+                    const start = Date.now()
+                    await this.channel.asyGetAllDetainedMsg()
+                    const reset = () => {
+                      this.resetHeaderTitle()
+                      this.setState({
+                        refreshing: false
+                      })
+                    }
+                    let diff = minTime - (Date.now() - start)
+                    diff = diff > 0 ? diff : 0
+                    setTimeout(reset, diff)
+                  } else {
+                    Toast.show({
+                      text: '连接已中断,请检查网络连接',
+                      position: 'top'
                     })
                   }
-                  let diff = minTime - (Date.now() - start)
-                  diff = diff > 0 ? diff : 0
-                  setTimeout(reset, diff)
                 }}
               />}
           >
