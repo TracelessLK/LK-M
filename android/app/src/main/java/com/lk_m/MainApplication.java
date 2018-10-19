@@ -19,7 +19,7 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import cn.reactnative.modules.update.UpdateContext;
 import org.pgsqlite.SQLitePluginPackage;
-
+import com.lk_m.nativeJava.AnExampleReactPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +50,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNDeviceInfo(),
             new VectorIconsPackage(),
             new RNFSPackage(),
-            new SQLitePluginPackage()
+            new SQLitePluginPackage(),
+            new AnExampleReactPackage()
       );
     }
 
