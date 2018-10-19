@@ -5,6 +5,7 @@ import {
   Linking
 } from 'react-native'
 import EntryView from './view/index/EntryView'
+
 YellowBox.ignoreWarnings([
   'Warning: isMounted(...) is deprecated in plain JavaScript React classes. Instead, make sure to clean up subscriptions and pending requests in componentWillUnmount to prevent memory leaks.',
   'Module RCTHotUpdate requires',

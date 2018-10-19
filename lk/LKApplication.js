@@ -22,8 +22,8 @@ class LKApplication extends Application{
         super.setCurrentUser(user);
         if(user){
           // console.log({user})
-          const {serverIp, serverPort} = user
-          const base = `${httpProtocol}://${serverIp}:${serverPort}`
+          const {serverIP, serverPort} = user
+          const base = `${httpProtocol}://${serverIP}:${serverPort}`
           const checkUpdateUrl = `${base}/checkUpdate `
           const manualDownloadUrl = `${base}/pkg/${Platform.OS}/${appName}.${Platform.OS === 'android'?'apk':'ipa'}`
 
@@ -35,6 +35,7 @@ class LKApplication extends Application{
           }
           const updateUtil = new UpdateUtil(option)
           container.state.updateUtil = updateUtil
+          container.state.user = user
           AsyncStorage.setItem('user', JSON.stringify(user))
           let rsa = new RSAKey();
             rsa.setPrivateString(user.privateKey);

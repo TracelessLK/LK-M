@@ -21,6 +21,7 @@ const lkApp = require('../../LKApplication').getCurrentApp()
 const chatManager = require('../../core/ChatManager')
 const _ = require('lodash')
 const addPng = require('../image/add.png')
+const {NetInfoUtil} = require('@ys/react-native-collection')
 
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -91,39 +92,26 @@ export default class RecentView extends Component<{}> {
 
       this.channel.on('connectionFail', this.connectionFail.bind(this))
       this.channel.on('connectionOpen', this.connectionOpen.bind(this))
-
-      NetInfo.addEventListener('connectionChange', (connectionInfo) => {
-        const {type} = connectionInfo
-        if (type === 'none' || type === 'unknown') {
-          navigation.setParams({
-            headerTitle: '消息(未连接)'
-          })
-          this.setState({
-            connectionOK: false,
-            msg: '当前网络不可用,请检查您的网络设置',
-            type: 'networkFail'
-          })
-        } else {
-          this.resetHeaderTitle()
-          this.setState({
-            connectionOK: true
-          })
-        }
-      }
-      )
     }
 
     connectionFail () {
       const {navigation} = this.props
-
       navigation.setParams({
         headerTitle: '消息(未连接)'
       })
-      this.setState({
-        connectionOK: false,
-        msg: '与服务器的连接已断开',
-        type: 'connectionFail'
-      })
+      if (NetInfoUtil.online) {
+        this.setState({
+          connectionOK: false,
+          msg: '当前网络不可用,请检查您的网络设置',
+          type: 'networkFail'
+        })
+      } else {
+        this.setState({
+          connectionOK: false,
+          msg: '与服务器的连接已断开',
+          type: 'connectionFail'
+        })
+      }
     }
     connectionOpen () {
       const {navigation} = this.props
