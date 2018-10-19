@@ -1,16 +1,17 @@
 import React, {Component} from 'react'
 
 import {
-  Alert, AlertIOS, Clipboard, Dimensions, View, Linking
+  Alert, Dimensions, View
 } from 'react-native'
-import { Avatar, Card, List, ListItem} from 'react-native-elements'
+import {Card} from 'react-native-elements'
 import {Button, Icon, Text, Toast, Spinner} from 'native-base'
 const versionLocal = require('../../../package.json').version
 const config = require('../../config')
-const common = require('@external/common')
-const {SearchBar, commonUtil, updateUtil} = common
-const {debounceFunc} = commonUtil
+const {FuncUtil} = require('@ys/vanilla')
+const {debounceFunc} = FuncUtil
 const lkApp = require('../../LKApplication').getCurrentApp()
+const container = require('../../state')
+console.log({container})
 
 export default class VersionView extends Component<{}> {
     static navigationOptions = () => {
@@ -50,7 +51,6 @@ export default class VersionView extends Component<{}> {
                   this.count = 0
                 }, 1000 * 10)
               }} >
-
                 {config.isPreviewVersion ? `预览版本:${versionLocal}(${config.previewVersion})` : `当前版本:${versionLocal}`}
               </Text>
               <View style={{marginVertical: 20}}>
@@ -58,39 +58,40 @@ export default class VersionView extends Component<{}> {
                   this.setState({
                     checking: true
                   })
+                  const {updateUtil} = container.state
 
                   const afterCheck = () => {
                     this.setState({
                       checking: false
                     })
-                    return Promise.resolve()
                   }
-
-                  updateUtil.checkUpdateGeneral({
-                    uid: this.user.id,
-                    name: this.user.name,
-                    beforeUpdate: afterCheck,
-                    noUpdateCb: () => {
-                      afterCheck().then(() => {
-                        Toast.show({
-                          text: '当前已是最新版本',
-                          position: 'top',
-                          type: 'success',
-                          duration: 3000
-                        })
-                      })
+                  const noUpdateCb = () => {
+                    afterCheck()
+                    Toast.show({
+                      text: '当前已是最新版本',
+                      position: 'top',
+                      type: 'success',
+                      duration: 3000
+                    })
+                  }
+                  const option = {
+                    customInfo: {
+                      uid: this.user.id,
+                      name: this.user.name
                     },
-                    errorCb: () => {
-                      afterCheck().then(() => {
-                        Toast.show({
-                          text: '检查更新出错了',
-                          position: 'top',
-                          type: 'error',
-                          duration: 3000
-                        })
+                    beforeUpdate: afterCheck,
+                    noUpdateCb,
+                    checkUpdateErrorCb: (error) => {
+                      console.log(error)
+                      Toast.show({
+                        text: '检查更新出错了',
+                        position: 'top',
+                        type: 'error',
+                        duration: 3000
                       })
                     }
-                  })
+                  }
+                  updateUtil.checkUpdate(option)
                 })
                 }>
                   <Icon name='refresh' />
@@ -100,7 +101,6 @@ export default class VersionView extends Component<{}> {
             </View>
           </Card>
           {this.state.checking ? <Spinner color='blue' style={{position: 'absolute', top: '10%'}}/> : null}
-
         </View>)
     }
 }

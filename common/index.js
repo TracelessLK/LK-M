@@ -7,11 +7,9 @@ import LoadingView from './view/LoadingView'
 const commonModule = require('@hfs/react-native-collection')
 const {ScanView, commonUtil} = commonModule
 
-const updateUtil = require('./util/updateUtil')
 const commonStyle = require('./view/style')
 const common = {
   commonUtil,
-  updateUtil,
   SearchBar,
   ScanView,
   List,

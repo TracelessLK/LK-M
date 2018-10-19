@@ -7,7 +7,9 @@ const config = {
   errorLogPath: RNFS.DocumentDirectoryPath + '/errorLog.txt',
   isDevMode: true,
   isPreviewVersion: false,
-  isEncrypted: true
+  isEncrypted: true,
+  httpProtocol: 'http',
+  appName: 'LK'
 }
 
 // config in production

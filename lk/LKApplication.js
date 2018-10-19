@@ -2,8 +2,15 @@ import Application from '../engine/Application'
 import ConfigManager from '../common/core/ConfigManager'
 import RSAKey from "react-native-rsa";
 import{
-  AsyncStorage
+  AsyncStorage,
+  Platform
 } from 'react-native'
+const container = require('./state')
+const config = require('./config')
+const {httpProtocol, appId, appName} = config
+const packageJson = require('../package')
+const {version: versionLocal} = packageJson
+const {UpdateUtil} = require('@ys/react-native-collection')
 
 class LKApplication extends Application{
 
@@ -14,12 +21,27 @@ class LKApplication extends Application{
     setCurrentUser(user){
         super.setCurrentUser(user);
         if(user){
+          // console.log({user})
+          const {serverIp, serverPort} = user
+          const base = `${httpProtocol}://${serverIp}:${serverPort}`
+          const checkUpdateUrl = `${base}/checkUpdate `
+          const manualDownloadUrl = `${base}/pkg/${Platform.OS}/${appName}.${Platform.OS === 'android'?'apk':'ipa'}`
+
+          const option = {
+            checkUpdateUrl,
+            versionLocal,
+            manualDownloadUrl,
+            appId
+          }
+          const updateUtil = new UpdateUtil(option)
+          container.state.updateUtil = updateUtil
           AsyncStorage.setItem('user', JSON.stringify(user))
           let rsa = new RSAKey();
             rsa.setPrivateString(user.privateKey);
             this._rsa = rsa;
         }else{
           AsyncStorage.removeItem('user')
+          container.state = {}
             delete this._rsa;
         }
 
