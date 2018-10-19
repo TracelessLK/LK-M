@@ -12,7 +12,8 @@
     "test": "npm run lint && jest",
     "try": "jest",
     "getAndroidData": "node bin/getAndroidData",
-    "showDevMenu": "adb shell input keyevent 82"
+    "showDevMenu": "adb shell input keyevent 82",
+    "yarnInstall": "yarn install && node bin/postinstall.js"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",

@@ -1,4 +1,4 @@
-
+// todo: use redux
 const constainer = {
   state: {}
 }

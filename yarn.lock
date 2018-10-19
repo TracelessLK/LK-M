@@ -186,7 +186,7 @@
 
 "@ys/react-native-collection@github:spirit1453/react_native_collection#publish":
   version "0.0.1"
-  resolved "https://codeload.github.com/spirit1453/react_native_collection/tar.gz/5b7190b9a23696b418e39591a85eba2bd05c039d"
+  resolved "https://codeload.github.com/spirit1453/react_native_collection/tar.gz/7c71f0f73419cbafaa4c3ebd3f9141b331802293"
   dependencies:
     "@ys/vanilla" "github:spirit1453/vanilla_js#publish"
     native-base "^2.8.0"

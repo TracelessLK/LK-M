@@ -102,23 +102,19 @@ export default class RecentView extends Component<{}> {
       if (NetInfoUtil.online) {
         this.setState({
           connectionOK: false,
-          msg: '当前网络不可用,请检查您的网络设置',
-          type: 'networkFail'
+          msg: '与服务器的连接已断开',
+          type: 'connectionFail'
         })
       } else {
         this.setState({
           connectionOK: false,
-          msg: '与服务器的连接已断开',
-          type: 'connectionFail'
+          msg: '当前网络不可用,请检查您的网络设置',
+          type: 'networkFail'
         })
       }
     }
     connectionOpen () {
-      const {navigation} = this.props
-
-      navigation.setParams({
-        headerTitle: '消息'
-      })
+      this.resetHeaderTitle()
       this.setState({
         connectionOK: true
       })
@@ -258,11 +254,13 @@ export default class RecentView extends Component<{}> {
     }
 
     resetHeaderTitle = async () => {
-      const {navigation} = this.props
-      const num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
-      navigation.setParams({
-        headerTitle: '消息' + (num ? `(${num})` : '')
-      })
+      if (this.state.connectionOK) {
+        const {navigation} = this.props
+        const num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
+        navigation.setParams({
+          headerTitle: '消息' + (num ? `(${num})` : '')
+        })
+      }
     }
 
     render () {
