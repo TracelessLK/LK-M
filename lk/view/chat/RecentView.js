@@ -10,8 +10,7 @@ import {
 } from 'react-native'
 import {
   ActionSheet,
-  Icon,
-  Toast
+  Icon
 } from 'native-base'
 const {commonUtil, MessageList} = require('@external/common')
 const {debounceFunc} = commonUtil

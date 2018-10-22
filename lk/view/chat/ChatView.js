@@ -15,7 +15,8 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import ImageViewer from 'react-native-image-zoom-viewer'
 import {
-  Toast
+  Toast,
+  ActionSheet
 } from 'native-base'
 import MessageText from './MessageText'
 import {Header} from 'react-navigation'
@@ -33,6 +34,7 @@ const {DelayIndicator, TextInputWrapper} = require('@ys/react-native-collection'
 const chatLeft = require('../image/chat-y-l.png')
 const chatRight = require('../image/chat-w-r.png')
 const uuid = require('uuid')
+const {runNetFunc} = require('../../util')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation }) => {
@@ -233,13 +235,9 @@ export default class ChatView extends Component<{}> {
       this.keyboardDidHideListener.remove()
     }
 
-    textChange=(v) => {
-      this.text = v
-    }
-
     componentDidMount= async () => {
       const num = await chatManager.asyGetNewMsgNum(this.otherSide.id)
-      console.log({otherSide: this.otherSide, num})
+      // console.log({otherSide: this.otherSide, num})
       if (num) {
         chatManager.asyReadMsgs(this.otherSide.id, num)
       }
@@ -260,15 +258,17 @@ export default class ChatView extends Component<{}> {
     }
 
     send=() => {
-      this.refs.text2.focus()
-      this.refs.text.reload()
-      const channel = lkApp.getLKWSChannel()
-      if (this.isGroupChat) {
-        channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
-      } else {
-        channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
-      }
-      this.text = ''
+      runNetFunc(() => {
+        this.refs.text2.focus()
+        this.refs.text.reload()
+        const channel = lkApp.getLKWSChannel()
+        if (this.isGroupChat) {
+          channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
+        } else {
+          channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
+        }
+        this.text = ''
+      })
     }
 
     // sendImage=(data) => {
@@ -468,7 +468,9 @@ export default class ChatView extends Component<{}> {
               paddingVertical: 5,
               marginBottom: 0}}>
               <TextInput ref='text2' style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
-              <TextInputWrapper onChangeText={this.textChange} onSubmitEditing={this.send} ref='text'></TextInputWrapper>
+              <TextInputWrapper onChangeText={(v) => {
+                this.text = v ? v.trim() : ''
+              }} onSubmitEditing={this.send} ref='text'></TextInputWrapper>
               <TouchableOpacity onPress={this.showImagePicker}
                 style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'center'}}>
                 <Ionicons name="ios-camera-outline" size={38} style={{marginRight: 5}}/>

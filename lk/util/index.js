@@ -5,8 +5,11 @@ const lkApp = require('../LKApplication').getCurrentApp()
 const {getAvatarSource} = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
 const container = require('../state')
-class Util{
-   static getAvatarSource (pic) {
+const {FuncUtil} = require('@ys/vanilla')
+const {runFunc} = FuncUtil
+
+  class Util {
+  static getAvatarSource (pic) {
     return getAvatarSource(pic, defaultAvatar)
   }
   static addExternalFriend ({navigation}) {
@@ -76,20 +79,23 @@ class Util{
     return Util.query(sql)
   }
   // todo: should be putinto net channell
-  static runNetFunc (func) {
+  static runNetFunc (func, errorCb) {
     const {connectionOK, NetInfoUtil} = container.state
     if (connectionOK) {
       func()
     } else {
+      runFunc(errorCb)
       if (NetInfoUtil.online) {
         Toast.show({
           text: '无法连接服务器',
-          position: 'top'
+          position: 'top',
+          type: 'warning'
         })
       } else {
         Toast.show({
           text: '您的连接已断开,请检查网络设置',
-          position: 'top'
+          position: 'top',
+          type: 'warning'
         })
       }
     }
