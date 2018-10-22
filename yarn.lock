@@ -133,7 +133,7 @@
 
 "@ys/collection@github:spirit1453/node_collection#publish":
   version "0.0.1"
-  resolved "https://codeload.github.com/spirit1453/node_collection/tar.gz/d61496b2101c87a4f29142b00979ac594d7896de"
+  resolved "https://codeload.github.com/spirit1453/node_collection/tar.gz/114825ab66792e988728bfe2c44ed7c99cf21a36"
   dependencies:
     "@ys/vanilla" "github:spirit1453/vanilla_js#publish"
     axios "^0.18.0"
@@ -186,7 +186,7 @@
 
 "@ys/react-native-collection@github:spirit1453/react_native_collection#publish":
   version "0.0.1"
-  resolved "https://codeload.github.com/spirit1453/react_native_collection/tar.gz/d10f24e4fa79fa991fbfba05701d79abedee529d"
+  resolved "https://codeload.github.com/spirit1453/react_native_collection/tar.gz/9f93e014f6aad19c6d589f488dc3c4e456047679"
   dependencies:
     "@ys/vanilla" "github:spirit1453/vanilla_js#publish"
     native-base "^2.8.1"
