@@ -5,10 +5,9 @@ import {
   View,
   Dimensions
 } from 'react-native'
-import { Input, Item, Button, Label, Toast } from 'native-base'
+import { Input, Item, Button, Label, Toast, Form} from 'native-base'
 import RSAKey from 'react-native-rsa'
 import deviceInfo from 'react-native-device-info'
-const {debounceFunc} = require('../../../common/util/commonUtil')
 const lkApplication = require('../../LKApplication').getCurrentApp()
 
 const uuid = require('uuid')
@@ -40,7 +39,7 @@ export default class RegisterView extends Component<{}> {
     render () {
       return (
         <View style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flex: 1, marginTop: 6}}>
-          <View style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', marginVertical: 15, width: '95%'}}>
+          <Form style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', marginVertical: 15, width: '95%'}}>
             {this.state.hasCheckCode ? (
               <Item floatingLabel style={{marginBottom: 10}}>
                 <Label>请输入验证码</Label>
@@ -58,7 +57,7 @@ export default class RegisterView extends Component<{}> {
                 this.passwordAgain = t
               }} secureTextEntry></Input>
             </Item>
-          </View>
+          </Form>
           <View style={{ alignItems: 'center', justifyContent: 'center'}}>
             <Button disabled={this.state.buttonDisabled} ref='button' iconLeft info style={{width: Dimensions.get('window').width - 30, alignItems: 'center', justifyContent: 'center', marginTop: 30}}
               onPress={() => {

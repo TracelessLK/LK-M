@@ -15,6 +15,7 @@ YellowBox.ignoreWarnings([
   'a promise was rejected with a non-error',
   'a promise was created in'
 ])
+console.disableYellowBox = true
 // console.log(process.env)
 
 export default class LKEntry extends Component<{}> {
