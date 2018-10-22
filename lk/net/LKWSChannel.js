@@ -476,7 +476,9 @@ class LKChannel extends WSChannel{
         let key = ChatManager.getHotChatKeyReceived(chatId,header.did,random);
         // var bytes  = CryptoJS.AES.decrypt(msg.body.content.toString(), key);
         // let content = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-        let content = JSON.parse(bytes.toString(msg.body.content));
+        // const msgDecrypted = bytes.toString(msg.body.content)
+        const msgDecrypted = msg.body.content
+        let content = JSON.parse(msgDecrypted);
       console.log({receivedMsg: msg})
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
