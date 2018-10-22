@@ -214,6 +214,58 @@ class Chat{
         });
     }
 
+    deleteGroup(userId,chatId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "delete from chat where ownerUserId=? and id=?";
+                tx.executeSql(sql,[userId,chatId],function () {
+                    resolve();
+                    let sql2 = "delete from groupMember where chatId = ?";
+                    tx.executeSql(sql2,[chatId],function () {
+                    },function (err) {
+                    });
+
+                    let sql3 = "delete from record where ownerUserId=? and chatId=?";
+                    tx.executeSql(sql3,[userId,chatId],function () {
+                    },function (err) {
+                    });
+
+                    let sql4 = "delete from group_record_state where ownerUserId=? and chatId=?";
+                    tx.executeSql(sql4,[userId,chatId],function () {
+                    },function (err) {
+                    });
+
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
+    deleteGroupMember(uerId,chatId,contactId){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql2 = "delete from groupMember where chatId=? and contactId=?";
+                tx.executeSql(sql,[chatId,contactId],function () {
+                    resolve();
+
+                    let sql3 = "delete from record where ownerUserId=? and chatId=? and senderUid=?";
+                    tx.executeSql(sql3,[userId,chatId,contactId],function () {
+                    },function (err) {
+                    });
+
+                    let sql4 = "delete from group_record_state where ownerUserId=? and chatId=? and reporterUid=?";
+                    tx.executeSql(sql4,[userId,chatId,contactId],function () {
+                    },function (err) {
+                    });
+
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
 
 }
 module.exports = new Chat();

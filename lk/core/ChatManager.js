@@ -405,6 +405,25 @@ class ChatManager extends EventTarget{
 
     }
 
+    /**
+     * leave the group
+     * @param chatId
+     */
+    async leaveGroup(chatId){
+        await Application.getCurrentApp().getLKWSChannel().leaveGroup(chatId);
+        return this.deleteGroup(chatId);
+    }
+
+    deleteGroup(chatId){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        return Chat.deleteGroup(userId,chatId);
+    }
+
+    deleteGroupMember(chatId,memberId){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        return Chat.deleteGroupMember(userId,chatId,memberId);
+    }
+
     async removeAll(){
         let userId = Application.getCurrentApp().getCurrentUser().id;
         await Chat.removeAll(userId);
