@@ -13,6 +13,7 @@ import LKChatProvider from '../logic/provider/LKChatProvider'
 import MFApplyManager from '../core/MFApplyManager'
 import FlowCursor from '../store/FlowCursor'
 import CryptoJS from "crypto-js";
+const container = require('../state')
 
 class LKChannel extends WSChannel{
 
@@ -25,6 +26,12 @@ class LKChannel extends WSChannel{
     constructor(url){
         super(url,true);
         this._ping();
+        this.on('connectionFail', () => {
+          container.state.connectionOK = false
+        })
+        this.on('connectionOpen', () => {
+          container.state.connectionOK = tru
+        })
     }
 
     _putFlowPool(preFlowId,msg){
@@ -636,7 +643,7 @@ class LKChannel extends WSChannel{
     }
   _onerror (event) {
       // console.log('connectionFail')
-      this.fire('connectionFail', event)
+    this.fire('connectionFail', event)
   }
 }
 

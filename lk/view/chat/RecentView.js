@@ -23,6 +23,9 @@ const chatManager = require('../../core/ChatManager')
 const _ = require('lodash')
 const addPng = require('../image/add.png')
 const {NetInfoUtil} = require('@ys/react-native-collection')
+const container = require('../../state')
+container.state.NetInfoUtil = NetInfoUtil
+const {runNetFunc} = require('../../util')
 
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -291,8 +294,8 @@ export default class RecentView extends Component<{}> {
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
-                onRefresh={async () => {
-                  if (this.state.connectionOK) {
+                onRefresh={() => {
+                  runNetFunc(async () => {
                     this.setState({
                       refreshing: true
                     })
@@ -311,12 +314,7 @@ export default class RecentView extends Component<{}> {
                     let diff = minTime - (Date.now() - start)
                     diff = diff > 0 ? diff : 0
                     setTimeout(reset, diff)
-                  } else {
-                    Toast.show({
-                      text: '连接已中断,请检查网络连接',
-                      position: 'top'
-                    })
-                  }
+                  })
                 }}
               />}
           >

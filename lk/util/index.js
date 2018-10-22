@@ -4,11 +4,12 @@ const {commonUtil} = require('@external/common')
 const lkApp = require('../LKApplication').getCurrentApp()
 const {getAvatarSource} = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
-const util = {
-  getAvatarSource (pic) {
+const container = require('../state')
+class Util{
+   static getAvatarSource (pic) {
     return getAvatarSource(pic, defaultAvatar)
-  },
-  addExternalFriend ({navigation}) {
+  }
+  static addExternalFriend ({navigation}) {
     navigation.navigate('ScanView', {
       onRead (e) {
         const {data} = e
@@ -32,16 +33,16 @@ const util = {
         }
       }
     })
-  },
-  async showAll (tableName) {
+  }
+  static async showAll (tableName) {
     let sql = `select * from ${tableName}`
-    const ary = await this.query(sql)
+    const ary = await Util.query(sql)
 
     const obj = {}
     obj[tableName] = ary
     console.log(obj)
-  },
-  query (sql) {
+  }
+  static query (sql) {
     return new Promise(resolve => {
       db.transaction((tx) => {
         tx.executeSql(sql, [], function (tx2, results) {
@@ -55,24 +56,43 @@ const util = {
         })
       })
     })
-  },
-  removeAllGroup () {
-    return this.deleteTable([''])
-  },
-  deleteTable (tableName) {
+  }
+  static removeAllGroup () {
+    return Util.deleteTable([''])
+  }
+  static deleteTable (tableName) {
     if (Array.isArray(tableName)) {
       const promiseAry = []
       for (let ele of tableName) {
-        promiseAry.push(this._deleteTable(ele))
+        promiseAry.push(Util._deleteTable(ele))
       }
       return Promise.all(promiseAry)
     } else {
-      return this._deleteTable(tableName)
+      return Util._deleteTable(tableName)
     }
-  },
-  _deleteTable (tableName) {
+  }
+  static _deleteTable (tableName) {
     const sql = `delete from ${tableName}`
-    return this.query(sql)
+    return Util.query(sql)
+  }
+  // todo: should be putinto net channell
+  static runNetFunc (func) {
+    const {connectionOK, NetInfoUtil} = container.state
+    if (connectionOK) {
+      func()
+    } else {
+      if (NetInfoUtil.online) {
+        Toast.show({
+          text: '无法连接服务器',
+          position: 'top'
+        })
+      } else {
+        Toast.show({
+          text: '您的连接已断开,请检查网络设置',
+          position: 'top'
+        })
+      }
+    }
   }
 }
 
@@ -83,14 +103,14 @@ const tableAry = [
 ]
 
 ;(async () => {
-  // const friendAry = await util.query('select * from contact where relation=1')
+  // const friendAry = await Util.query('select * from contact where relation=1')
   // console.log({friendAry})
-  // await util.removeAllGroup()
+  // await Util.removeAllGroup()
   for (let ele of tableAry) {
-    util.showAll(ele)
+    Util.showAll(ele)
   }
 })()
 
-Object.freeze(util)
+Object.freeze(Util)
 
-module.exports = util
+module.exports = Util

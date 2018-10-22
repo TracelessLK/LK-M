@@ -11,7 +11,7 @@ const {FuncUtil} = require('@ys/vanilla')
 const {debounceFunc} = FuncUtil
 const lkApp = require('../../LKApplication').getCurrentApp()
 const container = require('../../state')
-console.log({container})
+const {runNetFunc} = require('../../util')
 
 export default class VersionView extends Component<{}> {
     static navigationOptions = () => {
@@ -55,43 +55,46 @@ export default class VersionView extends Component<{}> {
               </Text>
               <View style={{marginVertical: 20}}>
                 <Button iconLeft info disabled={this.state.checking} onPress={debounceFunc(() => {
-                  this.setState({
-                    checking: true
-                  })
-                  const {updateUtil} = container.state
-
-                  const afterCheck = () => {
+                  runNetFunc(() => {
                     this.setState({
-                      checking: false
+                      checking: true
                     })
-                  }
-                  const noUpdateCb = () => {
-                    afterCheck()
-                    Toast.show({
-                      text: '当前已是最新版本',
-                      position: 'top',
-                      type: 'success',
-                      duration: 3000
-                    })
-                  }
-                  const option = {
-                    customInfo: {
-                      uid: this.user.id,
-                      name: this.user.name
-                    },
-                    beforeUpdate: afterCheck,
-                    noUpdateCb,
-                    checkUpdateErrorCb: (error) => {
-                      console.log(error)
+                    const {updateUtil} = container.state
+
+                    const afterCheck = () => {
+                      this.setState({
+                        checking: false
+                      })
+                    }
+                    const noUpdateCb = () => {
+                      afterCheck()
                       Toast.show({
-                        text: '检查更新出错了',
+                        text: '当前已是最新版本',
                         position: 'top',
-                        type: 'error',
+                        type: 'success',
                         duration: 3000
                       })
                     }
-                  }
-                  updateUtil.checkUpdate(option)
+                    const option = {
+                      customInfo: {
+                        uid: this.user.id,
+                        name: this.user.name
+                      },
+                      beforeUpdate: afterCheck,
+                      noUpdateCb,
+                      checkUpdateErrorCb: (error) => {
+                        afterCheck()
+                        console.log(error)
+                        Toast.show({
+                          text: '检查更新出错了',
+                          position: 'top',
+                          type: 'error',
+                          duration: 3000
+                        })
+                      }
+                    }
+                    updateUtil.checkUpdate(option)
+                  })
                 })
                 }>
                   <Icon name='refresh' />
