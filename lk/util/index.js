@@ -8,7 +8,7 @@ const container = require('../state')
 const {FuncUtil} = require('@ys/vanilla')
 const {runFunc} = FuncUtil
 
-  class Util {
+class Util {
   static getAvatarSource (pic) {
     return getAvatarSource(pic, defaultAvatar)
   }
@@ -80,6 +80,7 @@ const {runFunc} = FuncUtil
   }
   // todo: should be putinto net channell
   static runNetFunc (func, errorCb) {
+    console.log({container})
     const {connectionOK, NetInfoUtil} = container.state
     if (connectionOK) {
       func()

@@ -1,4 +1,4 @@
-package com.traceless.nativeJava;
+package com.lk_m.nativeJava;
 
 import android.widget.Toast;
 import android.content.Intent;
@@ -28,7 +28,7 @@ public class AndroidUtil extends ReactContextBaseJavaModule {
 
     @Override
     public String getName() {
-      return "ToastExample";
+      return "AndroidUtil";
     }
 
     @ReactMethod
