@@ -30,7 +30,7 @@ class LKChannel extends WSChannel{
           container.state.connectionOK = false
         })
         this.on('connectionOpen', () => {
-          container.state.connectionOK = tru
+          container.state.connectionOK = true
         })
     }
 
