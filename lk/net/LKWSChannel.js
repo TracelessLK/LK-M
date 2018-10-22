@@ -611,12 +611,28 @@ class LKChannel extends WSChannel{
         }
         if(inNewMembers){
             let name = content.name;
-            ChatManager.addGroupChat(chatId,name,newMembers);
+            let oldMembers = content.oldMembers;
+
+            ChatManager.addGroupChat(chatId,name,newMembers.concat(oldMembers));
         }else{
             let chat = await LKChatProvider.asyGetChat(user.id,chatId);
             if(chat){
                 ChatManager.addGroupMembers(chatId,newMembers);
             }
+        }
+    }
+    async leaveGroup(chatId){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("leaveGroup",{chatId:chatId})]);
+        return result[0]._sendMessage(result[1]);
+    }
+    async leaveGroupHandler(msg){
+        let sender = msg.header.uid;
+        let chatId = msg.body.content.chatId;
+        let user = Application.getCurrentApp().getCurrentUser();
+        if(sender===user.id){
+            ChatManager.deleteGroup(chatId);
+        }else{
+            ChatManager.deleteGroupMember(chatId,sender);
         }
     }
     async setUserName(name){
