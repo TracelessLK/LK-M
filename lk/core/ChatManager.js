@@ -430,6 +430,25 @@ class ChatManager extends EventTarget{
         await Record.removeAll(userId);
 
     }
+    async msgReadReport(reporterUid,chatId,msgIds,state){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        let chat = await LKChatProvider.asyGetChat(userId,chatId);
+        if(chat){
+            Record.msgReadReport(userId,chatId,msgIds,reporterUid,state,chat.isGroup);
+        }
+
+    }
+
+    /**
+     * get read report detail of group msg
+     * @param chatId
+     * @param msgId
+     * @returns [{name,state}]
+     */
+    asyGetGroupMsgReadReport(chatId,msgId){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        return Record.getGroupMsgReadReport(userId,chatId,msgId);
+    }
 
 }
 

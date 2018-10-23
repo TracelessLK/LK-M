@@ -58,54 +58,130 @@ class Record{
         });
 
     }
-    //TODO group_record_state添加群消息报告详情
-    updateMsgState(msgIds,state){
-       return new Promise((resolve,reject)=>{
-           let sql = "update record set state=? where state<? and id ";
-           let update = false;
-           if(!msgIds.forEach){
-               sql += "='"
-               sql += msgIds;
-               sql += "'";
-               update = true;
-           }else{
-               sql += "in (";
-               for(var i=0;i<msgIds.length;i++){
-                   sql+="'";
-                   sql+=msgIds[i];
-                   sql+="'";
-                   if(i<msgIds.length-1){
-                       sql+=",";
-                   }
-               }
-               sql+=")";
-               update = true;
-           }
-           if(update){
-               db.transaction((tx)=>{
-                   tx.executeSql(sql,[state,state], (tx,res)=> {
-                       if(res.rowsAffected>0){
-                           resolve();
-                       } else {
-                         resolve()
-                       }
-                       // this._allUpdate(msgIds,state).then((all)=>{
-                       //     if(all){
-                       //         resolve();
-                       //     }
-                       // });
-                   },function (err) {
-                       reject(err);
-                   });
-               });
-           } else {
-             reject(new Error('update is false'))
-           }
+
+
+    _addGroupMsgReadReport(userId,chatId,msgIds,reporterUid,state){
+        return new Promise((resolve,reject)=>{
+            let sql = "insert into group_record_state(ownerUserId,chatId,msgId,reporterUid,state) values ";
+            var params=[];
+            for(var i=0;i<msgIds.length;i++){
+                var m = msgIds[i];
+                sql += "(?,?,?,?)";
+                if(i<msgIds.length-1){
+                    sql +=",";
+                }
+                params.push(userId);
+                params.push(chatId);
+                params.push(m);
+                params.push(reporterUid);
+                params.push(state);
+            }
+            db.transaction((tx)=>{
+                tx.executeSql(sql,params,function (tx,results) {
+                    resolve();
+                },function (err) {
+                    reject();
+                });
+            });
+        });
+
+    }
+
+    async msgReadReport(userId,chatId,msgIds,reporterUid,state,isGroup){
+        await this._ensureAllMsgExists(userId,chatId,msgIds);
+        await this._updateMsgState(userId,chatId,msgIds,state);
+        if(isGroup){
+            this._addGroupMsgReadReport(userId,chatId,msgIds,reporterUid,state);
+        }
+    }
+
+    _ensureAllMsgExists(userId,chatId,msgIds){
+        return new Promise((resolve,reject)=>{
+            var sql = "select id from record where ownerUserId=? and chatId=? and senderUid=? and id ";
+            var num = 0;
+            sql += "in (";
+            for(var i=0;i<msgIds.length;i++){
+                sql+="'";
+                sql+=msgIds[i];
+                sql+="'";
+                if(i<msgIds.length-1){
+                    sql+=",";
+                }
+                num++;
+            }
+            sql+=")";
+            db.transaction((tx)=>{
+                tx.executeSql(sql,[userId,chatId,userId],function (tx,results) {
+                    var len = results.rows.length;
+                    if(len==num){
+                        resolve();
+                    }
+                },function (err) {
+                    reject();
+                });
+            });
+        });
+
+    }
+    _updateMsgState(userId,chatId,msgIds,state){
+        return new Promise((resolve,reject)=>{
+            let sql = "update record set state=? where state<? and ownerUserId=? and chatId=? and id ";
+            if(!msgIds.forEach){
+                sql += "='"
+                sql += msgIds;
+                sql += "'";
+            }else{
+                sql += "in (";
+                for(var i=0;i<msgIds.length;i++){
+                    sql+="'";
+                    sql+=msgIds[i];
+                    sql+="'";
+                    if(i<msgIds.length-1){
+                        sql+=",";
+                    }
+                }
+                sql+=")";
+            }
+            db.transaction((tx)=>{
+                tx.executeSql(sql,[state,state,userId,chatId], (tx,res)=> {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
 
 
         });
 
     }
+
+    updateMsgState(userId,chatId,msgIds,state){
+        return this._updateMsgState(userId,chatId,msgIds,state)
+    }
+    getGroupMsgReadReport(userId,chatId,msgId){
+        new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = `select contact.name,group_record_state.state from group_record_state ,contact 
+                where group_record_state.reporterUid = contact.id 
+                and group_record_state.ownerUserId=? 
+                and group_record_state.chatId=? 
+                and group_record_state.msgId=? 
+                and contact.ownerUserId=?
+                `;
+                tx.executeSql(sql,[userId,chatId,msgId,userId],function (tx,results) {
+                    let rs =[];
+                    let len = results.rows.length;
+                    for(let i=0;i<len;i++){
+                        rs.push(results.rows.item(i));
+                    }
+                    resolve(rs);
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
     getMsgs(userId,chatId,limit){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{

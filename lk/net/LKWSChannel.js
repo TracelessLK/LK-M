@@ -410,13 +410,13 @@ class LKChannel extends WSChannel{
                 //     });
                 // }
             // }else{
-                LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
+                LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
                     ChatManager.fire("msgChanged",chatId);
                 });
             // }
         }).catch((error)=>{
           console.log(error)
-            LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
+            LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
                 ChatManager.fire("msgChanged",chatId);
             });
         });
@@ -504,7 +504,8 @@ class LKChannel extends WSChannel{
     }
 
     async sendMsgHandler(msg){
-      console.log({receivedMsgEncrypted: msg})
+        //TODO 处理同一用户不同设备同步
+        console.log({receivedMsg: msg})
 
         //TODO 处理消息重入或前置未达如本地还没有群
         let userId = Application.getCurrentApp().getCurrentUser().id;
@@ -540,17 +541,22 @@ class LKChannel extends WSChannel{
     }
 
     async readReport(chatId,serverIP,serverPort,msgIds){
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",msgIds,{target:{id:chatId,serverIP:serverIP,serverPort:serverPort}})]);
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",{msgIds:msgIds,chatId:chatId},{target:{id:chatId,serverIP:serverIP,serverPort:serverPort}})]);
         result[0]._sendMessage(result[1]).then((resp)=>{
             LKChatHandler.asyUpdateReadState(msgIds,ChatManager.MESSAGE_READSTATE_READREPORT);
         });
     }
     readReportHandler(msg){
-        let msgIds = msg.body.content;
-        LKChatHandler.asyUpdateMsgState(msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then(()=>{
+        let msgIds = msg.body.content.msgIds;
+        let chatId = msg.body.content.chatId;
+        // let userId = Application.getCurrentApp().getCurrentUser().id;
+        ChatManager.msgReadReport(msg.header.uid,chatId,msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then(()=>{
             this._reportMsgHandled(msg.header.flowId,msg.header.flowType);
             ChatManager.fire("msgChanged",msg.header.id);
         });
+        // LKChatHandler.asyUpdateMsgState(userId,chatId,msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then(()=>{
+        //
+        // });
     }
 
     async applyMF(contactId,serverIP,serverPort){

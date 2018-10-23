@@ -10,8 +10,8 @@ class LKChatHandler{
     asyAddMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state,relativeMsgId,relativeOrder,receiveOrder,sendOrder){
         return Record.addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state,relativeMsgId,relativeOrder,receiveOrder,sendOrder);
     }
-    asyUpdateMsgState(msgIds,state){
-        return Record.updateMsgState(msgIds,state)
+    asyUpdateMsgState(userId,chatId,msgIds,state){
+        return Record.updateMsgState(userId,chatId,msgIds,state)
     }
     asyUpdateNewMsgNum(userId,chatId,num){
         return Chat.updateNewMsgNum(userId,chatId,num);

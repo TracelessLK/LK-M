@@ -30,14 +30,14 @@ export default class GroupInfoView extends Component<{}> {
     super(props)
     this.state = {}
     this.group = this.props.navigation.state.params.group
-    console.log({group: this.group})
+    // console.log({group: this.group})
     this.user = lkApp.getCurrentUser()
   }
 
   componentDidMount () {
     const {navigation} = this.props
     navigation.setParams({addMember: () => {
-        navigation.navigate('AddGroupMemberView')
+      navigation.navigate('AddGroupMemberView', {group: this.group})
     }})
   }
 
