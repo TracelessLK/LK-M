@@ -6,7 +6,8 @@ import {
   Image,
   Text,
   TouchableOpacity,
-  RefreshControl
+  RefreshControl,
+  AppState
 } from 'react-native'
 import {
   ActionSheet,
@@ -84,6 +85,7 @@ export default class RecentView extends Component<{}> {
       }
       this.channel.un('connectionFail', this.connectionFail)
       this.channel.un('connectionOpen', this.connectionOpen)
+      AppState.removeEventListener('change', this._handleAppStateChange)
     }
 
     componentDidMount=() => {
@@ -97,6 +99,14 @@ export default class RecentView extends Component<{}> {
 
       this.channel.on('connectionFail', this.connectionFail.bind(this))
       this.channel.on('connectionOpen', this.connectionOpen.bind(this))
+      AppState.addEventListener('change', this._handleAppStateChange)
+    }
+
+    _handleAppStateChange = (appState) => {
+      // console.log({appState})
+      if (appState === 'active') {
+        this.asyGetAllDetainedMsg({minTime: 500})
+      }
     }
 
     connectionFail () {
@@ -278,48 +288,55 @@ export default class RecentView extends Component<{}> {
       }
     }
 
-    render () {
-      const {navigation} = this.props
-      return (
-        <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
-          {this.state.connectionOK ? null
-            : <TouchableOpacity style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}
-              onPress={() => { this.props.navigation.navigate('ConnectionFailView', {type: this.state.type}) }}
-            >
-              <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>{this.state.msg}</Text>
-            </TouchableOpacity>
-          }
-          <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always"
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={() => {
-                  runNetFunc(async () => {
-                    this.setState({
-                      refreshing: true
-                    })
-                    navigation.setParams({
-                      headerTitle: '消息(正在接受消息...)'
-                    })
-                    const minTime = 1000 * 1
-                    const start = Date.now()
-                    await this.channel.asyGetAllDetainedMsg()
-                    const reset = () => {
-                      this.resetHeaderTitle()
-                      this.setState({
-                        refreshing: false
-                      })
-                    }
-                    let diff = minTime - (Date.now() - start)
-                    diff = diff > 0 ? diff : 0
-                    setTimeout(reset, diff)
-                  })
-                }}
-              />}
+  asyGetAllDetainedMsg = ({minTime = 1000 * 1, refreshControl}) => {
+    const {navigation} = this.props
+
+    runNetFunc(async () => {
+      if (refreshControl) {
+        this.setState({
+          refreshing: true
+        })
+      }
+
+      navigation.setParams({
+        headerTitle: '消息(正在接受中...)'
+      })
+      const start = Date.now()
+      await this.channel.asyGetAllDetainedMsg()
+      const reset = () => {
+        this.resetHeaderTitle()
+        this.setState({
+          refreshing: false
+        })
+      }
+      let diff = minTime - (Date.now() - start)
+      diff = diff > 0 ? diff : 0
+      setTimeout(reset, diff)
+    })
+  }
+
+  render () {
+    return (
+      <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
+        {this.state.connectionOK ? null
+          : <TouchableOpacity style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}
+            onPress={() => { this.props.navigation.navigate('ConnectionFailView', {type: this.state.type}) }}
           >
-            {this.state.contentAry}
-          </ScrollView>
-        </View>
-      )
-    }
+            <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>{this.state.msg}</Text>
+          </TouchableOpacity>
+        }
+        <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always"
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={() => {
+                this.asyGetAllDetainedMsg({refreshControl: true})
+              }}
+            />}
+        >
+          {this.state.contentAry}
+        </ScrollView>
+      </View>
+    )
+  }
 }
