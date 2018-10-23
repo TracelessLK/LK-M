@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react'
 import {
+  Image,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -12,11 +13,17 @@ const common = require('@external/common')
 const {List} = common
 const chatManager = require('../../core/ChatManager')
 const {runNetFunc} = require('../../util')
+const addPng = require('../image/add.png')
 
 export default class GroupInfoView extends Component<{}> {
-  static navigationOptions =() => {
+  static navigationOptions =({navigation}) => {
+    const size = 20
     return {
-      headerTitle: '成员信息'
+      headerTitle: '成员信息',
+      headerRight:
+        <TouchableOpacity onPress={navigation.getParam('addMember')}>
+          <Image source={addPng} style={{width: size, height: size, marginHorizontal: 10}} resizeMode='contain'/>
+        </TouchableOpacity>
     }
   }
   constructor (props) {
@@ -25,6 +32,13 @@ export default class GroupInfoView extends Component<{}> {
     this.group = this.props.navigation.state.params.group
     console.log({group: this.group})
     this.user = lkApp.getCurrentUser()
+  }
+
+  componentDidMount () {
+    const {navigation} = this.props
+    navigation.setParams({addMember: () => {
+        navigation.navigate('AddGroupMemberView')
+    }})
   }
 
   render () {

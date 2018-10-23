@@ -110,7 +110,7 @@ const tableAry = [
 ]
 
 ;(async () => {
-  Util.deleteTable([''])
+  // Util.deleteTable([''])
   // const friendAry = await Util.query('select * from contact where relation=1')
   // console.log({friendAry})
   // await Util.removeAllGroup()
