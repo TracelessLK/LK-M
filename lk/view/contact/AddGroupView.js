@@ -9,6 +9,7 @@ const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const {getAvatarSource} = require('../../util')
 const _ = require('lodash')
 const chatManager = require('../../core/ChatManager')
+const {runNetFunc} = require('../../util')
 
 export default class AddGroupView extends Component<{}> {
   static navigationOptions =({ navigation }) => (
@@ -37,18 +38,20 @@ export default class AddGroupView extends Component<{}> {
     this.name = v
   }
 
-  createGroup= async () => {
-    if (!this.name) {
-      alert('请填写群名称')
-      return
-    }
-    if (this.selectedAry.length === 0) {
-      alert('请选择群成员')
-    } else {
-      // console.log({selectedAry: this.selectedAry, user: this.user})
-      await chatManager.newGroupChat(this.name, [this.user].concat(this.selectedAry))
-      this.props.navigation.goBack()
-    }
+  createGroup= () => {
+    runNetFunc(async () => {
+      if (!this.name) {
+        alert('请填写群名称')
+        return
+      }
+      if (this.selectedAry.length === 0) {
+        alert('请选择群成员')
+      } else {
+        // console.log({selectedAry: this.selectedAry, user: this.user})
+        await chatManager.newGroupChat(this.name, [this.user].concat(this.selectedAry))
+        this.props.navigation.goBack()
+      }
+    })
   }
 
   async asyncRender (filterText) {

@@ -146,8 +146,12 @@ export default class RecentView extends Component<{}> {
       // console.log({msgAry})
       // console.log({createTime})
       const {length} = msgAry
+      let obj = {
+        deletePress: () => {
+          this.deleteRow(chatId)
+        }
+      }
       if (isGroup) {
-        let obj = {}
         obj.id = chatId
         obj.name = chatName
         obj.newMsgNum = newMsgNum
@@ -181,9 +185,7 @@ export default class RecentView extends Component<{}> {
           this.chat(param)
         }
         // console.log({picAry})
-        result.item = obj
       } else if (length) {
-        const obj = {}
         const msg = _.last(msgAry)
         const {sendTime, content} = msg
         const person = await LKContactProvider.asyGet(userId, chatId)
@@ -203,12 +205,8 @@ export default class RecentView extends Component<{}> {
             isGroup: false
           })
         }
-        obj.deletePress = () => {
-          this.deleteRow(chatId)
-        }
-        result.item = obj
       }
-
+      result.item = obj
       return result
     }
 
