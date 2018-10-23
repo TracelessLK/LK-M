@@ -438,6 +438,17 @@ class ChatManager extends EventTarget{
 
     }
 
+    /**
+     * get read report detail of group msg
+     * @param chatId
+     * @param msgId
+     * @returns [{name,state}]
+     */
+    asyGetGroupMsgReadReport(chatId,msgId){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        return Record.getGroupMsgReadReport(userId,chatId,msgId);
+    }
+
 }
 
 

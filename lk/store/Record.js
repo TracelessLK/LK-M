@@ -154,13 +154,34 @@ class Record{
         });
 
     }
-    localUpdateMsgState(userId,chatId,msgIds,state){
-        return this._updateMsgState(userId,chatId,msgIds,state);
-    }
 
     updateMsgState(userId,chatId,msgIds,state){
         return this._updateMsgState(userId,chatId,msgIds,state)
     }
+    getGroupMsgReadReport(userId,chatId,msgId){
+        new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = `select contact.name,group_record_state.state from group_record_state ,contact 
+                where group_record_state.reporterUid = contact.id 
+                and group_record_state.ownerUserId=? 
+                and group_record_state.chatId=? 
+                and group_record_state.msgId=? 
+                and contact.ownerUserId=?
+                `;
+                tx.executeSql(sql,[userId,chatId,msgId,userId],function (tx,results) {
+                    let rs =[];
+                    let len = results.rows.length;
+                    for(let i=0;i<len;i++){
+                        rs.push(results.rows.item(i));
+                    }
+                    resolve(rs);
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
     getMsgs(userId,chatId,limit){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
