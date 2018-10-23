@@ -279,7 +279,7 @@ export default class RecentView extends Component<{}> {
     }
 
     resetHeaderTitle = async () => {
-      if (this.state.connectionOK) {
+      if (container.state.connectionOK) {
         const {navigation} = this.props
         const num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
         navigation.setParams({
