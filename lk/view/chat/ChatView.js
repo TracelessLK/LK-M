@@ -159,13 +159,14 @@ export default class ChatView extends Component<{}> {
            // console.log({sentMsg: msg})
            let iconName = this.getIconNameByState(msg.state)
            recordAry.push(<View key={id} style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10}}>
-             <TouchableOpacity ChatView={this} msgId={id} onPress={this.doTouchMsgState}>
+             <TouchableOpacity onPress={() => {
+               this.doTouchMsgState(msg.state)
+             }}>
                <Ionicons name={iconName} size={20} style={{marginRight: 5, lineHeight: 40, color: msg.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}/>
              </TouchableOpacity>
              <View style={{maxWidth: 200, borderWidth: 0, borderColor: '#e0e0e0', backgroundColor: '#ffffff', borderRadius: 5, minHeight: 40, padding: 10, overflow: 'hidden'}}>
                {this._getMessage(msg)}
              </View>
-             {/* <Text>  {name}  </Text> */}
              <Image source={chatRight} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
              <Image source={picSource} style={{width: 40, height: 40, marginRight: 5, marginLeft: 8}} resizeMode="contain"></Image>
            </View>)
@@ -325,15 +326,15 @@ export default class ChatView extends Component<{}> {
     }
 
     getIconNameByState=function (state) {
-      if (state === 0) {
+      if (state === chatManager.MESSAGE_STATE_SENDING) {
         return 'md-arrow-round-up'
-      } else if (state === 1) {
+      } else if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
         return 'md-refresh'
-      } else if (state === 2) {
+      } else if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
         return 'md-checkmark-circle-outline'
-      } else if (state === 3) {
+      } else if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
         return 'ios-checkmark-circle-outline'
-      } else if (state === 4) {
+      } else if (state === chatManager.MESSAGE_STATE_TARGET_READ) {
         return 'ios-mail-open-outline'
       } else if (state === 5) {
         return 'ios-bonfire-outline'
@@ -341,31 +342,14 @@ export default class ChatView extends Component<{}> {
       return 'ios-help'
     }
 
-    doTouchMsgState=function () {
-      if (this.ChatView.isGroupChat) {
-        // Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
-        //     if(rec){
-        //         if(rec.state===Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
-        //             if(rec.type===Store.MESSAGE_TYEP_TEXT){
-        //                 WSChannel.resendGroupMessage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,rec.content);
-        //             }else if(rec.type===Store.MESSAGE_TYPE_IMAGE){
-        //                 WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,JSON.parse(rec.content))
-        //             }
-        //         }else{
-        //             this.ChatView.props.navigation.navigate("GroupMsgStateView",{gid:this.ChatView.otherSide.id,msgId:this.msgId});
-        //         }
-        //     }
-        // });
-
+    doTouchMsgState= (state) => {
+      // console.log({state}, this.isGroupChat)
+      if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
+        // todo: resend
       } else {
-        // Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
-        //     if(rec&&rec.state===Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
-        //         if(rec.type===Store.MESSAGE_TYEP_TEXT)
-        //         {WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.content);}
-        //         else if(rec.type===Store.MESSAGE_TYPE_IMAGE)
-        //         {WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))}
-        //     }
-        // });
+        if (this.isGroupChat && state === chatManager.MESSAGE_STATE_TARGET_READ) {
+          this.props.navigation.navigate('ReadStateView')
+        }
       }
     }
 
