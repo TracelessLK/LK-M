@@ -5,6 +5,9 @@ import{
   AsyncStorage,
   Platform
 } from 'react-native'
+import {
+  Toast
+} from 'native-base'
 const container = require('./state')
 const config = require('./config')
 const {httpProtocol, appId, appName} = config
@@ -22,7 +25,7 @@ class LKApplication extends Application{
         super.setCurrentUser(user);
         if(user){
           // console.log({user})
-          const {serverIP, serverPort} = user
+          const {serverIP, serverPort, id, name} = user
           const base = `${httpProtocol}://${serverIP}:${serverPort}`
           const checkUpdateUrl = `${base}/checkUpdate `
           const manualDownloadUrl = `${base}/pkg/${Platform.OS}/${appName}.${Platform.OS === 'android'?'apk':'ipa'}`
@@ -35,6 +38,22 @@ class LKApplication extends Application{
           }
           const updateUtil = new UpdateUtil(option)
           container.state.updateUtil = updateUtil
+          const optionCheck = {
+            customInfo: {
+              id,
+              name
+            },
+            checkUpdateErrorCb: (error) => {
+              console.log(error)
+              // Toast.show({
+              //   text: '检查更新出错了',
+              //   position: 'top',
+              //   type: 'error',
+              //   duration: 3000
+              // })
+            }
+          }
+          updateUtil.checkUpdate(optionCheck)
           container.state.user = user
           AsyncStorage.setItem('user', JSON.stringify(user))
           let rsa = new RSAKey();
