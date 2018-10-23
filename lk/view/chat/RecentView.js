@@ -103,7 +103,7 @@ export default class RecentView extends Component<{}> {
     }
 
     _handleAppStateChange = (appState) => {
-      // console.log({appState})
+      console.log({appState})
       if (appState === 'active') {
         this.asyGetAllDetainedMsg({minTime: 500})
       }
