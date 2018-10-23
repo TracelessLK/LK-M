@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {
-  Image,
-  Text, TouchableOpacity,
+  Text,
   View,
   Linking,
   Button
@@ -25,7 +24,7 @@ export default class ConnectionFailView extends Component<{}> {
     const {type} = this.props.navigation.state.params
     let content = null
     const style1 = {fontSize: 16, color: '#606060'}
-    if (type !== 'connectionFail') {
+    if (type === 'connectionFail') {
       content = <View >
         <View style={{marginVertical: 20}}>
           <Text style={{fontWeight: 'bold', fontSize: 18}}>与服务器连接已断开</Text>

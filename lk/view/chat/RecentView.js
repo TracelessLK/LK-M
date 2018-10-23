@@ -53,8 +53,10 @@ export default class RecentView extends Component<{}> {
     }
 
   optionToChoose = () => {
-    const {navigation} = this.props
-    let BUTTONS = ['发起群聊', '添加外部好友', '取消']
+    // const {navigation} = this.props
+    let BUTTONS = ['发起群聊',
+      // '添加外部好友',
+      '取消']
     let CANCEL_INDEX = BUTTONS.length - 1
     ActionSheet.show(
       {
@@ -66,7 +68,7 @@ export default class RecentView extends Component<{}> {
         if (buttonIndex === 0) {
           this.props.navigation.navigate('AddGroupView')
         } else if (buttonIndex === 1) {
-          addExternalFriend({navigation})
+          // addExternalFriend({navigation})
         }
       }
     )
