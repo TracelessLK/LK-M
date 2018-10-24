@@ -224,6 +224,7 @@ class ChatManager extends EventTarget{
             targets.get(record.senderUid).push(record.id);
         });
         LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
+        this.fire('recentChanged')
         targets.forEach((v,k)=>{
             Contact.get(userId,k).then((contact)=>{
                 Application.getCurrentApp().getLKWSChannel().readReport(k,contact.serverIP,contact.serverPort,v);
@@ -385,8 +386,8 @@ class ChatManager extends EventTarget{
         //     curMembers.push(m.id);
         // });
         await Application.getCurrentApp().getLKWSChannel().addGroupMembers(chatId,newMembers);
-        return Chat.addGroupMembers(chatId,newMembers);
-
+        await Chat.addGroupMembers(chatId,newMembers);
+        this.fire('groupMemberChange', chatId)
     }
     async addGroupMembers(chatId,newMembers){
         let userId = Application.getCurrentApp().getCurrentUser().id;

@@ -3,10 +3,8 @@ import React, { Component } from 'react'
 import {
   Text,
   View,
-  ScrollView,
-  Image
+  ScrollView
 } from 'react-native'
-import {Toast} from 'native-base'
 import { ListItem } from 'react-native-elements'
 const common = require('@external/common')
 const {SearchBar, commonUtil, List, LoadingView} = common
@@ -14,9 +12,10 @@ const {debounceFunc} = commonUtil
 const lkApp = require('../../LKApplication').getCurrentApp()
 const style = require('../style')
 const LKContactProvider = require('../../logic/provider/LKContactProvider')
-const {getAvatarSource} = require('../../util')
-const {HeaderRightButton} = require('@ys/react-native-collection')
+const {getAvatarSource, addExternalFriend} = require('../../util')
+const {HeaderRightButton, CenterLayout} = require('@ys/react-native-collection')
 const ContactManager = require('../../core/ContactManager')
+const noUserImg = require('../image/noUser.png')
 
 export default class ExternalView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -24,29 +23,7 @@ export default class ExternalView extends Component<{}> {
         title: '添加',
         color: style.color.mainColor,
         onPress: () => {
-          navigation.navigate('ScanView', {
-            onRead (e) {
-              const {data} = e
-              const {action, code, ip, port, id} = JSON.parse(data)
-              console.log(data)
-              if (code === 'LK' && action === 'addFriend') {
-                lkApp.getLKWSChannel().applyMF(id, ip, port)
-                Toast.show({
-                  text: '好友请求已成功发送!',
-                  position: 'top',
-                  type: 'success',
-                  duration: 3000
-                })
-              } else {
-                Toast.show({
-                  text: '该二维码无效,请核对后重试!',
-                  position: 'top',
-                  type: 'warning',
-                  duration: 3000
-                })
-              }
-            }
-          })
+          addExternalFriend({navigation})
         }
       }
       return {
@@ -118,19 +95,13 @@ export default class ExternalView extends Component<{}> {
       ary.sort(sortFunc)
       dataAry = dataAry.concat(ary)
 
-      const size = 120
-      const noUser = (
-        <View style={{display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'flex-start', marginTop: 200}}>
-          <Image source ={require('../image/noUser.png')} style={{width: size, height: size}} resizeMode='contain'/>
-          <View style={{margin: 20}}>
-            <Text style={{color: style.color.secondColor, fontSize: 18}}>
-                        无外部联系人,请扫描二维码添加好友
-            </Text>
-          </View>
-
-        </View>
-      )
-      console.log({dataAry})
+      const prop = {
+        text: '无外部联系人,请扫描二维码添加好友',
+        textStyle: {color: style.color.secondColor, fontSize: 18},
+        img: noUserImg
+      }
+      const noUser = <CenterLayout {...prop}></CenterLayout>
+      // console.log({dataAry})
       const content = dataAry.length ? (
         <View>
           {/* <SearchBar */}

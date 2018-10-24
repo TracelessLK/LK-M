@@ -3,7 +3,8 @@ import React, { Component } from 'react'
 import {
   Alert,
   ScrollView, Text,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native'
 import { Avatar, Icon, ListItem } from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker'
@@ -99,6 +100,7 @@ export default class MineView extends Component<{}> {
     }
 
     render () {
+      const {navigation} = this.props
       const list2 = [
         {
           title: `个人基本信息`,
@@ -222,14 +224,17 @@ export default class MineView extends Component<{}> {
               )
             }
           </View>
-          <View style={{backgroundColor: 'white',
+          <TouchableOpacity style={{backgroundColor: 'white',
             marginVertical: 40,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 12}}>
+            padding: 12}} onPress={() => {
+            lkApp.setCurrentUser(null)
+            navigation.navigate('SelectUserView')
+          }}>
             <Text style={{fontSize: 17, color: '#e53d59'}} >退出登录</Text>
-          </View>
+          </TouchableOpacity>
         </ScrollView>
       )
     }

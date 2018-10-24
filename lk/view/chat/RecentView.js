@@ -4,24 +4,36 @@ import {
   ScrollView,
   View,
   Image,
-  TouchableOpacity
+  Text,
+  TouchableOpacity,
+  RefreshControl,
+  AppState
 } from 'react-native'
-import {ActionSheet} from 'native-base'
+import {
+  ActionSheet,
+  Icon
+} from 'native-base'
 const {commonUtil, MessageList} = require('@external/common')
 const {debounceFunc} = commonUtil
-const {getAvatarSource} = require('../../util')
+const {getAvatarSource, addExternalFriend} = require('../../util')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
 const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const chatManager = require('../../core/ChatManager')
 const _ = require('lodash')
 const addPng = require('../image/add.png')
+const {NetInfoUtil} = require('@ys/react-native-collection')
+const container = require('../../state')
+container.state.NetInfoUtil = NetInfoUtil
+const {runNetFunc} = require('../../util')
 
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
       const size = 20
+      let headerTitle = navigation.getParam('headerTitle')
+      headerTitle = headerTitle || '消息'
       return {
-        headerTitle: '消息',
+        headerTitle,
         headerRight:
         <TouchableOpacity onPress={navigation.getParam('optionToChoose')}>
           <Image source={addPng} style={{width: size, height: size, marginHorizontal: 10}} resizeMode='contain'/>
@@ -31,13 +43,21 @@ export default class RecentView extends Component<{}> {
     constructor (props) {
       super(props)
       this.state = {
-        contentAry: null
+        contentAry: null,
+        connectionOK: true,
+        refreshing: false
       }
       this.eventAry = ['msgChanged', 'recentChanged']
+      // todo: store all not undefined value
+      this.channel = lkApp.getLKWSChannel()
+      this.user = lkApp.getCurrentUser()
     }
 
   optionToChoose = () => {
-    let BUTTONS = ['发起群聊', '添加好友', '取消']
+    // const {navigation} = this.props
+    let BUTTONS = ['发起群聊',
+      // '添加外部好友',
+      '取消']
     let CANCEL_INDEX = BUTTONS.length - 1
     ActionSheet.show(
       {
@@ -48,6 +68,8 @@ export default class RecentView extends Component<{}> {
       buttonIndex => {
         if (buttonIndex === 0) {
           this.props.navigation.navigate('AddGroupView')
+        } else if (buttonIndex === 1) {
+          // addExternalFriend({navigation})
         }
       }
     )
@@ -61,13 +83,68 @@ export default class RecentView extends Component<{}> {
       for (let event of this.eventAry) {
         chatManager.un(event, this.update)
       }
+      this.channel.un('connectionFail', this.connectionFail)
+      this.channel.un('connectionOpen', this.connectionOpen)
+      AppState.removeEventListener('change', this._handleAppStateChange)
     }
+
     componentDidMount=() => {
+      const {navigation} = this.props
+
       for (let event of this.eventAry) {
         chatManager.on(event, this.update)
       }
       this.updateRecent()
-      this.props.navigation.setParams({optionToChoose: this.optionToChoose})
+      navigation.setParams({optionToChoose: this.optionToChoose})
+
+      this.channel.on('connectionFail', this.connectionFail.bind(this))
+      this.channel.on('connectionOpen', this.connectionOpen.bind(this))
+      AppState.addEventListener('change', this._handleAppStateChange)
+    }
+
+    _handleAppStateChange = (appState) => {
+      console.log({appState})
+      if (appState === 'active') {
+        this.asyGetAllDetainedMsg({minTime: 500})
+      }
+    }
+
+    connectionFail () {
+      const {navigation} = this.props
+      navigation.setParams({
+        headerTitle: '消息(未连接)'
+      })
+      const msg = this.getConnectionMsg()
+      if (NetInfoUtil.online) {
+        this.setState({
+          connectionOK: false,
+          msg,
+          type: 'connectionFail'
+        })
+      } else {
+        this.setState({
+          connectionOK: false,
+          msg,
+          type: 'networkFail'
+        })
+      }
+    }
+
+    getConnectionMsg () {
+      let result
+      if (NetInfoUtil.online) {
+        result = '与服务器的连接已断开'
+      } else {
+        result = '当前网络不可用,请检查您的网络设置'
+      }
+      return result
+    }
+
+    connectionOpen () {
+      this.resetHeaderTitle()
+      this.setState({
+        connectionOK: true
+      })
     }
 
     async getMsg (option) {
@@ -79,10 +156,15 @@ export default class RecentView extends Component<{}> {
       // console.log({msgAry})
       // console.log({createTime})
       const {length} = msgAry
+      let obj = {
+        deletePress: () => {
+          this.deleteRow(chatId)
+        }
+      }
       if (isGroup) {
-        let obj = {}
         obj.id = chatId
         obj.name = chatName
+        obj.newMsgNum = newMsgNum
         if (length) {
           const lastMsg = _.last(msgAry)
           obj.content = lastMsg.content
@@ -93,6 +175,12 @@ export default class RecentView extends Component<{}> {
         }
 
         const memberAry = await LKChatProvider.asyGetGroupMembers(chatId)
+        // console.log({memberAry})
+        const memberInfoObj = memberAry.reduce((accumulator, ele) => {
+          accumulator[ele.id] = ele
+          return accumulator
+        }, {})
+        // console.log({memberInfoObj})
         const picAry = memberAry.map(ele => ele.pic)
         obj.image = picAry
         obj.onPress = () => {
@@ -100,16 +188,14 @@ export default class RecentView extends Component<{}> {
             isGroup: true,
             otherSide: {
               id: chatId,
-              memberAry,
+              memberInfoObj,
               name: chatName
             }
           }
           this.chat(param)
         }
         // console.log({picAry})
-        result.item = obj
       } else if (length) {
-        const obj = {}
         const msg = _.last(msgAry)
         const {sendTime, content} = msg
         const person = await LKContactProvider.asyGet(userId, chatId)
@@ -129,12 +215,8 @@ export default class RecentView extends Component<{}> {
             isGroup: false
           })
         }
-        obj.deletePress = () => {
-          this.deleteRow(chatId)
-        }
-        result.item = obj
       }
-
+      result.item = obj
       return result
     }
 
@@ -142,56 +224,119 @@ export default class RecentView extends Component<{}> {
       const user = lkApp.getCurrentUser()
       const allChat = await LKChatProvider.asyGetAll(user.id)
       const msgAryPromise = []
+      let contentAry
       console.log({allChat})
-      for (let chat of allChat) {
-        const {isGroup, name, createTime} = chat
-        const option = {
-          userId: user.id,
-          chatId: chat.id,
-          newMsgNum: await chatManager.asyGetNewMsgNum(chat.id),
-          isGroup,
-          chatName: name,
-          createTime
+      const {length} = allChat
+      if (length) {
+        for (let chat of allChat) {
+          const {isGroup, name, createTime, id: chatId} = chat
+          const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
+          // console.log({newMsgNum, chatId})
+          const option = {
+            userId: user.id,
+            chatId,
+            newMsgNum,
+            isGroup,
+            chatName: name,
+            createTime
+          }
+          const msgPromise = this.getMsg(option)
+          msgAryPromise.push(msgPromise)
         }
-        const msgPromise = this.getMsg(option)
-        msgAryPromise.push(msgPromise)
+        let recentAry = await Promise.all(msgAryPromise)
+        recentAry = recentAry.filter(ele => {
+          return ele.item || ele.isGroup
+        })
+
+        // recentAry.sort((obj1, obj2) => {
+        //   return obj1.sendTime - obj2.sendTime
+        // })
+        const data = recentAry.map(ele => ele.item)
+        // console.log({data})
+        contentAry = <MessageList data={data}/>
+      } else {
+        contentAry =
+          <View style={{justifyContent: 'flex-start', alignItems: 'center'}}>
+            <TouchableOpacity onPress={() => { this.props.navigation.navigate('ContactTab') }} style={{marginTop: 30, width: '90%', height: 50, borderColor: 'gray', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={{fontSize: 18, textAlign: 'center', color: 'gray'}}>开始和好友聊天吧!</Text>
+            </TouchableOpacity>
+          </View>
       }
-      let recentAry = await Promise.all(msgAryPromise)
-      recentAry = recentAry.filter(ele => {
-        return ele.item || ele.isGroup
-      })
-
-      // recentAry.sort((obj1, obj2) => {
-      //   return obj1.sendTime - obj2.sendTime
-      // })
-
-      const contentAry = <MessageList data={recentAry.map(ele => ele.item)}/>
 
       this.setState({
         contentAry
       })
+      this.resetHeaderTitle()
     }
 
     chat = debounceFunc((option) => {
       this.props.navigation.navigate('ChatView', option)
     })
 
-    deleteRow (data) {
-      // Store.deleteRecent(data.id,()=>{
-      //     this.update()
-      // })
+    async deleteRow (chatId) {
+      await LKChatProvider.asyDeleteChat(this.user.id, chatId)
+      this.update()
     }
 
-    render () {
-      return (
-        <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
-          {/* <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:50,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}> */}
-          {/* <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text> */}
-          {/* </TouchableOpacity> */}
-          <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always">
-            {this.state.contentAry}
-          </ScrollView>
-        </View>
-      )
+    resetHeaderTitle = async () => {
+      if (container.state.connectionOK) {
+        const {navigation} = this.props
+        const num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
+        navigation.setParams({
+          headerTitle: '消息' + (num ? `(${num})` : '')
+        })
+      }
     }
+
+  asyGetAllDetainedMsg = ({minTime = 1000 * 1, refreshControl}) => {
+    const {navigation} = this.props
+
+    runNetFunc(async () => {
+      if (refreshControl) {
+        this.setState({
+          refreshing: true
+        })
+      }
+
+      navigation.setParams({
+        headerTitle: '消息(正在接受中...)'
+      })
+      const start = Date.now()
+      await this.channel.asyGetAllDetainedMsg()
+      const reset = () => {
+        this.resetHeaderTitle()
+        this.setState({
+          refreshing: false
+        })
+      }
+      let diff = minTime - (Date.now() - start)
+      diff = diff > 0 ? diff : 0
+      setTimeout(reset, diff)
+    })
+  }
+
+  render () {
+    return (
+      <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
+        {this.state.connectionOK ? null
+          : <TouchableOpacity style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}
+            onPress={() => { this.props.navigation.navigate('ConnectionFailView', {type: this.state.type}) }}
+          >
+            <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>{this.state.msg}</Text>
+          </TouchableOpacity>
+        }
+        <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always"
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={() => {
+                this.asyGetAllDetainedMsg({refreshControl: true})
+              }}
+            />}
+        >
+          {this.state.contentAry}
+        </ScrollView>
+      </View>
+    )
+  }
 }

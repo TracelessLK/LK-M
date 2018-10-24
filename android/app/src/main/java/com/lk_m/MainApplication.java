@@ -3,6 +3,7 @@ package com.lk_m;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.horcrux.svg.SvgPackage;
 import com.imagepicker.ImagePickerPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
@@ -19,7 +20,7 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import cn.reactnative.modules.update.UpdateContext;
 import org.pgsqlite.SQLitePluginPackage;
-
+import com.lk_m.nativeJava.AnExampleReactPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +41,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativeRestartPackage(),
             new SvgPackage(),
             new ImagePickerPackage(),
             new ImageResizerPackage(),
@@ -50,7 +52,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNDeviceInfo(),
             new VectorIconsPackage(),
             new RNFSPackage(),
-            new SQLitePluginPackage()
+            new SQLitePluginPackage(),
+            new AnExampleReactPackage()
       );
     }
 

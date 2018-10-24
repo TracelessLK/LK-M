@@ -1,20 +1,51 @@
 import db from '../../common/store/DataBase'
+import {Toast} from 'native-base'
 const {commonUtil} = require('@external/common')
+const lkApp = require('../LKApplication').getCurrentApp()
 const {getAvatarSource} = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
-const util = {
-  getAvatarSource (pic) {
+const container = require('../state')
+const {FuncUtil} = require('@ys/vanilla')
+const {runFunc} = FuncUtil
+
+class Util {
+  static getAvatarSource (pic) {
     return getAvatarSource(pic, defaultAvatar)
-  },
-  async showAll (tableName) {
+  }
+  static addExternalFriend ({navigation}) {
+    navigation.navigate('ScanView', {
+      onRead (e) {
+        const {data} = e
+        const {action, code, ip, port, id} = JSON.parse(data)
+        console.log(data)
+        if (code === 'LK' && action === 'addFriend') {
+          lkApp.getLKWSChannel().applyMF(id, ip, port)
+          Toast.show({
+            text: '好友请求已成功发送!',
+            position: 'top',
+            type: 'success',
+            duration: 3000
+          })
+        } else {
+          Toast.show({
+            text: '该二维码无效,请核对后重试!',
+            position: 'top',
+            type: 'warning',
+            duration: 3000
+          })
+        }
+      }
+    })
+  }
+  static async showAll (tableName) {
     let sql = `select * from ${tableName}`
-    const ary = await this.query(sql)
+    const ary = await Util.query(sql)
 
     const obj = {}
     obj[tableName] = ary
     console.log(obj)
-  },
-  query (sql) {
+  }
+  static query (sql) {
     return new Promise(resolve => {
       db.transaction((tx) => {
         tx.executeSql(sql, [], function (tx2, results) {
@@ -28,30 +59,66 @@ const util = {
         })
       })
     })
-  },
-  async removeAllGroup () {
-    let sql = `delete  from chat`
-    await this.query(sql)
-    sql = 'delete from groupMember'
-    await this.query(sql)
-    console.log('all group chat deleted')
+  }
+  static removeAllGroup () {
+    return Util.deleteTable([''])
+  }
+  static deleteTable (tableName) {
+    if (Array.isArray(tableName)) {
+      const promiseAry = []
+      for (let ele of tableName) {
+        promiseAry.push(Util._deleteTable(ele))
+      }
+      return Promise.all(promiseAry)
+    } else {
+      return Util._deleteTable(tableName)
+    }
+  }
+  static _deleteTable (tableName) {
+    const sql = `delete from ${tableName}`
+    return Util.query(sql)
+  }
+  // todo: should be putinto net channell
+  static runNetFunc (func, errorCb) {
+    console.log({container})
+    const {connectionOK, NetInfoUtil} = container.state
+    if (connectionOK) {
+      func()
+    } else {
+      runFunc(errorCb)
+      if (NetInfoUtil.online) {
+        Toast.show({
+          text: '无法连接服务器',
+          position: 'top',
+          type: 'warning'
+        })
+      } else {
+        Toast.show({
+          text: '您的连接已断开,请检查网络设置',
+          position: 'top',
+          type: 'warning'
+        })
+      }
+    }
   }
 }
 
 const tableAry = [
   // 'device', 'mfapply', 'contact', 'record',
-  'chat', 'groupMember'
+  // 'chat', 'groupMember'
+  'record'
 ]
 
 ;(async () => {
-  // const friendAry = await util.query('select * from contact where relation=1')
+  // Util.deleteTable([''])
+  // const friendAry = await Util.query('select * from contact where relation=1')
   // console.log({friendAry})
-  // await util.removeAllGroup()
+  // await Util.removeAllGroup()
   for (let ele of tableAry) {
-    // util.showAll(ele)
+    Util.showAll(ele)
   }
 })()
 
-Object.freeze(util)
+Object.freeze(Util)
 
-module.exports = util
+module.exports = Util

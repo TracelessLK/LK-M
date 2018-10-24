@@ -26,6 +26,18 @@ class Chat{
             });
         });
     }
+    deleteChat(userId,chatId){
+      return new Promise((resolve,reject)=>{
+        db.transaction((tx)=>{
+          let sql = "delete from chat where id=? and ownerUserId=?";
+          tx.executeSql(sql,[chatId,userId],function (tx,results) {
+            resolve()
+          },function (err) {
+            reject(err);
+          });
+        });
+      });
+    }
     getChat(userId,chatId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{

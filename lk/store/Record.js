@@ -159,7 +159,7 @@ class Record{
         return this._updateMsgState(userId,chatId,msgIds,state)
     }
     getGroupMsgReadReport(userId,chatId,msgId){
-        new Promise((resolve,reject)=>{
+        return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 let sql = `select contact.name,group_record_state.state from group_record_state ,contact 
                 where group_record_state.reporterUid = contact.id 
@@ -274,6 +274,21 @@ class Record{
                 });
             });
         });
+    }
+    getAllMsgNotReadNum (userId) {
+      return new Promise((resolve,reject)=>{
+        db.transaction((tx)=>{
+          var sql = "select * from record where ownerUserId=? and senderUid<>? and readState<1";
+          db.transaction((tx)=>{
+            tx.executeSql(sql,[userId,userId],function (tx,results) {
+              var len = results.rows.length;
+              resolve(len);
+            },function (err) {
+              reject(err);
+            });
+          });
+        });
+      });
     }
 
     getMsg(userId,chatId,msgId){

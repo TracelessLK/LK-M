@@ -4,27 +4,32 @@ import {
   YellowBox,
   StyleSheet, View
 } from 'react-native'
-import entryUtil from './common/util/entryUtil'
 import {Root} from 'native-base'
 import Promise from 'bluebird'
-
 import LKEntry from './lk/LKEntry'
+const ErrorUtilRN = require('ErrorUtils')
+
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
 
-entryUtil.init()
+const {ErrorUtil, ErrorStock} = require('@ys/react-native-collection')
+const {setGlobalErrorHandler} = ErrorUtil
+const option = {
+  // todo error upload
+  productionProcess: () => {
 
+  },
+  ErrorUtilRN
+}
+setGlobalErrorHandler(option)
 global.Promise = Promise
 
+const errorStock = new ErrorStock()
 global.onunhandledrejection = function onunhandledrejection (error) {
-  // Warning: when running in "remote debug" mode (JS environment is Chrome browser),
-  // this handler is called a second time by Bluebird with a custom "dom-event".
-  // We need to filter this case out:
   if (error instanceof Error) {
-    // logError(error)
+    errorStock.processError({error})
   }
-  console.log(error)
 }
-
+// console.log(global)
 export default class Entry extends Component<{}> {
   render () {
     return (

@@ -13,6 +13,7 @@ import LKChatProvider from '../logic/provider/LKChatProvider'
 import MFApplyManager from '../core/MFApplyManager'
 import FlowCursor from '../store/FlowCursor'
 import CryptoJS from "crypto-js";
+const container = require('../state')
 
 class LKChannel extends WSChannel{
 
@@ -25,6 +26,12 @@ class LKChannel extends WSChannel{
     constructor(url){
         super(url,true);
         this._ping();
+        this.on('connectionFail', () => {
+          container.state.connectionOK = false
+        })
+        this.on('connectionOpen', () => {
+          container.state.connectionOK = true
+        })
     }
 
     _putFlowPool(preFlowId,msg){
@@ -180,7 +187,7 @@ class LKChannel extends WSChannel{
                     msg.body.order=option.order||ChatManager.getChatSendOrder(chatId);
                     // msg.body.content = option.content||CryptoJS.AES.encrypt(JSON.stringify(content), chat.key).toString();
                     msg.body.content = option.content||JSON.stringify(content);
-                    console.log({content: msg.body.content})
+                    // console.log({content: msg.body.content})
                 }
             }
 
@@ -321,11 +328,11 @@ class LKChannel extends WSChannel{
     }
 
     async _asyFetchMembers(remoteMemberMCode,added,modified){
-       let ids = added.contact(modified);
+       let ids = added.concat(modified);
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("fetchMembers",{members:ids})]);
         return new Promise((resolve,reject)=>{
             result[0]._sendMessage(result[1]).then((msg)=> {
-                let members = msg.content.members;
+                let members = msg.body.content.members;
                 return ContactManager.asyRebuildMembers(remoteMemberMCode,ids,members);
             }).then(()=>{
                 resolve();
@@ -337,6 +344,11 @@ class LKChannel extends WSChannel{
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("login")]);
         return result[0]._sendMessage(result[1]);
     }
+
+  async asyGetAllDetainedMsg(){
+    let result = await Promise.all([this.applyChannel(),this._asyNewRequest("getAllDetainedMsg")]);
+    return result[0]._sendMessage(result[1]);
+  }
 
    async asyRegister(ip,port,uid,did,venderDid,pk,checkCode,qrCode,description){
        let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
@@ -464,8 +476,10 @@ class LKChannel extends WSChannel{
         let key = ChatManager.getHotChatKeyReceived(chatId,header.did,random);
         // var bytes  = CryptoJS.AES.decrypt(msg.body.content.toString(), key);
         // let content = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-        let content = JSON.parse(bytes.toString(msg.body.content));
-
+        // const msgDecrypted = bytes.toString(msg.body.content)
+        const msgDecrypted = msg.body.content
+        let content = JSON.parse(msgDecrypted);
+      console.log({receivedMsg: msg})
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
@@ -507,6 +521,7 @@ class LKChannel extends WSChannel{
         let receiveOrder;
         if(relativeMsgId){
             let relativeMsg = await LKChatProvider.asyGetMsg(userId,chatId,relativeMsgId);
+            console.log({relativeMsg})
             if(relativeMsg){
                 relativeOrder = relativeMsg.receiveOrder;
                 receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
@@ -522,6 +537,7 @@ class LKChannel extends WSChannel{
             relativeOrder = Date.now();
             receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
         }
+        console.log({relativeOrder, receiveOrder})
         if(relativeOrder&&receiveOrder){
             this._receiveMsg(chatId,msg,relativeOrder,receiveOrder)
         }
@@ -652,6 +668,10 @@ class LKChannel extends WSChannel{
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("setUserPic",{pic:pic})]);
         return result[0]._sendMessage(result[1]);
     }
+  _onerror (event) {
+      // console.log('connectionFail')
+    this.fire('connectionFail', event)
+  }
 }
 
 module.exports=LKChannel;

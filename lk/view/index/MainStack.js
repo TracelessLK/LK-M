@@ -6,10 +6,14 @@ import {
 import ContactView from '../contact/ContactView'
 import AddContactView from '../contact/AddContactView'
 import FriendInfoView from '../contact/FriendInfoView'
+import GroupInfoView from '../contact/GroupInfoView'
+import AddGroupMemberView from '../contact/AddGroupMemberView'
 import OrgView from '../contact/OrgView'
 import ExternalView from '../contact/ExternalView'
 import ChatView from '../chat/ChatView'
 import RecentView from '../chat/RecentView'
+import ConnectionFailView from '../chat/ConnectionFailView'
+import ReadStateView from '../chat/ReadStateView'
 import RequestView from '../contact/RequestView'
 import AddGroupView from '../contact/AddGroupView'
 import MineView from '../mine/MineView'
@@ -104,7 +108,11 @@ const MainStack = createStackNavigator({
   FriendInfoView,
   ChatView,
   OrgView,
-  ExternalView,
+  // todo:  path not working
+  ExternalView: {
+    screen: ExternalView,
+    path: 'external'
+  },
   BasicInfoView,
   QrcodeView,
   UidView,
@@ -112,7 +120,11 @@ const MainStack = createStackNavigator({
   RenameView,
   InfoView,
   RequestView,
-  AddGroupView
+  AddGroupView,
+  GroupInfoView,
+  ConnectionFailView,
+  ReadStateView,
+  AddGroupMemberView
 }, stackNavigatorConfig)
 
 export default MainStack

@@ -9,6 +9,9 @@ import ChatManager from '../../core/ChatManager'
 const {getAvatarSource} = require('../../util')
 const MFApplyManager = require('../../core/MFApplyManager')
 const ContactManager = require('../../core/ContactManager')
+const style = require('../style')
+const noUserImg = require('../image/noUser.png')
+const {CenterLayout} = require('@ys/react-native-collection')
 
 export default class RequestView extends Component<{}> {
   constructor (props) {
@@ -18,11 +21,16 @@ export default class RequestView extends Component<{}> {
     }
   }
   update = async () => {
-    console.log('update requestView')
     const list = await MFApplyManager.asyGetAll()
-    console.log({list})
+    // console.log({list})
     let result = []
-    if (list) {
+    const prop = {
+      text: '没有好友请求',
+      textStyle: {color: style.color.secondColor},
+      img: noUserImg
+    }
+    const noContent = <CenterLayout {...prop}></CenterLayout>
+    if (list && list.length) {
       for (let i = 0; i < list.length; i++) {
         const req = list[i]
         const {pic} = req
@@ -37,6 +45,8 @@ export default class RequestView extends Component<{}> {
             {req.state === -1 ? btn : <Text>已添加</Text>}
           </View>
       }
+    } else {
+      result = noContent
     }
     this.setState({
       content: result
@@ -65,6 +75,7 @@ export default class RequestView extends Component<{}> {
   render () {
     return (
       <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
+
         {this.state.content}
       </View>
     )

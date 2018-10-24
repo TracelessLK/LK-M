@@ -16,7 +16,6 @@ class Org{
                     sql+="parentId='";
                     sql+=parentId;
                     sql+="'";
-                    param.push(parentId)
                 }else{
                     sql+="parentId is null";
                 }

@@ -8,7 +8,9 @@ class EventTarget{
             ary = [];
             this._listeners.set(event,ary);
         }
-        ary.push(fun);
+        if (ary.indexOf(fun) === -1) {
+          ary.push(fun)
+        }
     }
     un(event,fun) {
         var ary=this._listeners.get(event);

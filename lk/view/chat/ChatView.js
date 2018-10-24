@@ -15,28 +15,30 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import ImageViewer from 'react-native-image-zoom-viewer'
 import {
-  Toast
+  Toast,
+  ActionSheet
 } from 'native-base'
 import MessageText from './MessageText'
 import {Header} from 'react-navigation'
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 const {getAvatarSource} = require('../../util')
 const Constant = require('../state/Constant')
-const {MAX_INPUT_HEIGHT} = Constant
 const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
 const chatManager = manifest.get('ChatManager')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
 const personImg = require('../image/person.png')
+const groupImg = require('../image/group.png')
 const _ = require('lodash')
-const {DelayIndicator} = require('@ys/react-native-collection')
+const {DelayIndicator, TextInputWrapper} = require('@ys/react-native-collection')
 const chatLeft = require('../image/chat-y-l.png')
 const chatRight = require('../image/chat-w-r.png')
 const uuid = require('uuid')
+const {runNetFunc} = require('../../util')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation }) => {
-      const {otherSide} = navigation.state.params
+      const {otherSide, isGroup} = navigation.state.params
       let result
       if (otherSide) {
         result = {
@@ -44,7 +46,7 @@ export default class ChatView extends Component<{}> {
           headerRight:
                     <TouchableOpacity onPress={navigation.getParam('navigateToInfo')}
                       style={{marginRight: 20}}>
-                      <Image source={personImg} style={{width: 22, height: 22}} resizeMode="contain"/>
+                      <Image source={isGroup ? groupImg : personImg} style={{width: 22, height: 22}} resizeMode="contain"/>
                     </TouchableOpacity>
         }
       }
@@ -75,6 +77,12 @@ export default class ChatView extends Component<{}> {
         count: 0,
         isRefreshingControl: false
       }
+      if (this.isGroupChat) {
+        const {memberInfoObj} = otherSide
+        this.groupMemberInfo = memberInfoObj
+      }
+      // keyboard fix
+      this.keyBoardShowCount = 0
     }
 
      refreshRecord = async (limit) => {
@@ -95,7 +103,6 @@ export default class ChatView extends Component<{}> {
        const recordAry = []
        let lastShowingTime
        const msgSet = new Set()
-
        for (let msg of msgAry) {
          let picSource = getAvatarSource(user.pic)
          const {sendTime, id} = msg
@@ -126,6 +133,7 @@ export default class ChatView extends Component<{}> {
          const style = {
            recordEleStyle: {flexDirection: 'row', justifyContent: 'flex-start', alignItems: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? 'flex-start' : 'flex-start', width: '100%', marginTop: 15}
          }
+         // console.log({msg, senderUid: msg.senderUid, groupMemberInfo: this.groupMemberInfo})
          if (msg.senderUid !== user.id) {
            // message received
            let otherPicSource = getAvatarSource(this.otherSide.pic)
@@ -151,13 +159,14 @@ export default class ChatView extends Component<{}> {
            // console.log({sentMsg: msg})
            let iconName = this.getIconNameByState(msg.state)
            recordAry.push(<View key={id} style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10}}>
-             <TouchableOpacity ChatView={this} msgId={id} onPress={this.doTouchMsgState}>
+             <TouchableOpacity onPress={() => {
+               this.doTouchMsgState(msg.state)
+             }}>
                <Ionicons name={iconName} size={20} style={{marginRight: 5, lineHeight: 40, color: msg.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}/>
              </TouchableOpacity>
              <View style={{maxWidth: 200, borderWidth: 0, borderColor: '#e0e0e0', backgroundColor: '#ffffff', borderRadius: 5, minHeight: 40, padding: 10, overflow: 'hidden'}}>
                {this._getMessage(msg)}
              </View>
-             {/* <Text>  {name}  </Text> */}
              <Image source={chatRight} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
              <Image source={picSource} style={{width: 40, height: 40, marginRight: 5, marginLeft: 8}} resizeMode="contain"></Image>
            </View>)
@@ -172,6 +181,7 @@ export default class ChatView extends Component<{}> {
 
     _keyboardDidShow=(e) => {
       // console.log({e})
+      this.keyBoardShowCount++
       const {height} = Dimensions.get('window')
       let keyY = e.endCoordinates.screenY
       const _f = () => {
@@ -181,6 +191,7 @@ export default class ChatView extends Component<{}> {
         if (this.extra.contentHeight + headerHeight < keyY) {
           change.msgViewHeight = keyY - headerHeight
         } else {
+          // console.log({height, keyY})
           change.heightAnim = height - keyY
         }
         // console.log({change})
@@ -189,7 +200,8 @@ export default class ChatView extends Component<{}> {
       }
       if (Platform.OS === 'ios') {
         const {screenY: screenYStart} = e.startCoordinates
-        if (screenYStart === height) {
+        // fix keyboard, in ios, event emits 3 times
+        if (screenYStart === height || this.keyBoardShowCount === 3) {
           _f()
         }
       } else {
@@ -224,13 +236,9 @@ export default class ChatView extends Component<{}> {
       this.keyboardDidHideListener.remove()
     }
 
-    textChange=(v) => {
-      this.text = v
-    }
-
     componentDidMount= async () => {
       const num = await chatManager.asyGetNewMsgNum(this.otherSide.id)
-      console.log({otherSide: this.otherSide, num})
+      // console.log({otherSide: this.otherSide, num})
       if (num) {
         chatManager.asyReadMsgs(this.otherSide.id, num)
       }
@@ -244,24 +252,26 @@ export default class ChatView extends Component<{}> {
 
     _navigateToInfo = () => {
       if (this.isGroupChat) {
-        // this.props.navigation.navigate('FriendInfoView', {friend: this.otherSide})
+        this.props.navigation.navigate('GroupInfoView', {group: this.otherSide})
       } else {
         this.props.navigation.navigate('FriendInfoView', {friend: this.otherSide})
       }
     }
 
     send=() => {
-      setTimeout(() => {
-        this.textInput.clear()
-      }, 0)
-      const channel = lkApp.getLKWSChannel()
-      if (this.isGroupChat) {
-        channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
-      } else {
-        channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
-      }
-      this.text = ''
-      this.textInput.clear()
+      runNetFunc(() => {
+        this.refs.text2.focus()
+        this.refs.text.reload()
+        const channel = lkApp.getLKWSChannel()
+        if (this.isGroupChat) {
+          channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
+        } else {
+          channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
+        }
+        this.text = ''
+      }, () => {
+        this.refs.text.reload(this.text)
+      })
     }
 
     // sendImage=(data) => {
@@ -316,15 +326,15 @@ export default class ChatView extends Component<{}> {
     }
 
     getIconNameByState=function (state) {
-      if (state === 0) {
+      if (state === chatManager.MESSAGE_STATE_SENDING) {
         return 'md-arrow-round-up'
-      } else if (state === 1) {
+      } else if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
         return 'md-refresh'
-      } else if (state === 2) {
+      } else if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
         return 'md-checkmark-circle-outline'
-      } else if (state === 3) {
+      } else if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
         return 'ios-checkmark-circle-outline'
-      } else if (state === 4) {
+      } else if (state === chatManager.MESSAGE_STATE_TARGET_READ) {
         return 'ios-mail-open-outline'
       } else if (state === 5) {
         return 'ios-bonfire-outline'
@@ -332,31 +342,14 @@ export default class ChatView extends Component<{}> {
       return 'ios-help'
     }
 
-    doTouchMsgState=function () {
-      if (this.ChatView.isGroupChat) {
-        // Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
-        //     if(rec){
-        //         if(rec.state===Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
-        //             if(rec.type===Store.MESSAGE_TYEP_TEXT){
-        //                 WSChannel.resendGroupMessage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,rec.content);
-        //             }else if(rec.type===Store.MESSAGE_TYPE_IMAGE){
-        //                 WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,JSON.parse(rec.content))
-        //             }
-        //         }else{
-        //             this.ChatView.props.navigation.navigate("GroupMsgStateView",{gid:this.ChatView.otherSide.id,msgId:this.msgId});
-        //         }
-        //     }
-        // });
-
+    doTouchMsgState= (state) => {
+      // console.log({state}, this.isGroupChat)
+      if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
+        // todo: resend
       } else {
-        // Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
-        //     if(rec&&rec.state===Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
-        //         if(rec.type===Store.MESSAGE_TYEP_TEXT)
-        //         {WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.content);}
-        //         else if(rec.type===Store.MESSAGE_TYPE_IMAGE)
-        //         {WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))}
-        //     }
-        // });
+        if (this.isGroupChat && state === chatManager.MESSAGE_STATE_TARGET_READ) {
+          this.props.navigation.navigate('ReadStateView')
+        }
       }
     }
 
@@ -460,36 +453,10 @@ export default class ChatView extends Component<{}> {
               overflow: 'hidden',
               paddingVertical: 5,
               marginBottom: 0}}>
-              <TextInput multiline ref={(ref) => { this.textInput = ref }} style={{flex: 1,
-                color: 'black',
-                fontSize: 16,
-                paddingHorizontal: 4,
-                borderWidth: 1,
-                borderColor: '#d0d0d0',
-                borderRadius: 5,
-                marginHorizontal: 5,
-                minHeight: this.minHeight,
-                backgroundColor: '#f0f0f0',
-                marginBottom: 5,
-                height: this.state.height}}
-              blurOnSubmit={false} returnKeyType="send" enablesReturnKeyAutomatically
-              underlineColorAndroid='transparent' defaultValue={''} onSubmitEditing={debounceFunc(this.send)}
-              onChangeText={this.textChange}
-              returnKeyLabel='发送'
-              onContentSizeChange={(event) => {
-                let height = event.nativeEvent.contentSize.height
-                if (height < this.minHeight) {
-                  height = this.minHeight
-                } else {
-                  height += 10
-                }
-                if (this.state.height !== height) {
-                  if (height > MAX_INPUT_HEIGHT) {
-                    height = MAX_INPUT_HEIGHT
-                  }
-                  this.setState({height})
-                }
-              }}/>
+              <TextInput ref='text2' style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
+              <TextInputWrapper onChangeText={(v) => {
+                this.text = v ? v.trim() : ''
+              }} onSubmitEditing={this.send} ref='text'></TextInputWrapper>
               <TouchableOpacity onPress={this.showImagePicker}
                 style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'center'}}>
                 <Ionicons name="ios-camera-outline" size={38} style={{marginRight: 5}}/>

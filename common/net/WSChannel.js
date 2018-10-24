@@ -8,6 +8,7 @@ class WSChannel extends EventTarget{
         this._url = url;
         this._keepAlive = keepAlive;
     }
+    // todo: applyChannel 要先判断网络情况
     applyChannel(){
         if(!this._openPromise){
             try{
@@ -18,9 +19,7 @@ class WSChannel extends EventTarget{
             }
             if(this._ws){
                 this._ws.onmessage = this._onmessage;
-                this._ws.onerror = (event)=>{
-                    console.info(event);
-                };
+                this._ws.onerror = this._onerror.bind(this)
                 this._ws.onclose = (event)=>{
                     if((!this._foreClosed)&&this._keepAlive){
                         this._reconnect();
@@ -28,6 +27,7 @@ class WSChannel extends EventTarget{
                 }
                 this._openPromise = new Promise(resolve => {
                     this._ws.onopen =  ()=> {
+                        this.fire('connectionOpen')
                         resolve(this);
                     };
                 })

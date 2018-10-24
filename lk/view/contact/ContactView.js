@@ -59,6 +59,7 @@ export default class ContactView extends Component<{}> {
     async asyncRender (filterText) {
       const user = lkApp.getCurrentUser()
       let orgAry = await LKOrgProvider.asyGetChildren(null, user.id)
+      console.log({orgAry})
       const sortFunc = (ele1, ele2) => {
         const result = (ele2.title < ele1.title)
 
@@ -132,23 +133,23 @@ export default class ContactView extends Component<{}> {
             onChangeText={this.onChangeText}
             clearIconStyle={{color: style.color.mainColor}}
           />
-          <View>
-            <View style={{padding: 10}}>
-              <Text style={{color: '#a0a0a0'}}>
-                           外部联系人
-              </Text>
-            </View>
-            <View style={{width: '100%', height: 0, borderTopWidth: 1, borderColor: '#f0f0f0'}}>
-            </View>
-          </View>
-          <List data={[{
-            onPress: () => {
-              this.props.navigation.navigate('ExternalView')
-            },
-            title: '外部联系人',
-            image: require('../image/contact.png'),
-            key: 'ExternalView'
-          }]}></List>
+          {/* <View> */}
+          {/* <View style={{padding: 10}}> */}
+          {/* <Text style={{color: '#a0a0a0'}}> */}
+          {/* 外部联系人 */}
+          {/* </Text> */}
+          {/* </View> */}
+          {/* <View style={{width: '100%', height: 0, borderTopWidth: 1, borderColor: '#f0f0f0'}}> */}
+          {/* </View> */}
+          {/* </View> */}
+          {/* <List data={[{ */}
+          {/* onPress: () => { */}
+          {/* this.props.navigation.navigate('ExternalView') */}
+          {/* }, */}
+          {/* title: '外部联系人', */}
+          {/* image: require('../image/contact.png'), */}
+          {/* key: 'ExternalView' */}
+          {/* }]}></List> */}
 
           <View>
             <View style={{padding: 10}}>
