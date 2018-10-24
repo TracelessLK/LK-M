@@ -236,9 +236,12 @@ export default class ChatView extends Component<{}> {
 
     componentWillUnmount =() => {
       chatManager.un('msgChanged', this.msgChange)
-
-      this.keyboardDidShowListener.remove()
-      this.keyboardDidHideListener.remove()
+      // console.log(this.keyboardDidShowListener, this.keyboardDidHideListener)
+      // todo: could be null
+      const ary = ['keyboardDidShow', 'keyboardDidHide']
+      ary.forEach(ele => {
+        Keyboard.removeListener(ele)
+      })
     }
 
     componentDidMount= async () => {
@@ -248,8 +251,8 @@ export default class ChatView extends Component<{}> {
         chatManager.asyReadMsgs(this.otherSide.id, num)
       }
       chatManager.on('msgChanged', this.msgChange)
-      this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
-      this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
+      Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
+      Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
       this.refreshRecord(this.limit)
       this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
@@ -352,10 +355,11 @@ export default class ChatView extends Component<{}> {
       if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
         // todo: resend
       } else {
-        if (this.isGroupChat && state === chatManager.MESSAGE_STATE_TARGET_READ) {
+        if (this.isGroupChat && (state === chatManager.MESSAGE_STATE_TARGET_READ || state === chatManager.MESSAGE_STATE_SERVER_RECEIVE)) {
           this.props.navigation.navigate('ReadStateView', {
             msgId,
-            chatId: this.otherSide.id
+            chatId: this.otherSide.id,
+            group: this.otherSide
           })
         }
       }

@@ -55,8 +55,8 @@ export default class GroupInfoView extends Component<{}> {
   }
 
   render () {
-    const dataAry = []
     const {memberInfoObj} = this.group
+    const dataAry = []
     for (let key in memberInfoObj) {
       const value = memberInfoObj[key]
       const {id, name, pic} = value
