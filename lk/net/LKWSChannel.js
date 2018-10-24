@@ -543,8 +543,8 @@ class LKChannel extends WSChannel{
         }
     }
 
-    async readReport(chatId,serverIP,serverPort,msgIds){
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",{msgIds:msgIds,chatId:chatId},{target:{id:chatId,serverIP:serverIP,serverPort:serverPort}})]);
+    async readReport(chatId,senderUid,serverIP,serverPort,msgIds){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",{msgIds:msgIds,chatId:chatId},{target:{id:senderUid,serverIP:serverIP,serverPort:serverPort}})]);
         result[0]._sendMessage(result[1]).then((resp)=>{
             LKChatHandler.asyUpdateReadState(msgIds,ChatManager.MESSAGE_READSTATE_READREPORT);
         });

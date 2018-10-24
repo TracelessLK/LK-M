@@ -227,7 +227,7 @@ class ChatManager extends EventTarget{
         this.fire('recentChanged')
         targets.forEach((v,k)=>{
             Contact.get(userId,k).then((contact)=>{
-                Application.getCurrentApp().getLKWSChannel().readReport(k,contact.serverIP,contact.serverPort,v);
+                Application.getCurrentApp().getLKWSChannel().readReport(chatId,k,contact.serverIP,contact.serverPort,v);
             });
         });
 
@@ -239,19 +239,32 @@ class ChatManager extends EventTarget{
     async _ckReportReadstate(){
         let user = Application.getCurrentApp().getCurrentUser();
         if(user){
-            let msgs = await Record.getReadNotReportMsgs(user.id);
-            let targets = new Map();
-            msgs.forEach((record)=>{
-                if(!targets.has(record.senderUid)){
-                    targets.set(record.senderUid,[]);
-                }
-                targets.get(record.senderUid).push(record.id);
-            });
-            targets.forEach((v,k)=>{
-                Contact.get(user.id,k).then((contact)=>{
-                    Application.getCurrentApp().getLKWSChannel().readReport(k,contact.serverIP,contact.serverPort,v);
+            let chats = await LKChatProvider.getAll(user.id);
+            let ps = [];
+            if(chats){
+                chats.forEach((chat)=>{
+                    ps.push(Record.getReadNotReportMsgs(user.id,chat.id));
                 });
-            });
+               let rs = await Promise.all(ps);
+               for(let i=0;i<rs.length;i++){
+                   let msgs = rs[i];
+                   if(msgs){
+                       let targets = new Map();
+                       msgs.forEach((record)=>{
+                           if(!targets.has(record.senderUid)){
+                               targets.set(record.senderUid,[]);
+                           }
+                           targets.get(record.senderUid).push(record.id);
+                       });
+                       targets.forEach((v,k)=>{
+                           Contact.get(user.id,k).then((contact)=>{
+                               Application.getCurrentApp().getLKWSChannel().readReport(k,chats[i].id,contact.serverIP,contact.serverPort,v);
+                           });
+                       });
+                   }
+               }
+            }
+
             setTimeout(()=>{this._ckReportReadstate()},5*60*1000);
         }
     }
