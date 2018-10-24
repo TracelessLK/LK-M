@@ -66,7 +66,7 @@ class Record{
             var params=[];
             for(var i=0;i<msgIds.length;i++){
                 var m = msgIds[i];
-                sql += "(?,?,?,?)";
+                sql += "(?,?,?,?,?)";
                 if(i<msgIds.length-1){
                     sql +=",";
                 }
