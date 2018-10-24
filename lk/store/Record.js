@@ -161,7 +161,7 @@ class Record{
     getGroupMsgReadReport(userId,chatId,msgId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = `select contact.name,group_record_state.state from group_record_state ,contact 
+                let sql = `select contact.id,contact.name,group_record_state.state from group_record_state ,contact 
                 where group_record_state.reporterUid = contact.id 
                 and group_record_state.ownerUserId=? 
                 and group_record_state.chatId=? 
