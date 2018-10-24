@@ -39,6 +39,19 @@ export default class GroupInfoView extends Component<{}> {
     navigation.setParams({addMember: () => {
       navigation.navigate('AddGroupMemberView', {group: this.group})
     }})
+    chatManager.on('groupMemberChange', this.groupMemberChange)
+  }
+
+  groupMemberChange = (chatId) => {
+    if (chatId === this.group.id) {
+      this.setState({
+        update: true
+      })
+    }
+  }
+
+  componentWillUnmount () {
+    chatManager.un('groupMemberChange', this.groupMemberChange)
   }
 
   render () {

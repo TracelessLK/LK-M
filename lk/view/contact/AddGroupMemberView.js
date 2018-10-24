@@ -1,5 +1,5 @@
 import React, { Component} from 'react'
-import {Button, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native'
+import {Button, ScrollView, TouchableOpacity, View} from 'react-native'
 const common = require('@external/common')
 const {List} = common
 const {FuncUtil} = require('@ys/vanilla')
@@ -10,21 +10,30 @@ const {getAvatarSource} = require('../../util')
 const _ = require('lodash')
 const chatManager = require('../../core/ChatManager')
 const {runNetFunc} = require('../../util')
+const {CenterLayout} = require('@ys/react-native-collection')
+const style = require('../style')
+const noUserImg = require('../image/noUser.png')
 
 export default class AddGroupMemberView extends Component<{}> {
-  static navigationOptions =({ navigation }) => (
-    {
+  static navigationOptions =({ navigation }) => {
+    const {params} = navigation.state
+    const {hasOneToAdd} = params
+    const headerRight = hasOneToAdd ? (
+      <TouchableOpacity style={{marginRight: 20}}>
+        <Button color="#fff" title="确定"
+          onPress={debounceFunc(() => {
+            params.navigateAddGroupPress()
+          })}
+          style={{marginRight: 20}}/>
+      </TouchableOpacity>
+    ) : null
+
+    return {
       headerTitle: '添加群成员',
-      headerRight:
-        <TouchableOpacity style={{marginRight: 20}}>
-          <Button color="#fff" title="确定"
-            onPress={debounceFunc(() => {
-              navigation.state.params.navigateAddGroupPress()
-            })}
-            style={{marginRight: 20}}/>
-        </TouchableOpacity>
+      headerRight
+
     }
-  )
+  }
 
   constructor (props) {
     super(props)
@@ -42,16 +51,17 @@ export default class AddGroupMemberView extends Component<{}> {
       if (this.selectedAry.length === 0) {
         alert('请选择需要新增群成员')
       } else {
-        // console.log({selectedAry: this.selectedAry, user: this.user})
-        await chatManager.newGroupChat(this.name, [this.user].concat(this.selectedAry))
+        // console.log({selectedAry: this.selectedAry})
+        await chatManager.newGroupMembers(this.group.id, this.selectedAry)
         this.props.navigation.goBack()
       }
     })
   }
 
   async asyncRender (filterText) {
+    const {navigation} = this.props
     const memberIdAry = Object.keys(this.group.memberInfoObj)
-    console.log({memberIdAry})
+    // console.log({memberIdAry})
     const user = lkApp.getCurrentUser()
     const sortFunc = (ele1, ele2) => {
       const result = (ele2.title < ele1.title)
@@ -118,11 +128,17 @@ export default class AddGroupMemberView extends Component<{}> {
     ary.sort(sortFunc)
     dataAry = dataAry.concat(ary)
     let contentAry = <List data={dataAry} showSwitch onSelectedChange={this.onSelectedChange}></List>
+
     if (!dataAry.length) {
-      contentAry =
-        <View style={{justifyContent: 'center'}}>
-          <Text>所有的好友都已经加入本群</Text>
-        </View>
+      const prop = {
+        text: '所有的好友都已经加入本群',
+        textStyle: {color: style.color.secondColor},
+        img: noUserImg
+      }
+      const noContent = <CenterLayout {...prop}></CenterLayout>
+      contentAry = noContent
+    } else {
+      navigation.setParams({hasOneToAdd: true})
     }
     this.setState({
       contentAry
