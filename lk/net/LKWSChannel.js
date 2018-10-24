@@ -490,10 +490,8 @@ class LKChannel extends WSChannel{
     }
 
     async sendMsgHandler(msg){
-        //TODO 处理同一用户不同设备同步
         console.log({receivedMsg: msg})
 
-        //TODO 处理消息重入或前置未达如本地还没有群
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
         let body = msg.body;
@@ -513,7 +511,12 @@ class LKChannel extends WSChannel{
                 relativeOrder = relativeMsg.receiveOrder;
                 receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
             }else{
-                this._putChatMsgPool(chatId,msg);
+                if(header.RFExist===0){//relative msg flow has been deleted by server as a receive report or timeout or this is a new device after relative msg or eat by ghost
+                    let order = Date.now();
+                    this._receiveMsg(chatId,msg,order,order);
+                }else{
+                    this._putChatMsgPool(chatId,msg);
+                }
             }
         }else{
             relativeOrder = Date.now();
