@@ -4,6 +4,7 @@ import {
   View
 } from 'react-native'
 import PropTypes from 'prop-types'
+const chatManager = require('../../core/ChatManager')
 
 export default class ReadStateView extends Component<{}> {
   constructor (props) {
@@ -12,7 +13,13 @@ export default class ReadStateView extends Component<{}> {
   }
 
   componentDidMount () {
+    this.asyncRender()
+  }
 
+  asyncRender = async () => {
+    const {msgId, chatId} = this.props.navigation.state.params
+    const readState = await chatManager.asyGetGroupMsgReadReport(chatId, msgId)
+    console.log({readState})
   }
 
   componentWillUnmount () {

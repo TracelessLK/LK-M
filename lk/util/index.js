@@ -78,6 +78,10 @@ class Util {
     const sql = `delete from ${tableName}`
     return Util.query(sql)
   }
+  static dropTable (tableName) {
+    const sql = `drop table ${tableName}`
+    return Util.query(sql)
+  }
   // todo: should be putinto net channell
   static runNetFunc (func, errorCb) {
     console.log({container})
@@ -110,7 +114,7 @@ const tableAry = [
 ]
 
 ;(async () => {
-  // Util.deleteTable([''])
+  // Util.dropTable('group_record_state')
   // const friendAry = await Util.query('select * from contact where relation=1')
   // console.log({friendAry})
   // await Util.removeAllGroup()

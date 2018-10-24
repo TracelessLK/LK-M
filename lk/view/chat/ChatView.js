@@ -160,7 +160,11 @@ export default class ChatView extends Component<{}> {
            let iconName = this.getIconNameByState(msg.state)
            recordAry.push(<View key={id} style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10}}>
              <TouchableOpacity onPress={() => {
-               this.doTouchMsgState(msg.state)
+               const option = {
+                 msgId: id,
+                 state: msg.state
+               }
+               this.doTouchMsgState(option)
              }}>
                <Ionicons name={iconName} size={20} style={{marginRight: 5, lineHeight: 40, color: msg.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}/>
              </TouchableOpacity>
@@ -342,13 +346,16 @@ export default class ChatView extends Component<{}> {
       return 'ios-help'
     }
 
-    doTouchMsgState= (state) => {
+    doTouchMsgState= ({state, msgId}) => {
       // console.log({state}, this.isGroupChat)
       if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
         // todo: resend
       } else {
         if (this.isGroupChat && state === chatManager.MESSAGE_STATE_TARGET_READ) {
-          this.props.navigation.navigate('ReadStateView')
+          this.props.navigation.navigate('ReadStateView', {
+            msgId,
+            chatId: this.otherSide.id
+          })
         }
       }
     }
