@@ -236,12 +236,12 @@ class Record{
         });
     }
 
-    getReadNotReportMsgs(userId){
+    getReadNotReportMsgs(userId,chatId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                var sql = "select * from record where ownerUserId=? and senderUid<>? and readState=1";
+                var sql = "select * from record where ownerUserId=? and senderUid<>? and chatId=? and readState=1";
                 db.transaction((tx)=>{
-                    tx.executeSql(sql,[userId,chatId,userId],function (tx,results) {
+                    tx.executeSql(sql,[userId,userId,chatId],function (tx,results) {
                         var rs = [];
                         var len = results.rows.length;
                         for(var i=0;i<len;i++){
