@@ -1,0 +1,48 @@
+const path = require('path')
+const rootPath = path.resolve(__dirname, '../')
+const start = Date.now()
+const fs = require('fs')
+const fse = require('fs-extra')
+const buildFolderPath = path.resolve(rootPath, 'build')
+fse.ensureDirSync(buildFolderPath)
+const archivePath = path.resolve(buildFolderPath, 'tmp')
+const {argv} = require('yargs')
+let {scheme, archive = true} = argv
+const schemeAry = []
+const devConfig = require('../config/devConfig')
+const {appId} = devConfig
+const {CliUtil} = require('@ys/collection')
+const {execSync} = CliUtil
+
+if (!scheme || !schemeAry.includes(scheme)) {
+  scheme = appId
+}
+console.log(`scheme : ${scheme}`)
+
+if (archive) {
+  console.log('archive ios ....')
+  execSync(`
+    cd ios && xcodebuild  -allowProvisioningUpdates  archive -scheme ${scheme} -archivePath "${archivePath}"
+`)
+  timeLog()
+}
+
+console.log('archive success')
+
+const exportPath = devConfig.exportIpaFolderPath
+fse.ensureDirSync(exportPath)
+
+const exportOptionsPath = path.resolve(rootPath, 'ios/ExportOptions.plist')
+execSync(`
+    xcodebuild -exportArchive  -allowProvisioningUpdates  -archivePath "${archivePath}.xcarchive" -exportPath "${exportPath}" -exportOptionsPlist '${exportOptionsPath}'
+`)
+
+console.log('ipa generated successfully')
+
+fs.renameSync(path.resolve(exportPath, `${devConfig.appId}.ipa`), path.resolve(exportPath, `${devConfig.appName}.ipa`))
+timeLog()
+
+function timeLog () {
+  let timeInS = Math.floor((Date.now() - start) / 1000)
+  console.log(`time elapsed ${Math.floor(timeInS / 60)}m${timeInS % 60}s`)
+}

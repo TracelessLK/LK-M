@@ -13,7 +13,10 @@
     "try": "jest",
     "getAndroidData": "node bin/getAndroidData",
     "showDevMenu": "adb shell input keyevent 82",
-    "yarnInstall": "yarn install && node bin/postinstall.js"
+    "yarnInstall": "yarn install && node bin/postinstall.js",
+    "pack:ios": "node bin/packIOS",
+    "pack:ppk": "node bin/packPPK",
+    "pack:android": "node bin/packAndroid"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
@@ -56,7 +59,8 @@
     "babel-preset-react-native": "4.0.0",
     "jest": "23.4.2",
     "react-test-renderer": "16.2.0",
-    "yargs": "^12.0.2"
+    "yargs": "^12.0.2",
+    "node-ssh": "^5.1.2"
   },
   "repository": "https://github.com/tracelessman/LK-M.git"
 }
