@@ -37,7 +37,7 @@ export default class List extends Component<{}> {
     const contentAry = []
     const {data, showSwitch} = this.props
     for (let ele of data) {
-      const {onPress, image, title, key, extra} = ele
+      const {onPress, image, title, key, extra, rightContent} = ele
       // console.log({key})
       const content = (
         <View style={{backgroundColor: 'white', borderBottomColor: '#f0f0f0', borderBottomWidth: 1}} key={key}>
@@ -51,7 +51,7 @@ export default class List extends Component<{}> {
               <Text style={{fontSize: 18, fontWeight: '500'}}>
                 {title}
               </Text>
-              {showSwitch ? <Switch onValueChange={(value) => { this.select(value, key, extra) }} value={this.state.selected[key]} ios_backgroundColor='#5077AA'></Switch>: null}
+              {rightContent || (showSwitch ? <Switch onValueChange={(value) => { this.select(value, key, extra) }} value={this.state.selected[key]} ios_backgroundColor='#5077AA'></Switch> : null)}
             </View>
           </TouchableOpacity>
         </View>

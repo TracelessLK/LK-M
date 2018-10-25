@@ -162,15 +162,15 @@ export default class MineView extends Component<{}> {
                 <Icon name='qrcode' type="font-awesome" iconStyle={{margin: 10}} color='gray'
                   raised
                   onPress={debounceFunc(() => {
-                    this.props.navigation.navigate('QrcodeView', {
-                      qrcode: {
-                        uid: this.user.id,
-                        ip: this.user.ip,
-                        code: 'LK',
-                        action: 'addFriend'
-                      },
-                      avatarUrl: this.state.avatarSource.uri
-                    })
+                    // this.props.navigation.navigate('QrcodeView', {
+                    //   qrcode: {
+                    //     uid: this.user.id,
+                    //     ip: this.user.ip,
+                    //     code: 'LK',
+                    //     action: 'addFriend'
+                    //   },
+                    //   avatarUrl: this.state.avatarSource.uri
+                    // })
                   })}
                 />}
               avatar={<Avatar

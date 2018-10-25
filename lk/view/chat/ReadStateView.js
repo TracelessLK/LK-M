@@ -1,12 +1,11 @@
 import React, {Component} from 'react'
 import {
   ScrollView,
-  Text, TouchableOpacity,
-  View
+  View, Text
 } from 'react-native'
-import PropTypes from 'prop-types'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 const chatManager = require('../../core/ChatManager')
-const {getAvatarSource} = require('../../util')
+const {getAvatarSource, getIconNameByState} = require('../../util')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const common = require('@external/common')
 const {List} = common
@@ -27,17 +26,20 @@ export default class ReadStateView extends Component<{}> {
     const {memberInfoObj} = group
     const readState = await chatManager.asyGetGroupMsgReadReport(chatId, msgId)
     this.readAry = readState.map(ele => ele.id)
+    console.log({readAry: this.readAry})
     this.msgId = msgId
     const dataAry = []
     for (let key in memberInfoObj) {
       const value = memberInfoObj[key]
       const {id, name, pic} = value
-
       if (id !== this.user.id) {
+        const state = this.readAry.includes(id) ? chatManager.MESSAGE_STATE_TARGET_READ : chatManager.MESSAGE_STATE_SERVER_RECEIVE
+
         const obj = {
           image: getAvatarSource(pic),
           key: id,
-          title: name
+          title: name,
+          rightContent: <View><Ionicons name={getIconNameByState(state)} size={20} style={{marginRight: 5, lineHeight: 40}}/></View>
         }
         dataAry.push(obj)
       }
@@ -49,7 +51,7 @@ export default class ReadStateView extends Component<{}> {
       })
     }
   }
-
+// todo: 消息状态事件更新
   componentWillUnmount () {
 
   }

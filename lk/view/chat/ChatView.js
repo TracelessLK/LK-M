@@ -21,7 +21,7 @@ import {
 import MessageText from './MessageText'
 import {Header} from 'react-navigation'
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
-const {getAvatarSource} = require('../../util')
+const {getAvatarSource, getIconNameByState} = require('../../util')
 const Constant = require('../state/Constant')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
@@ -158,7 +158,7 @@ export default class ChatView extends Component<{}> {
          } else {
            // message sent
            // console.log({sentMsg: msg})
-           let iconName = this.getIconNameByState(msg.state)
+           let iconName = getIconNameByState(msg.state)
            recordAry.push(<View key={id} style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10}}>
              <TouchableOpacity onPress={() => {
                const option = {
@@ -331,23 +331,6 @@ export default class ChatView extends Component<{}> {
       const biggerImageIndex = this.imageIndexer[msgId]
 
       this.setState({biggerImageVisible: true, biggerImageUri: imgUri, biggerImageIndex})
-    }
-
-    getIconNameByState=function (state) {
-      if (state === chatManager.MESSAGE_STATE_SENDING) {
-        return 'md-arrow-round-up'
-      } else if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
-        return 'md-refresh'
-      } else if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
-        return 'md-checkmark-circle-outline'
-      } else if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
-        return 'ios-checkmark-circle-outline'
-      } else if (state === chatManager.MESSAGE_STATE_TARGET_READ) {
-        return 'ios-mail-open-outline'
-      } else if (state === 5) {
-        return 'ios-bonfire-outline'
-      }
-      return 'ios-help'
     }
 
     doTouchMsgState= ({state, msgId}) => {
