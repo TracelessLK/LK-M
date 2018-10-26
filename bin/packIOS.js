@@ -1,6 +1,5 @@
 const path = require('path')
 const rootPath = path.resolve(__dirname, '../')
-const start = Date.now()
 const fs = require('fs')
 const fse = require('fs-extra')
 const buildFolderPath = path.resolve(rootPath, 'build')
@@ -17,38 +16,33 @@ const {execSync} = CliUtil
 const {FuncUtil} = require('@ys/vanilla')
 const {timeCount} = FuncUtil
 
-if (!scheme || !schemeAry.includes(scheme)) {
-  scheme = appId
-}
-console.log(`scheme : ${scheme}`)
+timeCount(() => {
+  if (!scheme || !schemeAry.includes(scheme)) {
+    scheme = appId
+  }
+  console.log(`scheme : ${scheme}`)
 
-if (archive) {
-  console.log('archive ios ....')
-  execSync(`
+  if (archive) {
+    console.log('archive ios ....')
+    execSync(`
     cd ios && xcodebuild  -allowProvisioningUpdates  archive -scheme ${scheme} -archivePath "${archivePath}"
 `)
-  timeLog()
-  console.log('archive success')
-}
-fixFramework()
+    console.log('archive success')
+  }
+  fixFramework()
 
-const exportPath = devConfig.exportIpaFolderPath
-fse.ensureDirSync(exportPath)
+  const exportPath = devConfig.exportIpaFolderPath
+  fse.ensureDirSync(exportPath)
 
-const exportOptionsPath = path.resolve(rootPath, 'ios/ExportOptions.plist')
-execSync(`
+  const exportOptionsPath = path.resolve(rootPath, 'ios/ExportOptions.plist')
+  execSync(`
     xcodebuild -exportArchive  -allowProvisioningUpdates  -archivePath "${archivePath}.xcarchive" -exportPath "${exportPath}" -exportOptionsPlist '${exportOptionsPath}'
 `)
 
-console.log('ipa generated successfully')
+  console.log('ipa generated successfully')
 
-fs.renameSync(path.resolve(exportPath, `${devConfig.appId}.ipa`), path.resolve(exportPath, `${devConfig.appName}.ipa`))
-timeLog()
-
-function timeLog () {
-  let timeInS = Math.floor((Date.now() - start) / 1000)
-  console.log(`time elapsed ${Math.floor(timeInS / 60)}m${timeInS % 60}s`)
-}
+  fs.renameSync(path.resolve(exportPath, `${devConfig.appId}.ipa`), path.resolve(exportPath, `${devConfig.appName}.ipa`))
+})
 
 function fixFramework () {
   // QBImagePicker bug avoiding
