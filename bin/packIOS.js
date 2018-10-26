@@ -14,6 +14,8 @@ const devConfig = require('../config/devConfig')
 const {appId} = devConfig
 const {CliUtil} = require('@ys/collection')
 const {execSync} = CliUtil
+const {FuncUtil} = require('@ys/vanilla')
+const {timeCount} = FuncUtil
 
 if (!scheme || !schemeAry.includes(scheme)) {
   scheme = appId
@@ -28,6 +30,7 @@ if (archive) {
   timeLog()
   console.log('archive success')
 }
+fixFramework()
 
 const exportPath = devConfig.exportIpaFolderPath
 fse.ensureDirSync(exportPath)
@@ -45,4 +48,11 @@ timeLog()
 function timeLog () {
   let timeInS = Math.floor((Date.now() - start) / 1000)
   console.log(`time elapsed ${Math.floor(timeInS / 60)}m${timeInS % 60}s`)
+}
+
+function fixFramework () {
+  // QBImagePicker bug avoiding
+  const frameworkPath = path.resolve(archivePath, `Products/Applications/${appId}.app/Frameworks`)
+  fse.removeSync(frameworkPath)
+  fse.copySync(path.resolve(rootPath, 'resource/Frameworks'), frameworkPath)
 }
