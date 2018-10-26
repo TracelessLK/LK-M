@@ -11,7 +11,7 @@
 					<key>kind</key>
 					<string>software-package</string>
 					<key>url</key>
-					<string>http://192.144.200.234:3000/public/ios/LK2.ipa</string>
+					<string>http://192.144.200.234:3000/public/ios/LK.ipa</string>
 				</dict>
 				<dict>
 					<key>kind</key>
@@ -29,13 +29,13 @@
 			<key>metadata</key>
 			<dict>
 				<key>bundle-identifier</key>
-				<string>com.hfs.traceless</string>
+				<string>com.hfs.LK-M</string>
 				<key>bundle-version</key>
 				<string>1.0</string>
 				<key>kind</key>
 				<string>software</string>
 				<key>title</key>
-				<string>LK2</string>
+				<string>LK</string>
 			</dict>
 		</dict>
 	</array>
