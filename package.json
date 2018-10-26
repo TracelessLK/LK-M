@@ -14,7 +14,7 @@
     "getAndroidData": "node bin/getAndroidData",
     "showDevMenu": "adb shell input keyevent 82",
     "yarnInstall": "yarn install && node bin/postinstall.js",
-    "pack:ios": "npm run jsBundle && node bin/packIOS",
+    "pack:ios": "node bin/packIOS",
     "pack:ppk": "node bin/packPPK",
     "pack:android": "node bin/packAndroid",
     "updateYS": "rm yarn.lock && rm -rf node_modules/@ys && npm run yarnInstall",

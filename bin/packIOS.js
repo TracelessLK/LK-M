@@ -6,7 +6,7 @@ const buildFolderPath = path.resolve(rootPath, 'build')
 fse.ensureDirSync(buildFolderPath)
 const archivePath = path.resolve(buildFolderPath, 'tmp')
 const {argv} = require('yargs')
-let {scheme, archive = true} = argv
+let {scheme, archive = true, bundle = false} = argv
 // console.log(argv, archive)
 const schemeAry = []
 const devConfig = require('../config/devConfig')
@@ -21,6 +21,10 @@ timeCount(() => {
     scheme = appId
   }
   console.log(`scheme : ${scheme}`)
+
+  if (bundle) {
+    execSync('npm run jsBundle')
+  }
 
   if (archive) {
     console.log('archive ios ....')
@@ -46,7 +50,7 @@ timeCount(() => {
 
 function fixFramework () {
   // QBImagePicker bug avoiding
-  const frameworkPath = path.resolve(archivePath, `Products/Applications/${appId}.app/Frameworks`)
+  const frameworkPath = path.resolve(rootPath, `build/tmp.xcarchive/Products/Applications/${appId}.app/Frameworks`)
   fse.removeSync(frameworkPath)
   fse.copySync(path.resolve(rootPath, 'resource/Frameworks'), frameworkPath)
 }
