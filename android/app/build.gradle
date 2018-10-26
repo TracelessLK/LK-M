@@ -141,11 +141,11 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-image-crop-picker')
     compile project(':react-native-restart')
     compile project(':react-native-svg')
     compile project(':react-native-image-picker')
     compile project(':react-native-image-resizer')
-    compile project(':react-native-image-crop-picker')
     compile project(':react-native-fetch-blob')
     compile project(':react-native-update')
     compile project(':react-native-camera')

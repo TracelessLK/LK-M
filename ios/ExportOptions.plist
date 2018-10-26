@@ -4,6 +4,8 @@
 <dict>
 	<key>compileBitcode</key>
 	<true/>
+	<key>destination</key>
+	<string>export</string>
 	<key>method</key>
 	<string>ad-hoc</string>
 	<key>signingStyle</key>
