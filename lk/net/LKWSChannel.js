@@ -368,6 +368,29 @@ class LKChannel extends WSChannel{
           console.log(err)
         })
     }
+    async retrySend(chatId,msgId){
+        let curApp = Application.getCurrentApp();
+        let userId = curApp.getCurrentUser().id;
+        let result = await Promise.all([LKChatProvider.asyGetChat(userId,chatId),LKChatProvider.asyGetMsg(userId,chatId,msgId)]);
+        let chat = result[0];
+        let oldMsg = result[1];
+        if(oldMsg){
+            LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SENDING).then(()=>{
+                ChatManager.fire("msgChanged",chatId);
+            });
+            let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",{type:oldMsg.type,data:oldMsg.content},{isGroup:chat.isGroup,time:oldMsg.sendTime,chatId:chatId,relativeMsgId:oldMsg.relativeMsgId,id:oldMsg.id,order:oldMsg.order})]);
+            result[0]._sendMessage(result[1]).then((resp)=>{
+                LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
+                    ChatManager.fire("msgChanged",chatId);
+                });
+            }).catch((error)=>{
+                console.log(error)
+                LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
+                    ChatManager.fire("msgChanged",chatId);
+                });
+            });
+        }
+    }
     sendGroupText(chatId,text,relativeMsgId){
         this.sendText(chatId,text,relativeMsgId,true)
     }
@@ -434,9 +457,12 @@ class LKChannel extends WSChannel{
             console.log({diff})
             let added = ChatManager.deviceChanged(chatId,diff);
             if(added&&added.length>0){
-                let oldMsg = await LKChatProvider.asyGetMsg(Application.getCurrentApp().getCurrentUser().id,chatId,msgId);
+                let userId = Application.getCurrentApp().getCurrentUser().id;
+                let result = await Promise.all([LKChatProvider.asyGetChat(userId,chatId),LKChatProvider.asyGetMsg(userId,chatId,msgId)]);
+                let chat = result[0] ;
+                let oldMsg = result[1] ;
                 if(oldMsg){
-                    this._asyNewRequest("sendMsg2",{type:oldMsg.type,data:oldMsg.content},{time:oldMsg.sendTime,chatId:chatId,relativeMsgId:oldMsg.relativeMsgId,id:oldMsg.id,targets:added,order:oldMsg.order}).then((req)=>{
+                    this._asyNewRequest("sendMsg2",{type:oldMsg.type,data:oldMsg.content},{isGroup:chat.isGroup,time:oldMsg.sendTime,chatId:chatId,relativeMsgId:oldMsg.relativeMsgId,id:oldMsg.id,targets:added,order:oldMsg.order}).then((req)=>{
                         this._sendMessage(req);
                     });
                 }
