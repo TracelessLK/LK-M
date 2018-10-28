@@ -5,7 +5,7 @@ import {
   View,
   Dimensions
 } from 'react-native'
-import { Input, Item, Button, Label, Toast, Form} from 'native-base'
+import {Input, Item, Button, Label, Toast, Form} from 'native-base'
 import RSAKey from 'react-native-rsa'
 import deviceInfo from 'react-native-device-info'
 const lkApplication = require('../../LKApplication').getCurrentApp()

@@ -18,7 +18,7 @@
     "pack:ppk": "node bin/packPPK",
     "pack:android": "node bin/packAndroid",
     "updateYS": "rm yarn.lock && rm -rf node_modules/@ys && npm run yarnInstall",
-    "reintall": "rm yarn.lock && rm -rf node_modules && npm run yarnInstall",
+    "reinstall": "rm yarn.lock && rm -rf node_modules && npm run yarnInstall",
     "jsBundle": " react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios"
   },
   "dependencies": {

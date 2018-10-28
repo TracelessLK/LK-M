@@ -25,7 +25,11 @@ const removePathAry = [
 
 removePathAry.forEach(ele => {
   if (fs.existsSync(ele)) {
-    fs.unlink(ele)
+    fs.unlink(ele, (err) => {
+      if (err) {
+        throw err
+      }
+    })
     console.log(`remove ${ele}`)
   }
 })

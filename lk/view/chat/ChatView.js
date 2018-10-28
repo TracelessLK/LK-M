@@ -267,19 +267,21 @@ export default class ChatView extends Component<{}> {
     }
 
     send=() => {
-      runNetFunc(() => {
-        this.refs.text2.focus()
-        this.refs.text.reload()
-        const channel = lkApp.getLKWSChannel()
-        if (this.isGroupChat) {
-          channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
-        } else {
-          channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
-        }
-        this.text = ''
-      }, () => {
-        this.refs.text.reload(this.text)
-      })
+      if (this.text !== '') {
+        runNetFunc(() => {
+          this.refs.text2.focus()
+          this.refs.text.reload()
+          const channel = lkApp.getLKWSChannel()
+          if (this.isGroupChat) {
+            channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
+          } else {
+            channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
+          }
+          this.text = ''
+        }, () => {
+          this.refs.text.reload(this.text)
+        })
+      }
     }
 
     // sendImage=(data) => {

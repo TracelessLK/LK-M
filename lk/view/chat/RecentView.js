@@ -301,7 +301,7 @@ export default class RecentView extends Component<{}> {
       }
 
       navigation.setParams({
-        headerTitle: '消息(正在接受中...)'
+        headerTitle: '消息(正在接收中...)'
       })
       const start = Date.now()
       await this.channel.asyGetAllDetainedMsg()
