@@ -367,10 +367,14 @@ class LKChannel extends WSChannel{
           console.log(err)
         })
     }
+    sendImage(chatId,imgData,width,height,relativeMsgId,isGroup){
+        let content = {type:ChatManager.MESSAGE_TYPE_IMAGE,data:{data:imgData,width:width,height:height}};
+        this._sendMsg(chatId,content,relativeMsgId,isGroup);
+    }
     async retrySend(chatId,msgId){
         let curApp = Application.getCurrentApp();
         let userId = curApp.getCurrentUser().id;
-        let result = await Promise.all([LKChatProvider.asyGetChat(userId,chatId),LKChatProvider.asyGetMsg(userId,chatId,msgId)]);
+        let result = await Promise.all([LKChatProvider.asyGetChat(userId,chatId),LKChatProvider.asyGetMsg(userId,chatId,msgId,true)]);
         let chat = result[0];
         let oldMsg = result[1];
         if(oldMsg){

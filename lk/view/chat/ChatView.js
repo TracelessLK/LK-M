@@ -355,7 +355,7 @@ export default class ChatView extends Component<{}> {
 
     _getMessage=(rec) => {
       let result
-      if (rec.type === chatManager.MESSAGE_TYEP_TEXT) {
+      if (rec.type === chatManager.MESSAGE_TYPE_TEXT) {
         const text =
                 <MessageText currentMessage={
                   {text: rec.content}

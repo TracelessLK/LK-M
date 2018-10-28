@@ -1,5 +1,7 @@
 
 import db from '../../common/store/DataBase'
+import RNFetchBlob from 'react-native-fetch-blob';
+const dirs = RNFetchBlob.fs.dirs;
 db.transaction((tx)=>{
     tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER,readState INTEGER,relativeMsgId TEXT,relativeOrder INTEGER,receiveOrder INTEGER,sendOrder INTEGER)",[],function () {
     },function (err) {
@@ -9,16 +11,52 @@ db.transaction((tx)=>{
     });
 });
 class Record{
+    MESSAGE_TYPE_TEXT=0
+    MESSAGE_TYPE_IMAGE=1
+    MESSAGE_TYPE_FILE=2
     addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state,relativeMsgId,relativeOrder,receiveOrder,sendOrder){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
-                let sql = "insert into record(ownerUserId,chatId,id,senderUid,senderDid,type,content,sendTime,state,readState,relativeMsgId,relativeOrder,receiveOrder,sendOrder) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-                tx.executeSql(sql,[userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,isNaN(state)?-1:state,-1,relativeMsgId,relativeOrder,receiveOrder,sendOrder],function () {
-                    resolve();
-                },function (err) {
-                    reject(err);
+
+            let insert2DB = function () {
+                db.transaction((tx)=>{
+                    let sql = "insert into record(ownerUserId,chatId,id,senderUid,senderDid,type,content,sendTime,state,readState,relativeMsgId,relativeOrder,receiveOrder,sendOrder) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    tx.executeSql(sql,[userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,isNaN(state)?-1:state,-1,relativeMsgId,relativeOrder,receiveOrder,sendOrder],function () {
+                        resolve();
+                    },function (err) {
+                        reject(err);
+                    });
                 });
-            });
+            }
+            if(type===this.MESSAGE_TYPE_TEXT){
+                insert2DB();
+            }else if(type===this.MESSAGE_TYPE_IMAGE){
+                var dir = dirs.DocumentDir+"/"+userId+"/images/"+chatId;
+                var createImage = function () {
+                    var url = dir+"/"+msgId+".jpg";
+                    RNFetchBlob.fs.createFile(url,content.data,'base64').then(()=>{
+                        content = JSON.stringify({width:content.width,height:content.height,url:url});
+                        insert2DB();
+                    }).catch(err=>{
+                        reject()
+                    });
+                }
+                RNFetchBlob.fs.exists(dir).then(
+                    exist=>{
+                        if(!exist){
+                            RNFetchBlob.fs.mkdir(dir).then(()=>{
+                                createImage();
+                            }).catch();
+                        }else{
+                            createImage();
+                        }
+                    }
+                ).catch(
+                    reject()
+                );
+            }
+
+
+
         });
     }
     _allUpdate(msgIds,state){
@@ -291,14 +329,22 @@ class Record{
       });
     }
 
-    getMsg(userId,chatId,msgId){
+    getMsg(userId,chatId,msgId,fetchData){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 var sql = "select * from record where ownerUserId=? and chatId=? and id=?";
                 db.transaction((tx)=>{
-                    tx.executeSql(sql,[userId,chatId,msgId],function (tx,results) {
+                    tx.executeSql(sql,[userId,chatId,msgId], (tx,results) =>{
                         if(results.rows.length>0){
-                            resolve(results.rows.item(0));
+                            let result = results.rows.item(0);
+                            if(fetchData&&this.MESSAGE_TYPE_IMAGE===result.type){
+                                RNFetchBlob.fs.readFile(result.url,'base64').then((data)=>{
+                                    result.data = data;
+                                    resolve(result);
+                                });
+                            }else{
+                                resolve(result);
+                            }
                         }else{
                             resolve(null);
                         }
