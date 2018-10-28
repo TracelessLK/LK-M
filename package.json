@@ -13,7 +13,13 @@
     "try": "jest",
     "getAndroidData": "node bin/getAndroidData",
     "showDevMenu": "adb shell input keyevent 82",
-    "yarnInstall": "yarn install && node bin/postinstall.js"
+    "yarnInstall": "yarn install && node bin/postinstall.js",
+    "pack:ios": "node bin/packIOS",
+    "pack:ppk": "node bin/packPPK",
+    "pack:android": "node bin/packAndroid",
+    "updateYS": "rm yarn.lock && rm -rf node_modules/@ys && npm run yarnInstall",
+    "reinstall": "rm yarn.lock && rm -rf node_modules && npm run yarnInstall",
+    "jsBundle": " react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
@@ -33,7 +39,7 @@
     "react-native-elements": "^0.19.1",
     "react-native-fetch-blob": "^0.10.8",
     "react-native-fs": "2.10.14",
-    "react-native-image-crop-picker": "^0.20.3",
+    "react-native-image-crop-picker": "0.21.3",
     "react-native-image-picker": "^0.26.10",
     "react-native-image-resizer": "^1.0.0",
     "react-native-image-zoom-viewer": "^2.2.13",
@@ -46,7 +52,9 @@
     "react-native-svg": "7.0.2",
     "react-native-update": "^5.1.0",
     "react-native-vector-icons": "^4.6.0",
-    "react-navigation": "2.5.5"
+    "react-navigation": "2.5.5",
+    "react-redux": "^5.1.0",
+    "redux": "^4.0.1"
   },
   "devDependencies": {
     "@ys/eslint-config-rn": "github:spirit1453/codebase#react_native_eslint",
@@ -55,6 +63,7 @@
     "babel-plugin-transform-remove-console": "^6.9.4",
     "babel-preset-react-native": "4.0.0",
     "jest": "23.4.2",
+    "node-ssh": "^5.1.2",
     "react-test-renderer": "16.2.0",
     "yargs": "^12.0.2"
   },

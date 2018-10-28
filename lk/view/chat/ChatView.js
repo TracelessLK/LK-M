@@ -21,7 +21,7 @@ import {
 import MessageText from './MessageText'
 import {Header} from 'react-navigation'
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
-const {getAvatarSource} = require('../../util')
+const {getAvatarSource, getIconNameByState} = require('../../util')
 const Constant = require('../state/Constant')
 const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
@@ -68,6 +68,7 @@ export default class ChatView extends Component<{}> {
         isInited: false
       }
       this.otherSide = otherSide
+      console.log({otherSide})
       this.text = ''
       this.folderId = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
       this.limit = Constant.MESSAGE_PER_REFRESH
@@ -157,10 +158,14 @@ export default class ChatView extends Component<{}> {
          } else {
            // message sent
            // console.log({sentMsg: msg})
-           let iconName = this.getIconNameByState(msg.state)
+           let iconName = getIconNameByState(msg.state)
            recordAry.push(<View key={id} style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10}}>
              <TouchableOpacity onPress={() => {
-               this.doTouchMsgState(msg.state)
+               const option = {
+                 msgId: id,
+                 state: msg.state
+               }
+               this.doTouchMsgState(option)
              }}>
                <Ionicons name={iconName} size={20} style={{marginRight: 5, lineHeight: 40, color: msg.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}/>
              </TouchableOpacity>
@@ -231,9 +236,12 @@ export default class ChatView extends Component<{}> {
 
     componentWillUnmount =() => {
       chatManager.un('msgChanged', this.msgChange)
-
-      this.keyboardDidShowListener.remove()
-      this.keyboardDidHideListener.remove()
+      // console.log(this.keyboardDidShowListener, this.keyboardDidHideListener)
+      // todo: could be null
+      const ary = ['keyboardDidShow', 'keyboardDidHide']
+      ary.forEach(ele => {
+        Keyboard.removeListener(ele)
+      })
     }
 
     componentDidMount= async () => {
@@ -243,8 +251,8 @@ export default class ChatView extends Component<{}> {
         chatManager.asyReadMsgs(this.otherSide.id, num)
       }
       chatManager.on('msgChanged', this.msgChange)
-      this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
-      this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
+      Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
+      Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
       this.refreshRecord(this.limit)
       this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
@@ -259,19 +267,21 @@ export default class ChatView extends Component<{}> {
     }
 
     send=() => {
-      runNetFunc(() => {
-        this.refs.text2.focus()
-        this.refs.text.reload()
-        const channel = lkApp.getLKWSChannel()
-        if (this.isGroupChat) {
-          channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
-        } else {
-          channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
-        }
-        this.text = ''
-      }, () => {
-        this.refs.text.reload(this.text)
-      })
+      if (this.text !== '') {
+        runNetFunc(() => {
+          this.refs.text2.focus()
+          this.refs.text.reload()
+          const channel = lkApp.getLKWSChannel()
+          if (this.isGroupChat) {
+            channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
+          } else {
+            channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
+          }
+          this.text = ''
+        }, () => {
+          this.refs.text.reload(this.text)
+        })
+      }
     }
 
     // sendImage=(data) => {
@@ -325,30 +335,17 @@ export default class ChatView extends Component<{}> {
       this.setState({biggerImageVisible: true, biggerImageUri: imgUri, biggerImageIndex})
     }
 
-    getIconNameByState=function (state) {
-      if (state === chatManager.MESSAGE_STATE_SENDING) {
-        return 'md-arrow-round-up'
-      } else if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
-        return 'md-refresh'
-      } else if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
-        return 'md-checkmark-circle-outline'
-      } else if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
-        return 'ios-checkmark-circle-outline'
-      } else if (state === chatManager.MESSAGE_STATE_TARGET_READ) {
-        return 'ios-mail-open-outline'
-      } else if (state === 5) {
-        return 'ios-bonfire-outline'
-      }
-      return 'ios-help'
-    }
-
-    doTouchMsgState= (state) => {
+    doTouchMsgState= ({state, msgId}) => {
       // console.log({state}, this.isGroupChat)
       if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
         // todo: resend
       } else {
-        if (this.isGroupChat && state === chatManager.MESSAGE_STATE_TARGET_READ) {
-          this.props.navigation.navigate('ReadStateView')
+        if (this.isGroupChat && (state === chatManager.MESSAGE_STATE_TARGET_READ || state === chatManager.MESSAGE_STATE_SERVER_RECEIVE)) {
+          this.props.navigation.navigate('ReadStateView', {
+            msgId,
+            chatId: this.otherSide.id,
+            group: this.otherSide
+          })
         }
       }
     }

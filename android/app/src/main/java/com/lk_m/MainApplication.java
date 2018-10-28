@@ -3,11 +3,11 @@ package com.lk_m;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.horcrux.svg.SvgPackage;
 import com.imagepicker.ImagePickerPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
-import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import cn.reactnative.modules.update.UpdatePackage;
 import org.reactnative.camera.RNCameraPackage;
@@ -41,11 +41,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new PickerPackage(),
             new ReactNativeRestartPackage(),
             new SvgPackage(),
             new ImagePickerPackage(),
             new ImageResizerPackage(),
-            new PickerPackage(),
             new RNFetchBlobPackage(),
             new UpdatePackage(),
             new RNCameraPackage(),

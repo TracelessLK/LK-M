@@ -104,7 +104,7 @@ class Record{
             var params=[];
             for(var i=0;i<msgIds.length;i++){
                 var m = msgIds[i];
-                sql += "(?,?,?,?)";
+                sql += "(?,?,?,?,?)";
                 if(i<msgIds.length-1){
                     sql +=",";
                 }
@@ -199,7 +199,7 @@ class Record{
     getGroupMsgReadReport(userId,chatId,msgId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = `select contact.name,group_record_state.state from group_record_state ,contact 
+                let sql = `select contact.id,contact.name,group_record_state.state from group_record_state ,contact 
                 where group_record_state.reporterUid = contact.id 
                 and group_record_state.ownerUserId=? 
                 and group_record_state.chatId=? 

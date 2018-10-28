@@ -239,7 +239,7 @@ class ChatManager extends EventTarget{
     async _ckReportReadstate(){
         let user = Application.getCurrentApp().getCurrentUser();
         if(user){
-            let chats = await LKChatProvider.getAll(user.id);
+            let chats = await LKChatProvider.asyGetAll(user.id);
             let ps = [];
             if(chats){
                 chats.forEach((chat)=>{

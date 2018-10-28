@@ -215,6 +215,8 @@ export default class RecentView extends Component<{}> {
             isGroup: false
           })
         }
+      } else {
+        obj = null
       }
       result.item = obj
       return result
@@ -225,7 +227,7 @@ export default class RecentView extends Component<{}> {
       const allChat = await LKChatProvider.asyGetAll(user.id)
       const msgAryPromise = []
       let contentAry
-      console.log({allChat})
+      // console.log({allChat})
       const {length} = allChat
       if (length) {
         for (let chat of allChat) {
@@ -252,7 +254,7 @@ export default class RecentView extends Component<{}> {
         //   return obj1.sendTime - obj2.sendTime
         // })
         const data = recentAry.map(ele => ele.item)
-        // console.log({data})
+        // console.log({data, recentAry})
         contentAry = <MessageList data={data}/>
       } else {
         contentAry =
@@ -299,7 +301,7 @@ export default class RecentView extends Component<{}> {
       }
 
       navigation.setParams({
-        headerTitle: '消息(正在接受中...)'
+        headerTitle: '消息(正在接收中...)'
       })
       const start = Date.now()
       await this.channel.asyGetAllDetainedMsg()

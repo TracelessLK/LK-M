@@ -7,6 +7,7 @@ const defaultAvatar = require('../view/image/defaultAvatar.png')
 const container = require('../state')
 const {FuncUtil} = require('@ys/vanilla')
 const {runFunc} = FuncUtil
+const chatManager = require('../core/ChatManager')
 
 class Util {
   static getAvatarSource (pic) {
@@ -63,6 +64,22 @@ class Util {
   static removeAllGroup () {
     return Util.deleteTable([''])
   }
+  static getIconNameByState=function (state) {
+    if (state === chatManager.MESSAGE_STATE_SENDING) {
+      return 'md-arrow-round-up'
+    } else if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
+      return 'md-refresh'
+    } else if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
+      return 'md-checkmark-circle-outline'
+    } else if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
+      return 'ios-checkmark-circle-outline'
+    } else if (state === chatManager.MESSAGE_STATE_TARGET_READ) {
+      return 'ios-mail-open-outline'
+    } else if (state === 5) {
+      return 'ios-bonfire-outline'
+    }
+    return 'ios-help'
+  }
   static deleteTable (tableName) {
     if (Array.isArray(tableName)) {
       const promiseAry = []
@@ -76,6 +93,10 @@ class Util {
   }
   static _deleteTable (tableName) {
     const sql = `delete from ${tableName}`
+    return Util.query(sql)
+  }
+  static dropTable (tableName) {
+    const sql = `drop table ${tableName}`
     return Util.query(sql)
   }
   // todo: should be putinto net channell
@@ -110,7 +131,7 @@ const tableAry = [
 ]
 
 ;(async () => {
-  // Util.deleteTable([''])
+  // Util.dropTable('group_record_state')
   // const friendAry = await Util.query('select * from contact where relation=1')
   // console.log({friendAry})
   // await Util.removeAllGroup()
