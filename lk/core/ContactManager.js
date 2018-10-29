@@ -21,7 +21,7 @@ class ContactManager extends EventTarget{
 
     asyRebuildMembers(newMemberMCode,ids,newMembers){
         let curApp = Application.getCurrentApp();
-        if(ids&&ids.length>0){
+        if(ids&&ids.length>0&&newMembers&&newMembers.length>0){
             let userId = curApp.getCurrentUser().id;
             for(let i=0;i<newMembers.length;i++){
                 let m = newMembers[i];

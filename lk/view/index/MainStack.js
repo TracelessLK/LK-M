@@ -24,6 +24,7 @@ import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
 import VersionView from '../mine/VersionView'
 import RenameView from '../mine/RenameView'
+import MsgBadge from '../chat/MsgBadge'
 const util = require('../util/navigatorUtil')
 const style = require('../style')
 
@@ -67,9 +68,9 @@ const MainTab = createBottomTabNavigator({
     screen: ChatTab,
     navigationOptions: {
       tabBarIcon: (option) => {
-        console.log({option})
+        // console.log({option})
         const { focused } = option
-        return util.getTabLogo('消息', focused, 'message-outline', 24)
+        return util.getTabLogo('消息', focused, 'message-outline', 24, <MsgBadge></MsgBadge>)
       }
     }
   },

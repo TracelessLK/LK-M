@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import {Badge} from 'native-base'
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
 const chatManager = require('../../core/ChatManager')
+const lkApp = require('../../LKApplication').getCurrentApp()
 
 export default class MsgBadge extends Component<{}> {
   constructor (props) {
@@ -14,6 +15,7 @@ export default class MsgBadge extends Component<{}> {
     this.state = {
       badge: null
     }
+    this.user = lkApp.getCurrentUser()
   }
 
   async componentDidMount () {

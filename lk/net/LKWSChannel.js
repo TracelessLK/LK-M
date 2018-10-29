@@ -311,16 +311,20 @@ class LKChannel extends WSChannel{
     }
 
     async _asyFetchMembers(remoteMemberMCode,added,modified){
+
        let ids = added.concat(modified);
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("fetchMembers",{members:ids})]);
-        return new Promise((resolve,reject)=>{
-            result[0]._sendMessage(result[1]).then((msg)=> {
-                let members = msg.body.content.members;
-                return ContactManager.asyRebuildMembers(remoteMemberMCode,ids,members);
-            }).then(()=>{
-                resolve();
-            });
-        });
+       if(ids.length>0){
+           let result = await Promise.all([this.applyChannel(),this._asyNewRequest("fetchMembers",{members:ids})]);
+           return new Promise((resolve,reject)=>{
+               result[0]._sendMessage(result[1]).then((msg)=> {
+                   let members = msg.body.content.members;
+                   return ContactManager.asyRebuildMembers(remoteMemberMCode,ids,members);
+               }).then(()=>{
+                   resolve();
+               });
+           });
+       }
+
     }
 
     async asyLogin(){
