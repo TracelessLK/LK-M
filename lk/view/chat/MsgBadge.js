@@ -6,8 +6,9 @@ import {
 import PropTypes from 'prop-types'
 import {Badge} from 'native-base'
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
+const chatManager = require('../../core/ChatManager')
 
-export default class MsgBaddge extends Component<{}> {
+export default class MsgBadge extends Component<{}> {
   constructor (props) {
     super(props)
     this.state = {
@@ -17,6 +18,11 @@ export default class MsgBaddge extends Component<{}> {
 
   async componentDidMount () {
     let num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
+    this.updateBadge(num)
+    chatManager.on('msgBadgeChange', this.updateBadge)
+  }
+
+  updateBadge (num) {
     if (num) {
       if (num < 10) {
         num = ` ${num} `
@@ -25,6 +31,9 @@ export default class MsgBaddge extends Component<{}> {
         badge: num
       })
     }
+  }
+  componentWillUnmount () {
+    chatManager.un('msgBadgeChange', this.updateBadge)
   }
 
   render () {
@@ -40,6 +49,6 @@ export default class MsgBaddge extends Component<{}> {
   }
 }
 
-MsgBaddge.defaultProps = {}
+MsgBadge.defaultProps = {}
 
-MsgBaddge.propTypes = {}
+MsgBadge.propTypes = {}

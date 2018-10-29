@@ -14,6 +14,7 @@ import MFApplyManager from '../core/MFApplyManager'
 import FlowCursor from '../store/FlowCursor'
 import CryptoJS from "crypto-js";
 const container = require('../state')
+const LKChatProvider = require('../../logic/provider/LKChatProvider')
 
 class LKChannel extends WSChannel{
 
@@ -32,6 +33,7 @@ class LKChannel extends WSChannel{
         this.on('connectionOpen', () => {
           container.state.connectionOK = true
         })
+      this.user =  Application.getCurrentApp().getCurrentUser()
     }
 
     _putFlowPool(preFlowId,msg){
@@ -473,6 +475,8 @@ class LKChannel extends WSChannel{
         this._reportMsgHandled(header.flowId,header.flowType);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
         ChatManager.fire("msgChanged",chatId);
+      let num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
+        ChatManager.fire("msgBadgeChanged",num);
     }
 
     async _getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder){
