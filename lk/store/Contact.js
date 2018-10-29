@@ -88,7 +88,7 @@ class Contact{
     }
 
     rebuidMembers(ids,newMembers,userId){
-        this.removeContacts(ids,userId).then(()=>{
+       return this.removeContacts(ids,userId).then(()=>{
             this.addNewMembers(newMembers,userId);
         })
     }
@@ -230,7 +230,8 @@ class Contact{
                             }
                         }
                     sql+=")";
-                    tx.executeSql(sql,ids,function (tx,results) {
+                    let params = [userId];
+                    tx.executeSql(sql,params.concat(ids),function (tx,results) {
                         resolve();
                     },function (err) {
                         reject(err);
