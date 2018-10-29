@@ -266,6 +266,19 @@ class Chat{
         });
     }
 
+    setGroupName(userId,chatId,name){
+        return new Promise((resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "update chat set name=? where id=? and ownerUserId=?";
+                tx.executeSql(sql,[Date.now(),chatId,userId],function () {
+                    resolve();
+                },function (err) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
 
 }
 module.exports = new Chat();
