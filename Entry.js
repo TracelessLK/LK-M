@@ -2,7 +2,8 @@
 import React, { Component } from 'react'
 import {
   YellowBox,
-  StyleSheet, View
+  StyleSheet, View,
+  Alert
 } from 'react-native'
 import {Root} from 'native-base'
 import Promise from 'bluebird'
@@ -15,8 +16,8 @@ const {ErrorUtil, ErrorStock} = require('@ys/react-native-collection')
 const {setGlobalErrorHandler} = ErrorUtil
 const option = {
   // todo error upload
-  productionProcess: () => {
-
+  productionProcess: (error) => {
+    Alert.alert(error.toString())
   },
   ErrorUtilRN
 }
