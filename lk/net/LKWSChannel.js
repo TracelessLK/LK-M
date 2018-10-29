@@ -14,7 +14,6 @@ import MFApplyManager from '../core/MFApplyManager'
 import FlowCursor from '../store/FlowCursor'
 import CryptoJS from "crypto-js";
 const container = require('../state')
-const LKChatProvider = require('../../logic/provider/LKChatProvider')
 
 class LKChannel extends WSChannel{
 
