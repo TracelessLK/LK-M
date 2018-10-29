@@ -190,11 +190,11 @@ class ChatManager extends EventTarget{
         return new Promise((resovle)=>{
             LKChatProvider.asyGetChat(userId,contactId).then((chat)=>{
                 if(chat){
-                    resovle();
+                    resovle(true);
                 }else{
                     LKChatHandler.asyAddSingleChat(userId,contactId).then(()=>{
                         this.fire("recentChanged")
-                        resovle();
+                        resovle(true);
                     });
                 }
             })
