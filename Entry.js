@@ -19,7 +19,8 @@ const option = {
   productionProcess: (error) => {
     Alert.alert(error.toString())
   },
-  ErrorUtilRN
+  ErrorUtilRN,
+  resetTime: 1000 * 1
 }
 setGlobalErrorHandler(option)
 global.Promise = Promise

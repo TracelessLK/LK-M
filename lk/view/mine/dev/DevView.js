@@ -165,6 +165,23 @@ export default class BasicInfoView extends Component<{}> {
           onPress: debounceFunc(() => {
             this.props.navigation.navigate('SetHostView')
           })
+        },
+        {
+          title: (
+            <View style={style.listItem}>
+              <View>
+                <Text style={style.titleStyle}>
+                  test
+                </Text>
+              </View>
+              <View>
+                <Text style={style.contentStyle}>
+                </Text>
+              </View>
+            </View>),
+          onPress: debounceFunc(() => {
+            throw new Error('test')
+          })
         }
       ]
 

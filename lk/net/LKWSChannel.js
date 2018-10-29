@@ -99,14 +99,9 @@ class LKChannel extends WSChannel{
         }
 
         this.applyChannel().then((channel)=>{
-            // let uid = Application.getCurrentApp().getCurrentUser().id;
-            // let did = Application.getCurrentApp().getCurrentUser().deviceId;
             channel.send(JSON.stringify({header:{
                 version:"1.0",
                 flowId:flowId,
-                // msgId:msgId,
-                // uid:uid,
-                // did:did,
                 response:true
             }}));
         });
@@ -193,27 +188,13 @@ class LKChannel extends WSChannel{
             }
 
         }
-
-        //let mCode = Application.getCurrentApp().getCurrentUser().mCode;
-
-
-
         return msg;
     }
 
     _sendMessage(req){
-        const {header} = req
-        const {action} = header
-      const excludeAry = ['ping', 'login']
-      if (!excludeAry.includes(action)) {
-        console.log({sendMsg: req, action})
-      }
         return new Promise((resolve,reject)=>{
             let msgId = req.header.id;
             this._callbacks[msgId] = (msg)=>{
-              if (!excludeAry.includes(action)) {
-                console.log({responseCallbackMsg: msg,req})
-              }
                 delete this._callbacks[msgId];
                 resolve(msg);
             }
@@ -364,9 +345,7 @@ class LKChannel extends WSChannel{
 
     sendText(chatId,text,relativeMsgId,isGroup){
         let content = {type:ChatManager.MESSAGE_TYPE_TEXT,data:text};
-        this._sendMsg(chatId,content,relativeMsgId,isGroup).catch(err => {
-          console.log(err)
-        })
+        this._sendMsg(chatId,content,relativeMsgId,isGroup);
     }
     sendImage(chatId,imgData,width,height,relativeMsgId,isGroup){
         let content = {type:ChatManager.MESSAGE_TYPE_IMAGE,data:{data:imgData,width:width,height:height}};
@@ -388,7 +367,6 @@ class LKChannel extends WSChannel{
                     ChatManager.fire("msgChanged",chatId);
                 });
             }).catch((error)=>{
-                console.log(error)
                 LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
                     ChatManager.fire("msgChanged",chatId);
                 });
@@ -416,34 +394,10 @@ class LKChannel extends WSChannel{
         await LKChatHandler.asyAddMsg(userId,chatId,msgId,userId,did,content.type,content.data,time,ChatManager.MESSAGE_STATE_SENDING,relativeMsgId,relativeOrder,curTime,result[1].body.order);
         ChatManager.fire("msgChanged",chatId);
         result[0]._sendMessage(result[1]).then((resp)=>{
-            // let diff = resp.body.content.hasDiff;
-            // if(diff){
-            //     console.log({diff})
-                // let added = ChatManager.deviceChanged(chatId,diff);
-                // if(added&&added.length>0){
-                //     this._asyNewRequest("sendMsg2",content,{isGroup:isGroup,time:time,chatId:chatId,relativeMsgId:relativeMsgId,id:msgId,targets:added,order:result[1].header.order,content:result[1].body.content}).then((req)=>{
-                //         this._sendMessage(req).then(()=>{
-                //             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
-                //                 ChatManager.fire("msgChanged",chatId);
-                //             });
-                //         }).catch(()=>{
-                //             LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
-                //                 ChatManager.fire("msgChanged",chatId);
-                //             });
-                //         });
-                //     });
-                // }else{
-                //     LKChatHandler.asyUpdateMsgState(msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
-                //         ChatManager.fire("msgChanged",chatId);
-                //     });
-                // }
-            // }else{
                 LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
                     ChatManager.fire("msgChanged",chatId);
                 });
-            // }
         }).catch((error)=>{
-          console.log(error)
             LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
                 ChatManager.fire("msgChanged",chatId);
             });
@@ -458,11 +412,10 @@ class LKChannel extends WSChannel{
         let diff = content.diff;
         this._reportMsgHandled(header.flowId,header.flowType);
         if(diff){
-            console.log({diff})
             let added = ChatManager.deviceChanged(chatId,diff);
             if(added&&added.length>0){
                 let userId = Application.getCurrentApp().getCurrentUser().id;
-                let result = await Promise.all([LKChatProvider.asyGetChat(userId,chatId),LKChatProvider.asyGetMsg(userId,chatId,msgId)]);
+                let result = await Promise.all([LKChatProvider.asyGetChat(userId,chatId),LKChatProvider.asyGetMsg(userId,chatId,msgId,true)]);
                 let chat = result[0] ;
                 let oldMsg = result[1] ;
                 if(oldMsg){
@@ -478,24 +431,30 @@ class LKChannel extends WSChannel{
     _putChatMsgPool(chatId,msg){
         let msgs = this._chatMsgPool.get(chatId);
         if(!msgs){
-            msgs = [];
+            msgs = new Map();
             this._chatMsgPool.set(chatId,msgs);
         }
-        msgs.push(msg);
+        msgs.set(msg.header.id,msg);
     }
     async _checkChatMsgPool(chatId,relativeMsgId,relativeOrder){
-        //获取所有relativeMsg是msg的消息
         let msgs = this._chatMsgPool.get(chatId);
         if(msgs){
-           for(let i=0;i<msgs.length;i++){
-               let msg = msgs[i];
-               let header = msg.header;
-               let body = msg.body;
-               if(body.relativeMsgId===relativeMsgId){
-                   let receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,header.uid,header.did,body.order);
-                   this._receiveMsg(chatId,msg,relativeOrder,receiveOrder);
-               }
-           }
+            let ps = [];
+            let followMsgIds = [];
+            msgs.forEach((msg,msgId)=>{
+                let header = msg.header;
+                let body = msg.body;
+                if(body.relativeMsgId===relativeMsgId){
+                    ps.push(this._getReceiveOrder(chatId,relativeMsgId,header.uid,header.did,body.order));
+                    followMsgIds.push(header.id);
+                }
+            });
+            let orders = await Promise.all(ps);
+            for(let i=0;i<orders.length;i++){
+                let receiveOrder = orders[i];
+                let msg = msgs.get(followMsgIds[i]);
+                this._receiveMsg(chatId,msg,relativeOrder,receiveOrder);
+            }
         }
     }
 
@@ -510,11 +469,9 @@ class LKChannel extends WSChannel{
         // const msgDecrypted = bytes.toString(msg.body.content)
         const msgDecrypted = msg.body.content
         let content = JSON.parse(msgDecrypted);
-      console.log({receivedMsg: msg})
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
-        //await ChatManager.increaseNewMsgNum(chatId);
         ChatManager.fire("msgChanged",chatId);
     }
 
@@ -535,8 +492,6 @@ class LKChannel extends WSChannel{
     }
 
     async sendMsgHandler(msg){
-        console.log({receivedMsg: msg})
-
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let header = msg.header;
         let body = msg.body;
@@ -544,53 +499,59 @@ class LKChannel extends WSChannel{
         let senderDid = header.did;
         let isGroup = body.isGroup;
         let chatId = isGroup?body.chatId:(userId===senderUid?body.chatId:senderUid);
-        if(!isGroup)
-            await ChatManager.asyEnsureSingleChat(chatId);
-        let relativeMsgId = body.relativeMsgId;
-        let sendOrder = body.order;
-        let relativeOrder;
-        let receiveOrder;
-        if(relativeMsgId){
-            let relativeMsg = await LKChatProvider.asyGetMsg(userId,chatId,relativeMsgId);
-            console.log({relativeMsg})
-            if(relativeMsg){
-                relativeOrder = relativeMsg.receiveOrder;
-                receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
-            }else{
-                if(header.RFExist===0){//relative msg flow has been deleted by server as a receive report or timeout or this is a new device after relative msg or eat by ghost
-                    let order = Date.now();
-                    this._receiveMsg(chatId,msg,order,order);
-                }else{
-                    this._putChatMsgPool(chatId,msg);
-                }
-            }
+        let exits;
+        if(isGroup){
+            exits = await LKChatProvider.asyGetChat(userId,chatId);
         }else{
-            relativeOrder = Date.now();
-            receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
+            exits = await ChatManager.asyEnsureSingleChat(chatId);
         }
-        console.log({relativeOrder, receiveOrder})
-        if(relativeOrder&&receiveOrder){
-            this._receiveMsg(chatId,msg,relativeOrder,receiveOrder)
+        if(exits){
+            let relativeMsgId = body.relativeMsgId;
+            let sendOrder = body.order;
+            let relativeOrder;
+            let receiveOrder;
+            if(relativeMsgId){
+                let relativeMsg = await LKChatProvider.asyGetMsg(userId,chatId,relativeMsgId);
+                if(relativeMsg){
+                    relativeOrder = relativeMsg.receiveOrder;
+                    receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
+                }else{
+                    if(header.RFExist===0){//relative msg flow has been deleted by server as a receive report or timeout or this is a new device after relative msg or eat by ghost
+                        let order = Date.now();
+                        this._receiveMsg(chatId,msg,order,order);
+                    }else{
+                        this._putChatMsgPool(chatId,msg);
+                    }
+                }
+            }else{
+                relativeOrder = Date.now();
+                receiveOrder = await this._getReceiveOrder(chatId,relativeMsgId,senderUid,senderDid,sendOrder);
+            }
+            if(relativeOrder&&receiveOrder){
+                this._receiveMsg(chatId,msg,relativeOrder,receiveOrder)
+            }
         }
+
     }
 
-    async readReport(chatId,senderUid,serverIP,serverPort,msgIds){
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",{msgIds:msgIds,chatId:chatId},{target:{id:senderUid,serverIP:serverIP,serverPort:serverPort}})]);
+    async readReport(chatId,isGroup,senderUid,serverIP,serverPort,msgIds){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("readReport",{msgIds:msgIds,chatId:chatId,isGroup:isGroup},{target:{id:senderUid,serverIP:serverIP,serverPort:serverPort}})]);
         result[0]._sendMessage(result[1]).then((resp)=>{
             LKChatHandler.asyUpdateReadState(msgIds,ChatManager.MESSAGE_READSTATE_READREPORT);
         });
     }
     readReportHandler(msg){
-        let msgIds = msg.body.content.msgIds;
-        let chatId = msg.body.content.chatId;
-        // let userId = Application.getCurrentApp().getCurrentUser().id;
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        let content = msg.body.content;
+        let msgIds = content.msgIds;
+        let isGroup = content.isGroup;
+        let chatId = isGroup?content.chatId:(userId===msg.header.uid?content.chatId:msg.header.uid);
+
         ChatManager.msgReadReport(msg.header.uid,chatId,msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then(()=>{
             this._reportMsgHandled(msg.header.flowId,msg.header.flowType);
-            ChatManager.fire("msgChanged",msg.header.id);
+            ChatManager.fire("msgChanged",chatId);
         });
-        // LKChatHandler.asyUpdateMsgState(userId,chatId,msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then(()=>{
-        //
-        // });
+
     }
 
     async applyMF(contactId,serverIP,serverPort){

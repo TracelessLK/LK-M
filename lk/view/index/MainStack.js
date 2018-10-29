@@ -66,7 +66,9 @@ const MainTab = createBottomTabNavigator({
   ChatTab: {
     screen: ChatTab,
     navigationOptions: {
-      tabBarIcon: ({ focused }) => {
+      tabBarIcon: (option) => {
+        console.log({option})
+        const { focused } = option
         return util.getTabLogo('消息', focused, 'message-outline', 24)
       }
     }
