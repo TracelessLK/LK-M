@@ -547,8 +547,9 @@ class LKChannel extends WSChannel{
         let isGroup = content.isGroup;
         let chatId = isGroup?content.chatId:(userId===msg.header.uid?content.chatId:msg.header.uid);
 
-        ChatManager.msgReadReport(msg.header.uid,chatId,msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then(()=>{
-            this._reportMsgHandled(msg.header.flowId,msg.header.flowType);
+        ChatManager.msgReadReport(msg.header.uid,chatId,msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then((isAllUpdate)=>{
+            if(isAllUpdate)
+                this._reportMsgHandled(msg.header.flowId,msg.header.flowType);
             ChatManager.fire("msgChanged",chatId);
         });
 
