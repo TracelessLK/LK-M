@@ -653,6 +653,7 @@ class LKChannel extends WSChannel{
         return result[0]._sendMessage(result[1]);
     }
     async addGroupMembersHandler(msg){
+        let header = msg.header;
         let content = msg.body.content;
         let newMembers = content.members;
         let chatId = content.chatId;
@@ -669,26 +670,47 @@ class LKChannel extends WSChannel{
             let name = content.name;
             let oldMembers = content.oldMembers;
 
-            ChatManager.addGroupChat(chatId,name,newMembers.concat(oldMembers));
+            ChatManager.addGroupChat(chatId,name,newMembers.concat(oldMembers)).then(()=>{
+                this._reportMsgHandled(header.flowId,header.flowType);
+            });
         }else{
             let chat = await LKChatProvider.asyGetChat(user.id,chatId);
             if(chat){
-                ChatManager.addGroupMembers(chatId,newMembers);
+                ChatManager.addGroupMembers(chatId,newMembers).then(()=>{
+                    this._reportMsgHandled(header.flowId,header.flowType);
+                });
             }
         }
+    }
+    async setGroupName(chatId,name){
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("setGroupName",{chatId:chatId,name:name})]);
+        return result[0]._sendMessage(result[1]);
+    }
+    async setGroupNameHandler(msg){
+        let header = msg.header;
+        let chatId = msg.body.content.chatId;
+        let name = msg.body.content.name;
+        ChatManager.asyUpdateGroupName(chatId,name).then(()=>{
+            this._reportMsgHandled(header.flowId,header.flowType);
+        });
     }
     async leaveGroup(chatId){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("leaveGroup",{chatId:chatId})]);
         return result[0]._sendMessage(result[1]);
     }
     async leaveGroupHandler(msg){
-        let sender = msg.header.uid;
+        let header = msg.header;
+        let sender = header.uid;
         let chatId = msg.body.content.chatId;
         let user = Application.getCurrentApp().getCurrentUser();
         if(sender===user.id){
-            ChatManager.deleteGroup(chatId);
+            ChatManager.deleteGroup(chatId).then(()=>{
+                this._reportMsgHandled(header.flowId,header.flowType);
+            });
         }else{
-            ChatManager.deleteGroupMember(chatId,sender);
+            ChatManager.deleteGroupMember(chatId,sender).then(()=>{
+                this._reportMsgHandled(header.flowId,header.flowType);
+            });
         }
     }
     async setUserName(name){

@@ -463,6 +463,22 @@ class ChatManager extends EventTarget{
         return Record.getGroupMsgReadReport(userId,chatId,msgId);
     }
 
+    /**
+     * update group name
+     * @param chatId
+     * @param name
+     * @returns {Promise.<*|Promise>}
+     */
+    async asySetGroupName(chatId,name){
+        await Application.getCurrentApp().getLKWSChannel().setGroupName(chatId,name);
+        return this.asyUpdateGroupName(chatId,name)
+    }
+
+    asyUpdateGroupName(chatId,name){
+        let userId = Application.getCurrentApp().getCurrentUser().id;
+        return Chat.setGroupName(userId,chatId,name);
+    }
+
 }
 
 
