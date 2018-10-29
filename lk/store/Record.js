@@ -37,7 +37,8 @@ class Record{
                         content = JSON.stringify({width:content.width,height:content.height,url:url});
                         insert2DB();
                     }).catch(err=>{
-                        reject()
+                      console.log(err)
+                        reject(err)
                     });
                 }
                 RNFetchBlob.fs.exists(dir).then(
@@ -45,14 +46,17 @@ class Record{
                         if(!exist){
                             RNFetchBlob.fs.mkdir(dir).then(()=>{
                                 createImage();
-                            }).catch();
+                            }).catch(err => {
+                              console.log(err)
+                            });
                         }else{
                             createImage();
                         }
                     }
-                ).catch(
-                    reject()
-                );
+                ).catch((err) => {
+                  console.log(err)
+                  reject(err)
+                });
             }
 
 

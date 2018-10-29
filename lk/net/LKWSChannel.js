@@ -363,7 +363,7 @@ class LKChannel extends WSChannel{
     }
 
     sendText(chatId,text,relativeMsgId,isGroup){
-        let content = {type:ChatManager.MESSAGE_TYEP_TEXT,data:text};
+        let content = {type:ChatManager.MESSAGE_TYPE_TEXT,data:text};
         this._sendMsg(chatId,content,relativeMsgId,isGroup).catch(err => {
           console.log(err)
         })

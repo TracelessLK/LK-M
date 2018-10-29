@@ -227,7 +227,7 @@ export default class RecentView extends Component<{}> {
       const allChat = await LKChatProvider.asyGetAll(user.id)
       const msgAryPromise = []
       let contentAry
-      // console.log({allChat})
+      console.log({allChat})
       const {length} = allChat
       if (length) {
         for (let chat of allChat) {
