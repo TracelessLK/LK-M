@@ -224,12 +224,15 @@ class ChatManager extends EventTarget{
             targets.get(record.senderUid).push(record.id);
         });
         LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
-        this.fire('recentChanged')
-        targets.forEach((v,k)=>{
-            Contact.get(userId,k).then((contact)=>{
-                Application.getCurrentApp().getLKWSChannel().readReport(chatId,k,contact.serverIP,contact.serverPort,v);
+        this.fire('recentChanged');
+        LKChatProvider.asyGetChat(userId,chatId).then((chat)=>{
+            targets.forEach((v,k)=>{
+                Contact.get(userId,k).then((contact)=>{
+                    Application.getCurrentApp().getLKWSChannel().readReport(chatId,chat.isGroup,k,contact.serverIP,contact.serverPort,v);
+                });
             });
         });
+
 
         return {msgs:records,newMsgs:newMsgs};
     }
@@ -258,7 +261,7 @@ class ChatManager extends EventTarget{
                        });
                        targets.forEach((v,k)=>{
                            Contact.get(user.id,k).then((contact)=>{
-                               Application.getCurrentApp().getLKWSChannel().readReport(k,chats[i].id,contact.serverIP,contact.serverPort,v);
+                               Application.getCurrentApp().getLKWSChannel().readReport(chats[i].id,chats[i].isGroup,k,contact.serverIP,contact.serverPort,v);
                            });
                        });
                    }
