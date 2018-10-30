@@ -321,7 +321,8 @@ class LKChannel extends WSChannel{
 
     async asyLogin(){
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("login")]);
-        return result[0]._sendMessage(result[1]);
+        await result[0]._sendMessage(result[1])
+        Application.getCurrentApp().setLogin(Application.getCurrentApp().getCurrentUser())
     }
 
   async asyGetAllDetainedMsg(){
