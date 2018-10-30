@@ -84,6 +84,13 @@ class LKApplication extends Application{
         ConfigManager.getMagicCodeManager().init(user);
     }
 
+    getLogin(){
+        return this._login;
+    }
+    setLogin(user){
+        this._login = user;
+    }
+
     getCurrentRSA(){
         return this._rsa;
     }
