@@ -101,7 +101,7 @@ class Util {
     return Util.query(sql)
   }
   // todo: should be putinto net channell
-  static runNetFunc (func, {errorCb, showWarning = true}) {
+  static runNetFunc (func, {errorCb, showWarning = true} = {}) {
     // console.log({container})
     const {connectionOK, NetInfoUtil} = container.state
     if (connectionOK) {

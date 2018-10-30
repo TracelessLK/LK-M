@@ -47,7 +47,7 @@ export default class SelectUserView extends Component<{}> {
         image: getAvatarSource(pic),
         id,
         name: `${name}`,
-        content: `IP地址: ${serverIP} 端口: ${serverPort} 标识: ${id}`,
+        content: `IP地址: ${serverIP} 端口: ${serverPort}`,
         onPress: () => {
           navigation.navigate('PasswordLoginView', {user: ele})
         }

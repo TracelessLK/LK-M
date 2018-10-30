@@ -1,5 +1,5 @@
 import React, { Component} from 'react'
-import {Button, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native'
+import {Button, ScrollView, Text, TextInput, TouchableOpacity, View, Platform} from 'react-native'
 const common = require('@external/common')
 const {List} = common
 const {FuncUtil} = require('@ys/vanilla')
@@ -12,18 +12,20 @@ const chatManager = require('../../core/ChatManager')
 const {runNetFunc} = require('../../util')
 
 export default class AddGroupView extends Component<{}> {
-  static navigationOptions =({ navigation }) => (
-    {
-      headerRight:
-        <TouchableOpacity style={{marginRight: 20}}>
-          <Button color="#fff" title="确定"
-            onPress={debounceFunc(() => {
-              navigation.state.params.navigateAddGroupPress()
-            })}
-            style={{marginRight: 20}}/>
-        </TouchableOpacity>
-    }
-  )
+  static navigationOptions =({ navigation }) => {
+    return (
+      {
+        headerRight:
+          <TouchableOpacity style={{marginRight: 20}}>
+            <Button title="确定" color = {Platform.OS === 'ios' ? '#fff' : null}
+              onPress={debounceFunc(() => {
+                navigation.state.params.navigateAddGroupPress()
+              })}
+              style={{marginRight: 20, color: '#fff'}}/>
+          </TouchableOpacity>
+      }
+    )
+  }
 
   constructor (props) {
     super(props)
