@@ -24,7 +24,7 @@ const _ = require('lodash')
 const addPng = require('../image/add.png')
 const {NetInfoUtil} = require('@ys/react-native-collection')
 const container = require('../../state')
-container.state.NetInfoUtil = NetInfoUtil
+container.NetInfoUtil = NetInfoUtil
 const {runNetFunc} = require('../../util')
 
 export default class RecentView extends Component<{}> {
@@ -281,7 +281,7 @@ export default class RecentView extends Component<{}> {
     }
 
     resetHeaderTitle = async () => {
-      if (container.state.connectionOK) {
+      if (container.connectionOK) {
         const {navigation} = this.props
         const num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
         navigation.setParams({

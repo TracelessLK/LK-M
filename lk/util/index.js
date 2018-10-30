@@ -103,7 +103,7 @@ class Util {
   // todo: should be putinto net channell
   static runNetFunc (func, {errorCb, showWarning = true} = {}) {
     // console.log({container})
-    const {connectionOK, NetInfoUtil} = container.state
+    const {connectionOK, NetInfoUtil} = container
     if (connectionOK) {
       func()
     } else {

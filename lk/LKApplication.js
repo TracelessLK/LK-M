@@ -61,7 +61,7 @@ class LKApplication extends Application {
   }
 
   async checkUpdate (user) {
-    if (container.state.NetInfoUtil.online) {
+    if (container.NetInfoUtil.online) {
       const {serverIP, serverPort, id, name} = user
       const response = await fetch(appInfoUrl)
       const appInfo = await response.json()
@@ -84,7 +84,7 @@ class LKApplication extends Application {
         appId
       }
       const updateUtil = new UpdateUtil(option)
-      container.state.updateUtil = updateUtil
+      container.updateUtil = updateUtil
       const optionCheck = {
         customInfo: {
           id,

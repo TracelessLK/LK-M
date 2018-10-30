@@ -59,7 +59,7 @@ export default class VersionView extends Component<{}> {
                     this.setState({
                       checking: true
                     })
-                    const {updateUtil} = container.state
+                    const {updateUtil} = container
 
                     const afterCheck = () => {
                       this.setState({

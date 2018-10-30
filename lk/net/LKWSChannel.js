@@ -27,10 +27,10 @@ class LKChannel extends WSChannel{
         super(url,true);
         this._ping();
         this.on('connectionFail', () => {
-          container.state.connectionOK = false
+          container.connectionOK = false
         })
         this.on('connectionOpen', () => {
-          container.state.connectionOK = true
+          container.connectionOK = true
         })
       this.user =  Application.getCurrentApp().getCurrentUser()
     }
