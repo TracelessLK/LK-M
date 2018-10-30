@@ -44,7 +44,6 @@ class ContactManager extends EventTarget{
     async asyAddNewFriend(friend){
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let curContact = await Contact.get(userId,friend.id);
-        console.log({curContact})
         if(!curContact)
             await LKContactHandler.asyAddNewFriend(friend,userId);
         else if(curContact.relation==2){

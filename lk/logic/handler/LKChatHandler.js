@@ -1,8 +1,8 @@
 import Chat from '../../store/Chat'
 import Record from '../../store/Record'
 class LKChatHandler{
-    asyAddSingleChat(userId,chatId,newMsgNum){
-        return Chat.addSingleChat(userId,chatId,newMsgNum);
+    asyAddSingleChat(userId,chatId){
+        return Chat.addSingleChat(userId,chatId);
     }
     asyAddGroupMembers(chatId,members){
         return Chat.addGroupMembers(chatId,members);
@@ -12,9 +12,6 @@ class LKChatHandler{
     }
     asyUpdateMsgState(userId,chatId,msgIds,state){
         return Record.updateMsgState(userId,chatId,msgIds,state)
-    }
-    asyUpdateNewMsgNum(userId,chatId,num){
-        return Chat.updateNewMsgNum(userId,chatId,num);
     }
     asyUpdateReadState(msgIds,state){
         return Record.updateReadState(msgIds,state);
