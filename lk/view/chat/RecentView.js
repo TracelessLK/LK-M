@@ -27,6 +27,7 @@ const container = require('../../state')
 container.NetInfoUtil = NetInfoUtil
 const {runNetFunc} = require('../../util')
 
+
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
       const size = 20
