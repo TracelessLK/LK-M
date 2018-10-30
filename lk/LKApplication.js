@@ -79,7 +79,7 @@ class LKApplication extends Application {
       }
 
       // console.log({appInfo})
-      const checkUpdateUrl = `${base}${updateUrl} `
+      const checkUpdateUrl = `${base}${updateUrl}`
       console.log({checkUpdateUrl})
       const manualDownloadUrl = `${base}/pkg/${Platform.OS}/${appName}.${Platform.OS === 'android' ? 'apk' : 'ipa'}`
 

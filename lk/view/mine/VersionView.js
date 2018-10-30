@@ -12,7 +12,6 @@ const {debounceFunc} = FuncUtil
 const lkApp = require('../../LKApplication').getCurrentApp()
 const container = require('../../state')
 const {runNetFunc} = require('../../util')
-
 export default class VersionView extends Component<{}> {
     static navigationOptions = () => {
       return {
@@ -60,6 +59,7 @@ export default class VersionView extends Component<{}> {
                       checking: true
                     })
                     const {updateUtil} = container
+                    console.log({updateUtil})
 
                     const afterCheck = () => {
                       this.setState({
@@ -77,9 +77,10 @@ export default class VersionView extends Component<{}> {
                     }
                     const option = {
                       customInfo: {
-                        uid: this.user.id,
+                        id: this.user.id,
                         name: this.user.name
                       },
+                      versionLocal,
                       beforeUpdate: afterCheck,
                       noUpdateCb,
                       checkUpdateErrorCb: (error) => {
