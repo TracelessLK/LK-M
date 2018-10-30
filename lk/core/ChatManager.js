@@ -382,11 +382,13 @@ class ChatManager extends EventTarget{
 
     async addGroupChat(chatId,name,members,local){
         let userId = Application.getCurrentApp().getCurrentUser().id;
-        if(!local)
-            await Contact.addNewGroupContactIFNotExist(members,userId);
-        await Chat.addGroupChat(userId,chatId,name);
-        await Chat.addGroupMembers(chatId,members);
-        this.fire("recentChanged");
+        const chat = await Chat.getChat(userId,chatId);
+        if(!chat){
+            if(!local)
+                await Contact.addNewGroupContactIFNotExist(members,userId);
+            await Promise.all([Chat.addGroupChat(userId,chatId,name),Chat.addGroupMembers(chatId,members)])
+            this.fire("recentChanged");
+        }
     }
 
     /**
@@ -407,8 +409,7 @@ class ChatManager extends EventTarget{
     }
     async addGroupMembers(chatId,newMembers){
         let userId = Application.getCurrentApp().getCurrentUser().id;
-        await Contact.addNewGroupContactIFNotExist(newMembers,userId);
-        await Chat.addGroupMembers(chatId,newMembers);
+        await Promise.all([Contact.addNewGroupContactIFNotExist(newMembers,userId),Chat.addGroupMembers(chatId,newMembers)]);
 
     }
     async asyResetGroups(groups,userId){

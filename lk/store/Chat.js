@@ -1,7 +1,7 @@
 
 import db from '../../common/store/DataBase'
 db.transaction((tx)=>{
-    tx.executeSql("create table if not exists chat(id TEXT,ownerUserId TEXT,name TEXT,newMsgNum INTEGER,createTime INTEGER,topTime INTEGER,isGroup INTEGER,reserve1 TEXT,PRIMARY KEY(ownerUserId,id))",[],function () {
+    tx.executeSql("create table if not exists chat(id TEXT,ownerUserId TEXT,name TEXT,createTime INTEGER,topTime INTEGER,isGroup INTEGER,reserve1 TEXT,PRIMARY KEY(ownerUserId,id))",[],function () {
     },function (err) {
     });
     tx.executeSql("create table if not exists groupMember(chatId TEXT,contactId TEXT,reserve1 TEXT,primary key(chatId,contactId))",[],function () {
@@ -71,12 +71,12 @@ class Chat{
         });
     }
 
-    addSingleChat(userId,chatId,newMsgNum){
+    addSingleChat(userId,chatId){
 
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "insert into chat(id,ownerUserId,newMsgNum,createTime,topTime,isGroup) values (?,?,?,?,?,?)";
-                tx.executeSql(sql,[chatId,userId,newMsgNum||0,Date.now(),0,0],function () {
+                let sql = "insert into chat(id,ownerUserId,createTime,topTime,isGroup) values (?,?,?,?,?,?)";
+                tx.executeSql(sql,[chatId,userId,Date.now(),0,0],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -84,53 +84,47 @@ class Chat{
             });
         });
     }
-    addGroupChat(userId,chatId,name,newMsgNum){
+    addGroupChat(userId,chatId,name){
         return new Promise(async (resolve,reject)=>{
-            const chat = await this.getChat(userId,chatId)
-            if (chat) {
-              resolve()
-            } else {
-              db.transaction((tx)=>{
-                let sql = "insert into chat(id,ownerUserId,name,newMsgNum,createTime,topTime,isGroup) values (?,?,?,?,?,?,?)";
-                tx.executeSql(sql,[chatId,userId,name,newMsgNum||0,Date.now(),0,1],function () {
-                  resolve();
+            db.transaction((tx)=>{
+                let sql = "insert into chat(id,ownerUserId,name,createTime,topTime,isGroup) values (?,?,?,?,?,?,?)";
+                tx.executeSql(sql,[chatId,userId,name,Date.now(),0,1],function () {
+                    resolve();
                 },function (err) {
-                  reject(err);
+                    reject(err);
                 });
-              });
-            }
+            });
         });
     }
 
-    addGroupMembers(chatId,members){
-        return new Promise(async (resolve,reject)=>{
-            const memberAry = await this.getGroupMembers(chatId)
-           members =members.filter(ele => {
-              return !memberAry.some((eleInner) => {return eleInner.id === ele.id})
-            })
-            // console.log({memberAry,members})
-            if (members.length) {
-              db.transaction((tx)=>{
-                let sql = "insert into groupMember(chatId,contactId) values ";
-                for(let i=0;i<members.length;i++){
-                  sql += "('"+chatId+"','";
-                  sql += members[i].id;
-                  sql +="')";
-                  if(i<members.length-1){
-                    sql += ",";
-                  }
-                }
-                tx.executeSql(sql,[],function () {
-                  resolve();
+    _addGroupMember(chatId,contactId){
+        return new Promise( (resolve,reject)=>{
+            db.transaction((tx)=>{
+                let sql = "insert into groupMember(chatId,contactId) values (?,?) where not exists(select * from groupMember where chatId=? and contactId=?)";
+                tx.executeSql(sql,[chatId,contactId,chatId,contactId],function () {
+                    resolve();
                 },function (err) {
-                  reject(err);
+                    reject(err);
                 });
-              },function (err) {
+            },function (err) {
                 reject(err);
-              });
-            } else {
-              resolve()
-            }
+            });
+        });
+
+    }
+
+    addGroupMembers(chatId,members){
+        return new Promise( (resolve,reject)=>{
+            let ps = [];
+            members.forEach((contact)=>{
+                let contactId = contact.id;
+                ps.push(this._addGroupMember(chatId,contactId))
+            });
+            Promise.all(ps).then(()=>{
+                resolve();
+            }).catch(()=>{
+                reject()
+            })
         });
     }
 
@@ -147,19 +141,6 @@ class Chat{
         });
     }
 
-    updateNewMsgNum(userId,chatId,num){
-        return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
-                let sql = "update chat set newMsgNum=? where id=? and ownerUserId=?";
-                tx.executeSql(sql,[num,chatId,userId],function () {
-                    resolve();
-                },function (err) {
-                    reject(err);
-                });
-            });
-        });
-    }
-
     clear(userId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
@@ -168,21 +149,14 @@ class Chat{
 
                     let sql2 = "delete from record where ownerUserId=?";
                     tx.executeSql(sql2,[userId],function () {
-                    },function (err) {
-                    });
-
-                    let sql3 = "update chat set newMsgNum=? where ownerUserId=? and isGroup=? and newMsgNum>?";
-                    tx.executeSql(sql3,[0,userId,1,0],function () {
-
-                        resolve();
-
-                        let sql4 = "delete from group_record_state where ownerUserId=?";
-                        tx.executeSql(sql4,[userId],function () {
-                        },function (err) {
-                        });
-
+                        resolve()
                     },function (err) {
                         reject(err);
+                    });
+
+                    let sql4 = "delete from group_record_state where ownerUserId=?";
+                    tx.executeSql(sql4,[userId],function () {
+                    },function (err) {
                     });
 
                 },function (err) {
@@ -270,7 +244,7 @@ class Chat{
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
                 let sql = "update chat set name=? where id=? and ownerUserId=?";
-                tx.executeSql(sql,[Date.now(),chatId,userId],function () {
+                tx.executeSql(sql,[name,chatId,userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);

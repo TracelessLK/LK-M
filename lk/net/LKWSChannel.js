@@ -379,6 +379,9 @@ class LKChannel extends WSChannel{
     sendGroupText(chatId,text,relativeMsgId){
         this.sendText(chatId,text,relativeMsgId,true)
     }
+    sendGroupImage(chatId,imgData,width,height,relativeMsgId){
+        this.sendImage(chatId,imgData,width,height,relativeMsgId,true);
+    }
 
     async _sendMsg(chatId,content,relativeMsgId,isGroup){
         let curApp = Application.getCurrentApp();
