@@ -45,6 +45,12 @@ class LKApplication extends Application {
       }
       if (url) {
         this._channel = new (ConfigManager.getWSChannel())('ws://' + user.serverIP + ':' + user.serverPort, true)
+        this._channel.on('connectionFail', () => {
+          container.connectionOK = false
+        })
+        this._channel.on('connectionOpen', () => {
+          container.connectionOK = true
+        })
       }
     }
     if (this._channel) {

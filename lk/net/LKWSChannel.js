@@ -13,7 +13,6 @@ import LKChatProvider from '../logic/provider/LKChatProvider'
 import MFApplyManager from '../core/MFApplyManager'
 import FlowCursor from '../store/FlowCursor'
 import CryptoJS from "crypto-js";
-const container = require('../state')
 
 class LKChannel extends WSChannel{
 
@@ -26,12 +25,6 @@ class LKChannel extends WSChannel{
     constructor(url){
         super(url,true);
         this._ping();
-        this.on('connectionFail', () => {
-          container.connectionOK = false
-        })
-        this.on('connectionOpen', () => {
-          container.connectionOK = true
-        })
       this.user =  Application.getCurrentApp().getCurrentUser()
     }
 
