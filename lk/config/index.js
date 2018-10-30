@@ -8,8 +8,8 @@ const config = {
   isDevMode: true,
   isPreviewVersion: false,
   isEncrypted: true,
-  httpProtocol: 'http',
-  appName: 'LK'
+  appName: 'LK',
+  appInfoUrl: 'https://raw.githubusercontent.com/tracelessman/LK-M/dev_z/public/app.json'
 }
 
 // config in production

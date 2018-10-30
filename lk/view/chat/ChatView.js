@@ -278,8 +278,10 @@ export default class ChatView extends Component<{}> {
             channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
           }
           this.text = ''
-        }, () => {
-          this.refs.text.reload(this.text)
+        }, {
+          errorCb: () => {
+            this.refs.text.reload(this.text)
+          }
         })
       }
     }
@@ -444,12 +446,12 @@ export default class ChatView extends Component<{}> {
             <View style={{width: '100%',
               flexDirection: 'row',
               justifyContent: 'center',
-              alignItems: 'flex-end',
+              alignItems: Platform.OS === 'ios' ? 'flex-end' : 'center',
               borderTopWidth: 1,
               borderColor: '#d0d0d0',
               overflow: 'hidden',
               paddingVertical: 5,
-              marginBottom: 0}}>
+              marginBottom: Platform.OS === 'ios' ? 0 : 20}}>
               <TextInput ref='text2' style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
               <TextInputWrapper onChangeText={(v) => {
                 this.text = v ? v.trim() : ''

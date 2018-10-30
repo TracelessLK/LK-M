@@ -1,3 +1,4 @@
 {
-  "updateUrl": "/api/update/checkUpdate"
+  "updateUrl": "/api/update/checkUpdate",
+  "httpProtocol": "http"
 }

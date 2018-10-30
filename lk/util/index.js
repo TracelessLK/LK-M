@@ -1,6 +1,7 @@
 import db from '../../common/store/DataBase'
 import {Toast} from 'native-base'
 const {commonUtil} = require('@external/common')
+console.log(require('../LKApplication'))
 const lkApp = require('../LKApplication').getCurrentApp()
 const {getAvatarSource} = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
@@ -100,25 +101,27 @@ class Util {
     return Util.query(sql)
   }
   // todo: should be putinto net channell
-  static runNetFunc (func, errorCb) {
-    console.log({container})
+  static runNetFunc (func, {errorCb, showWarning = true}) {
+    // console.log({container})
     const {connectionOK, NetInfoUtil} = container.state
     if (connectionOK) {
       func()
     } else {
       runFunc(errorCb)
-      if (NetInfoUtil.online) {
-        Toast.show({
-          text: '无法连接服务器',
-          position: 'top',
-          type: 'warning'
-        })
-      } else {
-        Toast.show({
-          text: '您的连接已断开,请检查网络设置',
-          position: 'top',
-          type: 'warning'
-        })
+      if (showWarning) {
+        if (NetInfoUtil.online) {
+          Toast.show({
+            text: '无法连接服务器',
+            position: 'top',
+            type: 'warning'
+          })
+        } else {
+          Toast.show({
+            text: '您的连接已断开,请检查网络设置',
+            position: 'top',
+            type: 'warning'
+          })
+        }
       }
     }
   }

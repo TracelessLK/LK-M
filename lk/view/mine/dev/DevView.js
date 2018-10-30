@@ -41,95 +41,32 @@ export default class BasicInfoView extends Component<{}> {
         contentContainer: {
         }
       }
-      const list2 = [
+      const ary = [
         {
-          title: (
-            <View style={style.listItem}>
-              <View>
-                <Text style={style.titleStyle}>
-                                软件信息
-                </Text>
-              </View>
-              <View>
-                <Text style={style.contentStyle}>
-                </Text>
-              </View>
-            </View>),
-          onPress: debounceFunc(() => {
+          title: '软件信息',
+          onPress: () => {
             this.props.navigation.navigate('InfoView')
-          })
+          }
         },
         {
-          title: (
-            <View style={style.listItem}>
-              <View>
-                <Text style={style.titleStyle}>
-                                查看错误日志
-                </Text>
-              </View>
-              <View style={style.contentContainer}>
-                <Text style={[style.contentStyle, {fontSize: 14}]}>
-                </Text>
-              </View>
-
-            </View>),
-          onPress: debounceFunc(() => {
+          title: '查看错误日志',
+          onPress: () => {
             this.props.navigation.navigate('LogView', {
               path: config.errorLogPath
             })
-          })
+          }
         },
         {
-          title: (
-            <View style={style.listItem}>
-              <View>
-                <Text style={style.titleStyle}>
-                                查看调试日志
-                </Text>
-              </View>
-              <View>
-                <Text style={style.contentStyle}>
-                </Text>
-              </View>
-            </View>),
-          onPress: debounceFunc(() => {
+          title: '查看调试日志',
+          onPress: () => {
             this.props.navigation.navigate('LogView', {
               path: config.devLogPath
             })
-          })
+          }
         },
         {
-          title: (
-            <View style={style.listItem}>
-              <View>
-                <Text style={style.titleStyle}>
-                                数据二维码
-                </Text>
-              </View>
-              <View>
-                <Text style={style.contentStyle}>
-                </Text>
-              </View>
-            </View>),
-          onPress: debounceFunc(() => {
-            this.props.navigation.navigate('DataQrView', {
-            })
-          })
-        },
-        {
-          title: (
-            <View style={style.listItem}>
-              <View>
-                <Text style={style.titleStyle}>
-                                重置
-                </Text>
-              </View>
-              <View>
-                <Text style={style.contentStyle}>
-                </Text>
-              </View>
-            </View>),
-          onPress: debounceFunc(() => {
+          title: '重置',
+          onPress: () => {
             Alert.alert(
               '提示',
               '重置后会删除当前账号的所有数据,请确认是否继续本操作?',
@@ -146,44 +83,50 @@ export default class BasicInfoView extends Component<{}> {
               ],
               { cancelable: false }
             )
-          })
-        },
-
-        {
-          title: (
-            <View style={style.listItem}>
-              <View>
-                <Text style={style.titleStyle}>
-                                设置检查更新服务器地址
-                </Text>
-              </View>
-              <View>
-                <Text style={style.contentStyle}>
-                </Text>
-              </View>
-            </View>),
-          onPress: debounceFunc(() => {
-            this.props.navigation.navigate('SetHostView')
-          })
+          }
         },
         {
-          title: (
-            <View style={style.listItem}>
-              <View>
-                <Text style={style.titleStyle}>
-                  test
-                </Text>
-              </View>
-              <View>
-                <Text style={style.contentStyle}>
-                </Text>
-              </View>
-            </View>),
-          onPress: debounceFunc(() => {
-            throw new Error('test')
-          })
+          title: ' 设置检查更新服务器地址',
+          onPress: () => {
+            this.props.navigation.navigate('SetUpdateUrlView')
+          }
         }
+        // {
+        //   title: 'test',
+        //   onPress: () => {
+        //
+        //   }
+        // },
+        // {
+        //   title: 'test',
+        //   onPress: () => {
+        //
+        //   }
+        // },
+        // {
+        //   title: 'test',
+        //   onPress: () => {
+        //
+        //   }
+        // }
       ]
+      const list2 = ary.map(ele => {
+        return {
+          title: (
+            <View style={style.listItem}>
+              <View>
+                <Text style={style.titleStyle}>
+                  {ele.title}
+                </Text>
+              </View>
+              <View>
+                <Text style={style.contentStyle}>
+                </Text>
+              </View>
+            </View>),
+          onPress: debounceFunc(ele.onPress)
+        }
+      })
 
       return (
         <ScrollView >
