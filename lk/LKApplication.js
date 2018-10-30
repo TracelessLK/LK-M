@@ -27,7 +27,7 @@ class LKApplication extends Application{
           // console.log({user})
           const {serverIP, serverPort, id, name} = user
           const base = `${httpProtocol}://${serverIP}:${serverPort}`
-          const checkUpdateUrl = `${base}/checkUpdate `
+          const checkUpdateUrl = `${base}/update/checkUpdate `
           const manualDownloadUrl = `${base}/pkg/${Platform.OS}/${appName}.${Platform.OS === 'android'?'apk':'ipa'}`
 
           const option = {
