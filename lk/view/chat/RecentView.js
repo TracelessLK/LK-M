@@ -103,7 +103,7 @@ export default class RecentView extends Component<{}> {
     }
 
     _handleAppStateChange = (appState) => {
-      console.log({appState})
+      // console.log({appState})
       if (appState === 'active') {
         this.asyGetAllDetainedMsg({minTime: 500})
       }
@@ -290,7 +290,7 @@ export default class RecentView extends Component<{}> {
       }
     }
 
-  asyGetAllDetainedMsg = ({minTime = 1000 * 1, refreshControl}) => {
+  asyGetAllDetainedMsg = ({minTime = 1000 * 1, refreshControl, showWarning = false}) => {
     const {navigation} = this.props
 
     runNetFunc(async () => {
@@ -314,7 +314,7 @@ export default class RecentView extends Component<{}> {
       let diff = minTime - (Date.now() - start)
       diff = diff > 0 ? diff : 0
       setTimeout(reset, diff)
-    })
+    }, {showWarning})
   }
 
   render () {
@@ -332,7 +332,7 @@ export default class RecentView extends Component<{}> {
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={() => {
-                this.asyGetAllDetainedMsg({refreshControl: true})
+                this.asyGetAllDetainedMsg({refreshControl: true, showWarning: true})
               }}
             />}
         >
