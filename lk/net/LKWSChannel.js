@@ -475,7 +475,8 @@ class LKChannel extends WSChannel{
         // const msgDecrypted = bytes.toString(msg.body.content)
         const msgDecrypted = msg.body.content
         let content = JSON.parse(msgDecrypted);
-        await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,null,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
+        let state = userId===header.uid?ChatManager.MESSAGE_STATE_SERVER_RECEIVE:null;
+        await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,state,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
         ChatManager.fire("msgChanged",chatId);
