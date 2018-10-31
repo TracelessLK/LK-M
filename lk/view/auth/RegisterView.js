@@ -62,7 +62,7 @@ export default class RegisterView extends Component<{}> {
           </Form>
           <View style={{alignItems: 'center', justifyContent: 'center'}}>
             <Button disabled={this.state.buttonDisabled} ref='button' iconLeft info style={{width: Dimensions.get('window').width - 30, alignItems: 'center', justifyContent: 'center', marginTop: 30}}
-              onPress={() => {
+              onPress={async () => {
                 if (!this.checkCode && this.state.hasCheckCode) {
                   Toast.show({
                     text: '请输入验证码',
@@ -97,38 +97,36 @@ export default class RegisterView extends Component<{}> {
                   let rsa = new RSAKey()
                   rsa.generate(bits, exponent)
                   const publicKey = rsa.getPublicString() // return json encoded string
-                  const privateKey = rsa.getPrivateString(); // return js
+                  const privateKey = rsa.getPrivateString() // return js
 
-                  (async () => {
-                    const password = md5(this.password).toString()
-                    const user = {
-                      id: obj.id,
-                      name: obj.name,
-                      publicKey,
-                      privateKey,
-                      deviceId: uuid(),
-                      serverIP: obj.ip,
-                      serverPort: obj.port,
-                      orgId: obj.orgId,
-                      mCode: obj.mCode,
-                      password
-                    }
-                    const description = {
-                      brand: deviceInfo.getBrand(),
-                      device: deviceInfo.getDeviceId()
-                    }
-                    const venderDid = await pushUtil.getAPNDeviceId()
+                  const password = md5(this.password).toString()
+                  const user = {
+                    id: obj.id,
+                    name: obj.name,
+                    publicKey,
+                    privateKey,
+                    deviceId: uuid(),
+                    serverIP: obj.ip,
+                    serverPort: obj.port,
+                    orgId: obj.orgId,
+                    mCode: obj.mCode,
+                    password
+                  }
+                  const description = {
+                    brand: deviceInfo.getBrand(),
+                    device: deviceInfo.getDeviceId()
+                  }
+                  const venderDid = await pushUtil.getAPNDeviceId()
 
-                    lkApplication.asyRegister(user, venderDid, this.checkCode, qrcode, JSON.stringify(description, null, 2)).then((user) => {
-                      lkApplication.setCurrentUser(user)
-                      this.props.navigation.navigate('MainStack')
-                    }).catch(error => {
-                      const errStr = JSON.stringify(error)
-                      console.log(error)
+                  lkApplication.asyRegister(user, venderDid, this.checkCode, qrcode, JSON.stringify(description, null, 2)).then((user) => {
+                    lkApplication.setCurrentUser(user)
+                    this.props.navigation.navigate('MainStack')
+                  }).catch(error => {
+                    const errStr = JSON.stringify(error)
+                    console.log(error)
 
-                      Alert.alert(errStr)
-                    })
-                  })()
+                    Alert.alert(errStr)
+                  })
                 }
               }}>
               <Text style={{color: 'white'}}>注册</Text>
