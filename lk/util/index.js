@@ -1,7 +1,6 @@
 import db from '../../common/store/DataBase'
 import {Toast} from 'native-base'
 const {commonUtil} = require('@external/common')
-console.log(require('../LKApplication'))
 const lkApp = require('../LKApplication').getCurrentApp()
 const {getAvatarSource} = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
@@ -104,6 +103,7 @@ class Util {
   static runNetFunc (func, {errorCb, showWarning = true} = {}) {
     // console.log({container})
     const hasLogin = lkApp.getLogin()
+    // console.log({hasLogin})
 
     if (hasLogin) {
       const {connectionOK, NetInfoUtil} = container
@@ -131,7 +131,8 @@ class Util {
       Toast.show({
         text: '您的账户已在服务端被删除,无法再与服务端通信',
         position: 'top',
-        type: 'warning'
+        type: 'warning',
+        duration: 5000
       })
     }
   }
