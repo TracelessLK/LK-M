@@ -125,6 +125,7 @@ class LKApplication extends Application {
         if (content.error) {
           reject(content.error)
         } else {
+          // console.log({content})
           let serverPK = content.publicKey
           let orgMCode = content.orgMCode
           let orgs = content.orgs
@@ -144,6 +145,8 @@ class LKApplication extends Application {
             return ConfigManager.getUserManager().asyAddLKUser(user)
           }).then(function () {
             resolve(user)
+          }).catch(err => {
+            reject(err)
           })
         }
       })
