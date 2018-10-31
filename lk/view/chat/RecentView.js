@@ -24,8 +24,9 @@ const _ = require('lodash')
 const addPng = require('../image/add.png')
 const {NetInfoUtil} = require('@ys/react-native-collection')
 const container = require('../../state')
-container.state.NetInfoUtil = NetInfoUtil
+container.NetInfoUtil = NetInfoUtil
 const {runNetFunc} = require('../../util')
+
 
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -54,25 +55,26 @@ export default class RecentView extends Component<{}> {
     }
 
   optionToChoose = () => {
+    this.props.navigation.navigate('AddGroupView')
     // const {navigation} = this.props
-    let BUTTONS = ['发起群聊',
-      // '添加外部好友',
-      '取消']
-    let CANCEL_INDEX = BUTTONS.length - 1
-    ActionSheet.show(
-      {
-        options: BUTTONS,
-        cancelButtonIndex: CANCEL_INDEX,
-        title: ''
-      },
-      buttonIndex => {
-        if (buttonIndex === 0) {
-          this.props.navigation.navigate('AddGroupView')
-        } else if (buttonIndex === 1) {
-          // addExternalFriend({navigation})
-        }
-      }
-    )
+    // let BUTTONS = ['发起群聊',
+    //   // '添加外部好友',
+    //   '取消']
+    // let CANCEL_INDEX = BUTTONS.length - 1
+    // ActionSheet.show(
+    //   {
+    //     options: BUTTONS,
+    //     cancelButtonIndex: CANCEL_INDEX,
+    //     title: ''
+    //   },
+    //   buttonIndex => {
+    //     if (buttonIndex === 0) {
+    //       this.props.navigation.navigate('AddGroupView')
+    //     } else if (buttonIndex === 1) {
+    //       // addExternalFriend({navigation})
+    //     }
+    //   }
+    // )
   }
 
     update=() => {
@@ -103,7 +105,7 @@ export default class RecentView extends Component<{}> {
     }
 
     _handleAppStateChange = (appState) => {
-      console.log({appState})
+      // console.log({appState})
       if (appState === 'active') {
         this.asyGetAllDetainedMsg({minTime: 500})
       }
@@ -227,7 +229,7 @@ export default class RecentView extends Component<{}> {
       const allChat = await LKChatProvider.asyGetAll(user.id)
       const msgAryPromise = []
       let contentAry
-      // console.log({allChat})
+      console.log({allChat})
       const {length} = allChat
       if (length) {
         for (let chat of allChat) {
@@ -281,7 +283,7 @@ export default class RecentView extends Component<{}> {
     }
 
     resetHeaderTitle = async () => {
-      if (container.state.connectionOK) {
+      if (container.connectionOK) {
         const {navigation} = this.props
         const num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
         navigation.setParams({
@@ -290,7 +292,7 @@ export default class RecentView extends Component<{}> {
       }
     }
 
-  asyGetAllDetainedMsg = ({minTime = 1000 * 1, refreshControl}) => {
+  asyGetAllDetainedMsg = ({minTime = 1000 * 1, refreshControl, showWarning = false}) => {
     const {navigation} = this.props
 
     runNetFunc(async () => {
@@ -314,7 +316,7 @@ export default class RecentView extends Component<{}> {
       let diff = minTime - (Date.now() - start)
       diff = diff > 0 ? diff : 0
       setTimeout(reset, diff)
-    })
+    }, {showWarning})
   }
 
   render () {
@@ -332,7 +334,7 @@ export default class RecentView extends Component<{}> {
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={() => {
-                this.asyGetAllDetainedMsg({refreshControl: true})
+                this.asyGetAllDetainedMsg({refreshControl: true, showWarning: true})
               }}
             />}
         >

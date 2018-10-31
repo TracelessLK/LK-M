@@ -6,7 +6,7 @@ let deviceIdApnPromise = new Promise(resolve => {
     PushNotificationIOS.requestPermissions().then(res => {
       PushNotificationIOS.addEventListener('register', (deviceId) => {
         if (__DEV__ && Platform.OS === 'ios') {
-          console.log(`deviceId APN: ${deviceId}`)
+          // console.log(`deviceId APN: ${deviceId}`)
         }
         resolve(deviceId)
       })

@@ -1,6 +1,6 @@
 const style = {
   color: {
-    logoColor: '#00753c',
+    logoColor: '#5077AA',
     mainColor: '#5077AA',
     secondColor: '#979ea8'
   }

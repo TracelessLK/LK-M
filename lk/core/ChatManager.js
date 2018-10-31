@@ -225,6 +225,8 @@ class ChatManager extends EventTarget{
         });
         LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
         this.fire('recentChanged');
+       let num = await LKChatProvider.asyGetAllMsgNotReadNum(userId)
+       this.fire("msgBadgeChanged",num);
         LKChatProvider.asyGetChat(userId,chatId).then((chat)=>{
             targets.forEach((v,k)=>{
                 Contact.get(userId,k).then((contact)=>{

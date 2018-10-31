@@ -14,6 +14,8 @@ import {
 import RNFetchBlob from 'react-native-fetch-blob'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import ImageViewer from 'react-native-image-zoom-viewer'
+import ImagePicker from 'react-native-image-picker'
+import ImageResizer from 'react-native-image-resizer'
 import {
   Toast,
   ActionSheet
@@ -278,55 +280,49 @@ export default class ChatView extends Component<{}> {
             channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
           }
           this.text = ''
-        }, () => {
-          this.refs.text.reload(this.text)
+        }, {
+          errorCb: () => {
+            this.refs.text.reload(this.text)
+          }
         })
       }
     }
 
-    // sendImage=(data) => {
-    //   const callback = ()=>{
-    //       this.scrollView.scrollToEnd();
-    //   };
-    //   if(this.isGroupChat){
-    //       WSChannel.sendGroupImage(this.otherSide.id,this.otherSide.name,data,callback);
-    //   }else{
-    //       WSChannel.sendImage(this.otherSide.id,data,callback);
-    //   }
-    //
-    // }
+    sendImage=({data, width, height}) => {
+      channel.sendImage(this.otherSide.id, data, width, height, this.relativeMsgId, this.isGroupChat)
+    }
 
     showImagePicker=() => {
-      // let options = {
-      //   title: '选择图片',
-      //   cancelButtonTitle: '取消',
-      //   takePhotoButtonTitle: '拍照',
-      //   chooseFromLibraryButtonTitle: '图片库',
-      //   mediaType: 'photo',
-      //   storageOptions: {
-      //     skipBackup: true,
-      //     path: 'images'
-      //   }
-      // }
+      let options = {
+        title: '选择图片',
+        cancelButtonTitle: '取消',
+        takePhotoButtonTitle: '拍照',
+        chooseFromLibraryButtonTitle: '图片库',
+        mediaType: 'photo',
+        storageOptions: {
+          skipBackup: true,
+          path: 'images'
+        }
+      }
 
-      // ImagePicker.showImagePicker(options, (response) => {
-      //   if (response.didCancel) {
-      //   } else if (response.error) {
-      //   } else if (response.customButton) {
-      //   } else {
-      //     let imageUri = response.uri
-      //
-      //     const maxWidth = 1000
-      //     const maxHeight = 1000
-      //     ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null).then((res) => {
-      //       RNFetchBlob.fs.readFile(res.path, 'base64').then((data) => {
-      //         this.sendImage({data, width: maxWidth, height: maxHeight})
-      //       })
-      //     }).catch((err) => {
-      //       console.log(err)
-      //     })
-      //   }
-      // })
+      ImagePicker.showImagePicker(options, (response) => {
+        if (response.didCancel) {
+        } else if (response.error) {
+        } else if (response.customButton) {
+        } else {
+          let imageUri = response.uri
+
+          const maxWidth = 1000
+          const maxHeight = 1000
+          ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null).then((res) => {
+            RNFetchBlob.fs.readFile(res.path, 'base64').then((data) => {
+              this.sendImage({data, width: maxWidth, height: maxHeight})
+            })
+          }).catch((err) => {
+            console.log(err)
+          })
+        }
+      })
     }
 
     showBiggerImage= (imgUri, msgId) => {
@@ -444,12 +440,12 @@ export default class ChatView extends Component<{}> {
             <View style={{width: '100%',
               flexDirection: 'row',
               justifyContent: 'center',
-              alignItems: 'flex-end',
+              alignItems: Platform.OS === 'ios' ? 'flex-end' : 'center',
               borderTopWidth: 1,
               borderColor: '#d0d0d0',
               overflow: 'hidden',
               paddingVertical: 5,
-              marginBottom: 0}}>
+              marginBottom: Platform.OS === 'ios' ? 0 : 20}}>
               <TextInput ref='text2' style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
               <TextInputWrapper onChangeText={(v) => {
                 this.text = v ? v.trim() : ''

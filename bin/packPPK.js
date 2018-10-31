@@ -4,13 +4,11 @@ const {execSync} = CliUtil
 const {FuncUtil} = require('@ys/vanilla')
 const {timeCount} = FuncUtil
 
-;(async () => {
-  const result = await timeCount(() => {
-    console.log('ppk export started')
+timeCount(() => {
+  console.log('ppk export started')
+  const cmd = `pushy bundle --platform ios --output ${devConfig.exportPPKFolderPath}/${devConfig.appName}.ppk`
+  console.log({cmd})
+  execSync(cmd)
 
-    execSync(`pushy bundle --platform ios --output ${devConfig.exportPPKFolderPath}/${devConfig.appName}.ppk`)
-
-    console.log('ppk export end')
-  })
-  console.log(`time elapsed ${result}`)
-})()
+  console.log('ppk export end')
+})

@@ -100,26 +100,40 @@ class Util {
     return Util.query(sql)
   }
   // todo: should be putinto net channell
-  static runNetFunc (func, errorCb) {
-    console.log({container})
-    const {connectionOK, NetInfoUtil} = container.state
-    if (connectionOK) {
-      func()
-    } else {
-      runFunc(errorCb)
-      if (NetInfoUtil.online) {
-        Toast.show({
-          text: '无法连接服务器',
-          position: 'top',
-          type: 'warning'
-        })
+  static runNetFunc (func, {errorCb, showWarning = true} = {}) {
+    // console.log({container})
+    const hasLogin = lkApp.getLogin()
+    // console.log({hasLogin})
+
+    if (hasLogin) {
+      const {connectionOK, NetInfoUtil} = container
+      if (connectionOK) {
+        func()
       } else {
-        Toast.show({
-          text: '您的连接已断开,请检查网络设置',
-          position: 'top',
-          type: 'warning'
-        })
+        runFunc(errorCb)
+        if (showWarning) {
+          if (NetInfoUtil.online) {
+            Toast.show({
+              text: '无法连接服务器',
+              position: 'top',
+              type: 'warning'
+            })
+          } else {
+            Toast.show({
+              text: '您的连接已断开,请检查网络设置',
+              position: 'top',
+              type: 'warning'
+            })
+          }
+        }
       }
+    } else {
+      Toast.show({
+        text: '您的账户已在服务端被删除,无法再与服务端通信',
+        position: 'top',
+        type: 'warning',
+        duration: 5000
+      })
     }
   }
 }

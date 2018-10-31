@@ -18,12 +18,14 @@ import RequestView from '../contact/RequestView'
 import AddGroupView from '../contact/AddGroupView'
 import MineView from '../mine/MineView'
 import DevView from '../mine/dev/DevView'
+import SetUpdateUrlView from '../mine/dev/SetUpdateUrlView'
 import InfoView from '../mine/dev/InfoView'
 import BasicInfoView from '../mine/BasicInfoView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
 import VersionView from '../mine/VersionView'
 import RenameView from '../mine/RenameView'
+import MsgBadge from '../chat/MsgBadge'
 const util = require('../util/navigatorUtil')
 const style = require('../style')
 
@@ -66,8 +68,10 @@ const MainTab = createBottomTabNavigator({
   ChatTab: {
     screen: ChatTab,
     navigationOptions: {
-      tabBarIcon: ({ focused }) => {
-        return util.getTabLogo('消息', focused, 'message-outline', 24)
+      tabBarIcon: (option) => {
+        // console.log({option})
+        const { focused } = option
+        return util.getTabLogo('消息', focused, 'message-outline', 24, <MsgBadge></MsgBadge>)
       }
     }
   },
@@ -124,7 +128,8 @@ const MainStack = createStackNavigator({
   GroupInfoView,
   ConnectionFailView,
   ReadStateView,
-  AddGroupMemberView
+  AddGroupMemberView,
+  SetUpdateUrlView
 }, stackNavigatorConfig)
 
 export default MainStack
