@@ -12,6 +12,7 @@ import LKDeviceProvider from '../logic/provider/LKDeviceProvider'
 import LKChatProvider from '../logic/provider/LKChatProvider'
 import MFApplyManager from '../core/MFApplyManager'
 import FlowCursor from '../store/FlowCursor'
+import LKUtil  from '../util'
 import CryptoJS from "crypto-js";
 
 class LKChannel extends WSChannel{
@@ -320,7 +321,8 @@ class LKChannel extends WSChannel{
     }
 
     async asyLogin(){
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("login")]);
+        let venderDid = await LKUtil.asyGetApplePushId();
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("login",{venderDid:venderDid})]);
          result[0]._sendMessage(result[1]).then((msg)=>{
              if(!msg.body.content.err){
                  Application.getCurrentApp().setLogin(Application.getCurrentApp().getCurrentUser())
