@@ -1,5 +1,8 @@
 import React, { Component} from 'react'
-import {Button, ScrollView, Text, TextInput, TouchableOpacity, View, Platform} from 'react-native'
+import {
+  ActivityIndicator,
+  Button, ScrollView, Text, TextInput, TouchableOpacity, View, Platform
+} from 'react-native'
 const common = require('@external/common')
 const {List} = common
 const {FuncUtil} = require('@ys/vanilla')
@@ -50,6 +53,10 @@ export default class AddGroupView extends Component<{}> {
         alert('请选择群成员')
       } else {
         // console.log({selectedAry: this.selectedAry, user: this.user})
+        // todo: disable button and timeout
+        this.setState({
+          isWating: true
+        })
         await chatManager.newGroupChat(this.name, [this.user].concat(this.selectedAry))
         this.props.navigation.goBack()
       }
@@ -136,6 +143,7 @@ export default class AddGroupView extends Component<{}> {
   render () {
     return (
       <ScrollView>
+        {this.state.isWating ? <ActivityIndicator size='large' style={{position: 'absolute', top: '50%'}}/> : null}
         <View>
           <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', width: '96%', height: 40, marginTop: 10, marginLeft: 10}}>
             <Text style={{color: '#a0a0a0'}}>群名称：</Text>
