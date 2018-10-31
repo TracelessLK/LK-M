@@ -99,8 +99,8 @@ export default class RecentView extends Component<{}> {
       this.updateRecent()
       navigation.setParams({optionToChoose: this.optionToChoose})
 
-      this.channel.on('connectionFail', this.connectionFail.bind(this))
-      this.channel.on('connectionOpen', this.connectionOpen.bind(this))
+      this.channel.on('connectionFail', this.connectionFail)
+      this.channel.on('connectionOpen', this.connectionOpen)
       AppState.addEventListener('change', this._handleAppStateChange)
     }
 
@@ -111,7 +111,7 @@ export default class RecentView extends Component<{}> {
       }
     }
 
-    connectionFail () {
+    connectionFail = () => {
       const {navigation} = this.props
       navigation.setParams({
         headerTitle: '消息(未连接)'
@@ -142,7 +142,7 @@ export default class RecentView extends Component<{}> {
       return result
     }
 
-    connectionOpen () {
+    connectionOpen = () => {
       this.resetHeaderTitle()
       this.setState({
         connectionOK: true
