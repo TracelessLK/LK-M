@@ -6,6 +6,7 @@ import MessageList from './widget/MessageList'
 import LoadingView from './view/LoadingView'
 const commonModule = require('@hfs/react-native-collection')
 const {ScanView, commonUtil} = commonModule
+const pushUtil = require('./util/pushUtil')
 
 const commonStyle = require('./view/style')
 const common = {
@@ -17,7 +18,8 @@ const common = {
   commonStyle,
   ActivityIndicator,
   LoadingView,
-  GroupAvatar
+  GroupAvatar,
+  pushUtil
 }
 
 Object.freeze(common)

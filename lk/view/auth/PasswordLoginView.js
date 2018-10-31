@@ -15,6 +15,7 @@ import {
 const md5 = require('crypto-js/md5')
 const Application = require('../../LKApplication')
 const lkApplication = Application.getCurrentApp()
+const style = require('../style')
 
 export default class PasswordLoginView extends Component<{}> {
   static navigationOptions =() => {
@@ -33,7 +34,7 @@ export default class PasswordLoginView extends Component<{}> {
   login = () => {
     const {navigation} = this.props
 
-    console.log({t: this.t})
+    // console.log({t: this.t})
     if (!this.t) {
       Toast.show({
         text: '请输入密码',
@@ -54,6 +55,7 @@ export default class PasswordLoginView extends Component<{}> {
   }
 
   render () {
+    // console.log(style.mainColor)
     return (
       <View style={{alignItems: 'center', marginVertical: 40}}>
         <Card style={{width: '90%'}}>
@@ -78,7 +80,7 @@ export default class PasswordLoginView extends Component<{}> {
                 this.t = t
               }} onSubmitEditing={this.login}
               ></TextInput>
-              <Button block info style={{width: 60, height: 40}} onPress={this.login}>
+              <Button block style={{width: 60, height: 40, backgroundColor: style.color.mainColor}} onPress={this.login}>
                 <Text style={{color: 'white'}}>确认</Text>
               </Button>
             </View>
