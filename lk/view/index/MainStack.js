@@ -26,8 +26,9 @@ import UidView from '../mine/UidView'
 import VersionView from '../mine/VersionView'
 import RenameView from '../mine/RenameView'
 import MsgBadge from '../chat/MsgBadge'
-const util = require('../util/navigatorUtil')
+const {getTabLogo} = require('../../util')
 const style = require('../style')
+const backImg = require('../image/back-icon.png')
 
 const stackNavigatorConfig = {
   navigationOptions: {
@@ -47,7 +48,7 @@ const stackNavigatorConfig = {
       />
     ),
     headerBackImage: (
-      <Image style={{width: 30, height: 30}} source={require('../image/back-icon.png')}></Image>
+      <Image style={{width: 30, height: 30}} source={backImg}></Image>
     )
   }
 }
@@ -71,7 +72,7 @@ const MainTab = createBottomTabNavigator({
       tabBarIcon: (option) => {
         // console.log({option})
         const { focused } = option
-        return util.getTabLogo('消息', focused, 'message-outline', 24, <MsgBadge></MsgBadge>)
+        return getTabLogo('消息', focused, 'message-outline', 24, <MsgBadge></MsgBadge>)
       }
     }
   },
@@ -79,7 +80,7 @@ const MainTab = createBottomTabNavigator({
     screen: ContactTab,
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return util.getTabLogo('通讯录', focused, 'table-of-contents')
+        return getTabLogo('通讯录', focused, 'table-of-contents')
       }
     }
   },
@@ -87,7 +88,7 @@ const MainTab = createBottomTabNavigator({
     screen: MineTab,
     navigationOptions: {
       tabBarIcon: ({ focused }) => {
-        return util.getTabLogo('我', focused, 'account-outline')
+        return getTabLogo('我', focused, 'account-outline')
       }
     }
   }

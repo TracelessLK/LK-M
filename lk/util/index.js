@@ -1,5 +1,8 @@
 import db from '../../common/store/DataBase'
 import {Toast} from 'native-base'
+import {Text, View} from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import React from "react";
 const {commonUtil} = require('@external/common')
 const lkApp = require('../LKApplication').getCurrentApp()
 const {getAvatarSource} = commonUtil
@@ -8,8 +11,28 @@ const container = require('../state')
 const {FuncUtil} = require('@ys/vanilla')
 const {runFunc} = FuncUtil
 const chatManager = require('../core/ChatManager')
+const {pushUtil} = require('@external/common')
+const lkStyle = require('../view/style')
 
 class Util {
+  /**
+   * 获取IOS推送id
+   * @returns {Promise} Promise resolve IOS推送id {string}
+   */
+  static asynGetApplePushId () {
+    return pushUtil.getAPNDeviceId()
+  }
+  static getTabLogo (title, focused, iconName, iconSize = 26, badge) {
+    let color = focused ? lkStyle.color.mainColor : '#a0a0a0'
+    let style = {display: 'flex', justifyContent: 'center', alignItems: 'center'}
+    return (
+      <View style={style}>
+        {badge || null}
+        <Icon name={iconName} size={iconSize} color={color}/>
+        <Text style={{fontSize: 10, color}}>{title}</Text>
+      </View>
+    )
+  }
   static getAvatarSource (pic) {
     return getAvatarSource(pic, defaultAvatar)
   }
