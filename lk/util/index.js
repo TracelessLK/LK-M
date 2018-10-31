@@ -1,8 +1,8 @@
 import db from '../../common/store/DataBase'
 import {Toast} from 'native-base'
-import {Text, View} from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import React from "react";
+import {Text, View} from 'react-native'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import React from 'react'
 const {commonUtil} = require('@external/common')
 const lkApp = require('../LKApplication').getCurrentApp()
 const {getAvatarSource} = commonUtil
