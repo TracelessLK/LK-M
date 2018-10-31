@@ -97,20 +97,44 @@ class Chat{
         });
     }
 
-    _addGroupMember(chatId,contactId){
-        return new Promise( (resolve,reject)=>{
+    getGroupMember(chatId,contactId){
+        return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "insert into groupMember(chatId,contactId) values (?,?) where not exists(select * from groupMember where chatId=? and contactId=?)";
-                tx.executeSql(sql,[chatId,contactId,chatId,contactId],function () {
-                    resolve();
+                let sql = "select c.* from groupMember where chatId=? and contactId=?";
+                tx.executeSql(sql,[chatId,contactId],function (tx,results) {
+                    let ary = [];
+                    for(let i=0;i<results.rows.length;i++){
+                        ary.push(results.rows.item(i));
+                    }
+                    if(results.rows.length>0){
+                        resolve(results.rows.item(0));
+                    }else{
+                        resolve(null);
+                    }
+
                 },function (err) {
                     reject(err);
                 });
-            },function (err) {
-                reject(err);
             });
         });
+    }
 
+    async _addGroupMember(chatId,contactId){
+        let cur = await this.getGroupMember();
+        if(!cur){
+            return new Promise( (resolve,reject)=>{
+                db.transaction((tx)=>{
+                    let sql = "insert into groupMember(chatId,contactId) values (?,?)";
+                    tx.executeSql(sql,[chatId,contactId],function () {
+                        resolve();
+                    },function (err) {
+                        reject(err);
+                    });
+                },function (err) {
+                    reject(err);
+                });
+            });
+        }
     }
 
     addGroupMembers(chatId,members){
