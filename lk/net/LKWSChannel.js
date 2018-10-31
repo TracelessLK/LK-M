@@ -13,6 +13,7 @@ import LKChatProvider from '../logic/provider/LKChatProvider'
 import MFApplyManager from '../core/MFApplyManager'
 import FlowCursor from '../store/FlowCursor'
 import LKUtil  from '../util'
+import LZBase64String from '../../common/util/lz-base64-string'
 import CryptoJS from "crypto-js";
 
 class LKChannel extends WSChannel{
@@ -374,7 +375,9 @@ class LKChannel extends WSChannel{
         this._sendMsg(chatId,content,relativeMsgId,isGroup);
     }
     sendImage(chatId,imgData,width,height,relativeMsgId,isGroup){
-        let content = {type:ChatManager.MESSAGE_TYPE_IMAGE,data:{data:imgData,width:width,height:height}};
+        let _img = LZBase64String.compress(imgData);
+        alert(imgData.length+"->"+_img.length);
+        let content = {type:ChatManager.MESSAGE_TYPE_IMAGE,data:{data:_img,width:width,height:height}};
         this._sendMsg(chatId,content,relativeMsgId,isGroup);
     }
     async retrySend(chatId,msgId){
@@ -499,7 +502,11 @@ class LKChannel extends WSChannel{
         const msgDecrypted = msg.body.content
         let content = JSON.parse(msgDecrypted);
         let state = userId===header.uid?ChatManager.MESSAGE_STATE_SERVER_RECEIVE:null;
-        await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,state,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
+        let data = content.data;
+        if(content.type===ChatManager.MESSAGE_TYPE_IMAGE){
+            data = LZBase64String.decompress(data);
+        }
+        await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,data,header.time,state,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
         ChatManager.fire("msgChanged",chatId);
