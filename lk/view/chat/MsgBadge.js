@@ -21,10 +21,11 @@ export default class MsgBadge extends Component<{}> {
   async componentDidMount () {
     let num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
     this.updateBadge(num)
-    chatManager.on('msgBadgeChange', this.updateBadge)
+    chatManager.on('msgBadgeChanged', this.updateBadge)
   }
 
-  updateBadge (num) {
+  updateBadge = (num) => {
+    // console.log({updateNum:num})
     if (num) {
       if (num < 10) {
         num = ` ${num} `
@@ -32,14 +33,18 @@ export default class MsgBadge extends Component<{}> {
       this.setState({
         badge: num
       })
+    } else {
+      this.setState({
+        badge: null
+      })
     }
   }
   componentWillUnmount () {
-    chatManager.un('msgBadgeChange', this.updateBadge)
+    chatManager.un('msgBadgeChanged', this.updateBadge)
   }
 
   render () {
-    const scale = 0.6
+    const scale = 0.65
 
     return (
       this.state.badge

@@ -223,10 +223,11 @@ class ChatManager extends EventTarget{
             }
             targets.get(record.senderUid).push(record.id);
         });
-        LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
+        await LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
         this.fire('recentChanged');
        let num = await LKChatProvider.asyGetAllMsgNotReadNum(userId)
        this.fire("msgBadgeChanged",num);
+       // console.log({num})
         LKChatProvider.asyGetChat(userId,chatId).then((chat)=>{
             targets.forEach((v,k)=>{
                 Contact.get(userId,k).then((contact)=>{
@@ -314,7 +315,7 @@ class ChatManager extends EventTarget{
 
     deviceChanged(chatId,changedMembers){
         let returnAdded = [];
-        console.log({changedMembers})
+        // console.log({changedMembers})
         changedMembers.forEach(function(changed){
             LKDeviceHandler.asyAddDevices(changed.id,changed.added);
             LKDeviceHandler.asyRemoveDevices(changed.id,changed.removed);
