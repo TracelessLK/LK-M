@@ -70,7 +70,7 @@ export default class ChatView extends Component<{}> {
         isInited: false
       }
       this.otherSide = otherSide
-      console.log({otherSide})
+      // console.log({otherSide})
       this.text = ''
       this.folderId = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
       this.limit = Constant.MESSAGE_PER_REFRESH

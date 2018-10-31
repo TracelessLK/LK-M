@@ -62,7 +62,7 @@ class LKChannel extends WSChannel{
                 callback(msg);
             }
         }else if(action){
-            console.log({msgRecieved: msg})
+            // console.log({msgRecieved: msg})
             let handler = this[action+"Handler"];
             if(handler){
                 if(header.preFlowId){

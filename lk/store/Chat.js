@@ -100,7 +100,7 @@ class Chat{
     getGroupMember(chatId,contactId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                let sql = "select c.* from groupMember where chatId=? and contactId=?";
+                let sql = "select * from groupMember where chatId=? and contactId=?";
                 tx.executeSql(sql,[chatId,contactId],function (tx,results) {
                     let ary = [];
                     for(let i=0;i<results.rows.length;i++){
