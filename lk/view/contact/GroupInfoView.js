@@ -5,7 +5,8 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ActivityIndicator
 } from 'react-native'
 const {getAvatarSource} = require('../../util')
 const lkApp = require('../../LKApplication').getCurrentApp()
@@ -74,6 +75,7 @@ export default class GroupInfoView extends Component<{}> {
     }
     return (
       <ScrollView>
+        {this.state.isWating ? <ActivityIndicator size='large' style={{position: 'absolute', top: '50%'}}/> : null}
         <View style={{marginVertical: 20}}>
           <List data={dataAry}></List>
           <TouchableOpacity style={{backgroundColor: 'white',
@@ -83,6 +85,9 @@ export default class GroupInfoView extends Component<{}> {
             justifyContent: 'center',
             padding: 12}} onPress={() => {
             runNetFunc(async () => {
+              this.setState({
+                isWating: true
+              })
               await chatManager.leaveGroup(this.group.id)
               this.props.navigation.navigate('RecentTab')
             })
