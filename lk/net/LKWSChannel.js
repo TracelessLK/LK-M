@@ -18,7 +18,7 @@ import CryptoJS from "crypto-js";
 class LKChannel extends WSChannel{
 
     _callbacks={};
-    _timeout=60000;
+    _timeout=30000;
     _chatMsgPool = new Map();
     _flowPool = new Map();
 
@@ -186,25 +186,48 @@ class LKChannel extends WSChannel{
         return msg;
     }
 
-    _sendMessage(req){
+    __sendReq(req,timeout){
         return new Promise((resolve,reject)=>{
             let msgId = req.header.id;
-            this._callbacks[msgId] = (msg)=>{
-                delete this._callbacks[msgId];
-                resolve(msg);
-            }
+            let callback = this._callbacks[msgId];
+            callback._tryTimes++;
             try{
                 super.send(JSON.stringify(req));
             }catch (e){
-                reject({error:e.toString()});
+                if(callback._tryTimes<2)
+                    this.__sendReq(req,timeout).catch(()=>{
+                        reject({error:"timeout", req});
+                    });
+                else
+                    reject({error:"timeout", req});
             }
 
             setTimeout(()=>{
                 if(this._callbacks[msgId]){
-                    reject({error:"timeout", req});
+                    if(callback._tryTimes<2)
+                        this.__sendReq(req,timeout).catch(()=>{
+                            reject({error:"timeout", req});
+                        });
+                    else
+                        reject({error:"timeout", req});
                 }
 
-            },this._timeout);
+            },timeout*callback._tryTimes);
+        });
+    }
+
+    _sendMessage(req,timeout){
+        return new Promise((resolve,reject)=>{
+            let msgId = req.header.id;
+            let callback = this._callbacks[msgId] = (msg)=>{
+                delete this._callbacks[msgId];
+                resolve(msg);
+            }
+            callback._tryTimes = 0;
+            let _timeout = timeout||this._timeout;
+            this.__sendReq(req,_timeout).catch((err)=>{
+                reject(err)
+            })
         });
 
     }
@@ -338,7 +361,7 @@ class LKChannel extends WSChannel{
    async asyRegister(ip,port,uid,did,venderDid,pk,checkCode,qrCode,description){
        let msg = {uid:uid,did:did,venderDid:venderDid,pk:pk,checkCode:checkCode,qrCode:qrCode,description:description};
        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("register",msg)]);
-       return result[0]._sendMessage(result[1]);
+       return result[0]._sendMessage(result[1],60000);
     }
 
     async asyUnRegister(){
