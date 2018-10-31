@@ -44,33 +44,58 @@ class Device{
         });
     }
 
-    addDevices(contactId,devices){
+    _addDevice(contactId,device){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
-                if(devices&&devices.length>0){
+                if(contactId&&device){
                     let sql = "insert into device(id,publicKey,contactId) values ";
-                    var params=[];
-                    for(var i=0;i<devices.length;i++){
-                        var device = devices[i];
-                        sql += "(?,?,?)";
-                        if(i<devices.length-1){
-                            sql +=",";
-                        }
-                        params.push(device.id);
-                        params.push(device.pk);
-                        params.push(contactId);
-                    }
-                    console.log({params})
-
-                    tx.executeSql(sql,params,function () {
+                    sql += "(?,?,?)";
+                    tx.executeSql(sql,[device.id,device.pk,contactId],function () {
                         resolve();
                     },function (err) {
-                        reject(err);
+                        reject(err)
                     });
                 }else{
                     resolve();
                 }
             });
+        });
+    }
+
+    addDevices(contactId,devices){
+        return new Promise((resolve,reject)=>{
+            let ps = [];
+            if(devices&&devices.length>0){
+                devices.forEach((device)=>{
+                    ps.push(this._addDevice(contactId,device));
+                });
+            }
+            return Promise.all(ps);
+            // db.transaction((tx)=>{
+            //     if(devices&&devices.length>0){
+            //         let sql = "insert into device(id,publicKey,contactId) values ";
+            //         var params=[];
+            //         for(var i=0;i<devices.length;i++){
+            //             var device = devices[i];
+            //             sql += "(?,?,?)";
+            //             if(i<devices.length-1){
+            //                 sql +=",";
+            //             }
+            //             params.push(device.id);
+            //             params.push(device.pk);
+            //             params.push(contactId);
+            //         }
+            //         console.log({params})
+            //
+            //         tx.executeSql(sql,params,function () {
+            //             resolve();
+            //         },function (err) {
+            //             reject(err);
+            //         });
+            //     }else{
+            //         resolve();
+            //     }
+            // });
         });
     }
     removeDevices(contactId,devices){

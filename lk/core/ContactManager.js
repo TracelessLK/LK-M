@@ -21,7 +21,7 @@ class ContactManager extends EventTarget{
 
     asyRebuildMembers(newMemberMCode,ids,newMembers){
         let curApp = Application.getCurrentApp();
-        if(ids&&ids.length>0){
+        if(ids&&ids.length>0&&newMembers&&newMembers.length>0){
             let userId = curApp.getCurrentUser().id;
             for(let i=0;i<newMembers.length;i++){
                 let m = newMembers[i];
@@ -44,7 +44,6 @@ class ContactManager extends EventTarget{
     async asyAddNewFriend(friend){
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let curContact = await Contact.get(userId,friend.id);
-        console.log({curContact})
         if(!curContact)
             await LKContactHandler.asyAddNewFriend(friend,userId);
         else if(curContact.relation==2){

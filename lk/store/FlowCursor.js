@@ -13,7 +13,7 @@ class FlowCursor{
             if(!flowId){
                 db.transaction((tx)=>{
                     let sql = "select flowId from flowCursor where ownerUserId=? and flowType=?";
-                    tx.executeSql(sql,[userId,flowType],function (tx,results) {
+                    tx.executeSql(sql,[userId,flowType], (tx,results)=>{
                         if(results.rows.length>0){
                             flowId = results.rows.item(0).flowId;
                             this._flows.set(userId+flowType,flowId)
@@ -43,7 +43,7 @@ class FlowCursor{
                     sql = "update flowCursor set flowId=? where ownerUserId=? and flowType=?";
                 }
                 db.transaction((tx)=>{
-                    tx.executeSql(sql,[flowId,userId,flowType],function (tx,results) {
+                    tx.executeSql(sql,[flowId,userId,flowType], (tx,results)=> {
                         this._flows.set(userId+flowType,flowId);
                         resolve();
                     },function (err) {

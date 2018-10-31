@@ -59,9 +59,9 @@ class Record{
 
         });
     }
-    _allUpdate(msgIds,state){
+    _isAllUpdate(userId,chatId,msgIds,state){
         return new Promise((resolve,reject)=>{
-            let sql = "select id from record where state>=? and id ";
+            let sql = "select id from record where ownerUserId=? and chatId=? and state>=? and id ";
             let num = 0;
             if(!msgIds.forEach){
                 sql += "='"
@@ -82,7 +82,7 @@ class Record{
                 sql+=")";
             }
             db.transaction((tx)=>{
-                tx.executeSql(sql,[state],function (tx,results) {
+                tx.executeSql(sql,[userId,chatId,state],function (tx,results) {
                     var len = results.rows.length;
                     if(len==num){
                         resolve(true);
@@ -98,22 +98,15 @@ class Record{
     }
 
 
-    _addGroupMsgReadReport(userId,chatId,msgIds,reporterUid,state){
+    _addGroupMsgReadReport(userId,chatId,msgId,reporterUid,state){
         return new Promise((resolve,reject)=>{
-            let sql = "insert into group_record_state(ownerUserId,chatId,msgId,reporterUid,state) values ";
+            let sql = "insert into group_record_state(ownerUserId,chatId,msgId,reporterUid,state) values (?,?,?,?,?)";
             var params=[];
-            for(var i=0;i<msgIds.length;i++){
-                var m = msgIds[i];
-                sql += "(?,?,?,?,?)";
-                if(i<msgIds.length-1){
-                    sql +=",";
-                }
-                params.push(userId);
-                params.push(chatId);
-                params.push(m);
-                params.push(reporterUid);
-                params.push(state);
-            }
+            params.push(userId);
+            params.push(chatId);
+            params.push(msgId);
+            params.push(reporterUid);
+            params.push(state);
             db.transaction((tx)=>{
                 tx.executeSql(sql,params,function (tx,results) {
                     resolve();
@@ -126,11 +119,18 @@ class Record{
     }
 
     async msgReadReport(userId,chatId,msgIds,reporterUid,state,isGroup){
-        await this._ensureAllMsgExists(userId,chatId,msgIds);
+        // await this._ensureAllMsgExists(userId,chatId,msgIds);
         await this._updateMsgState(userId,chatId,msgIds,state);
         if(isGroup){
-            this._addGroupMsgReadReport(userId,chatId,msgIds,reporterUid,state);
+            let ps = [];
+            msgIds.forEach((msgId)=>{
+                ps.push(this._addGroupMsgReadReport(userId,chatId,msgId,reporterUid,state));
+            });
+           Promise.all(ps).catch(()=>{
+               //do nothing
+           });
         }
+        return this._isAllUpdate(userId,chatId,msgIds,state);
     }
 
     _ensureAllMsgExists(userId,chatId,msgIds){

@@ -190,11 +190,11 @@ class ChatManager extends EventTarget{
         return new Promise((resovle)=>{
             LKChatProvider.asyGetChat(userId,contactId).then((chat)=>{
                 if(chat){
-                    resovle();
+                    resovle(true);
                 }else{
                     LKChatHandler.asyAddSingleChat(userId,contactId).then(()=>{
                         this.fire("recentChanged")
-                        resovle();
+                        resovle(true);
                     });
                 }
             })
@@ -224,12 +224,15 @@ class ChatManager extends EventTarget{
             targets.get(record.senderUid).push(record.id);
         });
         LKChatHandler.asyUpdateReadState(readNewMsgs,this.MESSAGE_READSTATE_READ);
-        this.fire('recentChanged')
-        targets.forEach((v,k)=>{
-            Contact.get(userId,k).then((contact)=>{
-                Application.getCurrentApp().getLKWSChannel().readReport(chatId,k,contact.serverIP,contact.serverPort,v);
+        this.fire('recentChanged');
+        LKChatProvider.asyGetChat(userId,chatId).then((chat)=>{
+            targets.forEach((v,k)=>{
+                Contact.get(userId,k).then((contact)=>{
+                    Application.getCurrentApp().getLKWSChannel().readReport(chatId,chat.isGroup,k,contact.serverIP,contact.serverPort,v);
+                });
             });
         });
+
 
         return {msgs:records,newMsgs:newMsgs};
     }
@@ -258,7 +261,7 @@ class ChatManager extends EventTarget{
                        });
                        targets.forEach((v,k)=>{
                            Contact.get(user.id,k).then((contact)=>{
-                               Application.getCurrentApp().getLKWSChannel().readReport(k,chats[i].id,contact.serverIP,contact.serverPort,v);
+                               Application.getCurrentApp().getLKWSChannel().readReport(chats[i].id,chats[i].isGroup,k,contact.serverIP,contact.serverPort,v);
                            });
                        });
                    }
@@ -379,11 +382,13 @@ class ChatManager extends EventTarget{
 
     async addGroupChat(chatId,name,members,local){
         let userId = Application.getCurrentApp().getCurrentUser().id;
-        if(!local)
-            await Contact.addNewGroupContactIFNotExist(members,userId);
-        await Chat.addGroupChat(userId,chatId,name);
-        await Chat.addGroupMembers(chatId,members);
-        this.fire("recentChanged");
+        const chat = await Chat.getChat(userId,chatId);
+        if(!chat){
+            if(!local)
+                await Contact.addNewGroupContactIFNotExist(members,userId);
+            await Promise.all([Chat.addGroupChat(userId,chatId,name),Chat.addGroupMembers(chatId,members)])
+            this.fire("recentChanged");
+        }
     }
 
     /**
@@ -404,8 +409,7 @@ class ChatManager extends EventTarget{
     }
     async addGroupMembers(chatId,newMembers){
         let userId = Application.getCurrentApp().getCurrentUser().id;
-        await Contact.addNewGroupContactIFNotExist(newMembers,userId);
-        await Chat.addGroupMembers(chatId,newMembers);
+        await Promise.all([Contact.addNewGroupContactIFNotExist(newMembers,userId),Chat.addGroupMembers(chatId,newMembers)]);
 
     }
     async asyResetGroups(groups,userId){
