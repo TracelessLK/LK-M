@@ -27,7 +27,6 @@ const container = require('../../state')
 container.NetInfoUtil = NetInfoUtil
 const {runNetFunc} = require('../../util')
 
-
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
       const size = 20
@@ -324,7 +323,9 @@ export default class RecentView extends Component<{}> {
       <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
         {this.state.connectionOK ? null
           : <TouchableOpacity style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}
-            onPress={() => { this.props.navigation.navigate('ConnectionFailView', {type: this.state.type}) }}
+            onPress={() => {
+              // this.props.navigation.navigate('ConnectionFailView', {type: this.state.type})
+            }}
           >
             <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>{this.state.msg}</Text>
           </TouchableOpacity>
