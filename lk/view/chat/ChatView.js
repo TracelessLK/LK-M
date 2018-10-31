@@ -102,6 +102,26 @@ export default class ChatView extends Component<{}> {
        } else {
          this.relativeMsgId = null
        }
+       const imageUrls = []
+       const imageIndexer = {}
+       let index = 0
+       for (let i = 0; i < msgAry.length; i++) {
+         const record = msgAry[i]
+         if (record.type === chatManager.MESSAGE_TYPE_IMAGE) {
+           let img = JSON.parse(record.content)
+
+           img.data = this.getImageData(img)
+
+           imageUrls.push({
+             url: 'file://' + img.data,
+             props: {
+             }
+           })
+           imageIndexer[record.msgId] = index
+           index++
+         }
+       }
+       this.imageIndexer = imageIndexer
 
        const recordAry = []
        let lastShowingTime
@@ -182,7 +202,8 @@ export default class ChatView extends Component<{}> {
        this.setState({
          recordEls: recordAry,
          refreshing: false,
-         isInited: true
+         isInited: true,
+         imageUrls
        })
      }
 
@@ -380,9 +401,11 @@ export default class ChatView extends Component<{}> {
     }
 
     getImageData = (img) => {
-      let result = img.data
+      // console.log({img})
+      const {url} = img
+      let result = url
       if (Platform.OS === 'ios') {
-        result = img.data.replace(getFolderId(img.data), this.folderId)
+        result = url.replace(getFolderId(url), this.folderId)
       }
       return result
     }

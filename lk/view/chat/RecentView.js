@@ -154,7 +154,7 @@ export default class RecentView extends Component<{}> {
         isGroup
       }
       const msgAry = await LKChatProvider.asyGetMsgs(userId, chatId)
-      console.log({msgAry})
+      // console.log({msgAry})
       // console.log({createTime})
       const {length} = msgAry
       let obj = {
