@@ -268,18 +268,22 @@ export default class ChatView extends Component<{}> {
       }
     }
 
-    send=() => {
+    send= async () => {
       if (this.text !== '') {
         runNetFunc(() => {
           this.refs.text2.focus()
           this.refs.text.reload()
           const channel = lkApp.getLKWSChannel()
-          if (this.isGroupChat) {
-            channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
-          } else {
-            channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
+          try {
+            if (this.isGroupChat) {
+              channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
+            } else {
+              channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
+            }
+            this.text = ''
+          } catch (err) {
+            Alert.alert(err.toString())
           }
-          this.text = ''
         }, {
           errorCb: () => {
             this.refs.text.reload(this.text)
@@ -289,7 +293,7 @@ export default class ChatView extends Component<{}> {
     }
 
     sendImage=({data, width, height}) => {
-      channel.sendImage(this.otherSide.id, data, width, height, this.relativeMsgId, this.isGroupChat)
+      lkApp.getLKWSChannel().sendImage(this.otherSide.id, data, width, height, this.relativeMsgId, this.isGroupChat)
     }
 
     showImagePicker=() => {

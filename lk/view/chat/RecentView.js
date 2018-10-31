@@ -162,6 +162,16 @@ export default class RecentView extends Component<{}> {
           this.deleteRow(chatId)
         }
       }
+      // if(type === Store.MESSAGE_TYEP_TEXT){
+      //   if(length > maxDisplay){
+      //     result.content = result.content.substring(0,maxDisplay)+"......"
+      //   }
+      // }else if(type === Store.MESSAGE_TYPE_IMAGE){
+      //   result.content = '[图片]'
+      // }else if(type === Store.MESSAGE_TYPE_FILE){
+      //   result.content = '[文件]'
+      // }
+
       if (isGroup) {
         obj.id = chatId
         obj.name = chatName
