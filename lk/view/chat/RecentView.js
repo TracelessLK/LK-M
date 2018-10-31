@@ -154,7 +154,7 @@ export default class RecentView extends Component<{}> {
         isGroup
       }
       const msgAry = await LKChatProvider.asyGetMsgs(userId, chatId)
-      // console.log({msgAry})
+      console.log({msgAry})
       // console.log({createTime})
       const {length} = msgAry
       let obj = {
@@ -162,15 +162,6 @@ export default class RecentView extends Component<{}> {
           this.deleteRow(chatId)
         }
       }
-      // if(type === Store.MESSAGE_TYEP_TEXT){
-      //   if(length > maxDisplay){
-      //     result.content = result.content.substring(0,maxDisplay)+"......"
-      //   }
-      // }else if(type === Store.MESSAGE_TYPE_IMAGE){
-      //   result.content = '[图片]'
-      // }else if(type === Store.MESSAGE_TYPE_FILE){
-      //   result.content = '[文件]'
-      // }
 
       if (isGroup) {
         obj.id = chatId
@@ -178,7 +169,7 @@ export default class RecentView extends Component<{}> {
         obj.newMsgNum = newMsgNum
         if (length) {
           const lastMsg = _.last(msgAry)
-          obj.content = lastMsg.content
+          obj.content = this.getMsgContent(lastMsg.content, lastMsg.type)
           obj.time = new Date(lastMsg.sendTime)
         } else {
           obj.content = '一起群聊吧'
@@ -208,11 +199,11 @@ export default class RecentView extends Component<{}> {
         // console.log({picAry})
       } else if (length) {
         const msg = _.last(msgAry)
-        const {sendTime, content} = msg
+        const {sendTime, content, type} = msg
         const person = await LKContactProvider.asyGet(userId, chatId)
         const {name, pic} = person
         obj.time = new Date(sendTime)
-        obj.content = content
+        obj.content = this.getMsgContent(content, type)
         obj.sendTime = sendTime
         obj.newMsgNum = newMsgNum
         obj.name = name
@@ -233,12 +224,26 @@ export default class RecentView extends Component<{}> {
       return result
     }
 
+    getMsgContent (content, type) {
+      const maxDisplay = 15
+      if (type === chatManager.MESSAGE_TYEP_TEXT) {
+        const {length} = content
+        if (length > maxDisplay) {
+          content = content.substring(0, maxDisplay) + '......'
+        }
+      } else if (type === chatManager.MESSAGE_TYPE_IMAGE) {
+        content = '[图片]'
+      } else if (type === chatManager.MESSAGE_TYPE_FILE) {
+        content = '[文件]'
+      }
+      return content
+    }
     async updateRecent () {
       const user = lkApp.getCurrentUser()
       const allChat = await LKChatProvider.asyGetAll(user.id)
       const msgAryPromise = []
       let contentAry
-      console.log({allChat})
+      // console.log({allChat})
       const {length} = allChat
       if (length) {
         for (let chat of allChat) {
