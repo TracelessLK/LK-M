@@ -19,7 +19,7 @@ class Util {
    * 获取IOS推送id
    * @returns {Promise} Promise resolve IOS推送id {string}
    */
-  static asynGetApplePushId () {
+  static asyGetApplePushId () {
     return pushUtil.getAPNDeviceId()
   }
   static getTabLogo (title, focused, iconName, iconSize = 26, badge) {
