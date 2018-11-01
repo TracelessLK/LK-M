@@ -1,4 +1,3 @@
-const devConfig = require('../config/devConfig')
 const {FuncUtil} = require('@ys/vanilla')
 const {timeCount} = FuncUtil
 const childProcess = require('child_process')
@@ -6,9 +5,11 @@ const NodeSSH = require('node-ssh')
 const ssh = new NodeSSH()
 const config = require('../config/devConfig')
 const path = require('path')
-const {exportPPKFolderPath, serverRoot,appName} = config
+const {exportPPKFolderPath, serverRoot, appName} = config
 const fileName = `${appName}.ppk`
 const outputPath = `${exportPPKFolderPath}/${fileName}`
+const {upload} = require('./util')
+
 start()
 
 function start () {
@@ -29,17 +30,7 @@ function start () {
     const remotePath = path.resolve(serverRoot, `static/public/ppk/${fileName}`)
     // console.log(remotePath)
 
-    return new Promise(resolve => {
-      ssh.putFiles([{local: outputPath, remote: remotePath}]).then(() => {
-        resolve()
-        ssh.dispose()
-      },
-      (error) => {
-        console.log("Something's wrong")
-        console.log(error)
-        ssh.dispose()
-      })
-    })
+    return upload({local: outputPath, remote: remotePath})
   })
 
   // clipboardy.writeSync(cmd)

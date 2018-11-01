@@ -10,11 +10,12 @@ let {scheme, archive = true, bundle = false} = argv
 // console.log(argv, archive)
 const schemeAry = []
 const devConfig = require('../config/devConfig')
-const {appId} = devConfig
+const {appId, serverRoot} = devConfig
 const {CliUtil} = require('@ys/collection')
 const {execSync} = CliUtil
 const {FuncUtil} = require('@ys/vanilla')
 const {timeCount} = FuncUtil
+const {upload} = require('./util')
 
 timeCount(() => {
   if (!scheme || !schemeAry.includes(scheme)) {
@@ -44,8 +45,14 @@ timeCount(() => {
 `)
 
   console.log('ipa generated successfully')
+  const fileName = `${devConfig.appName}.ipa`
+  const destination = path.resolve(exportPath, fileName)
+  fs.renameSync(path.resolve(exportPath, `${devConfig.appId}.ipa`), destination)
 
-  fs.renameSync(path.resolve(exportPath, `${devConfig.appId}.ipa`), path.resolve(exportPath, `${devConfig.appName}.ipa`))
+  return upload({
+    local: destination,
+    remote: path.resolve(serverRoot, `static/public/ios/${fileName}`)
+  })
 })
 
 function fixFramework () {

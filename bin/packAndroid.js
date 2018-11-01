@@ -1,8 +1,4 @@
-let fs, node_ssh, ssh
-
-fs = require('fs')
-node_ssh = require('node-ssh')
-ssh = new node_ssh()
+const fs = require('fs')
 const path = require('path')
 const argv = require('yargs').argv
 const fse = require('fs-extra')
@@ -13,6 +9,9 @@ const {CliUtil} = require('@ys/collection')
 const {execSync} = CliUtil
 const {FuncUtil} = require('@ys/vanilla')
 const {timeCount} = FuncUtil
+const {upload} = require('./util')
+const {serverRoot} = config
+const fileName = `${appName}.apk`
 
 timeCount(() => {
   const localApkPath = path.resolve(__dirname, '../android/app/build/outputs/apk/app-release.apk')
@@ -22,5 +21,11 @@ timeCount(() => {
         cd android && ./gradlew assembleRelease
     `)
   }
-  fse.copySync(localApkPath, path.resolve(exportApkFolderPath, `${appName}.apk`))
+  const destination = path.resolve(exportApkFolderPath, fileName)
+  fse.copySync(localApkPath, destination)
+
+  return upload({
+    local: destination,
+    remote: path.resolve(serverRoot, `static/public/android/${fileName}`)
+  })
 })
