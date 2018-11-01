@@ -380,9 +380,8 @@ class LKChannel extends WSChannel{
         this._sendMsg(chatId,content,relativeMsgId,isGroup);
     }
     sendImage(chatId,imgData,width,height,relativeMsgId,isGroup){
-        let _img = LZBase64String.compress(imgData);
-        alert(imgData.length+"->"+_img.length);
-        let content = {type:ChatManager.MESSAGE_TYPE_IMAGE,data:{data:_img,width:width,height:height}};
+        // let _img = LZBase64String.compress(imgData);
+        let content = {type:ChatManager.MESSAGE_TYPE_IMAGE,data:{data:imgData,width:width,height:height}};
         return this._sendMsg(chatId,content,relativeMsgId,isGroup);
     }
     async retrySend(chatId,msgId){
@@ -508,9 +507,9 @@ class LKChannel extends WSChannel{
         let content = JSON.parse(msgDecrypted);
         let state = userId===header.uid?ChatManager.MESSAGE_STATE_SERVER_RECEIVE:null;
         let data = content.data;
-        if(content.type===ChatManager.MESSAGE_TYPE_IMAGE){
-            data = LZBase64String.decompress(data);
-        }
+        // if(content.type===ChatManager.MESSAGE_TYPE_IMAGE){
+        //     data = LZBase64String.decompress(data);
+        // }
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,data,header.time,state,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
