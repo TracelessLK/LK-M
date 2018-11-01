@@ -345,7 +345,12 @@ class LKChannel extends WSChannel{
     }
 
     async asyLogin(){
-        let venderDid = await LKUtil.asyGetApplePushId();
+        let venderDid = null;
+        try{
+            venderDid = await LKUtil.asyGetApplePushId();
+        }catch(e){
+
+        }
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("login",{venderDid:venderDid})]);
          result[0]._sendMessage(result[1]).then((msg)=>{
              if(!msg.body.content.err){
