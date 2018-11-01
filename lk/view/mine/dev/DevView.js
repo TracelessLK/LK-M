@@ -5,13 +5,12 @@ import {
   ScrollView, Text, View
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
-import {Toast} from "native-base";
+import {Toast} from 'native-base'
 const {debounceFunc} = require('../../../../common/util/commonUtil')
 const config = require('../../config')
 const lkApp = require('../../../LKApplication').getCurrentApp()
 const container = require('../../../state')
 const versionLocal = require('../../../../package.json').version
-
 
 export default class BasicInfoView extends Component<{}> {
     static navigationOptions =() => {
@@ -19,6 +18,11 @@ export default class BasicInfoView extends Component<{}> {
         headerTitle: '开发者工具'
 
       }
+    }
+
+    constructor () {
+      super()
+      this.user = lkApp.getCurrentUser()
     }
 
     render () {
