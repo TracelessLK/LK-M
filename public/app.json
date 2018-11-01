@@ -1,4 +1,5 @@
 {
   "updateUrl": "/api/update/checkUpdate",
-  "httpProtocol": "http"
+  "httpProtocol": "http",
+  "port": "3000"
 }

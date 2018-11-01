@@ -125,7 +125,7 @@ export default class BasicInfoView extends Component<{}> {
           }
         },
         {
-          title: '1',
+          title: '1:25',
           onPress: () => {
           }
         }

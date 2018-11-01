@@ -75,11 +75,11 @@ class LKApplication extends Application {
 
   async checkUpdate (user) {
     if (container.NetInfoUtil.online) {
-      const {serverIP, serverPort, id, name} = user
+      const {serverIP, id, name} = user
       const response = await fetch(appInfoUrl)
       const appInfo = await response.json()
-      const {updateUrl, httpProtocol} = appInfo
-      let base = `${httpProtocol}://${serverIP}:${serverPort}`
+      const {updateUrl, httpProtocol, port} = appInfo
+      let base = `${httpProtocol}://${serverIP}:${port}`
       const updateUrlBase = await AsyncStorage.getItem('updateUrlBase')
       if (updateUrlBase) {
         base = updateUrlBase
