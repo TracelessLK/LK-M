@@ -133,7 +133,7 @@ class Util {
         func()
       } else {
         Toast.show({
-          text: '您的账户已在服务端被删除,无法再与服务端通信',
+          text: '用户身份无法确认,无法使用该功能',
           position: 'top',
           type: 'warning',
           duration: 5000
