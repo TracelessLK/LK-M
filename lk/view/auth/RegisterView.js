@@ -128,7 +128,7 @@ export default class RegisterView extends Component<{}> {
 
                       Alert.alert(errStr)
                     })
-                  })
+                  }, 1000 * 1)
                 }
               }}>
               <Text style={{color: 'white'}}>注册</Text>
