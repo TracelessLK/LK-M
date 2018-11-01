@@ -13,7 +13,7 @@ import {
   ActionSheet,
   Icon
 } from 'native-base'
-const {commonUtil, MessageList} = require('@external/common')
+const {commonUtil, MessageList, pushUtil} = require('@external/common')
 const {debounceFunc} = commonUtil
 const {getAvatarSource, addExternalFriend} = require('../../util')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
@@ -107,6 +107,7 @@ export default class RecentView extends Component<{}> {
       // console.log({appState})
       if (appState === 'active') {
         this.asyGetAllDetainedMsg({minTime: 500})
+        pushUtil.removeNotify()
       }
     }
 

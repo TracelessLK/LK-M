@@ -7,7 +7,7 @@ import {
 // import {Toast} from 'native-base'
 
 if (Platform.OS === 'ios') {
-  PushNotificationIOS.requestPermissions().then(res => {
+  PushNotificationIOS.requestPermissions().then(() => {
     PushNotificationIOS.addEventListener('registrationError', (reason) => {
       throw new Error(reason)
     })
