@@ -44,7 +44,9 @@ export default class MineView extends Component<{}> {
 
     componentDidMount () {
       for (let ele of this.eventAry) {
-        userManager.on(ele, this.update.bind(this, ele))
+        userManager.on(ele, () => {
+          this.update(ele)
+        })
       }
     }
 
@@ -55,7 +57,7 @@ export default class MineView extends Component<{}> {
     }
 
     update = (ele) => {
-      console.log({event: ele})
+      // console.log({event: ele})
       this.user = lkApp.getCurrentUser()
       const {name, pic} = this.user
       this.setState({name, avatarSource: getAvatarSource(pic)})

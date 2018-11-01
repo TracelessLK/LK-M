@@ -1,21 +1,24 @@
-import {Platform, PushNotificationIOS} from 'react-native'
+import {
+  Platform,
+  PushNotificationIOS,
+  Alert,
+  AsyncStorage
+} from 'react-native'
 // import {Toast} from 'native-base'
 
-let deviceIdApnPromise = new Promise(resolve => {
-  if (Platform.OS === 'ios') {
-    PushNotificationIOS.requestPermissions().then(res => {
-      PushNotificationIOS.addEventListener('register', (deviceId) => {
-        if (__DEV__ && Platform.OS === 'ios') {
-          // console.log(`deviceId APN: ${deviceId}`)
-        }
-        resolve(deviceId)
-      })
+if (Platform.OS === 'ios') {
+  PushNotificationIOS.requestPermissions().then(res => {
+    PushNotificationIOS.addEventListener('registrationError', (reason) => {
+      throw new Error(reason)
     })
-  } else {
-    resolve()
-  }
-})
-
+    PushNotificationIOS.addEventListener('register', (deviceId) => {
+      if (__DEV__ && Platform.OS === 'ios') {
+        // console.log(`deviceId APN: ${deviceId}`)
+      }
+      AsyncStorage.setItem('deviceIdAPN', deviceId)
+    })
+  })
+}
 const pushUtil = {
   setJpush (option) {
     if (Platform.OS === 'android') {
@@ -49,13 +52,10 @@ const pushUtil = {
 
         }
       })
-      PushNotificationIOS.addEventListener('registrationError', (reason) => {
-        console.log(reason)
-      })
     }
   },
   getAPNDeviceId () {
-    return deviceIdApnPromise
+    return AsyncStorage.getItem('deviceIdAPN')
   },
   removeNotify () {
     if (Platform.OS === 'ios') {

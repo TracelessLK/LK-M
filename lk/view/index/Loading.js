@@ -43,7 +43,10 @@ export default class Loading extends Component<{}> {
             const user = await AsyncStorage.getItem('user')
 
             if (user) {
-              lkApplication.setCurrentUser(JSON.parse(user))
+              lkApplication.setCurrentUser(JSON.parse(user)).catch(err => {
+                throw err
+              })
+
               routerName = 'MainStack'
             } else {
               routerName = 'SelectUserView'
