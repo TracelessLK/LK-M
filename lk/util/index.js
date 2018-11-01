@@ -13,6 +13,7 @@ const {runFunc} = FuncUtil
 const chatManager = require('../core/ChatManager')
 const {pushUtil} = require('@external/common')
 const lkStyle = require('../view/style')
+const RNFS = require('react-native-fs')
 
 class Util {
   /**
@@ -21,6 +22,13 @@ class Util {
    */
   static asyGetApplePushId () {
     return pushUtil.getAPNDeviceId()
+  }
+  static appendToLog (option) {
+    const {path, content} = option
+    RNFS.appendFile(path, content + '\n', 'utf8').then(() => {
+    }).catch((err) => {
+      console.log(err)
+    })
   }
   static getTabLogo (title, focused, iconName, iconSize = 26, badge) {
     let color = focused ? lkStyle.color.mainColor : '#a0a0a0'
@@ -157,7 +165,6 @@ class Util {
         }
       }
     }
-
   }
 }
 
