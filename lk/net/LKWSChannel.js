@@ -383,7 +383,7 @@ class LKChannel extends WSChannel{
         let _img = LZBase64String.compress(imgData);
         alert(imgData.length+"->"+_img.length);
         let content = {type:ChatManager.MESSAGE_TYPE_IMAGE,data:{data:_img,width:width,height:height}};
-        this._sendMsg(chatId,content,relativeMsgId,isGroup);
+        return this._sendMsg(chatId,content,relativeMsgId,isGroup);
     }
     async retrySend(chatId,msgId){
         let curApp = Application.getCurrentApp();

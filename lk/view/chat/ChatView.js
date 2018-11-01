@@ -313,8 +313,12 @@ export default class ChatView extends Component<{}> {
       }
     }
 
-    sendImage=({data, width, height}) => {
-      lkApp.getLKWSChannel().sendImage(this.otherSide.id, data, width, height, this.relativeMsgId, this.isGroupChat)
+    sendImage = ({data, width, height}) => {
+      runNetFunc(() => {
+        lkApp.getLKWSChannel().sendImage(this.otherSide.id, data, width, height, this.relativeMsgId, this.isGroupChat).catch(err => {
+          Alert.alert(err.toString())
+        })
+      })
     }
 
     showImagePicker=() => {
