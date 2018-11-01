@@ -15,7 +15,7 @@ if (Platform.OS === 'ios') {
       if (__DEV__ && Platform.OS === 'ios') {
         // console.log(`deviceId APN: ${deviceId}`)
       }
-      Alert.alert(deviceId + '')
+      // Alert.alert(deviceId + '')
       AsyncStorage.setItem('deviceIdAPN', deviceId)
     })
   })
