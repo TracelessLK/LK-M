@@ -17,7 +17,7 @@ function start () {
   timeCount(async () => {
     console.log('ppk export started')
     console.log({cmd})
-    // childProcess.execSync(cmd)
+    childProcess.execSync(cmd)
 
     console.log('ppk export end')
     const option = {
@@ -27,7 +27,7 @@ function start () {
     }
     await ssh.connect(option)
     const remotePath = path.resolve(serverRoot, `static/public/ppk/${fileName}`)
-    console.log(remotePath)
+    // console.log(remotePath)
 
     return new Promise(resolve => {
       ssh.putFiles([{local: outputPath, remote: remotePath}]).then(() => {
