@@ -1,6 +1,7 @@
 import React, { Component} from 'react'
 import {
-  Text, View, ScrollView
+  Text, View, ScrollView,
+  AsyncStorage
 } from 'react-native'
 import {Card} from 'react-native-elements'
 import DeviceInfo from 'react-native-device-info'
@@ -10,7 +11,18 @@ export default class InfoView extends Component<{}> {
   constructor (props) {
     super(props)
     this.user = lkApp.getCurrentUser()
+    this.state = {
+      deviceIdAPN: ''
+    }
   }
+
+  async componentDidMount () {
+    const deviceIdAPN = await AsyncStorage.getItem('deviceIdAPN')
+    this.setState({
+      deviceIdAPN
+    })
+  }
+
   render () {
     return (
       <ScrollView>
@@ -49,6 +61,11 @@ export default class InfoView extends Component<{}> {
             <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
               <Text selectable style={{}} >
                 buildNumber:{DeviceInfo.getBuildNumber()}
+              </Text>
+            </View>
+            <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
+              <Text selectable style={{}} >
+                apnId:{this.state.deviceIdAPN}
               </Text>
             </View>
           </Card>

@@ -12,6 +12,7 @@ class util {
       }
       await ssh.connect(option)
       ssh.putFiles([{local, remote}]).then(() => {
+        console.log(`upload ${local} to ${remote} in the server`)
         resolve()
         ssh.dispose()
       },

@@ -18,6 +18,7 @@ import RequestView from '../contact/RequestView'
 import AddGroupView from '../contact/AddGroupView'
 import MineView from '../mine/MineView'
 import DevView from '../mine/dev/DevView'
+import LogView from '../mine/dev/LogView'
 import SetUpdateUrlView from '../mine/dev/SetUpdateUrlView'
 import InfoView from '../mine/dev/InfoView'
 import BasicInfoView from '../mine/BasicInfoView'
@@ -130,7 +131,8 @@ const MainStack = createStackNavigator({
   ConnectionFailView,
   ReadStateView,
   AddGroupMemberView,
-  SetUpdateUrlView
+  SetUpdateUrlView,
+  LogView
 }, stackNavigatorConfig)
 
 export default MainStack
