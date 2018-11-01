@@ -94,7 +94,7 @@ export default class BasicInfoView extends Component<{}> {
           }
         },
         {
-          title: ' 设置检查更新服务器地址',
+          title: '设置检查更新服务器地址',
           onPress: () => {
             this.props.navigation.navigate('SetUpdateUrlView')
           }

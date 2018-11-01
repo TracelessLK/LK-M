@@ -91,41 +91,43 @@ export default class RegisterView extends Component<{}> {
                   })
                 } else {
                   this.setState({buttonDisabled: true, isWating: true})
-                  const {obj, qrcode} = this.props.navigation.state.params
-                  const bits = 1024
-                  const exponent = '10001'
-                  let rsa = new RSAKey()
-                  rsa.generate(bits, exponent)
-                  const publicKey = rsa.getPublicString() // return json encoded string
-                  const privateKey = rsa.getPrivateString() // return js
+                  setTimeout(async () => {
+                    const {obj, qrcode} = this.props.navigation.state.params
+                    const bits = 1024
+                    const exponent = '10001'
+                    let rsa = new RSAKey()
+                    rsa.generate(bits, exponent)
+                    const publicKey = rsa.getPublicString() // return json encoded string
+                    const privateKey = rsa.getPrivateString() // return js
 
-                  const password = md5(this.password).toString()
-                  const user = {
-                    id: obj.id,
-                    name: obj.name,
-                    publicKey,
-                    privateKey,
-                    deviceId: uuid(),
-                    serverIP: obj.ip,
-                    serverPort: obj.port,
-                    orgId: obj.orgId,
-                    mCode: obj.mCode,
-                    password
-                  }
-                  const description = {
-                    brand: deviceInfo.getBrand(),
-                    device: deviceInfo.getDeviceId()
-                  }
-                  const venderDid = await pushUtil.getAPNDeviceId()
+                    const password = md5(this.password).toString()
+                    const user = {
+                      id: obj.id,
+                      name: obj.name,
+                      publicKey,
+                      privateKey,
+                      deviceId: uuid(),
+                      serverIP: obj.ip,
+                      serverPort: obj.port,
+                      orgId: obj.orgId,
+                      mCode: obj.mCode,
+                      password
+                    }
+                    const description = {
+                      brand: deviceInfo.getBrand(),
+                      device: deviceInfo.getDeviceId()
+                    }
+                    const venderDid = await pushUtil.getAPNDeviceId()
 
-                  lkApplication.asyRegister(user, venderDid, this.checkCode, qrcode, JSON.stringify(description, null, 2)).then((user) => {
-                    lkApplication.setCurrentUser(user)
-                    this.props.navigation.navigate('MainStack')
-                  }).catch(error => {
-                    const errStr = JSON.stringify(error)
-                    console.log(error)
+                    lkApplication.asyRegister(user, venderDid, this.checkCode, qrcode, JSON.stringify(description, null, 2)).then((user) => {
+                      lkApplication.setCurrentUser(user)
+                      this.props.navigation.navigate('MainStack')
+                    }).catch(error => {
+                      const errStr = JSON.stringify(error)
+                      console.log(error)
 
-                    Alert.alert(errStr)
+                      Alert.alert(errStr)
+                    })
                   })
                 }
               }}>
