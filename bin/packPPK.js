@@ -12,7 +12,7 @@ const outputPath = `${exportPPKFolderPath}/${fileName}`
 start()
 
 function start () {
-  const cmd = `pushy bundle --platform ios --verbose --output ${outputPath}`
+  const cmd = `npx pushy bundle --platform ios --verbose --output ${outputPath}`
 
   timeCount(async () => {
     console.log('ppk export started')
