@@ -5,9 +5,13 @@ import {
   ScrollView, Text, View
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
+import {Toast} from "native-base";
 const {debounceFunc} = require('../../../../common/util/commonUtil')
 const config = require('../../config')
 const lkApp = require('../../../LKApplication').getCurrentApp()
+const container = require('../../../state')
+const versionLocal = require('../../../../package.json').version
+
 
 export default class BasicInfoView extends Component<{}> {
     static navigationOptions =() => {
@@ -89,6 +93,31 @@ export default class BasicInfoView extends Component<{}> {
           title: ' 设置检查更新服务器地址',
           onPress: () => {
             this.props.navigation.navigate('SetUpdateUrlView')
+          }
+        },
+        {
+          title: 'updateAnyWay',
+          onPress: () => {
+            const {updateUtil} = container
+
+            const option = {
+              customInfo: {
+                id: this.user.id,
+                name: this.user.name
+              },
+              'updateAnyWay': true,
+              versionLocal,
+              checkUpdateErrorCb: (error) => {
+                console.log(error)
+                Toast.show({
+                  text: '检查更新出错了',
+                  position: 'top',
+                  type: 'error',
+                  duration: 3000
+                })
+              }
+            }
+            updateUtil.checkUpdate(option)
           }
         }
         // {

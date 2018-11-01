@@ -54,48 +54,46 @@ export default class VersionView extends Component<{}> {
               </Text>
               <View style={{marginVertical: 20}}>
                 <Button iconLeft info disabled={this.state.checking} onPress={debounceFunc(() => {
-                  runNetFunc(() => {
-                    this.setState({
-                      checking: true
-                    })
-                    const {updateUtil} = container
-                    console.log({updateUtil})
+                  this.setState({
+                    checking: true
+                  })
+                  const {updateUtil} = container
+                  console.log({updateUtil})
 
-                    const afterCheck = () => {
-                      this.setState({
-                        checking: false
-                      })
-                    }
-                    const noUpdateCb = () => {
+                  const afterCheck = () => {
+                    this.setState({
+                      checking: false
+                    })
+                  }
+                  const noUpdateCb = () => {
+                    afterCheck()
+                    Toast.show({
+                      text: '当前已是最新版本',
+                      position: 'top',
+                      type: 'success',
+                      duration: 3000
+                    })
+                  }
+                  const option = {
+                    customInfo: {
+                      id: this.user.id,
+                      name: this.user.name
+                    },
+                    versionLocal,
+                    beforeUpdate: afterCheck,
+                    noUpdateCb,
+                    checkUpdateErrorCb: (error) => {
                       afterCheck()
+                      console.log(error)
                       Toast.show({
-                        text: '当前已是最新版本',
+                        text: '检查更新出错了',
                         position: 'top',
-                        type: 'success',
+                        type: 'error',
                         duration: 3000
                       })
                     }
-                    const option = {
-                      customInfo: {
-                        id: this.user.id,
-                        name: this.user.name
-                      },
-                      versionLocal,
-                      beforeUpdate: afterCheck,
-                      noUpdateCb,
-                      checkUpdateErrorCb: (error) => {
-                        afterCheck()
-                        console.log(error)
-                        Toast.show({
-                          text: '检查更新出错了',
-                          position: 'top',
-                          type: 'error',
-                          duration: 3000
-                        })
-                      }
-                    }
-                    updateUtil.checkUpdate(option)
-                  })
+                  }
+                  updateUtil.checkUpdate(option)
                 })
                 }>
                   <Icon name='refresh' />
