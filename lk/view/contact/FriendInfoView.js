@@ -27,7 +27,7 @@ export default class FriendInfoView extends Component<{}> {
       ChatManager.asyEnsureSingleChat(this.friend.id)
       this.props.navigation.navigate('ChatTab')
       this.props.navigation.navigate('ChatView', {
-        otherSide: this.friend,
+        otherSideId: this.friend.id,
         isGroup: false
       })
     }

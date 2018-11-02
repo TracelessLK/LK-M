@@ -40,19 +40,19 @@ const uuid = require('uuid')
 const {runNetFunc} = require('../../util')
 
 export default class ChatView extends Component<{}> {
-    static navigationOptions = async ({ navigation }) => {
+    static navigationOptions = ({ navigation }) => {
       const {otherSideId, isGroup} = navigation.state.params
+      let headerTitle = navigation.getParam('headerTitle')
+      headerTitle = headerTitle || ''
       let result
       if (otherSideId) {
-        const chat = await LKChatProvider.asyGetChat(lkApp.getCurrentUser().id, otherSideId)
-
         result = {
-          // headerTitle: chat.name,
-          // headerRight:
-          //           <TouchableOpacity onPress={navigation.getParam('navigateToInfo')}
-          //             style={{marginRight: 20}}>
-          //             <Image source={isGroup ? groupImg : personImg} style={{width: 22, height: 22}} resizeMode="contain"/>
-          //           </TouchableOpacity>
+          headerTitle,
+          headerRight:
+                    <TouchableOpacity onPress={navigation.getParam('navigateToInfo')}
+                      style={{marginRight: 20}}>
+                      <Image source={isGroup ? groupImg : personImg} style={{width: 22, height: 22}} resizeMode="contain"/>
+                    </TouchableOpacity>
         }
       }
       return result
@@ -90,14 +90,33 @@ export default class ChatView extends Component<{}> {
      refreshRecord = async (limit) => {
        const user = lkApp.getCurrentUser()
        let memberInfoObj
+       let headerTitle
        if (this.isGroupChat) {
+         const chat = await LKChatProvider.asyGetChat(lkApp.getCurrentUser().id, this.otherSideId)
+         headerTitle = chat.name
          const memberAry = await LKChatProvider.asyGetGroupMembers(this.otherSideId)
          // console.log({memberAry})
          memberInfoObj = memberAry.reduce((accumulator, ele) => {
            accumulator[ele.id] = ele
            return accumulator
          }, {})
+         this.otherSide = {
+           memberInfoObj,
+           id: this.otherSideId,
+           name: headerTitle
+         }
+       } else {
+         const otherSide = await LKContactProvider.asyGet(user.id, this.otherSideId)
+         this.otherSide = otherSide
+         // console.log({otherSide})
+         headerTitle = otherSide.name
+         // console.log({headerTitle})
        }
+       const {navigation} = this.props
+       navigation.setParams({
+         headerTitle
+       })
+
        const msgAry = await LKChatProvider.asyGetMsgs(user.id, this.otherSideId, limit)
        // console.log(msgAry)
        const msgOtherSideAry = msgAry.filter(msg => {
@@ -257,11 +276,11 @@ export default class ChatView extends Component<{}> {
         chatManager.asyReadMsgs(this.otherSideId, num)
       }
       this.limit++
-      // this.refreshRecord(this.limit)
+      this.refreshRecord(this.limit)
     }
 
     update = () => {
-      // this.refreshRecord(this.limit)
+      this.refreshRecord(this.limit)
     }
 
     componentWillUnmount =() => {
@@ -283,15 +302,15 @@ export default class ChatView extends Component<{}> {
       Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
       Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
-      // this.refreshRecord(this.limit)
+      this.refreshRecord(this.limit)
       this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
     }
 
     _navigateToInfo = () => {
       if (this.isGroupChat) {
-        this.props.navigation.navigate('GroupInfoView', {groupId: this.otherSideId})
+        this.props.navigation.navigate('GroupInfoView', {group: this.otherSide})
       } else {
-        this.props.navigation.navigate('FriendInfoView', {friendId: this.otherSideId})
+        this.props.navigation.navigate('FriendInfoView', {friend: this.otherSide})
       }
     }
 
@@ -374,7 +393,8 @@ export default class ChatView extends Component<{}> {
         if (this.isGroupChat && (state === chatManager.MESSAGE_STATE_TARGET_READ || state === chatManager.MESSAGE_STATE_SERVER_RECEIVE)) {
           this.props.navigation.navigate('ReadStateView', {
             msgId,
-            chatId: this.otherSideId
+            chatId: this.otherSideId,
+            group: this.otherSide
           })
         }
       }
