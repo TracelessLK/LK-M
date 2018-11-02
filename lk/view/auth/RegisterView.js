@@ -12,8 +12,10 @@ import deviceInfo from 'react-native-device-info'
 const lkApplication = require('../../LKApplication').getCurrentApp()
 
 const uuid = require('uuid')
-const PushUtil = require('@external/common')
+const {PushUtil} = require('@external/common')
+
 const {getAPNDeviceId} = PushUtil
+// console.log({getAPNDeviceId, PushUtil })
 const md5 = require('crypto-js/md5')
 
 export default class RegisterView extends Component<{}> {
