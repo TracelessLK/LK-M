@@ -29,6 +29,7 @@ const lkApp = require('../../LKApplication').getCurrentApp()
 const manifest = require('../../../Manifest')
 const chatManager = manifest.get('ChatManager')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
+const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const personImg = require('../image/person.png')
 const groupImg = require('../image/group.png')
 const _ = require('lodash')
@@ -39,17 +40,19 @@ const uuid = require('uuid')
 const {runNetFunc} = require('../../util')
 
 export default class ChatView extends Component<{}> {
-    static navigationOptions =({ navigation }) => {
-      const {otherSide, isGroup} = navigation.state.params
+    static navigationOptions = async ({ navigation }) => {
+      const {otherSideId, isGroup} = navigation.state.params
       let result
-      if (otherSide) {
+      if (otherSideId) {
+        const chat = await LKChatProvider.asyGetChat(lkApp.getCurrentUser().id, otherSideId)
+
         result = {
-          headerTitle: otherSide.name,
-          headerRight:
-                    <TouchableOpacity onPress={navigation.getParam('navigateToInfo')}
-                      style={{marginRight: 20}}>
-                      <Image source={isGroup ? groupImg : personImg} style={{width: 22, height: 22}} resizeMode="contain"/>
-                    </TouchableOpacity>
+          // headerTitle: chat.name,
+          // headerRight:
+          //           <TouchableOpacity onPress={navigation.getParam('navigateToInfo')}
+          //             style={{marginRight: 20}}>
+          //             <Image source={isGroup ? groupImg : personImg} style={{width: 22, height: 22}} resizeMode="contain"/>
+          //           </TouchableOpacity>
         }
       }
       return result
@@ -58,7 +61,7 @@ export default class ChatView extends Component<{}> {
     constructor (props) {
       super(props)
       this.minHeight = 35
-      const {isGroup, otherSide} = this.props.navigation.state.params
+      const {isGroup, otherSideId} = this.props.navigation.state.params
       this.isGroupChat = isGroup
       this.originalContentHeight = Dimensions.get('window').height - Header.HEIGHT
       this.state = {
@@ -69,8 +72,7 @@ export default class ChatView extends Component<{}> {
         msgViewHeight: this.originalContentHeight,
         isInited: false
       }
-      this.otherSide = otherSide
-      // console.log({otherSide})
+      this.otherSideId = otherSideId
       this.text = ''
       this.folderId = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
       this.limit = Constant.MESSAGE_PER_REFRESH
@@ -80,17 +82,23 @@ export default class ChatView extends Component<{}> {
         count: 0,
         isRefreshingControl: false
       }
-      if (this.isGroupChat) {
-        const {memberInfoObj} = otherSide
-        this.groupMemberInfo = memberInfoObj
-      }
+
       // keyboard fix
       this.keyBoardShowCount = 0
     }
 
      refreshRecord = async (limit) => {
        const user = lkApp.getCurrentUser()
-       const msgAry = await LKChatProvider.asyGetMsgs(user.id, this.otherSide.id, limit)
+       let memberInfoObj
+       if (this.isGroupChat) {
+         const memberAry = await LKChatProvider.asyGetGroupMembers(this.otherSideId)
+         // console.log({memberAry})
+         memberInfoObj = memberAry.reduce((accumulator, ele) => {
+           accumulator[ele.id] = ele
+           return accumulator
+         }, {})
+       }
+       const msgAry = await LKChatProvider.asyGetMsgs(user.id, this.otherSideId, limit)
        // console.log(msgAry)
        const msgOtherSideAry = msgAry.filter(msg => {
          return msg.senderUid !== user.id
@@ -156,17 +164,19 @@ export default class ChatView extends Component<{}> {
          const style = {
            recordEleStyle: {flexDirection: 'row', justifyContent: 'flex-start', alignItems: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? 'flex-start' : 'flex-start', width: '100%', marginTop: 15}
          }
-         // console.log({msg, senderUid: msg.senderUid, groupMemberInfo: this.groupMemberInfo})
          if (msg.senderUid !== user.id) {
            // message received
-           let otherPicSource = getAvatarSource(this.otherSide.pic)
+
+           // fixme: 存在群成员不是好友的情况
+           const otherSide = await LKContactProvider.asyGet(user.id, msg.senderUid)
+           let otherPicSource = getAvatarSource(otherSide.pic)
 
            recordAry.push(<View key={id} style={style.recordEleStyle}>
              <Image source={otherPicSource} style={{width: 40, height: 40, marginLeft: 5, marginRight: 8}} resizeMode="contain"></Image>
              <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
                {this.isGroupChat
                  ? <View style={{marginBottom: 8, marginLeft: 5}}>
-                   <Text style={{color: '#808080', fontSize: 13}}> {this.groupMemberInfo[msg.senderUid].name}</Text>
+                   <Text style={{color: '#808080', fontSize: 13}}> {memberInfoObj[msg.senderUid].name}</Text>
                  </View>
                  : null}
                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start'}}>
@@ -241,20 +251,17 @@ export default class ChatView extends Component<{}> {
     }
 
     msgChange= async () => {
-      // if (targetId === this.otherSide.id) {
-      //
-      // }
       // todo should have scroll and message pop up animation
-      const num = await chatManager.asyGetNewMsgNum(this.otherSide.id)
+      const num = await chatManager.asyGetNewMsgNum(this.otherSideId)
       if (num) {
-        chatManager.asyReadMsgs(this.otherSide.id, num)
+        chatManager.asyReadMsgs(this.otherSideId, num)
       }
       this.limit++
-      this.refreshRecord(this.limit)
+      // this.refreshRecord(this.limit)
     }
 
     update = () => {
-      this.refreshRecord(this.limit)
+      // this.refreshRecord(this.limit)
     }
 
     componentWillUnmount =() => {
@@ -268,24 +275,23 @@ export default class ChatView extends Component<{}> {
     }
 
     componentDidMount= async () => {
-      const num = await chatManager.asyGetNewMsgNum(this.otherSide.id)
-      // console.log({otherSide: this.otherSide, num})
+      const num = await chatManager.asyGetNewMsgNum(this.otherSideId)
       if (num) {
-        chatManager.asyReadMsgs(this.otherSide.id, num)
+        chatManager.asyReadMsgs(this.otherSideId, num)
       }
       chatManager.on('msgChanged', this.msgChange)
       Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
       Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
-      this.refreshRecord(this.limit)
+      // this.refreshRecord(this.limit)
       this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
     }
 
     _navigateToInfo = () => {
       if (this.isGroupChat) {
-        this.props.navigation.navigate('GroupInfoView', {group: this.otherSide})
+        this.props.navigation.navigate('GroupInfoView', {groupId: this.otherSideId})
       } else {
-        this.props.navigation.navigate('FriendInfoView', {friend: this.otherSide})
+        this.props.navigation.navigate('FriendInfoView', {friendId: this.otherSideId})
       }
     }
 
@@ -297,9 +303,9 @@ export default class ChatView extends Component<{}> {
           const channel = lkApp.getLKWSChannel()
           try {
             if (this.isGroupChat) {
-              channel.sendGroupText(this.otherSide.id, this.text, this.relativeMsgId)
+              channel.sendGroupText(this.otherSideId, this.text, this.relativeMsgId)
             } else {
-              channel.sendText(this.otherSide.id, this.text, this.relativeMsgId)
+              channel.sendText(this.otherSideId, this.text, this.relativeMsgId)
             }
             this.text = ''
           } catch (err) {
@@ -315,7 +321,7 @@ export default class ChatView extends Component<{}> {
 
     sendImage = ({data, width, height}) => {
       runNetFunc(() => {
-        lkApp.getLKWSChannel().sendImage(this.otherSide.id, data, width, height, this.relativeMsgId, this.isGroupChat).catch(err => {
+        lkApp.getLKWSChannel().sendImage(this.otherSideId, data, width, height, this.relativeMsgId, this.isGroupChat).catch(err => {
           Alert.alert(err.toString())
         })
       })
@@ -368,8 +374,7 @@ export default class ChatView extends Component<{}> {
         if (this.isGroupChat && (state === chatManager.MESSAGE_STATE_TARGET_READ || state === chatManager.MESSAGE_STATE_SERVER_RECEIVE)) {
           this.props.navigation.navigate('ReadStateView', {
             msgId,
-            chatId: this.otherSide.id,
-            group: this.otherSide
+            chatId: this.otherSideId
           })
         }
       }

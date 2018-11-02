@@ -62,7 +62,7 @@ export default class RecentView extends Component<{}> {
             const {senderId, chatId, isGroup} = data
             console.log({onInitialNotification: res})
             this.chat({
-              otherSide: senderUid,
+              otherSideId: isGroup ? chatId : senderId,
               isGroup
             })
           }
@@ -195,21 +195,13 @@ export default class RecentView extends Component<{}> {
         }
 
         const memberAry = await LKChatProvider.asyGetGroupMembers(chatId)
-        // console.log({memberAry})
-        const memberInfoObj = memberAry.reduce((accumulator, ele) => {
-          accumulator[ele.id] = ele
-          return accumulator
-        }, {})
+
         const picAry = memberAry.map(ele => ele.pic)
         obj.image = picAry
         obj.onPress = () => {
           const param = {
             isGroup: true,
-            otherSide: {
-              id: chatId,
-              memberInfoObj,
-              name: chatName
-            }
+            otherSideId: chatId
           }
           this.chat(param)
         }
@@ -230,7 +222,7 @@ export default class RecentView extends Component<{}> {
 
         obj.onPress = () => {
           this.chat({
-            otherSide: person,
+            otherSideId: person.id,
             isGroup: false
           })
         }
@@ -250,10 +242,10 @@ export default class RecentView extends Component<{}> {
           accumulator[ele.id] = ele
           return accumulator
         }, {})
-        result =  {
-            id,
-            memberInfoObj,
-            name: chatName
+        result = {
+          id,
+          memberInfoObj,
+          name: chatName
         }
       }
 
@@ -294,7 +286,7 @@ export default class RecentView extends Component<{}> {
             chatName: name,
             createTime
           }
-          const msgPromise = this. getMsg(option)
+          const msgPromise = this.getMsg(option)
           msgAryPromise.push(msgPromise)
         }
         let recentAry = await Promise.all(msgAryPromise)
