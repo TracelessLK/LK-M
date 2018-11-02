@@ -14,7 +14,7 @@ const chatManager = require('../core/ChatManager')
 const {pushUtil} = require('@external/common')
 const lkStyle = require('../view/style')
 const RNFS = require('react-native-fs')
-const {logPath} = require('./config')
+const {logPath} = require('../config')
 
 class Util {
   /**
@@ -26,8 +26,11 @@ class Util {
   }
   static appendToLog (option) {
     const {content, type} = option
+    console.log({option})
     const appendPath = logPath[type]
-    RNFS.appendFile(appendPath, content + '\n', 'utf8').catch((err) => {
+    const now = new Date()
+    const str = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}: \n ${content} \n \n`
+    RNFS.appendFile(appendPath, str, 'utf8').catch((err) => {
       console.log(err)
     })
   }

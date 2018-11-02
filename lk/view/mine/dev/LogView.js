@@ -61,9 +61,9 @@ export default class LogView extends Component<{}> {
             </View>
 
           </View>
-          <Card title="" style={{}}>
+          <Card title="" style={{flex: 1, width: '90%'}}>
             <Text>
-              {this.state.result}
+              {this.state.result || '无记录'}
             </Text>
           </Card>
 

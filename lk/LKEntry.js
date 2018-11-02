@@ -26,10 +26,11 @@ const {ErrorUtil, ErrorStock} = require('@ys/react-native-collection')
 const {setGlobalErrorHandler} = ErrorUtil
 const option = {
   // todo error upload
-  productionProcess: (error) => {\
+  productionProcess: (error) => {
+    console.log({stack: error.stack})
     appendToLog({
       type: 'error',
-      content: error.toString()
+      content: error.stack.toString()
     })
   },
   ErrorUtilRN,
@@ -43,7 +44,7 @@ global.onunhandledrejection = function onunhandledrejection (error) {
   if (error instanceof Error) {
     appendToLog({
       type: 'error',
-      content: error.toString()
+      content: error.stack
     })
     errorStock.processError({error})
   }

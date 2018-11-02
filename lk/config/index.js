@@ -11,9 +11,9 @@ const config = {
   appName: 'LK',
   appInfoUrl: 'https://raw.githubusercontent.com/tracelessman/LK-M/dev_z/public/app.json',
   logPath: {
-    error: RNFS.DocumentDirectoryPath + '/log/error.txt',
-    debug: RNFS.DocumentDirectoryPath + '/log/debug.txt',
-    info: RNFS.DocumentDirectoryPath + '/log/info.txt'
+    error: RNFS.DocumentDirectoryPath + '/error.txt',
+    debug: RNFS.DocumentDirectoryPath + '/debug.txt',
+    info: RNFS.DocumentDirectoryPath + '/info.txt'
   }
 }
 
