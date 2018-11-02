@@ -103,21 +103,16 @@ class LKApplication extends Application {
           id,
           name
         },
+        versionLocal,
         checkUpdateErrorCb: (error) => {
           console.log(error)
-          // Toast.show({
-          //   text: '检查更新出错了',
-          //   position: 'top',
-          //   type: 'error',
-          //   duration: 3000
-          // })
         }
       }
-      // updateUtil.checkUpdate(optionCheck)
+      updateUtil.checkUpdate(optionCheck)
     }
   }
 
-  async asyRegister (user, venderDid, checkCode, qrcode, description) {
+  asyRegister (user, venderDid, checkCode, qrcode, description) {
     let channel = new (ConfigManager.getWSChannel())('ws://' + user.serverIP + ':' + user.serverPort, true)
     return new Promise((resolve, reject) => {
       channel.asyRegister(user.serverIP, user.serverPort, user.id, user.deviceId, venderDid, user.publicKey, checkCode, qrcode, description).then(function (msg) {
