@@ -9,7 +9,12 @@ const config = {
   isPreviewVersion: false,
   isEncrypted: true,
   appName: 'LK',
-  appInfoUrl: 'https://raw.githubusercontent.com/tracelessman/LK-M/dev_z/public/app.json'
+  appInfoUrl: 'https://raw.githubusercontent.com/tracelessman/LK-M/dev_z/public/app.json',
+  logPath: {
+    error: RNFS.DocumentDirectoryPath + '/log/error.txt',
+    debug: RNFS.DocumentDirectoryPath + '/log/debug.txt',
+    info: RNFS.DocumentDirectoryPath + '/log/info.txt'
+  }
 }
 
 // config in production

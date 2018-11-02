@@ -2,36 +2,13 @@
 import React, { Component } from 'react'
 import {
   YellowBox,
-  StyleSheet, View,
-  Alert
+  StyleSheet, View
 } from 'react-native'
 import {Root} from 'native-base'
-import Promise from 'bluebird'
 import LKEntry from './lk/LKEntry'
-const ErrorUtilRN = require('ErrorUtils')
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
 
-const {ErrorUtil, ErrorStock} = require('@ys/react-native-collection')
-const {setGlobalErrorHandler} = ErrorUtil
-const option = {
-  // todo error upload
-  productionProcess: (error) => {
-    Alert.alert(error.toString())
-  },
-  ErrorUtilRN,
-  resetTime: 1000 * 1
-}
-setGlobalErrorHandler(option)
-global.Promise = Promise
-
-const errorStock = new ErrorStock()
-global.onunhandledrejection = function onunhandledrejection (error) {
-  if (error instanceof Error) {
-    errorStock.processError({error})
-  }
-}
-// console.log(global)
 export default class Entry extends Component<{}> {
   render () {
     return (

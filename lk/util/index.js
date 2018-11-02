@@ -14,6 +14,7 @@ const chatManager = require('../core/ChatManager')
 const {pushUtil} = require('@external/common')
 const lkStyle = require('../view/style')
 const RNFS = require('react-native-fs')
+const {logPath} = require('./config')
 
 class Util {
   /**
@@ -24,9 +25,9 @@ class Util {
     return pushUtil.getAPNDeviceId()
   }
   static appendToLog (option) {
-    const {path, content} = option
-    RNFS.appendFile(path, content + '\n', 'utf8').then(() => {
-    }).catch((err) => {
+    const {content, type} = option
+    const appendPath = logPath[type]
+    RNFS.appendFile(appendPath, content + '\n', 'utf8').catch((err) => {
       console.log(err)
     })
   }

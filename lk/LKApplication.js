@@ -109,6 +109,8 @@ class LKApplication extends Application {
         }
       }
       updateUtil.checkUpdate(optionCheck)
+      throw new Error('this is a test')
+
     }
   }
 

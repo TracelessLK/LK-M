@@ -2,9 +2,13 @@
 import React, { Component } from 'react'
 import {
   YellowBox,
-  Linking
+  Linking, Alert
 } from 'react-native'
 import EntryView from './view/index/EntryView'
+import Promise from 'bluebird'
+const ErrorUtilRN = require('ErrorUtils')
+const util = require('./util')
+const {appendToLog} = util
 
 YellowBox.ignoreWarnings([
   'Warning: isMounted(...) is deprecated in plain JavaScript React classes. Instead, make sure to clean up subscriptions and pending requests in componentWillUnmount to prevent memory leaks.',
@@ -17,6 +21,34 @@ YellowBox.ignoreWarnings([
 ])
 console.disableYellowBox = true
 // console.log(process.env)
+
+const {ErrorUtil, ErrorStock} = require('@ys/react-native-collection')
+const {setGlobalErrorHandler} = ErrorUtil
+const option = {
+  // todo error upload
+  productionProcess: (error) => {\
+    appendToLog({
+      type: 'error',
+      content: error.toString()
+    })
+  },
+  ErrorUtilRN,
+  resetTime: 1000 * 10
+}
+setGlobalErrorHandler(option)
+global.Promise = Promise
+
+const errorStock = new ErrorStock()
+global.onunhandledrejection = function onunhandledrejection (error) {
+  if (error instanceof Error) {
+    appendToLog({
+      type: 'error',
+      content: error.toString()
+    })
+    errorStock.processError({error})
+  }
+}
+// console.log(global)
 
 export default class LKEntry extends Component<{}> {
   componentDidMount () {
