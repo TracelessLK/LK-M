@@ -11,7 +11,8 @@ const container = require('../state')
 const {FuncUtil} = require('@ys/vanilla')
 const {runFunc} = FuncUtil
 const chatManager = require('../core/ChatManager')
-const {pushUtil} = require('@external/common')
+const {PushUtil} = require('@external/common')
+const {getAPNDeviceId} = PushUtil
 const lkStyle = require('../view/style')
 const RNFS = require('react-native-fs')
 const {logPath} = require('../config')
@@ -22,7 +23,7 @@ class Util {
    * @returns {Promise} Promise resolve IOS推送id {string}
    */
   static asyGetApplePushId () {
-    return pushUtil.getAPNDeviceId()
+    return getAPNDeviceId()
   }
   static appendToLog (option) {
     const {content, type} = option

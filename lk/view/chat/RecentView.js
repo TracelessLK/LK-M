@@ -13,7 +13,8 @@ import {
   ActionSheet,
   Icon
 } from 'native-base'
-const {commonUtil, MessageList, pushUtil} = require('@external/common')
+const {commonUtil, MessageList, PushUtil} = require('@external/common')
+const {removeNotify} = PushUtil
 const {debounceFunc} = commonUtil
 const {getAvatarSource, addExternalFriend} = require('../../util')
 const LKChatProvider = require('../../logic/provider/LKChatProvider')
@@ -51,6 +52,22 @@ export default class RecentView extends Component<{}> {
       // todo: store all not undefined value
       this.channel = lkApp.getLKWSChannel()
       this.user = lkApp.getCurrentUser()
+      new PushUtil({
+        onNotfication: res => {
+          // console.log({onNotfication: res})
+        },
+        onInitialNotification: res => {
+          if (res) {
+            const {_data: data} = res
+            const {senderId, chatId, isGroup} = data
+            console.log({onInitialNotification: res})
+            this.chat({
+              otherSide: senderUid,
+              isGroup
+            })
+          }
+        }
+      })
     }
 
   optionToChoose = () => {
@@ -107,7 +124,7 @@ export default class RecentView extends Component<{}> {
       // console.log({appState})
       if (appState === 'active') {
         this.asyGetAllDetainedMsg({minTime: 500})
-        pushUtil.removeNotify()
+        removeNotify()
       }
     }
 
@@ -183,7 +200,6 @@ export default class RecentView extends Component<{}> {
           accumulator[ele.id] = ele
           return accumulator
         }, {})
-        // console.log({memberInfoObj})
         const picAry = memberAry.map(ele => ele.pic)
         obj.image = picAry
         obj.onPress = () => {
@@ -225,6 +241,25 @@ export default class RecentView extends Component<{}> {
       return result
     }
 
+    getOtherSide = async ({isGroup, id}) => {
+      let result
+
+      if (isGroup) {
+        const memberAry = await LKChatProvider.asyGetGroupMembers(id)
+        const memberInfoObj = memberAry.reduce((accumulator, ele) => {
+          accumulator[ele.id] = ele
+          return accumulator
+        }, {})
+        result =  {
+            id,
+            memberInfoObj,
+            name: chatName
+        }
+      }
+
+      return result
+    }
+
     getMsgContent (content, type) {
       const maxDisplay = 15
       if (type === chatManager.MESSAGE_TYEP_TEXT) {
@@ -259,7 +294,7 @@ export default class RecentView extends Component<{}> {
             chatName: name,
             createTime
           }
-          const msgPromise = this.getMsg(option)
+          const msgPromise = this. getMsg(option)
           msgAryPromise.push(msgPromise)
         }
         let recentAry = await Promise.all(msgAryPromise)

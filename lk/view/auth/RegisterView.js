@@ -12,7 +12,8 @@ import deviceInfo from 'react-native-device-info'
 const lkApplication = require('../../LKApplication').getCurrentApp()
 
 const uuid = require('uuid')
-const pushUtil = require('../../../common/util/pushUtil')
+const PushUtil = require('@external/common')
+const {getAPNDeviceId} = PushUtil
 const md5 = require('crypto-js/md5')
 
 export default class RegisterView extends Component<{}> {
@@ -72,7 +73,7 @@ export default class RegisterView extends Component<{}> {
         brand: deviceInfo.getBrand(),
         device: deviceInfo.getDeviceId()
       }
-      const venderDid = await pushUtil.getAPNDeviceId()
+      const venderDid = await getAPNDeviceId()
 
       lkApplication.asyRegister(user, venderDid, this.checkCode, qrcode, JSON.stringify(description, null, 2)).then((user) => {
         lkApplication.setCurrentUser(user)

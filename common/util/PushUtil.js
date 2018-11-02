@@ -20,24 +20,16 @@ if (Platform.OS === 'ios') {
     })
   })
 }
-const pushUtil = {
-  setJpush (option) {
-    if (Platform.OS === 'android') {
-    }
-  },
-  init () {
+class PushUtil {
+  constructor ({onNotfication, onInitialNotification}) {
     if (Platform.OS === 'ios') {
       // 必须要调用requestPermissions,否则无法接受到register事件获取deviceId
 
-      PushNotificationIOS.getInitialNotification().then(res => {
-        // TODO 跳转到指定聊天窗口
-      })
+      PushNotificationIOS.getInitialNotification().then(onInitialNotification)
 
-      this.removeNotify()
+      PushUtil.removeNotify()
 
-      // PushNotificationIOS.addEventListener('notification', (res) => {
-      //
-      // });
+      PushNotificationIOS.addEventListener('notification', onNotfication)
       PushNotificationIOS.checkPermissions((permissions) => {
         const {alert, sound, badge} = permissions
 
@@ -54,11 +46,16 @@ const pushUtil = {
         }
       })
     }
-  },
-  getAPNDeviceId () {
+  }
+
+  static setJpush (option) {
+    if (Platform.OS === 'android') {
+    }
+  }
+  static getAPNDeviceId () {
     return AsyncStorage.getItem('deviceIdAPN')
-  },
-  removeNotify () {
+  }
+  static removeNotify () {
     if (Platform.OS === 'ios') {
       PushNotificationIOS.removeAllDeliveredNotifications()
       PushNotificationIOS.setApplicationIconBadgeNumber(0)
@@ -66,6 +63,4 @@ const pushUtil = {
   }
 }
 
-pushUtil.init()
-
-module.exports = pushUtil
+module.exports = PushUtil
