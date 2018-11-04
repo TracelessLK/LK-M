@@ -30,7 +30,7 @@ class Util {
     console.log({option})
     const appendPath = logPath[type]
     const now = new Date()
-    const str = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}: \n ${content} \n \n`
+    const str = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}: \n ${content} \n\n\n \n`
     RNFS.appendFile(appendPath, str, 'utf8').catch((err) => {
       console.log(err)
     })

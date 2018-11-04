@@ -234,29 +234,12 @@ export default class RecentView extends Component<{}> {
       return result
     }
 
-    getOtherSide = async ({isGroup, id}) => {
-      let result
-
-      if (isGroup) {
-        const memberAry = await LKChatProvider.asyGetGroupMembers(id)
-        const memberInfoObj = memberAry.reduce((accumulator, ele) => {
-          accumulator[ele.id] = ele
-          return accumulator
-        }, {})
-        result = {
-          id,
-          memberInfoObj,
-          name: chatName
-        }
-      }
-
-      return result
-    }
-
     getMsgContent (content, type) {
+      // console.log({content})
       const maxDisplay = 15
       if (type === chatManager.MESSAGE_TYEP_TEXT) {
         const {length} = content
+        // console.log({content,length})
         if (length > maxDisplay) {
           content = content.substring(0, maxDisplay) + '......'
         }
