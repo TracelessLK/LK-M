@@ -160,6 +160,7 @@ export default class RecentView extends Component<{}> {
     }
 
     connectionOpen = () => {
+      this.asyGetAllDetainedMsg({minTime: 500})
       this.resetHeaderTitle()
       this.setState({
         connectionOK: true
