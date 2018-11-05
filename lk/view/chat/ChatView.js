@@ -7,7 +7,8 @@ import {
   Modal,
   Platform, ScrollView, Text, TextInput, TouchableOpacity, View,
   Alert, RefreshControl,
-  CameraRoll
+  CameraRoll,
+  StatusBar
 } from 'react-native'
 // import ImagePicker from 'react-native-image-picker'
 // import ImageResizer from 'react-native-image-resizer'
@@ -518,6 +519,7 @@ export default class ChatView extends Component<{}> {
           <Modal visible={this.state.biggerImageVisible} transparent={false} animationType={'fade'}
             onRequestClose={this.closeImage}
           >
+            <StatusBar hidden />
             <ImageViewer imageUrls={this.state.imageUrls}
               onClick={this.closeImage}
               onSave={(url) => {
