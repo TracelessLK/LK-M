@@ -593,7 +593,7 @@ class LKChannel extends WSChannel{
         ChatManager.msgReadReport(msg.header.uid,chatId,msgIds,ChatManager.MESSAGE_STATE_TARGET_READ).then((isAllUpdate)=>{
             if(isAllUpdate)
                 this._reportMsgHandled(msg.header.flowId,msg.header.flowType);
-            ChatManager.fire("msgChanged",chatId);
+            // ChatManager.fire("msgChanged",chatId);
         });
 
     }

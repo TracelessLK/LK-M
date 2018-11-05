@@ -26,10 +26,10 @@ const util = {
         }
         result = `${prefix} ${hour}:` + minute
       } else {
-        result = `${commonUtil.pad(month + 1)}-${day}`
+        result = `${commonUtil.pad(month + 1)}-${commonUtil.pad(day)}`
       }
     } else {
-      result = `${year}-${commonUtil.pad(month + 1)}月-${day}日`
+      result = `${year}-${commonUtil.pad(month + 1)}月-${commonUtil.pad(day)}日`
     }
     if (dayDiff === 1) {
       result = '昨天'
