@@ -367,7 +367,7 @@ export default class RecentView extends Component<{}> {
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={() => {
-                this.asyGetAllDetainedMsg({refreshControl: true, showWarning: true})
+                this.asyGetAllDetainedMsg({refreshControl: true, showWarning: true, minTime: 1000})
               }}
             />}
         >
