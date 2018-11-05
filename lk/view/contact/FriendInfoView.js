@@ -41,13 +41,13 @@ export default class FriendInfoView extends Component<{}> {
       const deviceAry = await LKDeviceProvider.asyGetAll(this.friend.id)
       const str = deviceAry.map(ele => ele.id).join('\n')
       this.setState({
-        allDevice: str
+        allDevice: str || '无记录'
       })
     }
     render () {
       let friend = this.friend
       return (
-        <ScrollView contentContainerStyle={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff', paddingTop: 20}}>
+        <ScrollView contentContainerStyle={{ flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff', paddingTop: 20}}>
           <Image source={getAvatarSource(this.friend.pic)}
             style={{margin: 10, width: 100, height: 100, borderRadius: 5}} resizeMode="contain"></Image>
 
@@ -62,10 +62,13 @@ export default class FriendInfoView extends Component<{}> {
           <TouchableOpacity onPress={this.sendMessage} style={{marginVertical: 30, width: '90%', height: 40, borderColor: 'gray', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
             <Text style={{fontSize: 18, textAlign: 'center', color: 'gray'}}>发消息</Text>
           </TouchableOpacity>
-          <Card title='device id'
-            style={{marginVertical: 50, width: '90%', padding: 10, alignItems: 'center', justifyContent: 'center'}}>
-            <Text>{this.state.allDevice}</Text>
-          </Card>
+          <View style={{marginVertical: 20}}>
+            <Card title='device id'
+              style={{marginVertical: 50, width: '90%', padding: 10, alignItems: 'center', justifyContent: 'center'}}>
+              <Text>{this.state.allDevice}</Text>
+            </Card>
+          </View>
+
         </ScrollView>
       )
     }

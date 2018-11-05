@@ -354,13 +354,13 @@ export default class RecentView extends Component<{}> {
     return (
       <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
         {this.state.connectionOK ? null
-          : <TouchableOpacity style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}
+          : <View style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}
             onPress={() => {
               // this.props.navigation.navigate('ConnectionFailView', {type: this.state.type})
             }}
           >
             <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>{this.state.msg}</Text>
-          </TouchableOpacity>
+          </View>
         }
         <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always"
           refreshControl={
