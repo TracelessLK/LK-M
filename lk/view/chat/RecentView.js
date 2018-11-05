@@ -9,10 +9,7 @@ import {
   RefreshControl,
   AppState
 } from 'react-native'
-import {
-  ActionSheet,
-  Icon
-} from 'native-base'
+import NetIndicator from '../common/NetIndicator'
 const {commonUtil, MessageList, PushUtil} = require('@external/common')
 const {removeNotify} = PushUtil
 const {debounceFunc} = commonUtil
@@ -47,7 +44,6 @@ export default class RecentView extends Component<{}> {
       super(props)
       this.state = {
         contentAry: null,
-        connectionOK: true,
         refreshing: false
       }
       this.eventAry = ['msgChanged', 'recentChanged']
@@ -138,13 +134,11 @@ export default class RecentView extends Component<{}> {
       const msg = this.getConnectionMsg()
       if (NetInfoUtil.online) {
         this.setState({
-          connectionOK: false,
           msg,
           type: 'connectionFail'
         })
       } else {
         this.setState({
-          connectionOK: false,
           msg,
           type: 'networkFail'
         })
@@ -164,9 +158,6 @@ export default class RecentView extends Component<{}> {
     connectionOpen = () => {
       this.asyGetAllDetainedMsg()
       this.resetHeaderTitle()
-      this.setState({
-        connectionOK: true
-      })
     }
 
     async getMsg (option) {
@@ -353,15 +344,7 @@ export default class RecentView extends Component<{}> {
   render () {
     return (
       <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
-        {this.state.connectionOK ? null
-          : <View style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}
-            onPress={() => {
-              // this.props.navigation.navigate('ConnectionFailView', {type: this.state.type})
-            }}
-          >
-            <Icon name='ios-alert' style={{color: '#eb7265', fontSize: 25, marginRight: 5}}/><Text style={{color: '#606060'}}>{this.state.msg}</Text>
-          </View>
-        }
+        <NetIndicator/>
         <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always"
           refreshControl={
             <RefreshControl

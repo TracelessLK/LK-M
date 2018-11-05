@@ -20,6 +20,7 @@ import {
   Toast,
   ActionSheet
 } from 'native-base'
+import NetIndicator from '../common/NetIndicator'
 import MessageText from './MessageText'
 import {Header} from 'react-navigation'
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
@@ -480,6 +481,7 @@ export default class ChatView extends Component<{}> {
     render () {
       const contentView =
         <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}>
+          <NetIndicator/>
           <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}>
             <ScrollView ref={(ref) => { this.scrollView = ref }} style={{width: '100%', backgroundColor: '#d5e0f2'}}
               refreshControl={
