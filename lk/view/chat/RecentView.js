@@ -339,7 +339,7 @@ export default class RecentView extends Component<{}> {
       await this.channel.asyGetAllDetainedMsg()
       const reset = async () => {
         // console.log('reset')
-        await this.resetHeaderTitle()
+        this.resetHeaderTitle()
         this.setState({
           refreshing: false
         })
