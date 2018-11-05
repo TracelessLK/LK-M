@@ -30,7 +30,7 @@ class util {
     })
   }
   static timeStamp ({packType}) {
-    const obj = require(appJSONPath)
+    const obj = {}
     obj.packTime = getTimeDisplay()
     obj.packType = packType
     fs.writeFileSync(appJSONPath, JSON.stringify(obj))
