@@ -5,7 +5,6 @@ import {
 } from 'react-native'
 import {Card} from 'react-native-elements'
 import DeviceInfo from 'react-native-device-info'
-const RNFS = require('react-native-fs')
 const lkApp = require('../../../LKApplication').getCurrentApp()
 const packageJSON = require('../../../../package')
 const {version} = packageJSON
@@ -21,17 +20,7 @@ export default class InfoView extends Component<{}> {
 
   async componentDidMount () {
     const deviceIdAPN = await AsyncStorage.getItem('deviceIdAPN')
-
-    const appJSONPath = '../../../app.json'
-    const existAppJSON = await RNFS.exists(appJSONPath)
-    let appJSON = {}
-    // console.log({existAppJSON})
-
-    if (existAppJSON) {
-      const str = await RNFS.readFile(appJSONPath, 'utf8')
-      appJSON = JSON.parse(str.trim())
-    }
-
+    let appJSON = require('../../../app.json')
     const {packType = '', packTime = ''} = appJSON
     this.setState({
       deviceIdAPN, packType, packTime
