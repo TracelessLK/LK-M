@@ -6,6 +6,8 @@ import {
 import {Card} from 'react-native-elements'
 import DeviceInfo from 'react-native-device-info'
 const lkApp = require('../../../LKApplication').getCurrentApp()
+const appJSON = require('../../../app.json')
+const {packType, packTime} = appJSON
 
 export default class InfoView extends Component<{}> {
   constructor (props) {
@@ -24,50 +26,27 @@ export default class InfoView extends Component<{}> {
   }
 
   render () {
+    const ary = [
+      `uid:  ${this.user.id}`, `clientId:  ${this.user.deviceId}`, `bundleId:  ${DeviceInfo.getBundleId()}`,
+      `__DEV__:  ${__DEV__ ? '是' : '否'}`, `uniqueId:  ${DeviceInfo.getUniqueID()}`,
+      `原生版本:  ${DeviceInfo.getVersion()}`, `buildNumber: ${DeviceInfo.getBuildNumber()}`,
+      `apnId:  ${this.state.deviceIdAPN}`, `packType: ${packType}`, `packTime: ${packTime}`
+    ]
+
+    const aryView = ary.map((ele, index) => {
+      return (
+        <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}} key={index}>
+          <Text selectable style={{}} >
+            {ele}
+          </Text>
+        </View>
+      )
+    })
     return (
       <ScrollView>
         <View style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', marginVertical: 40}}>
           <Card title="" style={{}}>
-            <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-              <Text selectable style={{}} >
-                uid:{this.user.id}
-              </Text>
-            </View>
-            <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-              <Text selectable style={{}} >
-                clientId:{this.user.deviceId}
-              </Text>
-            </View>
-            <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-              <Text selectable style={{}} >
-                bundleId:{DeviceInfo.getBundleId()}
-              </Text>
-            </View>
-            <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-              <Text selectable style={{}} >
-                开发状态:{__DEV__ ? '是' : '否'}
-              </Text>
-            </View>
-            <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-              <Text selectable style={{}} >
-                uniqueId:{DeviceInfo.getUniqueID()}
-              </Text>
-            </View>
-            <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-              <Text selectable style={{}} >
-                原生版本:{DeviceInfo.getVersion()}
-              </Text>
-            </View>
-            <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-              <Text selectable style={{}} >
-                buildNumber:{DeviceInfo.getBuildNumber()}
-              </Text>
-            </View>
-            <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-              <Text selectable style={{}} >
-                apnId:{this.state.deviceIdAPN}
-              </Text>
-            </View>
+            {aryView}
           </Card>
         </View>
       </ScrollView>

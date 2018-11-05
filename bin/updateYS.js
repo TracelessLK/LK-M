@@ -1,6 +1,23 @@
-const {ModuleUtil} = require('@ys/collection')
-const {updateYS} = ModuleUtil
 const path = require('path')
-const rootPath = path.resolve(__dirname, '../')
+const rootDir = path.resolve(__dirname, '../')
+const fs = require('fs')
+const {execSync} = require('child_process')
 
-updateYS(rootPath)
+let cmd = ''
+const ary = ['yarn.lock', 'node_modules/@ys']
+
+ary.forEach(ele => {
+  const elePath = path.resolve(rootDir, ele)
+
+  if (fs.existsSync(elePath)) {
+    cmd += `rm ${ele} &&`
+  }
+})
+
+cmd += 'npm run yarnInstall'
+
+const defaultOption = {
+  stdio: [process.stderr, process.stdin, process.stdout]
+}
+
+execSync(cmd, defaultOption)

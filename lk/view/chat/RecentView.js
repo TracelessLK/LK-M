@@ -237,7 +237,7 @@ export default class RecentView extends Component<{}> {
     getMsgContent (content, type) {
       // console.log({content})
       const maxDisplay = 15
-      if (type === chatManager.MESSAGE_TYEP_TEXT) {
+      if (type === chatManager.MESSAGE_TYPE_TEXT) {
         const {length} = content
         // console.log({content,length})
         if (length > maxDisplay) {

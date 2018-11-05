@@ -132,11 +132,6 @@ export default class BasicInfoView extends Component<{}> {
             }
             updateUtil.checkUpdate(option)
           }
-        },
-        {
-          title: '2:38',
-          onPress: () => {
-          }
         }
         // {
         //   title: 'test',

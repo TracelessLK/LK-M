@@ -8,7 +8,7 @@ const path = require('path')
 const {exportPPKFolderPath, serverRoot, appName} = config
 const fileName = `${appName}.ppk`
 const outputPath = `${exportPPKFolderPath}/${fileName}`
-const {upload} = require('./util')
+const {upload, timeStamp} = require('./util')
 
 start()
 
@@ -18,6 +18,8 @@ function start () {
   timeCount(async () => {
     console.log('ppk export started')
     console.log({cmd})
+    // fixme: 解决异步的问题
+    timeStamp({packType: 'ppk'})
     childProcess.execSync(cmd)
 
     console.log('ppk export end')

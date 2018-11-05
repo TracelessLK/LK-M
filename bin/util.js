@@ -1,6 +1,12 @@
 const NodeSSH = require('node-ssh')
 const ssh = new NodeSSH()
 const config = require('../config/devConfig')
+const path = require('path')
+const rootDir = path.resolve(__dirname, '..')
+const appJSONPath = path.resolve(rootDir, 'lk/app.json')
+const {DateUtil} = require('@ys/vanilla')
+const {getTimeDisplay} = DateUtil
+const fs = require('fs')
 
 class util {
   static upload ({local, remote}) {
@@ -22,6 +28,12 @@ class util {
         ssh.dispose()
       })
     })
+  }
+  static timeStamp ({packType}) {
+    const obj = require(appJSONPath)
+    obj.packTime = getTimeDisplay()
+    obj.packType = packType
+    fs.writeFileSync(appJSONPath, JSON.stringify(obj))
   }
 }
 
