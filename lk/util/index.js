@@ -27,7 +27,7 @@ class Util {
   }
   static appendToLog (option) {
     const {content, type} = option
-    console.log({option})
+    // console.log({option})
     const appendPath = logPath[type]
     const now = new Date()
     const str = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}: \n ${content} \n\n\n \n`
