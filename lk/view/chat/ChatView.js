@@ -146,7 +146,7 @@ export default class ChatView extends Component<{}> {
              props: {
              }
            })
-           imageIndexer[record.msgId] = index
+           imageIndexer[record.id] = index
            index++
          }
        }
@@ -382,7 +382,9 @@ export default class ChatView extends Component<{}> {
     }
 
     showBiggerImage= (imgUri, msgId) => {
+
       const biggerImageIndex = this.imageIndexer[msgId]
+      // console.log( msgId,this.imageIndexer)
 
       this.setState({biggerImageVisible: true, biggerImageUri: imgUri, biggerImageIndex})
     }
@@ -403,6 +405,7 @@ export default class ChatView extends Component<{}> {
     }
 
     _getMessage=(rec) => {
+      // console.log({rec})
       let result
       if (rec.type === chatManager.MESSAGE_TYPE_TEXT) {
         const text =
@@ -423,7 +426,7 @@ export default class ChatView extends Component<{}> {
         if (img && img.data) {
           imgUri = 'file://' + img.data
         }
-        result = <TouchableOpacity onPress={() => { this.showBiggerImage(imgUri, rec.msgId) }}><Image source={{uri: imgUri}} style={{width: imgW, height: imgH}} resizeMode="contain"/></TouchableOpacity>
+        result = <TouchableOpacity onPress={() => { this.showBiggerImage(imgUri, rec.id) }}><Image source={{uri: imgUri}} style={{width: imgW, height: imgH}} resizeMode="contain"/></TouchableOpacity>
       } else if (rec.type === chatManager.MESSAGE_TYPE_FILE) {
         let file = JSON.parse(rec.content)
         result = <TouchableOpacity><Ionicons name="ios-document-outline" size={40} style={{marginRight: 5, lineHeight: 40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>

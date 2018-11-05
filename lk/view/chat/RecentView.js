@@ -121,7 +121,7 @@ export default class RecentView extends Component<{}> {
     _handleAppStateChange = (appState) => {
       // console.log({appState})
       if (appState === 'active') {
-        this.asyGetAllDetainedMsg()
+        this.asyGetAllDetainedMsg({minTime: 500})
         removeNotify()
       }
     }
