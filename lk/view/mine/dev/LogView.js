@@ -8,6 +8,12 @@ import {Card} from 'react-native-elements'
 const RNFS = require('react-native-fs')
 
 export default class LogView extends Component<{}> {
+  static navigationOptions =({navigation}) => {
+    return {
+      headerTitle: (navigation.state.params.type || '')
+    }
+  }
+
   constructor (props) {
     super(props)
     this.state = {

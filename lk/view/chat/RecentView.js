@@ -125,7 +125,7 @@ export default class RecentView extends Component<{}> {
     _handleAppStateChange = (appState) => {
       // console.log({appState})
       if (appState === 'active') {
-        this.asyGetAllDetainedMsg({minTime: 500})
+        this.asyGetAllDetainedMsg()
         removeNotify()
       }
     }
@@ -162,7 +162,7 @@ export default class RecentView extends Component<{}> {
     }
 
     connectionOpen = () => {
-      this.asyGetAllDetainedMsg({minTime: 500})
+      this.asyGetAllDetainedMsg()
       this.resetHeaderTitle()
       this.setState({
         connectionOK: true
@@ -312,6 +312,7 @@ export default class RecentView extends Component<{}> {
 
     resetHeaderTitle = async () => {
       if (container.connectionOK) {
+        // console.log('resetHeaderTitle')
         const {navigation} = this.props
         const num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
         navigation.setParams({
@@ -320,7 +321,8 @@ export default class RecentView extends Component<{}> {
       }
     }
 
-  asyGetAllDetainedMsg = ({minTime = 1000 * 1, refreshControl, showWarning = false}) => {
+  asyGetAllDetainedMsg = (option = {}) => {
+    const {minTime = 0, refreshControl, showWarning = false} = option
     const {navigation} = this.props
 
     runNetFunc(async () => {
@@ -335,8 +337,9 @@ export default class RecentView extends Component<{}> {
       })
       const start = Date.now()
       await this.channel.asyGetAllDetainedMsg()
-      const reset = () => {
-        this.resetHeaderTitle()
+      const reset = async () => {
+        console.log('reset')
+        await this.resetHeaderTitle()
         this.setState({
           refreshing: false
         })

@@ -61,7 +61,8 @@ export default class BasicInfoView extends Component<{}> {
           title: '查看错误日志',
           onPress: () => {
             this.props.navigation.navigate('LogView', {
-              path: logPath.error
+              path: logPath.error,
+              type: 'error'
             })
           }
         },
@@ -69,7 +70,8 @@ export default class BasicInfoView extends Component<{}> {
           title: '查看信息日志',
           onPress: () => {
             this.props.navigation.navigate('LogView', {
-              path: logPath.info
+              path: logPath.info,
+              type: 'info'
             })
           }
         },
@@ -77,7 +79,8 @@ export default class BasicInfoView extends Component<{}> {
           title: '查看调试日志',
           onPress: () => {
             this.props.navigation.navigate('LogView', {
-              path: logPath.debug
+              path: logPath.debug,
+              type: 'debug'
             })
           }
         },

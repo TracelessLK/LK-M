@@ -80,7 +80,7 @@ class Util {
 
     const obj = {}
     obj[tableName] = ary
-    console.log(obj)
+    // console.log(obj)
   }
   static query (sql) {
     return new Promise(resolve => {
@@ -138,19 +138,22 @@ class Util {
   // todo: should be putinto net channell
   static runNetFunc (func, {errorCb, showWarning = true} = {}) {
     // console.log({container})
-    const hasLogin = lkApp.getLogin()
+    const hasLogin = require('../LKApplication').getCurrentApp().getLogin()
     // console.log({hasLogin})
     const {connectionOK, NetInfoUtil} = container
     if (connectionOK) {
+      // console.log({hasLogin})
       if (hasLogin) {
         func()
       } else {
-        Toast.show({
-          text: '用户身份无法确认,无法使用该功能',
-          position: 'top',
-          type: 'warning',
-          duration: 5000
-        })
+        if (showWarning) {
+          Toast.show({
+            text: '用户身份无法确认,无法使用该功能',
+            position: 'top',
+            type: 'warning',
+            duration: 5000
+          })
+        }
       }
     } else {
       runFunc(errorCb)

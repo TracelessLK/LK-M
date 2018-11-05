@@ -24,15 +24,17 @@ console.disableYellowBox = true
 
 const {ErrorUtil, ErrorStock} = require('@ys/react-native-collection')
 const {setGlobalErrorHandler} = ErrorUtil
+const f = (error) => {
+  console.log({stack: error.stack})
+  appendToLog({
+    type: 'error',
+    content: error.stack.toString()
+  })
+}
 const option = {
   // todo error upload
-  productionProcess: (error) => {
-    console.log({stack: error.stack})
-    appendToLog({
-      type: 'error',
-      content: error.stack.toString()
-    })
-  },
+  productionProcess: f,
+  devProcess: f,
   ErrorUtilRN,
   resetTime: 1000 * 10
 }
