@@ -5,9 +5,10 @@ import {
 } from 'react-native'
 import {Card} from 'react-native-elements'
 import DeviceInfo from 'react-native-device-info'
+const RNFS = require('react-native-fs')
 const lkApp = require('../../../LKApplication').getCurrentApp()
-const appJSON = require('../../../app.json')
-const {packType, packTime} = appJSON
+const packageJSON = require('../../../../package')
+const {version} = packageJSON
 
 export default class InfoView extends Component<{}> {
   constructor (props) {
@@ -20,17 +21,45 @@ export default class InfoView extends Component<{}> {
 
   async componentDidMount () {
     const deviceIdAPN = await AsyncStorage.getItem('deviceIdAPN')
+
+    const appJSONPath = '../../../app.json'
+    const existAppJSON = await RNFS.exists(appJSONPath)
+    let appJSON = {}
+    // console.log({existAppJSON})
+
+    if (existAppJSON) {
+      const str = await RNFS.readFile(appJSONPath, 'utf8')
+      appJSON = JSON.parse(str.trim())
+    }
+
+    const {packType = '', packTime = ''} = appJSON
     this.setState({
-      deviceIdAPN
+      deviceIdAPN, packType, packTime
     })
   }
 
   render () {
     const ary = [
-      `uid:  ${this.user.id}`, `clientId:  ${this.user.deviceId}`, `bundleId:  ${DeviceInfo.getBundleId()}`,
-      `__DEV__:  ${__DEV__ ? '是' : '否'}`, `uniqueId:  ${DeviceInfo.getUniqueID()}`,
-      `原生版本:  ${DeviceInfo.getVersion()}`, `buildNumber: ${DeviceInfo.getBuildNumber()}`,
-      `apnId:  ${this.state.deviceIdAPN}`, `packType: ${packType}`, `packTime: ${packTime}`
+      `uid:  ${this.user.id}`,
+      `clientId:  ${this.user.deviceId}`,
+      `bundleId:  ${DeviceInfo.getBundleId()}`,
+      `__DEV__:  ${__DEV__ ? '是' : '否'}`,
+      `uniqueId:  ${DeviceInfo.getUniqueID()}`,
+      `原生版本:  ${DeviceInfo.getVersion()}`,
+      `版本号: ${version}`,
+      `buildNumber: ${DeviceInfo.getBuildNumber()}`,
+      `apnId:  ${this.state.deviceIdAPN}`,
+      `packType: ${this.state.packType}`,
+      `packTime: ${this.state.packTime}`,
+      `品牌: ${DeviceInfo.getBrand()}`,
+      `appName: ${DeviceInfo.getApplicationName()}`,
+      `locale: ${DeviceInfo.getDeviceLocale()}`,
+      `os: ${DeviceInfo.getSystemName()}`,
+      `os version: ${DeviceInfo.getSystemVersion()}`,
+      `version: ${DeviceInfo.getVersion()}`,
+      `是否模拟器: ${DeviceInfo.isEmulator()}`,
+      `是否平板: ${DeviceInfo.isTablet()}`
+
     ]
 
     const aryView = ary.map((ele, index) => {

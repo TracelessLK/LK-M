@@ -33,6 +33,10 @@ function start () {
     // console.log(remotePath)
 
     return upload({local: outputPath, remote: remotePath})
+  }, {
+    callback () {
+      process.exit()
+    }
   })
 
   // clipboardy.writeSync(cmd)

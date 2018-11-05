@@ -10,7 +10,7 @@ ary.forEach(ele => {
   const elePath = path.resolve(rootDir, ele)
 
   if (fs.existsSync(elePath)) {
-    cmd += `rm ${ele} &&`
+    cmd += `rm -rf ${ele} &&`
   }
 })
 

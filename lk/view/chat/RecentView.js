@@ -27,6 +27,8 @@ const {NetInfoUtil} = require('@ys/react-native-collection')
 const container = require('../../state')
 container.NetInfoUtil = NetInfoUtil
 const {runNetFunc} = require('../../util')
+const {StringUtil} = require('@ys/vanilla')
+const {stripNewline} = StringUtil
 
 export default class RecentView extends Component<{}> {
     static navigationOptions =({navigation}) => {
@@ -241,7 +243,7 @@ export default class RecentView extends Component<{}> {
         const {length} = content
         // console.log({content,length})
         if (length > maxDisplay) {
-          content = content.substring(0, maxDisplay) + '......'
+          content = stripNewline(content.substring(0, maxDisplay)) + '......'
         }
       } else if (type === chatManager.MESSAGE_TYPE_IMAGE) {
         content = '[图片]'
