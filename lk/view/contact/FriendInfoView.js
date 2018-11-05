@@ -64,7 +64,7 @@ export default class FriendInfoView extends Component<{}> {
           </TouchableOpacity>
           <View style={{marginVertical: 20}}>
             <Card title='device id'
-              style={{marginVertical: 50, width: '90%', padding: 10, alignItems: 'center', justifyContent: 'center'}}>
+              style={{marginVertical: 50, width: '95%', padding: 10, alignItems: 'center', justifyContent: 'center'}}>
               <Text>{this.state.allDevice}</Text>
             </Card>
           </View>

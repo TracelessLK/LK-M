@@ -454,9 +454,8 @@ class ChatManager extends EventTarget{
         let userId = Application.getCurrentApp().getCurrentUser().id;
         let chat = await LKChatProvider.asyGetChat(userId,chatId);
         if(chat){
-            Record.msgReadReport(userId,chatId,msgIds,reporterUid,state,chat.isGroup);
+            return Record.msgReadReport(userId,chatId,msgIds,reporterUid,state,chat.isGroup);
         }
-
     }
 
     /**
