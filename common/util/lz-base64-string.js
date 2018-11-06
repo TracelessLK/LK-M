@@ -284,10 +284,11 @@ var Base64String = {
 
     }
 }
-// var string = "VGhpcyBpcyBteSBjb21wcmVzc2lvbiB0ZXN0Lgo=";
-// console.info("Size of sample is: " + string.length);
-// var compressed = Base64String.compress(string);
-// console.info("Size of compressed sample is: " + compressed.length);
-// string = Base64String.decompress(compressed);
-// console.info("Sample is: " + string);
+var string = "VGhpcyBpcyBteSBjb21wcmVzc2lvbiB0ZXN0Lgo=";
+console.info("Size of sample is: " + string.length);
+var compressed = Base64String.compressToUTF16(string);
+console.info(compressed)
+console.info("Size of compressed sample is: " + compressed.length);
+string = Base64String.decompressFromUTF16(compressed);
+console.info("Sample is: " + string);
 module.exports = Base64String
