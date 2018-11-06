@@ -35,10 +35,12 @@
 		45AEA7CD8F4C47B8B2DF155A /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D355C5BC579042F684A37826 /* libRNFetchBlob.a */; };
 		46A5CB2791C046D2B557B909 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E8C0AB2B5A3A4907AF25BF17 /* Feather.ttf */; };
 		49CFD1D481C64D14B8C0974E /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8EF64DAC29EE4ED89A97EC0C /* Foundation.ttf */; };
+		4BFFFD4A2CD14D4DA9B0B32F /* libVoice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FFB9516F72C34B29AAAD92A3 /* libVoice.a */; };
 		52F8C9F35B1A4EDD94DC5565 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41C6B7A5EABB4C31B232F178 /* Roboto_medium.ttf */; };
 		5B0381F67BE349F2BC457844 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35E74A3BB33F4A72BC56FF9D /* Entypo.ttf */; };
 		5D6E04CA4CE54CD8A322F400 /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F62685400E9649359C1E4761 /* rubicon-icon-font.ttf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		75CA11AB3DC040658D02992B /* libRNAudioRecorderPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 35A5FCB83138488CB90EB7B3 /* libRNAudioRecorderPlayer.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		839F721CD4D94DDD91532141 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FE0375F9FC040E3A1A05710 /* MaterialIcons.ttf */; };
 		86A563701E004007A61E2603 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1071E4723F78471C903A8D48 /* libRNVectorIcons.a */; };
@@ -334,6 +336,20 @@
 			remoteGlobalIDString = 358F4ED71D1E81A9004DF814;
 			remoteInfo = RCTBlob;
 		};
+		FD582F0321914AB800AAB770 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FDC3532417324B10A0364DB9 /* Voice.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC0729B51EF78E41004EBC83;
+			remoteInfo = Voice;
+		};
+		FD582F5A2191600700AAB770 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB684B2DB0194F6EB438BB8E /* RNAudioRecorderPlayer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNAudioRecorderPlayer;
+		};
 		FD5B8E7C2123EC170047CD28 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EB19981C7BD24F18BAAC3FBD /* RCTRestart.xcodeproj */;
@@ -498,6 +514,7 @@
 		2A167C099C324A1D9B9C3754 /* libSQLite.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSQLite.a; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		306DC77C03BF45DBBD4ADF16 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		35A5FCB83138488CB90EB7B3 /* libRNAudioRecorderPlayer.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNAudioRecorderPlayer.a; sourceTree = "<group>"; };
 		35E74A3BB33F4A72BC56FF9D /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		3C6B1707F2CD4456B0B0523F /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		41C6B7A5EABB4C31B232F178 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
@@ -521,6 +538,7 @@
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		AEB3A27F24B54ED08CDB7EFA /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		BB3F359403D540A2A73B4AE0 /* RNCamera.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RNCamera.xcodeproj"; sourceTree = "<group>"; };
+		BB684B2DB0194F6EB438BB8E /* RNAudioRecorderPlayer.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNAudioRecorderPlayer.xcodeproj; path = "../node_modules/react-native-audio-recorder-player/ios/RNAudioRecorderPlayer.xcodeproj"; sourceTree = "<group>"; };
 		BC2519E619A94BCB98B70D91 /* RCTImageResizer.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTImageResizer.xcodeproj; path = "../node_modules/react-native-image-resizer/ios/RCTImageResizer.xcodeproj"; sourceTree = "<group>"; };
 		CB3C72FD81B04AC991C29B98 /* SQLite.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SQLite.xcodeproj; path = "../node_modules/react-native-sqlite-storage/src/ios/SQLite.xcodeproj"; sourceTree = "<group>"; };
 		D07A2A18E48C456C8737162E /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -538,10 +556,12 @@
 		FC8FD756E83744D0BCE892E4 /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFetchBlob.xcodeproj; path = "../node_modules/react-native-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; };
 		FD9FE74C211405120079F0E3 /* QBImagePicker.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = "<group>"; };
 		FD9FE74D211405120079F0E3 /* RSKImageCropper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = "<group>"; };
+		FDC3532417324B10A0364DB9 /* Voice.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = Voice.xcodeproj; path = "../node_modules/react-native-voice/ios/Voice.xcodeproj"; sourceTree = "<group>"; };
 		FDFFF65A210CD41C007CDCE7 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		FDFFF65D210CD4C0007CDCE7 /* libbz2.1.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.1.0.tbd; path = usr/lib/libbz2.1.0.tbd; sourceTree = SDKROOT; };
 		FDFFF660210CD8E8007CDCE7 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		FDFFF66A210CEC3A007CDCE7 /* LK_M.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = LK_M.entitlements; path = LK_M/LK_M.entitlements; sourceTree = "<group>"; };
+		FFB9516F72C34B29AAAD92A3 /* libVoice.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libVoice.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -593,6 +613,8 @@
 				137387C29BF14F818E4142CE /* libRCTRestart.a in Frameworks */,
 				CF1ABA8062B94815B4E6C203 /* libRNSVG.a in Frameworks */,
 				8CB786544E6D40ADB15F953B /* libimageCropPicker.a in Frameworks */,
+				4BFFFD4A2CD14D4DA9B0B32F /* libVoice.a in Frameworks */,
+				75CA11AB3DC040658D02992B /* libRNAudioRecorderPlayer.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -796,6 +818,8 @@
 				EB19981C7BD24F18BAAC3FBD /* RCTRestart.xcodeproj */,
 				D86AED5FC5BA46F8881FA6BF /* RNSVG.xcodeproj */,
 				6BCB1B8AF5944456B3B8D18A /* imageCropPicker.xcodeproj */,
+				FDC3532417324B10A0364DB9 /* Voice.xcodeproj */,
+				BB684B2DB0194F6EB438BB8E /* RNAudioRecorderPlayer.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -839,6 +863,22 @@
 			children = (
 				ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */,
 				2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FD582F0021914AB800AAB770 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FD582F0421914AB800AAB770 /* libVoice.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FD582F572191600700AAB770 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FD582F5B2191600700AAB770 /* libRNAudioRecorderPlayer.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -918,6 +958,8 @@
 				A3ED53976A4E49D2BA5BDB99 /* libRCTRestart.a */,
 				592D96BDFCA14ED784B9F59F /* libRNSVG.a */,
 				41DD1CCBA8554F1381CF107D /* libimageCropPicker.a */,
+				FFB9516F72C34B29AAAD92A3 /* libVoice.a */,
+				35A5FCB83138488CB90EB7B3 /* libRNAudioRecorderPlayer.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -1126,6 +1168,10 @@
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
 				{
+					ProductGroup = FD582F572191600700AAB770 /* Products */;
+					ProjectRef = BB684B2DB0194F6EB438BB8E /* RNAudioRecorderPlayer.xcodeproj */;
+				},
+				{
 					ProductGroup = FDFFF5B8210810EB007CDCE7 /* Products */;
 					ProjectRef = BB3F359403D540A2A73B4AE0 /* RNCamera.xcodeproj */;
 				},
@@ -1156,6 +1202,10 @@
 				{
 					ProductGroup = FDFFF51A2106F2BB007CDCE7 /* Products */;
 					ProjectRef = CB3C72FD81B04AC991C29B98 /* SQLite.xcodeproj */;
+				},
+				{
+					ProductGroup = FD582F0021914AB800AAB770 /* Products */;
+					ProjectRef = FDC3532417324B10A0364DB9 /* Voice.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1426,6 +1476,20 @@
 			remoteRef = ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		FD582F0421914AB800AAB770 /* libVoice.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libVoice.a;
+			remoteRef = FD582F0321914AB800AAB770 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FD582F5B2191600700AAB770 /* libRNAudioRecorderPlayer.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNAudioRecorderPlayer.a;
+			remoteRef = FD582F5A2191600700AAB770 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		FD5B8E7D2123EC170047CD28 /* libRCTRestart.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1662,12 +1726,16 @@
 					"$(SRCROOT)/../node_modules/react-native-restart/ios/RCTRestart/**",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-voice/ios/Voice",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
 				);
 				INFOPLIST_FILE = LK_MTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1699,12 +1767,16 @@
 					"$(SRCROOT)/../node_modules/react-native-restart/ios/RCTRestart/**",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-voice/ios/Voice",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
 				);
 				INFOPLIST_FILE = LK_MTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1738,6 +1810,8 @@
 					"$(SRCROOT)/../node_modules/react-native-restart/ios/RCTRestart/**",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-voice/ios/Voice",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
 				);
 				INFOPLIST_FILE = LK_M/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1772,6 +1846,8 @@
 					"$(SRCROOT)/../node_modules/react-native-restart/ios/RCTRestart/**",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-voice/ios/Voice",
+					"$(SRCROOT)/../node_modules/react-native-audio-recorder-player/ios",
 				);
 				INFOPLIST_FILE = LK_M/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

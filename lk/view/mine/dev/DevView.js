@@ -27,6 +27,7 @@ export default class BasicInfoView extends Component<{}> {
     }
 
     render () {
+      const {navigation} = this.props
       const style = {
         listItem: {
           display: 'flex',
@@ -135,13 +136,13 @@ export default class BasicInfoView extends Component<{}> {
             }
             updateUtil.checkUpdate(option)
           }
+        },
+        {
+          title: 'test',
+          onPress: () => {
+            navigation.navigate('TestView')
+          }
         }
-        // {
-        //   title: 'test',
-        //   onPress: () => {
-        //
-        //   }
-        // },
         // {
         //   title: 'test',
         //   onPress: () => {

@@ -21,6 +21,7 @@ import DevView from '../mine/dev/DevView'
 import LogView from '../mine/dev/LogView'
 import SetUpdateUrlView from '../mine/dev/SetUpdateUrlView'
 import InfoView from '../mine/dev/InfoView'
+import TestView from '../mine/dev/TestView'
 import BasicInfoView from '../mine/BasicInfoView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
@@ -132,7 +133,8 @@ const MainStack = createStackNavigator({
   ReadStateView,
   AddGroupMemberView,
   SetUpdateUrlView,
-  LogView
+  LogView,
+  TestView
 }, stackNavigatorConfig)
 
 export default MainStack
