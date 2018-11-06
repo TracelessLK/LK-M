@@ -446,7 +446,6 @@ class LKChannel extends WSChannel{
         let msgId = content.msgId;
         let chatId = content.chatId;
         let diff = content.diff;
-        this._reportMsgHandled(header.flowId,header.flowType);
         if(diff){
             let added = ChatManager.deviceChanged(chatId,diff);
             if(added&&added.length>0){
@@ -456,11 +455,25 @@ class LKChannel extends WSChannel{
                 let oldMsg = result[1] ;
                 if(oldMsg){
                     this._asyNewRequest("sendMsg2",{type:oldMsg.type,data:oldMsg.content},{isGroup:chat.isGroup,time:oldMsg.sendTime,chatId:chatId,relativeMsgId:oldMsg.relativeMsgId,id:oldMsg.id,targets:added,order:oldMsg.order}).then((req)=>{
-                        this._sendMessage(req);
+                        this._sendMessage(req).then((resp)=>{
+                            LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
+                                ChatManager.fire("msgChanged",chatId);
+                            });
+                        }).catch((error)=>{
+                            LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE).then(()=>{
+                                ChatManager.fire("msgChanged",chatId);
+                            });
+                        });
                     });
+                }else{
+                    this._reportMsgHandled(header.flowId,header.flowType);
                 }
 
+            }else{
+                this._reportMsgHandled(header.flowId,header.flowType);
             }
+        }else{
+            this._reportMsgHandled(header.flowId,header.flowType);
         }
     }
 
