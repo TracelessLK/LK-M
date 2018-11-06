@@ -14,7 +14,8 @@ const config = {
     error: RNFS.DocumentDirectoryPath + '/error.txt',
     debug: RNFS.DocumentDirectoryPath + '/debug.txt',
     info: RNFS.DocumentDirectoryPath + '/info.txt'
-  }
+  },
+  maxChatDisplay: 100
 }
 
 // config in production

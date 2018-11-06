@@ -18,7 +18,7 @@ import ImageViewer from 'react-native-image-zoom-viewer'
 import ImagePicker from 'react-native-image-picker'
 import ImageResizer from 'react-native-image-resizer'
 import {
-  Toast,
+  Toast
 } from 'native-base'
 import NetIndicator from '../common/NetIndicator'
 import MessageText from './MessageText'
