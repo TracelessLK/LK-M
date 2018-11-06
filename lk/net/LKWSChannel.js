@@ -394,7 +394,7 @@ class LKChannel extends WSChannel{
                 ChatManager.fire("msgChanged",chatId);
             });
             if(oldMsg.type===ChatManager.MESSAGE_TYPE_IMAGE){
-                oldMsg.content.data =  LZBase64String.compress(oldMsg.content.data);
+                oldMsg.content.data =  LZBase64String.compressToUTF16(oldMsg.content.data);
                 oldMsg.content.compress = true;
             }
             let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",{type:oldMsg.type,data:oldMsg.content},{isGroup:chat.isGroup,time:oldMsg.sendTime,chatId:chatId,relativeMsgId:oldMsg.relativeMsgId,id:oldMsg.id,order:oldMsg.order})]);
@@ -424,8 +424,8 @@ class LKChannel extends WSChannel{
         if(content.type===ChatManager.MESSAGE_TYPE_IMAGE){
             sendContent = {type:content.type,data:{width:content.data.width,height:content.data.height,compress:true}};
             sendContent.data.data = LZBase64String.compressToUTF16(content.data.data);
-            alert("compress")
-            alert(content.data.data)
+           // alert("compress")
+            //alert(content.data.data)
         }
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",sendContent,{isGroup:isGroup,chatId:chatId,relativeMsgId:relativeMsgId})]);
         let msgId = result[1].header.id;
@@ -531,8 +531,8 @@ class LKChannel extends WSChannel{
         let state = userId===header.uid?ChatManager.MESSAGE_STATE_SERVER_RECEIVE:null;
         if(content.type===ChatManager.MESSAGE_TYPE_IMAGE&&content.data.compress){
             content.data.data = LZBase64String.decompressFromUTF16(content.data.data);
-            alert("decompress");
-            alert(content.data.data);
+            //alert("decompress");
+            //alert(content.data.data);
         }
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,state,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
