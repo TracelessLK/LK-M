@@ -380,7 +380,6 @@ class LKChannel extends WSChannel{
         this._sendMsg(chatId,content,relativeMsgId,isGroup);
     }
     sendImage(chatId,imgData,width,height,relativeMsgId,isGroup){
-        // let _img = LZBase64String.compress(imgData);
         let content = {type:ChatManager.MESSAGE_TYPE_IMAGE,data:{data:imgData,width:width,height:height}};
         return this._sendMsg(chatId,content,relativeMsgId,isGroup);
     }
@@ -394,6 +393,10 @@ class LKChannel extends WSChannel{
             LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SENDING).then(()=>{
                 ChatManager.fire("msgChanged",chatId);
             });
+            if(oldMsg.type===ChatManager.MESSAGE_TYPE_IMAGE){
+                oldMsg.content.data =  LZBase64String.compress(oldMsg.content.data);
+                oldMsg.content.compress = true;
+            }
             let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",{type:oldMsg.type,data:oldMsg.content},{isGroup:chat.isGroup,time:oldMsg.sendTime,chatId:chatId,relativeMsgId:oldMsg.relativeMsgId,id:oldMsg.id,order:oldMsg.order})]);
             result[0]._sendMessage(result[1]).then((resp)=>{
                 LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SERVER_RECEIVE).then(()=>{
@@ -417,7 +420,12 @@ class LKChannel extends WSChannel{
         let curApp = Application.getCurrentApp();
         let userId = curApp.getCurrentUser().id;
         let did = curApp.getCurrentUser().deviceId;
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",content,{isGroup:isGroup,chatId:chatId,relativeMsgId:relativeMsgId})]);
+        let sendContent = content;
+        if(content.type===ChatManager.MESSAGE_TYPE_IMAGE){
+            sendContent = {type:content.type,data:{width:content.data.width,height:content.data.height,compress:true}};
+            sendContent.data.data = LZBase64String.compress(content.data.data);
+        }
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",sendContent,{isGroup:isGroup,chatId:chatId,relativeMsgId:relativeMsgId})]);
         let msgId = result[1].header.id;
         let time = result[1].header.time;
         let curTime = Date.now();
@@ -519,11 +527,10 @@ class LKChannel extends WSChannel{
         const msgDecrypted = msg.body.content
         let content = JSON.parse(msgDecrypted);
         let state = userId===header.uid?ChatManager.MESSAGE_STATE_SERVER_RECEIVE:null;
-        let data = content.data;
-        // if(content.type===ChatManager.MESSAGE_TYPE_IMAGE){
-        //     data = LZBase64String.decompress(data);
-        // }
-        await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,data,header.time,state,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
+        if(content.type===ChatManager.MESSAGE_TYPE_IMAGE&&content.data.compress){
+            content.data.data = LZBase64String.decompress(content.data.data);
+        }
+        await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,state,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
         ChatManager.fire("msgChanged",chatId);
