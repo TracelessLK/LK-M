@@ -1,6 +1,6 @@
 {
   "name": "LK-M",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "coverage": "node bin/coverage",
@@ -46,6 +46,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.7.2",
     "react-native-parsed-text": "0.0.20",
     "react-native-qrcode-svg": "^5.1.1",
+    "react-native-read-more-text": "^1.1.0",
     "react-native-restart": "0.0.6",
     "react-native-rsa": "0.0.3",
     "react-native-sqlite-storage": "^3.3.6",

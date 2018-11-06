@@ -4,7 +4,10 @@ import { Linking, StyleSheet, Text, View, ViewPropTypes } from 'react-native'
 
 import ParsedText from 'react-native-parsed-text'
 import Communications from 'react-native-communications'
-import {Toast} from 'native-base'
+import {
+  Toast,
+  ActionSheet
+} from 'native-base'
 
 const WWW_URL_PATTERN = /^www\./i
 
@@ -35,12 +38,14 @@ export default class MessageText extends React.Component {
     onPhonePress = (phone) => {
       const options = ['呼叫', '短信', '取消']
       const cancelButtonIndex = options.length - 1
-      this.context.actionSheet().showActionSheetWithOptions(
+
+      ActionSheet.show(
         {
           options,
-          cancelButtonIndex
+          cancelButtonIndex,
+          title: ''
         },
-        (buttonIndex) => {
+        buttonIndex => {
           switch (buttonIndex) {
             case 0:
               Communications.phonecall(phone, true)

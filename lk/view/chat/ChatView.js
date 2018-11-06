@@ -19,7 +19,6 @@ import ImagePicker from 'react-native-image-picker'
 import ImageResizer from 'react-native-image-resizer'
 import {
   Toast,
-  ActionSheet
 } from 'native-base'
 import NetIndicator from '../common/NetIndicator'
 import MessageText from './MessageText'
