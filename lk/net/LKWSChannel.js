@@ -423,7 +423,9 @@ class LKChannel extends WSChannel{
         let sendContent = content;
         if(content.type===ChatManager.MESSAGE_TYPE_IMAGE){
             sendContent = {type:content.type,data:{width:content.data.width,height:content.data.height,compress:true}};
-            sendContent.data.data = LZBase64String.compress(content.data.data);
+            sendContent.data.data = LZBase64String.compressToUTF16(content.data.data);
+            alert("compress")
+            alert(content.data.data)
         }
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",sendContent,{isGroup:isGroup,chatId:chatId,relativeMsgId:relativeMsgId})]);
         let msgId = result[1].header.id;
@@ -528,7 +530,9 @@ class LKChannel extends WSChannel{
         let content = JSON.parse(msgDecrypted);
         let state = userId===header.uid?ChatManager.MESSAGE_STATE_SERVER_RECEIVE:null;
         if(content.type===ChatManager.MESSAGE_TYPE_IMAGE&&content.data.compress){
-            content.data.data = LZBase64String.decompress(content.data.data);
+            content.data.data = LZBase64String.decompressFromUTF16(content.data.data);
+            alert("decompress");
+            alert(content.data.data);
         }
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,state,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);
