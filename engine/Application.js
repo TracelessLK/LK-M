@@ -1,31 +1,26 @@
-class Application{
+class Application {
+  constructor (appName) {
+    this._appName = appName
+    Application._current = this
+  }
 
-    static _current=null;
+  setCurrentUser (user) {
+    this._user = user
+  }
 
-    constructor(appName){
-        this._appName = appName;
-        Application._current = this;
-    }
+  getCurrentUser () {
+    return this._user
+  }
 
-    static getCurrentApp(){
-        return this._current;
-    }
+  setLoginHandler (h) {
+    this._loginHandler = h
+  }
 
-    setCurrentUser(user){
-        this._user = user;
-    }
-
-    getCurrentUser(){
-        return this._user;
-    }
-
-    setLoginHandler(h){
-        this._loginHandler = h;
-    }
-
-    getLoginHandler () {
-        return this._loginHandler;
-    }
-
+  getLoginHandler () {
+    return this._loginHandler
+  }
 }
-module.exports = Application;
+Application.getCurrentApp = function () {
+  return this._current
+}
+module.exports = Application
