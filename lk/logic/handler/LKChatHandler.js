@@ -1,5 +1,5 @@
-import Chat from '../../store/Chat'
-import Record from '../../store/Record'
+const Chat = require('../../store/Chat')
+const Record = require('../../store/Record')
 class LKChatHandler{
     asyAddSingleChat(userId,chatId){
         return Chat.addSingleChat(userId,chatId);

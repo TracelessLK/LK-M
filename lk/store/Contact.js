@@ -1,5 +1,5 @@
 
-import db from '../../common/store/DataBase'
+const db = require('../../common/store/DataBase')
 db.transaction((tx)=>{
     //include org members 0 & foreign contacts 1 & group contacts 2
     let sql ="create table if not exists contact(id TEXT,name TEXT,pic TEXT,serverIP TEXT,serverPort INTEGER,relation INTEGER,orgId TEXT,mCode TEXT,ownerUserId TEXT,reserve1 TEXT,PRIMARY KEY(id,ownerUserId))";

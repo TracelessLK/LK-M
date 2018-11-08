@@ -1,7 +1,7 @@
-import Application from '../LKApplication'
-import EventTarget from '../../common/core/EventTarget'
-import MFApply from '../store/MFApply'
-import ConfigManager from '../../common/core/ConfigManager'
+const Application = require( '../LKApplication')
+const EventTarget = require( '../../common/core/EventTarget')
+const MFApply = require( '../store/MFApply')
+const ConfigManager = require( '../../common/core/ConfigManager')
 class MFApplyManager extends EventTarget{
 
     asyAddNewMFApply(apply){

@@ -1,5 +1,4 @@
-
-import db from '../../common/store/DataBase'
+const db = require('../../common/store/DataBase')
 db.transaction((tx)=>{
     tx.executeSql("create table if not exists lkuser(id TEXT PRIMARY KEY NOT NULL,name TEXT,pic TEXT,publicKey TEXT,privateKey TEXT,deviceId TEXT,serverIP TEXT,serverPort INTEGER,serverPublicKey TEXT,orgId TEXT,mCode TEXT,password TEXT,reserve1 TEXT)",[],function () {
     },function (err) {

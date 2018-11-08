@@ -1,13 +1,9 @@
-import db from '../../common/store/DataBase'
+const db = require('../../common/store/DataBase')
 db.transaction((tx)=>{
     tx.executeSql("create table if not exists device(id TEXT PRIMARY KEY NOT NULL,publicKey TEXT,contactId TEXT,remark TEXT,reserve1 TEXT)",[],function () {
     },function (err) {
     });
 });
-function showAll () {
-
-}
-
 
 class Device{
     getAll(contactId){

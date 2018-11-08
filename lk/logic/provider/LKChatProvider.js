@@ -1,6 +1,6 @@
 
-import Chat from '../../store/Chat'
-import Record from '../../store/Record'
+const Chat = require('../../store/Chat')
+const Record = require('../../store/Record')
 class LKChatProvider{
     asyGetAll(userId){
         return Chat.getAll(userId);

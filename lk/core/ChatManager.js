@@ -1,47 +1,48 @@
-import EventTarget from '../../common/core/EventTarget'
-import ContactManager from './ContactManager'
-import LKChatProvider from '../logic/provider/LKChatProvider'
-import LKContactProvider from '../logic/provider/LKContactProvider'
-import LKDeviceProvider from '../logic/provider/LKDeviceProvider'
-import LKChatHandler from '../logic/handler/LKChatHandler'
-import LKDeviceHandler from '../logic/handler/LKDeviceHandler'
-import Chat from '../store/Chat'
-import Contact from '../store/Contact'
-import Record from '../store/Record'
-import UUID from 'uuid/v4';
-import RSAKey from "react-native-rsa";
-import Application from '../LKApplication'
+const EventTarget = require('../../common/core/EventTarget')
+const ContactManager = require('./ContactManager')
+const LKChatProvider = require('../logic/provider/LKChatProvider')
+const LKContactProvider = require('../logic/provider/LKContactProvider')
+const LKDeviceProvider = require('../logic/provider/LKDeviceProvider')
+const LKChatHandler = require('../logic/handler/LKChatHandler')
+const LKDeviceHandler = require('../logic/handler/LKDeviceHandler')
+const Chat = require('../store/Chat')
+const Contact = require('../store/Contact')
+const Record = require('../store/Record')
+const UUID = require('uuid/v4')
+const RSAKey = require("react-native-rsa")
+const Application = require('../LKApplication')
 class ChatManager extends EventTarget{
-    //承担 发送消息的random缓存
-    _recentChats = [];//
-    _recentChatsIndex={};
-    _maxRecent = 6;
 
-    //接收消息的random缓存
-    _hotChatRandomReceived = {}
-
-    //all chat newmsgnum
-    // _allChatNewMsgNums = {}
-
-    MESSAGE_STATE_SENDING=0
-    MESSAGE_STATE_SERVER_NOT_RECEIVE=1
-    MESSAGE_STATE_SERVER_RECEIVE=2
-    MESSAGE_STATE_TARGET_RECEIVE=3
-    MESSAGE_STATE_TARGET_READ=4
-
-    MESSAGE_TYPE_TEXT=0
-    MESSAGE_TYPE_IMAGE=1
-    MESSAGE_TYPE_FILE=2
-    MESSAGE_TYPE_AUDIO=3
-
-    MESSAGE_READSTATE_READ=1
-    MESSAGE_READSTATE_READREPORT=2
-
-    _sendOrderSeed = Date.now()
-    _allChatSendOrder = {}
 
     constructor(){
         super();
+        //承担 发送消息的random缓存
+        this._recentChats = [];//
+        this._recentChatsIndex={};
+        this._maxRecent = 6;
+
+        //接收消息的random缓存
+        this._hotChatRandomReceived = {}
+
+        //all chat newmsgnum
+        // _allChatNewMsgNums = {}
+
+        this.MESSAGE_STATE_SENDING=0
+        this.MESSAGE_STATE_SERVER_NOT_RECEIVE=1
+        this.MESSAGE_STATE_SERVER_RECEIVE=2
+        this.MESSAGE_STATE_TARGET_RECEIVE=3
+        this.MESSAGE_STATE_TARGET_READ=4
+
+        this. MESSAGE_TYPE_TEXT=0
+        this.MESSAGE_TYPE_IMAGE=1
+        this.MESSAGE_TYPE_FILE=2
+        this.MESSAGE_TYPE_AUDIO=3
+
+        this.MESSAGE_READSTATE_READ=1
+        this.MESSAGE_READSTATE_READREPORT=2
+
+        this._sendOrderSeed = Date.now()
+        this._allChatSendOrder = {}
     }
 
     init(user){

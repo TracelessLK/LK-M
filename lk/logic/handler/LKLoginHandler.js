@@ -1,14 +1,13 @@
-import LoginHandler from '../../../common/logic/handler/login/LoginHandler'
-import Application from '../../LKApplication'
-import CryptoJS from "crypto-js";
-import RNFS from 'react-native-fs';
+const LoginHandler = require( '../../../common/logic/handler/login/LoginHandler')
+const Application = require( '../../LKApplication')
+const CryptoJS = require( "crypto-js")
 class LKLoginHandler extends  LoginHandler{
     needLogin(){
         return false;
     }
 
-   async asyLogin(userId,password){
-       let result = await Promise.all([Application.getCurrentApp().getLKUserProvider().asyGet(userId),RNFS.hash(password,'md5')]);
+   async asyLogin(userId,password,pwdHash){
+       let result = await Promise.all([Application.getCurrentApp().getLKUserProvider().asyGet(userId),pwdHash]);
        let user = result[0] ;
        let hc =  result[1] ;
        if(hc==user.password){

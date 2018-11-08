@@ -1,4 +1,4 @@
-import Device from '../../store/Device'
+const Device = require('../../store/Device')
 class LKDeviceProvider{
     asyGetAll(contactId){
         return Device.getAll(contactId);

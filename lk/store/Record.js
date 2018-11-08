@@ -1,6 +1,5 @@
-
-import db from '../../common/store/DataBase'
-import RNFetchBlob from 'react-native-fetch-blob';
+const db = require('../../common/store/DataBase')
+const RNFetchBlob = require('react-native-fetch-blob')
 const dirs = RNFetchBlob.fs.dirs;
 db.transaction((tx)=>{
     tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER,readState INTEGER,relativeMsgId TEXT,relativeOrder INTEGER,receiveOrder INTEGER,sendOrder INTEGER)",[],function () {
@@ -11,10 +10,13 @@ db.transaction((tx)=>{
     });
 });
 class Record{
-    MESSAGE_TYPE_TEXT=0
-    MESSAGE_TYPE_IMAGE=1
-    MESSAGE_TYPE_FILE=2
-    MESSAGE_TYPE_AUDIO=3
+
+    constructor(){
+        this.MESSAGE_TYPE_TEXT=0
+        this.MESSAGE_TYPE_IMAGE=1
+        this.MESSAGE_TYPE_FILE=2
+        this.MESSAGE_TYPE_AUDIO=3
+    }
     addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state,relativeMsgId,relativeOrder,receiveOrder,sendOrder){
         return new Promise((resolve,reject)=>{
 

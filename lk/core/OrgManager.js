@@ -1,9 +1,9 @@
-import Application from '../LKApplication'
-import EventTarget from '../../common/core/EventTarget'
-import LKOrgHandler from '../logic/handler/LKOrgHandler'
-import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
-import MagicCodeManager from './MagicCodeManager'
-import Org from '../store/Org'
+const Application = require( '../LKApplication')
+const EventTarget = require( '../../common/core/EventTarget')
+const LKOrgHandler = require( '../logic/handler/LKOrgHandler')
+const LKMagicCodeHandler = require( '../logic/handler/LKMagicCodeHandler')
+const MagicCodeManager = require( './MagicCodeManager')
+const Org = require( '../store/Org')
 
 class OrgManager extends EventTarget{
 
