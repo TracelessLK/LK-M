@@ -1,14 +1,80 @@
 
 import React, { Component } from 'react'
 import {
+  AsyncStorage,
+  Platform,
   YellowBox,
-  Linking, Alert
+  Linking
 } from 'react-native'
 import EntryView from './view/index/EntryView'
 import Promise from 'bluebird'
+const container = require('./state')
+const config = require('./config')
+const {appId, appName} = config
+const packageJson = require('../package.json')
+const {version: versionLocal} = packageJson
+const {UpdateUtil} = require('@ys/react-native-collection')
+const {appInfoUrl} = config
 const ErrorUtilRN = require('ErrorUtils')
 const util = require('./util')
 const {appendToLog} = util
+const Application = require('./LKApplication')
+const lkApplication = Application.getCurrentApp()
+
+lkApplication.on('currentUserChanged', user => {
+  if (user) {
+    // console.log({user})
+    checkUpdate(user)
+    container.state.user = user
+    AsyncStorage.setItem('user', JSON.stringify(user))
+  } else {
+    AsyncStorage.removeItem('user')
+    container.state = {}
+  }
+})
+
+lkApplication.on('netStateChanged', (result) => {
+  container.connectionOK = result
+})
+
+async function checkUpdate (user) {
+  if (container.NetInfoUtil.online) {
+    const {serverIP, id, name} = user
+    const response = await fetch(appInfoUrl)
+    const appInfo = await response.json()
+    const {updateUrl, httpProtocol, port} = appInfo
+    let base = `${httpProtocol}://${serverIP}:${port}`
+    const updateUrlBase = await AsyncStorage.getItem('updateUrlBase')
+    if (updateUrlBase) {
+      base = updateUrlBase
+    }
+
+    // console.log({appInfo})
+    const checkUpdateUrl = `${base}${updateUrl}`
+    console.log({checkUpdateUrl})
+    const manualDownloadUrl = `${base}/pkg/${Platform.OS}/${appName}.${Platform.OS === 'android' ? 'apk' : 'ipa'}`
+
+    const option = {
+      checkUpdateUrl,
+      versionLocal,
+      manualDownloadUrl,
+      appId
+    }
+    const updateUtil = new UpdateUtil(option)
+    container.updateUtil = updateUtil
+    const optionCheck = {
+      customInfo: {
+        id,
+        name
+      },
+      versionLocal,
+      checkUpdateErrorCb: (error) => {
+        console.log(error)
+      }
+    }
+    updateUtil.checkUpdate(optionCheck)
+  }
+}
 
 YellowBox.ignoreWarnings([
   'Warning: isMounted(...) is deprecated in plain JavaScript React classes. Instead, make sure to clean up subscriptions and pending requests in componentWillUnmount to prevent memory leaks.',

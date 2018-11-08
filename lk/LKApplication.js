@@ -1,40 +1,20 @@
 import Application from '../engine/Application'
 import ConfigManager from '../common/core/ConfigManager'
 import RSAKey from 'react-native-rsa'
-import {
-  AsyncStorage,
-  Platform
-} from 'react-native'
-// import {
-//   Toast
-// } from 'native-base'
-const container = require('./state')
-const config = require('./config')
-const {appId, appName} = config
-const packageJson = require('../package')
-const {version: versionLocal} = packageJson
-const {UpdateUtil} = require('@ys/react-native-collection')
-const {appInfoUrl} = config
 
 class LKApplication extends Application {
-
-    constructor (name) {
-      super(name)
-    }
+  constructor (name) {
+    super(name)
+  }
 
   setCurrentUser (user) {
     super.setCurrentUser(user)
+
     if (user) {
-      // console.log({user})
-      this.checkUpdate(user)
-      container.state.user = user
-      AsyncStorage.setItem('user', JSON.stringify(user))
       let rsa = new RSAKey()
       rsa.setPrivateString(user.privateKey)
       this._rsa = rsa
     } else {
-      AsyncStorage.removeItem('user')
-      container.state = {}
       delete this._rsa
     }
 
@@ -47,12 +27,10 @@ class LKApplication extends Application {
       if (url) {
         this._channel = new (ConfigManager.getWSChannel())('ws://' + user.serverIP + ':' + user.serverPort, true)
         this._channel.on('connectionFail', () => {
-          container.connectionOK = false
-            this.fire("netStateChanged",false)
+          this.fire('netStateChanged', false)
         })
         this._channel.on('connectionOpen', () => {
-          container.connectionOK = true
-            this.fire("netStateChanged",true)
+          this.fire('netStateChanged', true)
         })
       }
     }
@@ -61,7 +39,7 @@ class LKApplication extends Application {
         return channel.asyLogin(user.id, user.password)
       })
     }
-    this.fire("currentUserChanged",user)
+    this.fire('currentUserChanged', user)
     ConfigManager.getChatManager().init(user)
     ConfigManager.getMagicCodeManager().init(user)
   }
@@ -75,45 +53,6 @@ class LKApplication extends Application {
 
   getCurrentRSA () {
     return this._rsa
-  }
-
-  async checkUpdate (user) {
-    if (container.NetInfoUtil.online) {
-      const {serverIP, id, name} = user
-      const response = await fetch(appInfoUrl)
-      const appInfo = await response.json()
-      const {updateUrl, httpProtocol, port} = appInfo
-      let base = `${httpProtocol}://${serverIP}:${port}`
-      const updateUrlBase = await AsyncStorage.getItem('updateUrlBase')
-      if (updateUrlBase) {
-        base = updateUrlBase
-      }
-
-      // console.log({appInfo})
-      const checkUpdateUrl = `${base}${updateUrl}`
-      console.log({checkUpdateUrl})
-      const manualDownloadUrl = `${base}/pkg/${Platform.OS}/${appName}.${Platform.OS === 'android' ? 'apk' : 'ipa'}`
-
-      const option = {
-        checkUpdateUrl,
-        versionLocal,
-        manualDownloadUrl,
-        appId
-      }
-      const updateUtil = new UpdateUtil(option)
-      container.updateUtil = updateUtil
-      const optionCheck = {
-        customInfo: {
-          id,
-          name
-        },
-        versionLocal,
-        checkUpdateErrorCb: (error) => {
-          console.log(error)
-        }
-      }
-      updateUtil.checkUpdate(optionCheck)
-    }
   }
 
   asyRegister (user, venderDid, checkCode, qrcode, description) {
