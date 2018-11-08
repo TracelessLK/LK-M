@@ -383,6 +383,10 @@ class LKChannel extends WSChannel{
         let content = {type:ChatManager.MESSAGE_TYPE_IMAGE,data:{data:imgData,width:width,height:height}};
         return this._sendMsg(chatId,content,relativeMsgId,isGroup);
     }
+    sendAudio(chatId,audioData,audioExt,relativeMsgId,isGroup){
+        let content = {type:ChatManager.MESSAGE_TYPE_AUDIO,data:{data:audioData,ext:audioExt}};
+        return this._sendMsg(chatId,content,relativeMsgId,isGroup);
+    }
     async retrySend(chatId,msgId){
         let curApp = Application.getCurrentApp();
         let userId = curApp.getCurrentUser().id;
@@ -393,7 +397,7 @@ class LKChannel extends WSChannel{
             LKChatHandler.asyUpdateMsgState(userId,chatId,msgId,ChatManager.MESSAGE_STATE_SENDING).then(()=>{
                 ChatManager.fire("msgChanged",chatId);
             });
-            if(oldMsg.type===ChatManager.MESSAGE_TYPE_IMAGE){
+            if(oldMsg.type===ChatManager.MESSAGE_TYPE_IMAGE||oldMsg.type===ChatManager.MESSAGE_TYPE_AUDIO){
                 oldMsg.content.data =  LZBase64String.compressToUTF16(oldMsg.content.data);
                 oldMsg.content.compress = true;
             }
@@ -415,6 +419,9 @@ class LKChannel extends WSChannel{
     sendGroupImage(chatId,imgData,width,height,relativeMsgId){
         this.sendImage(chatId,imgData,width,height,relativeMsgId,true);
     }
+    sendGroupAudio(chatId,audioData,audioExt,relativeMsgId){
+        this.sendAudio(chatId,audioData,audioExt,relativeMsgId,true);
+    }
 
     async _sendMsg(chatId,content,relativeMsgId,isGroup){
         let curApp = Application.getCurrentApp();
@@ -424,8 +431,9 @@ class LKChannel extends WSChannel{
         if(content.type===ChatManager.MESSAGE_TYPE_IMAGE){
             sendContent = {type:content.type,data:{width:content.data.width,height:content.data.height,compress:true}};
             sendContent.data.data = LZBase64String.compressToUTF16(content.data.data);
-           // alert("compress")
-            //alert(content.data.data)
+        }else if(content.type===ChatManager.MESSAGE_TYPE_AUDIO){
+            sendContent = {type:content.type,data:{compress:true}};
+            sendContent.data.data = LZBase64String.compressToUTF16(content.data.data);
         }
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",sendContent,{isGroup:isGroup,chatId:chatId,relativeMsgId:relativeMsgId})]);
         let msgId = result[1].header.id;
@@ -529,10 +537,8 @@ class LKChannel extends WSChannel{
         const msgDecrypted = msg.body.content
         let content = JSON.parse(msgDecrypted);
         let state = userId===header.uid?ChatManager.MESSAGE_STATE_SERVER_RECEIVE:null;
-        if(content.type===ChatManager.MESSAGE_TYPE_IMAGE&&content.data.compress){
+        if((content.type===ChatManager.MESSAGE_TYPE_IMAGE||content.type===ChatManager.MESSAGE_TYPE_AUDIO)&&content.data.compress){
             content.data.data = LZBase64String.decompressFromUTF16(content.data.data);
-            //alert("decompress");
-            //alert(content.data.data);
         }
         await LKChatHandler.asyAddMsg(userId,chatId,header.id,header.uid,header.did,content.type,content.data,header.time,state,body.relativeMsgId,relativeOrder,receiveOrder,body.order);
         this._reportMsgHandled(header.flowId,header.flowType);

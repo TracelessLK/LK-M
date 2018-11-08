@@ -1,6 +1,8 @@
 class EventTarget{
 
-    _listeners=new Map();
+    constructor(){
+        this._listeners=new Map();
+    }
 
     on(event,fun) {
         var ary=this._listeners.get(event)
