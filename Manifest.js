@@ -1,11 +1,11 @@
-import ConfigManager from './common/core/ConfigManager'
-import WSChannel from './lk/net/LKWSChannel'
-import ChatManager from './lk/core/ChatManager'
-import ContactManager from './lk/core/ContactManager'
-import OrgManager from './lk/core/OrgManager'
-import UserManager from './lk/core/UserManager'
-import MagicCodeManager from './lk/core/MagicCodeManager'
-import MFApplyManager from './lk/core/MFApplyManager'
+const ConfigManager = require('./common/core/ConfigManager')
+const WSChannel = require('./lk/net/LKWSChannel')
+const ChatManager = require('./lk/core/ChatManager')
+const ContactManager = require('./lk/core/ContactManager')
+const OrgManager = require('./lk/core/OrgManager')
+const UserManager = require('./lk/core/UserManager')
+const MagicCodeManager = require('./lk/core/MagicCodeManager')
+const MFApplyManager = require('./lk/core/MFApplyManager')
 
 ConfigManager.configure('WSChannel', WSChannel)
 ConfigManager.configure('ChatManager', ChatManager)
