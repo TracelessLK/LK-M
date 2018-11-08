@@ -1,5 +1,5 @@
-import SQLite from 'react-native-sqlite-storage';
-import {appName}  from '../../app.json';
+const SQLite = require('react-native-sqlite-storage')
+const {appName}  = require('../../app.json')
 
 const db = SQLite.openDatabase({name: appName?appName+".db":'default.db', location: 'default'}, function () {
 }, function (err) {

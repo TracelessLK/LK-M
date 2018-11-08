@@ -28,4 +28,4 @@ class EventTarget{
     }
 }
 
-export default EventTarget
+module.exports = EventTarget

@@ -1,5 +1,7 @@
-class Application {
+const EventTarget = require('../common/core/EventTarget')
+class Application extends EventTarget{
   constructor (appName) {
+    super();
     this._appName = appName
     Application._current = this
   }

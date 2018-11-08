@@ -1,5 +1,5 @@
 const db = require('../../common/store/DataBase')
-const RNFetchBlob = require('react-native-fetch-blob')
+const RNFetchBlob = require('react-native-fetch-blob').default
 const dirs = RNFetchBlob.fs.dirs;
 db.transaction((tx)=>{
     tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER,readState INTEGER,relativeMsgId TEXT,relativeOrder INTEGER,receiveOrder INTEGER,sendOrder INTEGER)",[],function () {
