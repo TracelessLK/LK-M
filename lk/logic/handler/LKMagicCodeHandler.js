@@ -1,4 +1,4 @@
-import MagicCode from '../../store/MagicCode'
+const MagicCode = require('../../store/MagicCode')
 class LKMagicCodeHandler{
     asyReset(orgMCode,memberMCode,userId){
         return MagicCode.reset(orgMCode,memberMCode,userId);

@@ -1,4 +1,4 @@
-import Device from '../../store/Device'
+const Device = require('../../store/Device')
 class LKDeviceHandler{
     asyAddDevices(contactId,devices){
         return Device.addDevices(contactId,devices);

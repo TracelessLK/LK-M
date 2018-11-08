@@ -1,11 +1,11 @@
-import Application from '../LKApplication'
-import EventTarget from '../../common/core/EventTarget'
-import LKContactHandler from '../logic/handler/LKContactHandler'
-import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
-import MagicCodeManager from './MagicCodeManager'
-import Contact from '../store/Contact'
-import Device from '../store/Device'
-import ConfigManager from '../../common/core/ConfigManager'
+const Application = require( '../LKApplication')
+const EventTarget = require( '../../common/core/EventTarget')
+const LKContactHandler = require( '../logic/handler/LKContactHandler')
+const LKMagicCodeHandler = require( '../logic/handler/LKMagicCodeHandler')
+const MagicCodeManager = require( './MagicCodeManager')
+const Contact = require( '../store/Contact')
+const Device = require( '../store/Device')
+const ConfigManager = require( '../../common/core/ConfigManager')
 class ContactManager extends EventTarget{
 
 

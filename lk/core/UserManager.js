@@ -1,6 +1,6 @@
-import Application from '../LKApplication'
-import EventTarget from '../../common/core/EventTarget'
-import LKUserHandler from '../logic/handler/LKUserHandler'
+const Application = require( '../LKApplication')
+const EventTarget = require( '../../common/core/EventTarget')
+const LKUserHandler = require( '../logic/handler/LKUserHandler')
 
 class UserManager extends EventTarget{
 

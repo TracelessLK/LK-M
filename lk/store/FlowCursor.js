@@ -1,4 +1,4 @@
-import db from '../../common/store/DataBase'
+const db = require('../../common/store/DataBase')
 db.transaction((tx)=>{
     let sql = "create table if not exists flowCursor(ownerUserId TEXT,flowId TEXT,flowType TEXT,PRIMARY KEY(ownerUserId,flowType))";
     tx.executeSql(sql,[],function () {
@@ -6,7 +6,11 @@ db.transaction((tx)=>{
     });
 });
 class FlowCursor{
-    _flows=new Map();
+
+    constructor(){
+        this._flows=new Map();
+    }
+
     getLastFlowId(userId,flowType){
         return new Promise((resolve,reject)=>{
             let flowId = this._flows.get(userId+flowType);

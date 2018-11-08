@@ -1,10 +1,9 @@
-import EventTarget from '../core/EventTarget'
+const EventTarget = require('../core/EventTarget')
 class WSChannel extends EventTarget{
-
-    _reconnectDelay=0
 
     constructor(url,keepAlive){
         super();
+        this._reconnectDelay=0;
         this._url = url;
         this._keepAlive = keepAlive;
     }

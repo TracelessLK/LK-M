@@ -17,9 +17,10 @@ const {UpdateUtil} = require('@ys/react-native-collection')
 const {appInfoUrl} = config
 
 class LKApplication extends Application {
-  // constructor (name) {
-  //   super(name)
-  // }
+
+    constructor (name) {
+      super(name)
+    }
 
   setCurrentUser (user) {
     super.setCurrentUser(user)
@@ -47,9 +48,11 @@ class LKApplication extends Application {
         this._channel = new (ConfigManager.getWSChannel())('ws://' + user.serverIP + ':' + user.serverPort, true)
         this._channel.on('connectionFail', () => {
           container.connectionOK = false
+            this.fire("netStateChanged",false)
         })
         this._channel.on('connectionOpen', () => {
           container.connectionOK = true
+            this.fire("netStateChanged",true)
         })
       }
     }
@@ -58,6 +61,7 @@ class LKApplication extends Application {
         return channel.asyLogin(user.id, user.password)
       })
     }
+    this.fire("currentUserChanged",user)
     ConfigManager.getChatManager().init(user)
     ConfigManager.getMagicCodeManager().init(user)
   }

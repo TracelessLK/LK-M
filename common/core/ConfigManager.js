@@ -1,4 +1,4 @@
-import EventTarget from './EventTarget'
+const EventTarget = require ('./EventTarget')
 class ConfigManager extends EventTarget{
 
     configure(name,obj){

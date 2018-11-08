@@ -1,8 +1,8 @@
-import EventTarget from '../../common/core/EventTarget'
-import LKMagicCodeProvider from '../logic/provider/LKMagicCodeProvider'
-import LKMagicCodeHandler from '../logic/handler/LKMagicCodeHandler'
-import Application from '../LKApplication'
-import MagicCode from '../store/MagicCode'
+const EventTarget = require( '../../common/core/EventTarget')
+const LKMagicCodeProvider = require( '../logic/provider/LKMagicCodeProvider')
+const LKMagicCodeHandler = require( '../logic/handler/LKMagicCodeHandler')
+const Application = require( '../LKApplication')
+const MagicCode = require( '../store/MagicCode')
 
 class MagicCodeManager extends EventTarget{
 

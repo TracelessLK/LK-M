@@ -1,5 +1,4 @@
-
-import db from '../../common/store/DataBase'
+const db = require('../../common/store/DataBase')
 db.transaction((tx)=>{
     let sql = "create table if not exists org(id TEXT PRIMARY KEY NOT NULL,name TEXT,parentId TEXT,ownerUserId TEXT,reserve1 TEXT)";
     tx.executeSql(sql,[],function () {

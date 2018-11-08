@@ -1,4 +1,4 @@
-import Contact from '../../store/Contact'
+const Contact = require('../../store/Contact')
 class LKContactHandler{
     asyResetContacts(members,friends,groupContacts,userId){
         return Contact.resetContacts(members,friends,groupContacts,userId);
@@ -13,7 +13,6 @@ class LKContactHandler{
     }
 
     asyAddNewFriend(friend,userId){
-        console.log('LKContactHandler asyAddNewFriend')
         return Contact.addNewFriends([friend],userId);
     }
 }

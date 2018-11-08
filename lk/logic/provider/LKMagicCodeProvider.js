@@ -1,4 +1,4 @@
-import MagicCode from '../../store/MagicCode'
+const MagicCode = require('../../store/MagicCode')
 class LKMagicCodeProvider{
     asyGetMagicCode(userId){
         return MagicCode.getMagicCode(userId);

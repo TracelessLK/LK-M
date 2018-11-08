@@ -1,33 +1,30 @@
-import UUID from 'uuid/v4';
-import WSChannel from '../../common/net/WSChannel'
-import Application from '../LKApplication'
-import ChatManager from '../core/ChatManager'
-import OrgManager from '../core/OrgManager'
-import ContactManager from "../core/ContactManager"
-import MagicCodeManager from "../core/MagicCodeManager"
-import LKContactProvider from '../logic/provider/LKContactProvider'
-import LKContactHandler from '../logic/handler/LKContactHandler'
-import LKChatHandler from '../logic/handler/LKChatHandler'
-import LKDeviceProvider from '../logic/provider/LKDeviceProvider'
-import LKChatProvider from '../logic/provider/LKChatProvider'
-import MFApplyManager from '../core/MFApplyManager'
-import FlowCursor from '../store/FlowCursor'
-import LKUtil  from '../util'
-import LZBase64String from '../../common/util/lz-base64-string'
-import CryptoJS from "crypto-js";
+const UUID = require('uuid/v4')
+const WSChannel = require('../../common/net/WSChannel')
+const Application = require('../LKApplication')
+const ChatManager = require('../core/ChatManager')
+const OrgManager = require('../core/OrgManager')
+const ContactManager = require("../core/ContactManager")
+const MagicCodeManager = require("../core/MagicCodeManager")
+const LKContactProvider = require('../logic/provider/LKContactProvider')
+const LKContactHandler = require('../logic/handler/LKContactHandler')
+const LKChatHandler = require('../logic/handler/LKChatHandler')
+const LKDeviceProvider = require('../logic/provider/LKDeviceProvider')
+const LKChatProvider = require('../logic/provider/LKChatProvider')
+const MFApplyManager = require('../core/MFApplyManager')
+const FlowCursor = require('../store/FlowCursor')
+const LKUtil  = require('../util')
+const LZBase64String = require('../../common/util/lz-base64-string')
+const CryptoJS = require("crypto-js")
 
 class LKChannel extends WSChannel{
 
-    _callbacks={};
-    _timeout=30000;
-    _chatMsgPool = new Map();
-    _flowPool = new Map();
-
-
     constructor(url){
         super(url,true);
+        this._callbacks={};
+        this._timeout=30000;
+        this._chatMsgPool = new Map();
+        this._flowPool = new Map();
         this._ping();
-      this.user =  Application.getCurrentApp().getCurrentUser()
     }
 
     _putFlowPool(preFlowId,msg){
@@ -544,7 +541,7 @@ class LKChannel extends WSChannel{
         this._reportMsgHandled(header.flowId,header.flowType);
         this._checkChatMsgPool(chatId,header.id,receiveOrder);
         ChatManager.fire("msgChanged",chatId);
-      let num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
+      let num = await LKChatProvider.asyGetAllMsgNotReadNum(userId)
         ChatManager.fire("msgBadgeChanged",num);
     }
 

@@ -1,5 +1,5 @@
 
-import db from '../../common/store/DataBase'
+const db = require('../../common/store/DataBase')
 db.transaction((tx)=>{
     tx.executeSql("create table if not exists chat(id TEXT,ownerUserId TEXT,name TEXT,createTime INTEGER,topTime INTEGER,isGroup INTEGER,reserve1 TEXT,PRIMARY KEY(ownerUserId,id))",[],function () {
     },function (err) {

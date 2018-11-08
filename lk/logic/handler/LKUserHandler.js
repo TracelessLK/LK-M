@@ -1,4 +1,4 @@
-import LKUser from '../../store/LKUser'
+const LKUser = require('../../store/LKUser')
 class LKUserHandler{
     asyAddLKUser(lkUser){
         return LKUser.add(lkUser);

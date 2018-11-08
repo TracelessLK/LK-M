@@ -1,5 +1,5 @@
 
-import Contact from '../../store/Contact'
+const Contact = require('../../store/Contact')
 class LKContactProvider{
     asyGet(userId,contactId){
         return Contact.get(userId,contactId);
