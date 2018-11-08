@@ -14,6 +14,7 @@ class Record{
     MESSAGE_TYPE_TEXT=0
     MESSAGE_TYPE_IMAGE=1
     MESSAGE_TYPE_FILE=2
+    MESSAGE_TYPE_AUDIO=3
     addMsg(userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,state,relativeMsgId,relativeOrder,receiveOrder,sendOrder){
         return new Promise((resolve,reject)=>{
 
@@ -29,12 +30,22 @@ class Record{
             }
             if(type===this.MESSAGE_TYPE_TEXT){
                 insert2DB();
-            }else if(type===this.MESSAGE_TYPE_IMAGE){
-                var dir = dirs.DocumentDir+"/"+userId+"/images/"+chatId;
-                var createImage = function () {
-                    var url = dir+"/"+msgId+".jpg";
+            }else if(type===this.MESSAGE_TYPE_IMAGE||type===this.MESSAGE_TYPE_AUDIO){
+                let fileDir = "/images/";
+                let fileExt = "jpg";
+                if(type===this.MESSAGE_TYPE_AUDIO){
+                    fileDir="/audio/";
+                    fileExt=content.ext;
+                }
+                var dir = dirs.DocumentDir+"/"+userId+fileDir+chatId;
+                var createFile = function () {
+                    var url = dir+"/"+msgId+"."+fileExt;
                     RNFetchBlob.fs.createFile(url,content.data,'base64').then(()=>{
-                        content = JSON.stringify({width:content.width,height:content.height,url:url});
+                        if(type===this.MESSAGE_TYPE_IMAGE){
+                            content = JSON.stringify({width:content.width,height:content.height,url:url});
+                        }else{
+                            content = JSON.stringify({url:url});
+                        }
                         insert2DB();
                     }).catch(err=>{
                       console.log(err)
@@ -45,12 +56,12 @@ class Record{
                     exist=>{
                         if(!exist){
                             RNFetchBlob.fs.mkdir(dir).then(()=>{
-                                createImage();
+                                createFile();
                             }).catch(err => {
                               console.log(err)
                             });
                         }else{
-                            createImage();
+                            createFile();
                         }
                     }
                 ).catch((err) => {
