@@ -453,10 +453,9 @@ export default class ChatView extends Component<{}> {
               console.log(msg)
             }}
           >
-            <Ionicons name="ios-volume-up-outline" size={35} style={{marginRight: 5, lineHeight: 35, color: '#a0a0a0'}}></Ionicons>
+            <Ionicons name="ios-volume-up-outline" size={35}
+              style={{marginRight: 5, lineHeight: 35, color: '#a0a0a0'}}></Ionicons>
           </TouchableOpacity>)
-
-        console.log({ url})
       }
       return result
     }
