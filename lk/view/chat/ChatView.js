@@ -490,14 +490,17 @@ export default class ChatView extends Component<{}> {
 
   render () {
     let iconColor = '#6f7378'
-    const size = 200
+    const size = 150
     const contentView =
         <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}>
-          <View style={{position: 'absolute', top: '50%', width: size, height: size, backgroundColor: '#a0a0a0'}}>
-            <Text>
-              正在录音
-            </Text>
+          <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', top: '25%'}}>
+            <View style={{ width: size, height: size, backgroundColor: '#c0c0c0', justifyContent: 'center', alignItems: 'center'}}>
+              <Text>
+                正在录音
+              </Text>
+            </View>
           </View>
+
           <NetIndicator/>
           <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}>
             <ScrollView ref={(ref) => { this.scrollView = ref }} style={{width: '100%', backgroundColor: '#d5e0f2'}}
