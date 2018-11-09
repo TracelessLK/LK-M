@@ -240,6 +240,8 @@ export default class RecentView extends Component<{}> {
         content = '[图片]'
       } else if (type === chatManager.MESSAGE_TYPE_FILE) {
         content = '[文件]'
+      } else if (type === chatManager.MESSAGE_TYPE_AUDIO) {
+        content = '[语音]'
       }
       return content
     }

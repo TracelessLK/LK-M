@@ -436,6 +436,27 @@ export default class ChatView extends Component<{}> {
       } else if (rec.type === chatManager.MESSAGE_TYPE_FILE) {
         let file = JSON.parse(rec.content)
         result = <TouchableOpacity><Ionicons name="ios-document-outline" size={40} style={{marginRight: 5, lineHeight: 40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>
+      } else if (rec.type === chatManager.MESSAGE_TYPE_AUDIO) {
+        const {content} = rec
+        const {url} = JSON.parse(content)
+        result = (
+          <TouchableOpacity style={{width: 60, alignItems: 'center', justifyContent: 'center'}}
+            onPress={async () => {
+              this.audioRecorderPlayer.addPlayBackListener((e) => {
+                console.log({e})
+                if (e.current_position === e.duration) {
+                  console.log('finished')
+                  this.audioRecorderPlayer.stopPlayer()
+                }
+              })
+              const msg = await this.audioRecorderPlayer.startPlayer('file://' + url)
+              console.log(msg)
+            }}
+          >
+            <Ionicons name="ios-volume-up-outline" size={35} style={{marginRight: 5, lineHeight: 35, color: '#a0a0a0'}}></Ionicons>
+          </TouchableOpacity>)
+
+        console.log({ url})
       }
       return result
     }
