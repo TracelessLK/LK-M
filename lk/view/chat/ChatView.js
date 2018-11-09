@@ -72,7 +72,8 @@ export default class ChatView extends Component<{}> {
         refreshing: false,
         msgViewHeight: this.originalContentHeight,
         isInited: false,
-        showVoiceRecorder: false
+        showVoiceRecorder: false,
+        isRecording: false
       }
       this.otherSideId = otherSideId
       this.text = ''
@@ -488,19 +489,38 @@ export default class ChatView extends Component<{}> {
     })
   }
 
+  record = () => {
+    this.setState({
+      isRecording: true
+    })
+  }
+
+  cancelRecord = () => {
+    this.setState({
+      isRecording: false
+    })
+  }
+
   render () {
     let iconColor = '#6f7378'
-    const size = 150
+    const size = 200
+    const greyScale = 106
     const contentView =
         <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}>
-          <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', top: '25%'}}>
-            <View style={{ width: size, height: size, backgroundColor: '#c0c0c0', justifyContent: 'center', alignItems: 'center'}}>
-              <Text>
-                正在录音
-              </Text>
-            </View>
-          </View>
-
+          {this.state.isRecording
+            ? <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', top: '25%', zIndex: 2}}>
+              <View style={{ width: size,
+                height: size,
+                backgroundColor: `rgba(${greyScale}, ${greyScale}, ${greyScale}, 0.9)`,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 5}}>
+                <Ionicons name={'ios-mic-outline'} size={45} color='white'/>
+                <Text style={{fontSize: 20, color: 'white'}}>
+              正在录音...
+                </Text>
+              </View>
+            </View> : null}
           <NetIndicator/>
           <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}>
             <ScrollView ref={(ref) => { this.scrollView = ref }} style={{width: '100%', backgroundColor: '#d5e0f2'}}
@@ -552,6 +572,7 @@ export default class ChatView extends Component<{}> {
                   padding: 10,
                   marginHorizontal: 5
                 }}
+                onPressIn={this.record} onPressOut={this.cancelRecord}
               >
                 <Text>按住说话</Text>
               </TouchableOpacity> : <TextInputWrapper onChangeText={(v) => {
