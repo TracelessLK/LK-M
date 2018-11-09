@@ -18,7 +18,9 @@ indexPathAry.forEach(ele => {
 })
 
 const recordPath = path.resolve(nodeModule, 'react-native-audio-recorder-player/index.js')
-const commentOutAry = [`console.log('milisecs: ' + milisecs);`, `console.log('min: ' + minutes + ', secs: ' + seconds + ', ' + miliseconds);`]
+const commentOutAry = [`console.log('milisecs: ' + milisecs);`,
+  `console.log('Already started playing');`,
+  `console.log('min: ' + minutes + ', secs: ' + seconds + ', ' + miliseconds);`]
 
 commentOutAry.forEach(ele => {
   fs.writeFileSync(recordPath, fs.readFileSync(recordPath, 'utf8').replace(ele, ''))

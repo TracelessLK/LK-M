@@ -439,18 +439,32 @@ export default class ChatView extends Component<{}> {
       } else if (rec.type === chatManager.MESSAGE_TYPE_AUDIO) {
         const {content} = rec
         const {url} = JSON.parse(content)
+        // console.log({url})
         result = (
           <TouchableOpacity style={{width: 60, alignItems: 'center', justifyContent: 'center'}}
             onPress={async () => {
               this.audioRecorderPlayer.addPlayBackListener((e) => {
-                console.log({e})
+                // console.log({e})
                 if (e.current_position === e.duration) {
                   console.log('finished')
                   this.audioRecorderPlayer.stopPlayer()
                 }
               })
-              const msg = await this.audioRecorderPlayer.startPlayer('file://' + url)
-              console.log(msg)
+              const ary = url.split('Documents')
+              const baseUrl = ary[0]
+              const fileName = _.last(ary[1].split('audio')[1].split('/'))
+              const destination = `/private${baseUrl}tmp/${fileName}`
+              // console.log({url})
+              const exist = await RNFetchBlob.fs.exists(destination)
+              if (!exist) {
+                const data = await RNFetchBlob.fs.readFile(url, 'base64')
+                // console.log(data)
+                await RNFetchBlob.fs.writeFile(destination, data, 'base64')
+              }
+
+              // console.log({baseUrl, fileName, destination})
+              // console.log({exist})
+              await this.audioRecorderPlayer.startPlayer(fileName)
             }}
           >
             <Ionicons name="ios-volume-up-outline" size={35}
