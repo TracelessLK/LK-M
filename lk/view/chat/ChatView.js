@@ -23,6 +23,7 @@ import {
 import NetIndicator from '../common/NetIndicator'
 import MessageText from './MessageText'
 import {Header} from 'react-navigation'
+import AudioRecorderPlayer from 'react-native-audio-recorder-player'
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 const {getAvatarSource, getIconNameByState} = require('../../util')
 const Constant = require('../state/Constant')
@@ -88,6 +89,9 @@ export default class ChatView extends Component<{}> {
 
       // keyboard fix
       this.keyBoardShowCount = 0
+
+      const audioRecorderPlayer = new AudioRecorderPlayer()
+      this.audioRecorderPlayer = audioRecorderPlayer
     }
 
      refreshRecord = async (limit) => {
@@ -489,13 +493,20 @@ export default class ChatView extends Component<{}> {
     })
   }
 
-  record = () => {
+  record = async () => {
     this.setState({
       isRecording: true
     })
+    const result = await this.audioRecorderPlayer.startRecorder()
+    this.audioRecorderPlayer.addRecordBackListener((e) => {
+      console.log({e})
+    })
+    console.log(result)
   }
 
-  cancelRecord = () => {
+  cancelRecord = async () => {
+    const result = await this.audioRecorderPlayer.stopRecorder()
+    this.audioRecorderPlayer.removeRecordBackListener()
     this.setState({
       isRecording: false
     })
