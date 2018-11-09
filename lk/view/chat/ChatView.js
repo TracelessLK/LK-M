@@ -377,6 +377,7 @@ export default class ChatView extends Component<{}> {
           const maxWidth = 1000
           const maxHeight = 1000
           ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null).then((res) => {
+            console.log({path: res.path})
             RNFetchBlob.fs.readFile(res.path, 'base64').then((data) => {
               this.sendImage({data, width: maxWidth, height: maxHeight})
             })
@@ -494,42 +495,36 @@ export default class ChatView extends Component<{}> {
     })
   }
 
-  record = async () => {
-    this.setState({
-      isRecording: true
-    })
-    const audioPath = 'hello.m4a'
-    const filePath = await this.audioRecorderPlayer.startRecorder(audioPath)
-    const exist = await RNFetchBlob.fs.exists(filePath)
-    console.log({exist, filePath})
-    this.audioRecorderPlayer.addRecordBackListener((e) => {
-      // console.log({e})
-      const {current_position: recordTimeRaw} = e
-      const time = this.audioRecorderPlayer.mmssss(Math.floor(recordTimeRaw))
-      this.recordTimeRaw = recordTimeRaw
-      // console.log({recordTimeRaw})
+  record = () => {
+    runNetFunc(async () => {
       this.setState({
-        recordTime: time
+        isRecording: true
+      })
+      const audioPath = 'lk.m4a'
+      await this.audioRecorderPlayer.startRecorder(audioPath)
+      this.audioRecorderPlayer.addRecordBackListener((e) => {
+        // console.log({e})
+        const {current_position: recordTimeRaw} = e
+        const time = this.audioRecorderPlayer.mmssss(Math.floor(recordTimeRaw))
+        this.recordTimeRaw = recordTimeRaw
+        // console.log({recordTimeRaw})
+        this.setState({
+          recordTime: time
+        })
       })
     })
   }
 
   cancelRecord = async () => {
     const filePath = await this.audioRecorderPlayer.stopRecorder()
-    const exist = await RNFetchBlob.fs.exists(filePath)
-    console.log({exist,filePath})
-    setTimeout(async () => {
-      const exist = await RNFetchBlob.fs.exists(filePath)
-      console.log({exist,filePath})
-    }, 1000*4)
-    // RNFetchBlob.fs.readFile(filePath, 'base64').then((data) => {
-    //   runNetFunc(() => {
-    //     const ext = _.last(filePath.split('.'))
-    //     // lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
-    //     //   Alert.alert(err.toString())
-    //     // })
-    //   })
-    // })
+
+    RNFetchBlob.fs.readFile(filePath.replace('file://', ''), 'base64').then((data) => {
+      // console.log({data})
+      const ext = _.last(filePath.split('.'))
+      lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
+        Alert.alert(err.toString())
+      })
+    })
     this.audioRecorderPlayer.removeRecordBackListener()
     this.setState({
       isRecording: false,
