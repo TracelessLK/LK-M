@@ -5,6 +5,7 @@ import {
   StyleSheet, View
 } from 'react-native'
 import {Root} from 'native-base'
+import N from './Manifest'
 import LKEntry from './lk/LKEntry'
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])

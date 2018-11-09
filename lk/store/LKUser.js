@@ -1,15 +1,12 @@
-const db = require('../../common/store/DataBase')
-db.transaction((tx)=>{
-    tx.executeSql("create table if not exists lkuser(id TEXT PRIMARY KEY NOT NULL,name TEXT,pic TEXT,publicKey TEXT,privateKey TEXT,deviceId TEXT,serverIP TEXT,serverPort INTEGER,serverPublicKey TEXT,orgId TEXT,mCode TEXT,password TEXT,reserve1 TEXT)",[],function () {
-    },function (err) {
-    });
-});
+const DBProxy = require('./DBInit')
+
 class LKUser{
     add(lkUser){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "insert into lkuser(id,name,pic,publicKey,privateKey,deviceId,serverIP,serverPort,serverPublicKey,orgId,mCode,password,reserve1) values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
-                tx.executeSql(sql,[lkUser.id,lkUser.name,lkUser.pic,lkUser.publicKey,lkUser.privateKey,lkUser.deviceId,lkUser.serverIP,lkUser.serverPort,lkUser.serverPublicKey,lkUser.orgId,lkUser.mCode,lkUser.password,lkUser.reserve1],function (tx,results) {
+                db.run(sql,[lkUser.id,lkUser.name,lkUser.pic,lkUser.publicKey,lkUser.privateKey,lkUser.deviceId,lkUser.serverIP,lkUser.serverPort,lkUser.serverPublicKey,lkUser.orgId,lkUser.mCode,lkUser.password,lkUser.reserve1],function (tx,results) {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -19,16 +16,11 @@ class LKUser{
     }
     getAll(){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "select * from lkuser";
-                tx.executeSql(sql,[],function (tx,results) {
-
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i));
-                    }
-
-                    resolve(ary);
+                db.getAll(sql,[],function (results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
@@ -37,14 +29,11 @@ class LKUser{
     }
     get(id){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "select * from lkuser where id=?";
-                tx.executeSql(sql,[id],function (tx,results) {
-                    if(results.rows.length>0){
-                        resolve(results.rows.item(0));
-                    }else{
-                        resolve(null);
-                    }
+                db.get(sql,[id],function (row) {
+                    resolve(row);
                 },function (err) {
                     reject(err);
                 });
@@ -53,9 +42,10 @@ class LKUser{
     }
     remove(id){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "delete from lkuser where id=?";
-                tx.executeSql(sql,[id],function (tx,results) {
+                db.run(sql,[id],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -65,9 +55,10 @@ class LKUser{
     }
     setUserName(name,id){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "update lkuser set name=? where id=?";
-                tx.executeSql(sql,[name,id],function () {
+                db.run(sql,[name,id],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -77,9 +68,10 @@ class LKUser{
     }
     setUserPic(pic,id){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "update lkuser set pic=? where id=?";
-                tx.executeSql(sql,[pic,id],function () {
+                db.run(sql,[pic,id],function () {
                     resolve();
                 },function (err) {
                     reject(err);

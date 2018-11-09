@@ -1,14 +1,7 @@
-const db = require('../../common/store/DataBase')
+const DBProxy = require('./DBInit')
 const RNFetchBlob = require('react-native-fetch-blob').default
 const dirs = RNFetchBlob.fs.dirs;
-db.transaction((tx)=>{
-    tx.executeSql("create table if not exists record(ownerUserId TEXT,chatId TEXT,id TEXT,senderUid TEXT,senderDid TEXT,type INTEGER,content TEXT,sendTime INTEGER,state INTEGER,readState INTEGER,relativeMsgId TEXT,relativeOrder INTEGER,receiveOrder INTEGER,sendOrder INTEGER)",[],function () {
-    },function (err) {
-    });
-    tx.executeSql("create table if not exists group_record_state(ownerUserId TEXT,chatId TEXT,msgId TEXT ,reporterUid TEXT NOT NULL,state INTEGER)",[],function () {
-    },function (err) {
-    });
-});
+
 class Record{
 
     constructor(){
@@ -21,9 +14,10 @@ class Record{
         return new Promise((resolve,reject)=>{
 
             let insert2DB = function () {
+                let db = new DBProxy()
                 db.transaction((tx)=>{
                     let sql = "insert into record(ownerUserId,chatId,id,senderUid,senderDid,type,content,sendTime,state,readState,relativeMsgId,relativeOrder,receiveOrder,sendOrder) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-                    tx.executeSql(sql,[userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,isNaN(state)?-1:state,-1,relativeMsgId,relativeOrder,receiveOrder,sendOrder],function () {
+                    db.run(sql,[userId,chatId,msgId,senderUid,senderDid,type,content,sendTime,isNaN(state)?-1:state,-1,relativeMsgId,relativeOrder,receiveOrder,sendOrder],function () {
                         resolve();
                     },function (err) {
                         reject(err);
@@ -98,9 +92,10 @@ class Record{
                 }
                 sql+=")";
             }
+            let db = new DBProxy()
             db.transaction((tx)=>{
-                tx.executeSql(sql,[userId,chatId,state],function (tx,results) {
-                    var len = results.rows.length;
+                db.getAll(sql,[userId,chatId,state],function (results) {
+                    var len = results.length;
                     if(len==num){
                         resolve(true);
                     }else{
@@ -124,8 +119,9 @@ class Record{
             params.push(msgId);
             params.push(reporterUid);
             params.push(state);
+            let db = new DBProxy()
             db.transaction((tx)=>{
-                tx.executeSql(sql,params,function (tx,results) {
+                db.run(sql,params,function (tx,results) {
                     resolve();
                 },function (err) {
                     reject();
@@ -165,9 +161,10 @@ class Record{
                 num++;
             }
             sql+=")";
+            let db = new DBProxy()
             db.transaction((tx)=>{
-                tx.executeSql(sql,[userId,chatId,userId],function (tx,results) {
-                    var len = results.rows.length;
+                db.getAll(sql,[userId,chatId,userId],function (results) {
+                    var len = results.length;
                     if(len==num){
                         resolve();
                     }
@@ -197,8 +194,9 @@ class Record{
                 }
                 sql+=")";
             }
+            let db = new DBProxy()
             db.transaction((tx)=>{
-                tx.executeSql(sql,[state,state,userId,chatId], (tx,res)=> {
+                db.run(sql,[state,state,userId,chatId], (tx,res)=> {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -215,6 +213,7 @@ class Record{
     }
     getGroupMsgReadReport(userId,chatId,msgId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = `select contact.id,contact.name,group_record_state.state from group_record_state ,contact 
                 where group_record_state.reporterUid = contact.id 
@@ -223,13 +222,8 @@ class Record{
                 and group_record_state.msgId=? 
                 and contact.ownerUserId=?
                 `;
-                tx.executeSql(sql,[userId,chatId,msgId,userId],function (tx,results) {
-                    let rs =[];
-                    let len = results.rows.length;
-                    for(let i=0;i<len;i++){
-                        rs.push(results.rows.item(i));
-                    }
-                    resolve(rs);
+                db.getAll(sql,[userId,chatId,msgId,userId],function (results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
@@ -239,28 +233,23 @@ class Record{
 
     getMsgs(userId,chatId,limit){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
+            var sql = "select * from record where ownerUserId=? and chatId=?";
+            if(limit&&limit>0){
+                sql += " order by relativeOrder desc,receiveOrder desc,sendOrder desc";
+                sql += " limit ";
+                sql += limit;
+            }else{
+                sql += " order by relativeOrder,receiveOrder,sendOrder";
+            }
             db.transaction((tx)=>{
-                var sql = "select * from record where ownerUserId=? and chatId=?";
-                if(limit&&limit>0){
-                    sql += " order by relativeOrder desc,receiveOrder desc,sendOrder desc";
-                    sql += " limit ";
-                    sql += limit;
-                }else{
-                    sql += " order by relativeOrder,receiveOrder,sendOrder";
-                }
-                db.transaction((tx)=>{
-                    tx.executeSql(sql,[userId,chatId],function (tx,results) {
-                        var rs = [];
-                        var len = results.rows.length;
-                        for(var i=0;i<len;i++){
-                            rs.push(results.rows.item(i));
-                        }
-                        if(limit&&limit>0)
-						    rs = rs.reverse();
-                        resolve(rs);
-                    },function (err) {
-                        reject(err);
-                    });
+                db.getAll(sql,[userId,chatId],function (results) {
+                    let rs = results;
+                    if(limit&&limit>0)
+                        rs = rs.reverse();
+                    resolve(rs);
+                },function (err) {
+                    reject(err);
                 });
             });
         });
@@ -279,8 +268,9 @@ class Record{
                 }
             }
             sql+=")";
+            let db = new DBProxy()
             db.transaction((tx)=>{
-                tx.executeSql(sql,[state,state], ()=> {
+                db.run(sql,[state,state], ()=> {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -293,19 +283,13 @@ class Record{
 
     getReadNotReportMsgs(userId,chatId){
         return new Promise((resolve,reject)=>{
+            var sql = "select * from record where ownerUserId=? and senderUid<>? and chatId=? and readState=1";
+            let db = new DBProxy()
             db.transaction((tx)=>{
-                var sql = "select * from record where ownerUserId=? and senderUid<>? and chatId=? and readState=1";
-                db.transaction((tx)=>{
-                    tx.executeSql(sql,[userId,userId,chatId],function (tx,results) {
-                        var rs = [];
-                        var len = results.rows.length;
-                        for(var i=0;i<len;i++){
-                            rs.push(results.rows.item(i));
-                        }
-                        resolve(rs);
-                    },function (err) {
-                        reject(err);
-                    });
+                db.getAll(sql,[userId,userId,chatId],function (results) {
+                    resolve(results);
+                },function (err) {
+                    reject(err);
                 });
             });
         });
@@ -313,61 +297,52 @@ class Record{
 
     getMsgsNotRead(userId,chatId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
+            var sql = "select * from record where ownerUserId=? and chatId=? and senderUid<>? and readState<1";
             db.transaction((tx)=>{
-                var sql = "select * from record where ownerUserId=? and chatId=? and senderUid<>? and readState<1";
-                db.transaction((tx)=>{
-                    tx.executeSql(sql,[userId,chatId,userId],function (tx,results) {
-                        var rs = [];
-                        var len = results.rows.length;
-                        for(var i=0;i<len;i++){
-                            rs.push(results.rows.item(i));
-                        }
-                        resolve(rs);
-                    },function (err) {
-                        reject(err);
-                    });
+                db.getAll(sql,[userId,chatId,userId],function (results) {
+                    resolve(results);
+                },function (err) {
+                    reject(err);
                 });
             });
         });
     }
     getAllMsgNotReadNum (userId) {
       return new Promise((resolve,reject)=>{
+          let db = new DBProxy()
         db.transaction((tx)=>{
           var sql = "select * from record where ownerUserId=? and senderUid<>? and readState<1";
-          db.transaction((tx)=>{
-            tx.executeSql(sql,[userId,userId],function (tx,results) {
-              var len = results.rows.length;
+            db.getAll(sql,[userId,userId],function (results) {
+              var len = results.length;
               resolve(len);
             },function (err) {
               reject(err);
             });
-          });
         });
       });
     }
 
     getMsg(userId,chatId,msgId,fetchData){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 var sql = "select * from record where ownerUserId=? and chatId=? and id=?";
-                db.transaction((tx)=>{
-                    tx.executeSql(sql,[userId,chatId,msgId], (tx,results) =>{
-                        if(results.rows.length>0){
-                            let result = results.rows.item(0);
-                            if(fetchData&&this.MESSAGE_TYPE_IMAGE===result.type){
-                                RNFetchBlob.fs.readFile(result.url,'base64').then((data)=>{
-                                    result.data = data;
-                                    resolve(result);
-                                });
-                            }else{
+                db.get(sql,[userId,chatId,msgId], (result) =>{
+                    if(result){
+                        if(fetchData&&this.MESSAGE_TYPE_IMAGE===result.type){
+                            RNFetchBlob.fs.readFile(result.url,'base64').then((data)=>{
+                                result.data = data;
                                 resolve(result);
-                            }
+                            });
                         }else{
-                            resolve(null);
+                            resolve(result);
                         }
-                    },function (err) {
-                        reject(err);
-                    });
+                    }else{
+                        resolve(null);
+                    }
+                },function (err) {
+                    reject(err);
                 });
             });
         });
@@ -375,48 +350,43 @@ class Record{
 
     getRelativePreSendMsg(userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 var sql = "select * from record where ownerUserId=? and chatId=? and relativeMsgId=? and senderUid=? and senderDid=? and sendOrder<? order by sendOrder";
-                db.transaction((tx)=>{
-                    tx.executeSql(sql,[userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder],function (tx,results) {
-                        if(results.rows.length>0){
-                            resolve(results.rows.item(rows.length-1));
-                        }else{
-                            resolve(null);
-                        }
-                    },function (err) {
-                        reject(err);
-                    });
+                tx.getAll(sql,[userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder],function (results) {
+                    if(results.length>0){
+                        resolve(results[results.length-1]);
+                    }else{
+                        resolve(null);
+                    }
+                },function (err) {
+                    reject(err);
                 });
             });
         });
     }
     getRelativeNextSendMsg(userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 var sql = "select * from record where ownerUserId=? and chatId=? and relativeMsgId=? and senderUid=? and senderDid=? and sendOrder>? order by sendOrder";
-                db.transaction((tx)=>{
-                    tx.executeSql(sql,[userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder],function (tx,results) {
-                        if(results.rows.length>0){
-                            resolve(results.rows.item(0));
-                        }else{
-                            resolve(null);
-                        }
-                    },function (err) {
-                        reject(err);
-                    });
+                db.get(sql,[userId,chatId,relativeMsgId,senderUid,senderDid,sendOrder],function (row) {
+                    resolve(row);
+                },function (err) {
+                    reject(err);
                 });
             });
         });
     }
     removeAll(userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "delete from record where ownerUserId=? ";
-                tx.executeSql(sql,[userId],function () {
+                db.run(sql,[userId],function () {
 
                     let sql2 = "delete from group_record_state where ownerUserId=? ";
-                    tx.executeSql(sql2,[userId],function () {
+                    db.run(sql2,[userId],function () {
                         resolve();
                     },function (err) {
                         reject(err);

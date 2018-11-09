@@ -1,21 +1,13 @@
-const db = require('../../common/store/DataBase')
-db.transaction((tx)=>{
-    tx.executeSql("create table if not exists device(id TEXT PRIMARY KEY NOT NULL,publicKey TEXT,contactId TEXT,remark TEXT,reserve1 TEXT)",[],function () {
-    },function (err) {
-    });
-});
+const DBProxy = require('./DBInit')
 
 class Device{
     getAll(contactId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "select * from device where contactId=?";
-                tx.executeSql(sql,[contactId],function (tx,results) {
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i));
-                    }
-                    resolve(ary);
+                db.getAll(sql,[contactId],function (results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
@@ -25,14 +17,11 @@ class Device{
 
     getDevice(deviceId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "select * from device where id=?";
-                tx.executeSql(sql,[deviceId],function (tx,results) {
-                    if(results.rows.length>0){
-                        resolve(results.rows.item(0));
-                    }else{
-                        resolve(null);
-                    }
+                db.get(sql,[deviceId],function (row) {
+                    resolve(row)
                 },function (err) {
                     reject(err);
                 });
@@ -42,11 +31,12 @@ class Device{
 
     _addDevice(contactId,device){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 if(contactId&&device){
                     let sql = "insert into device(id,publicKey,contactId) values ";
                     sql += "(?,?,?)";
-                    tx.executeSql(sql,[device.id,device.pk,contactId],function () {
+                    db.run(sql,[device.id,device.pk,contactId],function () {
                         resolve();
                     },function (err) {
                         reject(err)
@@ -96,6 +86,7 @@ class Device{
     }
     removeDevices(contactId,devices){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 if(devices&&devices.length>0){
                     let sql = "delete from device where contactId=? and id in( ";
@@ -107,7 +98,7 @@ class Device{
                     }
                     sql += ")";
                     let param = [contactId];
-                    tx.executeSql(sql,param.concat(devices),function () {
+                    db.run(sql,param.concat(devices),function () {
                         resolve();
                     },function (err) {
                         reject(err);
@@ -120,9 +111,10 @@ class Device{
     }
     removeAll(userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql2 = "delete from device where contactId not in (select id from contact where ownerUserId=? )";
-                tx.executeSql(sql2,[userId],function () {
+                db.run(sql2,[userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);

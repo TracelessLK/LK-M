@@ -1,14 +1,10 @@
-const db = require('../../common/store/DataBase')
-db.transaction((tx)=>{
-    let sql = "create table if not exists org(id TEXT PRIMARY KEY NOT NULL,name TEXT,parentId TEXT,ownerUserId TEXT,reserve1 TEXT)";
-    tx.executeSql(sql,[],function () {
-    },function (err) {
-    });
-});
+const DBProxy = require('./DBInit')
+
 class Org{
     getChildren(parentId,userId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "select * from org where ownerUserId=? and ";
                 const param = [userId]
                 if(parentId){
@@ -19,13 +15,8 @@ class Org{
                     sql+="parentId is null";
                 }
 
-                tx.executeSql(sql,param,function (tx,results) {
-
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i));
-                    }
-                    resolve(ary);
+                db.getAll(sql,param,function (results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
@@ -34,9 +25,10 @@ class Org{
     }
     reset(orgs,userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "delete from org";
-                tx.executeSql(sql,[],function (tx,results) {
+                db.run(sql,[],function () {
                     if(orgs&&orgs.length>0){
                         let sql = "insert into org(id,name,parentId,ownerUserId) values ";
                         var params=[];
@@ -51,7 +43,7 @@ class Org{
                             params.push(org.parentId);
                             params.push(userId);
                         }
-                        tx.executeSql(sql,params,function () {
+                        db.run(sql,params,function () {
                             resolve();
                         },function (err) {
                             reject(err);
@@ -67,9 +59,10 @@ class Org{
     }
     removeAll(userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "delete from org where ownerUserId=?";
-                tx.executeSql(sql,[userId],function (tx,results) {
+                db.run(sql,[userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);

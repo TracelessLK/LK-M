@@ -1,4 +1,9 @@
 const ConfigManager = require('./common/core/ConfigManager')
+
+const DataSource = require('./lk/store/RNSqlite')
+ConfigManager.configure('DataSource',DataSource)
+
+
 const WSChannel = require('./lk/net/LKWSChannel')
 const ChatManager = require('./lk/core/ChatManager')
 const ContactManager = require('./lk/core/ContactManager')

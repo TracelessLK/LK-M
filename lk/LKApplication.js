@@ -1,4 +1,4 @@
-import Application from '../engine/Application'
+import Application from '../common/core/Application'
 import ConfigManager from '../common/core/ConfigManager'
 import RSAKey from 'react-native-rsa'
 

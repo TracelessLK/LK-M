@@ -1,10 +1,4 @@
-const db = require('../../common/store/DataBase')
-db.transaction((tx)=>{
-    let sql = "create table if not exists flowCursor(ownerUserId TEXT,flowId TEXT,flowType TEXT,PRIMARY KEY(ownerUserId,flowType))";
-    tx.executeSql(sql,[],function () {
-    },function (err) {
-    });
-});
+const DBProxy = require('./DBInit')
 class FlowCursor{
 
     constructor(){
@@ -15,11 +9,12 @@ class FlowCursor{
         return new Promise((resolve,reject)=>{
             let flowId = this._flows.get(userId+flowType);
             if(!flowId){
-                db.transaction((tx)=>{
+                let db = new DBProxy()
+                db.transaction(()=>{
                     let sql = "select flowId from flowCursor where ownerUserId=? and flowType=?";
-                    tx.executeSql(sql,[userId,flowType], (tx,results)=>{
-                        if(results.rows.length>0){
-                            flowId = results.rows.item(0).flowId;
+                    db.get(sql,[userId,flowType], (row)=>{
+                        if(row){
+                            flowId = row.flowId;
                             this._flows.set(userId+flowType,flowId)
                             resolve(flowId);
                         }else{
@@ -46,8 +41,9 @@ class FlowCursor{
                 }else{
                     sql = "update flowCursor set flowId=? where ownerUserId=? and flowType=?";
                 }
-                db.transaction((tx)=>{
-                    tx.executeSql(sql,[flowId,userId,flowType], (tx,results)=> {
+                let db = new DBProxy()
+                db.transaction(()=>{
+                    db.run(sql,[flowId,userId,flowType], ()=> {
                         this._flows.set(userId+flowType,flowId);
                         resolve();
                     },function (err) {

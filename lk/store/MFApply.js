@@ -1,16 +1,12 @@
-const db = require('../../common/store/DataBase')
-db.transaction((tx)=>{
-    tx.executeSql("create table if not exists mfapply(ownerUserId TEXT,id TEXT NOT NULL,name TEXT,pic TEXT,serverIP TEXT,serverPort INTEGER,mCode TEXT,time INTEGER,state INTEGER,PRIMARY KEY(ownerUserId,id))",[],function () {
-    },function (err) {
-      console.log(err)
-    });
-});
+const DBProxy = require('./DBInit')
+
 class MFApply{
     add(apply,userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "insert into mfapply(ownerUserId,id,name,pic,serverIP,serverPort,mCode,time,state) values(?,?,?,?,?,?,?,?,?)";
-                tx.executeSql(sql,[userId,apply.id,apply.name,apply.pic,apply.serverIP,apply.serverPort,apply.mCode,Date.now(),-1],function (tx,results) {
+                db.run(sql,[userId,apply.id,apply.name,apply.pic,apply.serverIP,apply.serverPort,apply.mCode,Date.now(),-1],function () {
                     resolve(true);
                 },function (err) {
                     console.log(err)
@@ -21,16 +17,11 @@ class MFApply{
     }
     getAll(userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "select * from mfapply where ownerUserId=? order by time desc";
-                tx.executeSql(sql,[userId],function (tx,results) {
-
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i));
-                    }
-
-                    resolve(ary);
+                db.getAll(sql,[userId],function (results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
@@ -39,10 +30,11 @@ class MFApply{
     }
     get(id,userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "select * from mfapply where id=? and ownerUserId=?";
-                tx.executeSql(sql,[id,userId],function (tx,results) {
-                    resolve(results.rows.item(0));
+                db.get(sql,[id,userId],function (row) {
+                    resolve(row);
                 },function (err) {
                     reject(err);
                 });
@@ -51,9 +43,10 @@ class MFApply{
     }
     accept(id,userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "update mfapply set state=1 where id=? and ownerUserId=?";
-                tx.executeSql(sql,[id,userId],function () {
+                db.run(sql,[id,userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -63,9 +56,10 @@ class MFApply{
     }
     removeAll(userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "delete from mfapply where ownerUserId=?";
-                tx.executeSql(sql,[userId],function (tx,results) {
+                db.run(sql,[userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);
