@@ -71,7 +71,8 @@ export default class ChatView extends Component<{}> {
         height: this.minHeight,
         refreshing: false,
         msgViewHeight: this.originalContentHeight,
-        isInited: false
+        isInited: false,
+        showVoiceRecorder: false
       }
       this.otherSideId = otherSideId
       this.text = ''
@@ -381,7 +382,6 @@ export default class ChatView extends Component<{}> {
     }
 
     showBiggerImage= (imgUri, msgId) => {
-
       const biggerImageIndex = this.imageIndexer[msgId]
       // console.log( msgId,this.imageIndexer)
 
@@ -481,8 +481,16 @@ export default class ChatView extends Component<{}> {
       this.setState({biggerImageVisible: false, biggerImageUri: null})
     }
 
-    render () {
-      const contentView =
+  showVoiceRecorder = () => {
+    const {showVoiceRecorder} = this.state
+    this.setState({
+      showVoiceRecorder: !showVoiceRecorder
+    })
+  }
+
+  render () {
+    let iconColor = '#6f7378'
+    const contentView =
         <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}>
           <NetIndicator/>
           <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}>
@@ -501,16 +509,46 @@ export default class ChatView extends Component<{}> {
             <View style={{width: '100%',
               flexDirection: 'row',
               justifyContent: 'center',
-              alignItems: Platform.OS === 'ios' ? 'flex-end' : 'center',
+              alignItems: 'center',
               borderTopWidth: 1,
               borderColor: '#d0d0d0',
               overflow: 'hidden',
               paddingVertical: 5,
-              marginBottom: Platform.OS === 'ios' ? 0 : 20}}>
+              marginBottom: Platform.OS === 'ios' ? 0 : 20
+            }}>
+              <TouchableOpacity onPress={this.showVoiceRecorder}
+                style={{display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', borderWidth: 0}}>
+                <View style={{borderRadius: 15,
+                  borderWidth: 1,
+                  width: 30,
+                  marginHorizontal: 5,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderColor: iconColor}}>
+
+                  <Ionicons name={this.state.showVoiceRecorder ? 'ios-keypad-outline' : 'ios-mic-outline'} size={25} color={iconColor}
+                    style={{}}/>
+                </View>
+
+              </TouchableOpacity>
               <TextInput ref='text2' style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
-              <TextInputWrapper onChangeText={(v) => {
+              {this.state.showVoiceRecorder ? <TouchableOpacity
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  borderColor: '#a0a0a0',
+                  padding: 10,
+                  marginHorizontal: 5
+                }}
+              >
+                <Text>按住说话</Text>
+              </TouchableOpacity> : <TextInputWrapper onChangeText={(v) => {
                 this.text = v ? v.trim() : ''
-              }} onSubmitEditing={this.send} ref='text'></TextInputWrapper>
+              }} onSubmitEditing={this.send} ref='text'></TextInputWrapper>}
+
               <TouchableOpacity onPress={this.showImagePicker}
                 style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'center'}}>
                 <Ionicons name="ios-camera-outline" size={38} style={{marginRight: 5}}/>
@@ -537,7 +575,7 @@ export default class ChatView extends Component<{}> {
             />
           </Modal>
         </View>
-      const loadingView = <DelayIndicator/>
-      return this.state.isInited ? contentView : loadingView
-    }
+    const loadingView = <DelayIndicator/>
+    return this.state.isInited ? contentView : loadingView
+  }
 }
