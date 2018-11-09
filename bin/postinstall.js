@@ -17,6 +17,13 @@ indexPathAry.forEach(ele => {
   }
 })
 
+const recordPath = path.resolve(nodeModule, 'react-native-audio-recorder-player/index.js')
+const commentOutAry = [`console.log('milisecs: ' + milisecs);`, `console.log('min: ' + minutes + ', secs: ' + seconds + ', ' + miliseconds);`]
+
+commentOutAry.forEach(ele => {
+  fs.writeFileSync(recordPath, fs.readFileSync(recordPath, 'utf8').replace(ele, ''))
+})
+
 const removePathAry = [
   path.resolve(rootPath, 'node_modules/react-native/local-cli/core/__fixtures__/files/package.json'),
   path.resolve(nodeModule, 'react-native/local-cli/core/__fixtures__/files/package.json'),

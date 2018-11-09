@@ -74,7 +74,8 @@ export default class ChatView extends Component<{}> {
         msgViewHeight: this.originalContentHeight,
         isInited: false,
         showVoiceRecorder: false,
-        isRecording: false
+        isRecording: false,
+        recordTime: ''
       }
       this.otherSideId = otherSideId
       this.text = ''
@@ -497,18 +498,42 @@ export default class ChatView extends Component<{}> {
     this.setState({
       isRecording: true
     })
-    const result = await this.audioRecorderPlayer.startRecorder()
+    const audioPath = 'hello.m4a'
+    const filePath = await this.audioRecorderPlayer.startRecorder(audioPath)
+    const exist = await RNFetchBlob.fs.exists(filePath)
+    console.log({exist, filePath})
     this.audioRecorderPlayer.addRecordBackListener((e) => {
-      console.log({e})
+      // console.log({e})
+      const {current_position: recordTimeRaw} = e
+      const time = this.audioRecorderPlayer.mmssss(Math.floor(recordTimeRaw))
+      this.recordTimeRaw = recordTimeRaw
+      // console.log({recordTimeRaw})
+      this.setState({
+        recordTime: time
+      })
     })
-    console.log(result)
   }
 
   cancelRecord = async () => {
-    const result = await this.audioRecorderPlayer.stopRecorder()
+    const filePath = await this.audioRecorderPlayer.stopRecorder()
+    const exist = await RNFetchBlob.fs.exists(filePath)
+    console.log({exist,filePath})
+    setTimeout(async () => {
+      const exist = await RNFetchBlob.fs.exists(filePath)
+      console.log({exist,filePath})
+    }, 1000*4)
+    // RNFetchBlob.fs.readFile(filePath, 'base64').then((data) => {
+    //   runNetFunc(() => {
+    //     const ext = _.last(filePath.split('.'))
+    //     // lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
+    //     //   Alert.alert(err.toString())
+    //     // })
+    //   })
+    // })
     this.audioRecorderPlayer.removeRecordBackListener()
     this.setState({
-      isRecording: false
+      isRecording: false,
+      recordTime: ''
     })
   }
 
@@ -527,9 +552,18 @@ export default class ChatView extends Component<{}> {
                 alignItems: 'center',
                 borderRadius: 5}}>
                 <Ionicons name={'ios-mic-outline'} size={45} color='white'/>
-                <Text style={{fontSize: 20, color: 'white'}}>
-              正在录音...
-                </Text>
+
+                <View>
+                  <Text style={{fontSize: 15, color: 'white'}}>
+                    正在录音...
+                  </Text>
+                </View>
+                <View style={{marginTop: 10}}>
+                  <Text style={{fontSize: 20, color: 'white'}}>
+                    {this.state.recordTime}
+                  </Text>
+                </View>
+
               </View>
             </View> : null}
           <NetIndicator/>
