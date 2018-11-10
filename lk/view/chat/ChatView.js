@@ -93,6 +93,21 @@ export default class ChatView extends Component<{}> {
 
       const audioRecorderPlayer = new AudioRecorderPlayer()
       this.audioRecorderPlayer = audioRecorderPlayer
+      this._responder = {
+        onResponderMove(event) {
+          const {nativeEvent} = event
+          const {locationX, locationY, pageX, pageY} = nativeEvent
+
+          console.log({locationX, locationY, pageX, pageY})
+        },
+        onMoveShouldSetResponder() {
+          // console.log({evt, sth})
+          return false
+        },
+        onResponderTerminationRequest() {
+          return true
+        }
+      }
     }
 
      refreshRecord = async (limit) => {
@@ -446,7 +461,6 @@ export default class ChatView extends Component<{}> {
               this.audioRecorderPlayer.addPlayBackListener((e) => {
                 // console.log({e})
                 if (e.current_position === e.duration) {
-                  console.log('finished')
                   this.audioRecorderPlayer.stopPlayer()
                 }
               })
@@ -652,6 +666,8 @@ export default class ChatView extends Component<{}> {
                 }}
                 onPressIn={this.record} onPressOut={this.cancelRecord}
                 hitSlop={{top: 500, left: 0, bottom: 100, right: 0}}
+                {...this._responder}
+
               >
                 <Text>按住说话</Text>
               </TouchableOpacity> : <TextInputWrapper onChangeText={(v) => {
