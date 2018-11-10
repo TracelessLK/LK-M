@@ -108,7 +108,9 @@ setGlobalErrorHandler(option)
 global.Promise = Promise
 
 const errorStock = new ErrorStock()
-global.onunhandledrejection = function onunhandledrejection (error) {
+// console.log(global)
+global.onunhandledrejection = (error) => {
+  console.log({error})
   if (error instanceof Error) {
     appendToLog({
       type: 'error',
