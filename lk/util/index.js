@@ -29,6 +29,11 @@ class Util {
     const {content, type} = option
     // console.log({option})
     const appendPath = logPath[type]
+    if (__DEV__) {
+      console.log({
+        content, type
+      })
+    }
     const now = new Date()
     const str = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}: \n ${content} \n\n\n \n`
     RNFS.appendFile(appendPath, str, 'utf8').catch((err) => {
