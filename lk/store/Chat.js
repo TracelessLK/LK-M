@@ -45,7 +45,7 @@ class Chat{
             let db = new DBProxy()
             db.transaction(()=>{
                 let sql = "select c.* from groupMember as m,contact as c where m.contactId=c.id and m.chatId=? group by c.id";
-                tx.getAll(sql,[chatId],function (results) {
+                db.getAll(sql,[chatId],function (results) {
                     resolve(results);
                 },function (err) {
                     reject(err);
