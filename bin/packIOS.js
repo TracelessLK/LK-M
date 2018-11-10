@@ -15,14 +15,14 @@ const {CliUtil} = require('@ys/collection')
 const {execSync} = CliUtil
 const {FuncUtil} = require('@ys/vanilla')
 const {timeCount} = FuncUtil
-const {upload} = require('./util')
+const {upload, timeStamp} = require('./util')
 
 timeCount(() => {
   if (!scheme || !schemeAry.includes(scheme)) {
     scheme = appId
   }
   console.log(`scheme : ${scheme}`)
-
+  timeStamp({packType: 'ios'})
   if (bundle) {
     execSync('npm run jsBundle')
   }
