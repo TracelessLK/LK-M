@@ -551,14 +551,18 @@ export default class ChatView extends Component<{}> {
 
   cancelRecord = async () => {
     const filePath = await this.audioRecorderPlayer.stopRecorder()
+    // console.log({filePath})
 
-    RNFetchBlob.fs.readFile(filePath.replace('file://', ''), 'base64').then((data) => {
-      // console.log({data})
-      const ext = _.last(filePath.split('.'))
-      lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
-        Alert.alert(err.toString())
+    if (filePath) {
+      RNFetchBlob.fs.readFile(filePath.replace('file://', ''), 'base64').then((data) => {
+        // console.log({data})
+        const ext = _.last(filePath.split('.'))
+        // lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
+        //   Alert.alert(err.toString())
+        // })
       })
-    })
+    }
+
     this.audioRecorderPlayer.removeRecordBackListener()
     this.setState({
       isRecording: false,
@@ -647,6 +651,7 @@ export default class ChatView extends Component<{}> {
                   marginHorizontal: 5
                 }}
                 onPressIn={this.record} onPressOut={this.cancelRecord}
+                hitSlop={{top: 10, left: 100, bottom: 100, right: 100}}
               >
                 <Text>按住说话</Text>
               </TouchableOpacity> : <TextInputWrapper onChangeText={(v) => {
