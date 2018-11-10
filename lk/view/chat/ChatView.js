@@ -651,7 +651,7 @@ export default class ChatView extends Component<{}> {
                   marginHorizontal: 5
                 }}
                 onPressIn={this.record} onPressOut={this.cancelRecord}
-                hitSlop={{top: 10, left: 100, bottom: 100, right: 100}}
+                hitSlop={{top: 500, left: 0, bottom: 100, right: 0}}
               >
                 <Text>按住说话</Text>
               </TouchableOpacity> : <TextInputWrapper onChangeText={(v) => {
