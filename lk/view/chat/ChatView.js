@@ -94,17 +94,17 @@ export default class ChatView extends Component<{}> {
       const audioRecorderPlayer = new AudioRecorderPlayer()
       this.audioRecorderPlayer = audioRecorderPlayer
       this._responder = {
-        onResponderMove(event) {
+        onResponderMove (event) {
           const {nativeEvent} = event
           const {locationX, locationY, pageX, pageY} = nativeEvent
 
           console.log({locationX, locationY, pageX, pageY})
         },
-        onMoveShouldSetResponder() {
-          // console.log({evt, sth})
+        onMoveShouldSetResponder (evt) {
+          console.log({evt})
           return false
         },
-        onResponderTerminationRequest() {
+        onResponderTerminationRequest () {
           return true
         }
       }
@@ -571,9 +571,9 @@ export default class ChatView extends Component<{}> {
       RNFetchBlob.fs.readFile(filePath.replace('file://', ''), 'base64').then((data) => {
         // console.log({data})
         const ext = _.last(filePath.split('.'))
-        // lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
-        //   Alert.alert(err.toString())
-        // })
+        lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
+          Alert.alert(err.toString())
+        })
       })
     }
 
@@ -589,7 +589,8 @@ export default class ChatView extends Component<{}> {
     const size = 200
     const greyScale = 106
     const contentView =
-        <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}>
+        <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}
+        >
           {this.state.isRecording
             ? <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', top: '25%', zIndex: 2}}>
               <View style={{ width: size,
@@ -614,7 +615,8 @@ export default class ChatView extends Component<{}> {
               </View>
             </View> : null}
           <NetIndicator/>
-          <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}>
+          <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}
+          >
             <ScrollView ref={(ref) => { this.scrollView = ref }} style={{width: '100%', backgroundColor: '#d5e0f2'}}
               refreshControl={
                 <RefreshControl
@@ -622,6 +624,7 @@ export default class ChatView extends Component<{}> {
                   onRefresh={this._onRefresh}
                 />}
               onContentSizeChange={this.onContentSizeChange}
+
             >
               <View style={{width: '100%', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20}}>
                 {this.state.recordEls}
@@ -636,7 +639,8 @@ export default class ChatView extends Component<{}> {
               overflow: 'hidden',
               paddingVertical: 5,
               marginBottom: Platform.OS === 'ios' ? 0 : 20
-            }}>
+            }}
+            >
               <TouchableOpacity onPress={this.showVoiceRecorder}
                 style={{display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', borderWidth: 0}}>
                 <View style={{borderRadius: 15,
@@ -666,8 +670,6 @@ export default class ChatView extends Component<{}> {
                 }}
                 onPressIn={this.record} onPressOut={this.cancelRecord}
                 hitSlop={{top: 500, left: 0, bottom: 100, right: 0}}
-                {...this._responder}
-
               >
                 <Text>按住说话</Text>
               </TouchableOpacity> : <TextInputWrapper onChangeText={(v) => {
