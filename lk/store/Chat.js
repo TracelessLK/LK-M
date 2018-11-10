@@ -1,25 +1,13 @@
-
-const db = require('../../common/store/DataBase')
-db.transaction((tx)=>{
-    tx.executeSql("create table if not exists chat(id TEXT,ownerUserId TEXT,name TEXT,createTime INTEGER,topTime INTEGER,isGroup INTEGER,reserve1 TEXT,PRIMARY KEY(ownerUserId,id))",[],function () {
-    },function (err) {
-    });
-    tx.executeSql("create table if not exists groupMember(chatId TEXT,contactId TEXT,reserve1 TEXT,primary key(chatId,contactId))",[],function () {
-    },function (err) {
-    });
-});
+const DBProxy = require('./DBInit')
 //order默认创建时间 如果置顶order=当前时间&onTop=1
 class Chat{
     getAll(userId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "select * from chat where ownerUserId=? order by topTime desc,createTime desc";
-                tx.executeSql(sql,[userId],function (tx,results) {
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i));
-                    }
-                    resolve(ary);
+                db.getAll(sql,[userId],function (results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
@@ -28,9 +16,10 @@ class Chat{
     }
     deleteChat(userId,chatId){
       return new Promise((resolve,reject)=>{
-        db.transaction((tx)=>{
+          let db = new DBProxy()
+        db.transaction(()=>{
           let sql = "delete from chat where id=? and ownerUserId=?";
-          tx.executeSql(sql,[chatId,userId],function (tx,results) {
+          db.run(sql,[chatId,userId],function () {
             resolve()
           },function (err) {
             reject(err);
@@ -40,14 +29,11 @@ class Chat{
     }
     getChat(userId,chatId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "select * from chat where id=? and ownerUserId=?";
-                tx.executeSql(sql,[chatId,userId],function (tx,results) {
-                    if(results.rows.length>0){
-                        resolve(results.rows.item(0));
-                    }else{
-                        resolve(null);
-                    }
+                db.get(sql,[chatId,userId],function (row) {
+                    resolve(row)
                 },function (err) {
                     reject(err);
                 });
@@ -56,14 +42,11 @@ class Chat{
     }
     getGroupMembers(chatId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "select c.* from groupMember as m,contact as c where m.contactId=c.id and m.chatId=? group by c.id";
-                tx.executeSql(sql,[chatId],function (tx,results) {
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i));
-                    }
-                    resolve(ary);
+                tx.getAll(sql,[chatId],function (results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
@@ -74,9 +57,10 @@ class Chat{
     addSingleChat(userId,chatId){
 
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "insert into chat(id,ownerUserId,createTime,topTime,isGroup) values (?,?,?,?,?)";
-                tx.executeSql(sql,[chatId,userId,Date.now(),0,0],function () {
+                db.run(sql,[chatId,userId,Date.now(),0,0],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -86,9 +70,10 @@ class Chat{
     }
     addGroupChat(userId,chatId,name){
         return new Promise(async (resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "insert into chat(id,ownerUserId,name,createTime,topTime,isGroup) values (?,?,?,?,?,?)";
-                tx.executeSql(sql,[chatId,userId,name,Date.now(),0,1],function () {
+                db.run(sql,[chatId,userId,name,Date.now(),0,1],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -100,18 +85,10 @@ class Chat{
     getGroupMember(chatId,contactId){
         return new Promise((resolve,reject)=>{
             db.transaction((tx)=>{
+                let db = new DBProxy()
                 let sql = "select * from groupMember where chatId=? and contactId=?";
-                tx.executeSql(sql,[chatId,contactId],function (tx,results) {
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i));
-                    }
-                    if(results.rows.length>0){
-                        resolve(results.rows.item(0));
-                    }else{
-                        resolve(null);
-                    }
-
+                db.get(sql,[chatId,contactId],function (row) {
+                    resolve(row)
                 },function (err) {
                     reject(err);
                 });
@@ -123,9 +100,10 @@ class Chat{
         let cur = await this.getGroupMember();
         if(!cur){
             return new Promise( (resolve,reject)=>{
-                db.transaction((tx)=>{
+                let db = new DBProxy()
+                db.transaction(()=>{
                     let sql = "insert into groupMember(chatId,contactId) values (?,?)";
-                    tx.executeSql(sql,[chatId,contactId],function () {
+                    db.run(sql,[chatId,contactId],function () {
                         resolve();
                     },function (err) {
                         reject(err);
@@ -154,9 +132,11 @@ class Chat{
 
     topChat(userId,chatId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
+                let db = new DBProxy()
                 let sql = "update chat set topTime=? where id=? and ownerUserId=?";
-                tx.executeSql(sql,[Date.now(),chatId,userId],function () {
+                db.run(sql,[Date.now(),chatId,userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -167,19 +147,20 @@ class Chat{
 
     clear(userId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "delete from chat where ownerUserId=? and isGroup=?";//removeAllSingleChats
-                tx.executeSql(sql,[userId,0],function () {
+                db.run(sql,[userId,0],function () {
 
                     let sql2 = "delete from record where ownerUserId=?";
-                    tx.executeSql(sql2,[userId],function () {
+                    db.run(sql2,[userId],function () {
                         resolve()
                     },function (err) {
                         reject(err);
                     });
 
                     let sql4 = "delete from group_record_state where ownerUserId=?";
-                    tx.executeSql(sql4,[userId],function () {
+                    db.run(sql4,[userId],function () {
                     },function (err) {
                     });
 
@@ -192,12 +173,13 @@ class Chat{
 
     removeAll(userId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "delete from chat where ownerUserId=? ";
-                tx.executeSql(sql,[userId],function () {
+                db.run(sql,[userId],function () {
 
                     let sql2 = "delete from groupMember where chatId not in (select id from chat where ownerUserId=? )";
-                    tx.executeSql(sql2,[userId],function () {
+                    db.run(sql2,[userId],function () {
                         resolve();
                     },function (err) {
                         reject(err);
@@ -214,22 +196,23 @@ class Chat{
 
     deleteGroup(userId,chatId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "delete from chat where ownerUserId=? and id=?";
-                tx.executeSql(sql,[userId,chatId],function () {
+                db.run(sql,[userId,chatId],function () {
                     resolve();
                     let sql2 = "delete from groupMember where chatId = ?";
-                    tx.executeSql(sql2,[chatId],function () {
+                    db.run(sql2,[chatId],function () {
                     },function (err) {
                     });
 
                     let sql3 = "delete from record where ownerUserId=? and chatId=?";
-                    tx.executeSql(sql3,[userId,chatId],function () {
+                    db.run(sql3,[userId,chatId],function () {
                     },function (err) {
                     });
 
                     let sql4 = "delete from group_record_state where ownerUserId=? and chatId=?";
-                    tx.executeSql(sql4,[userId,chatId],function () {
+                    db.run(sql4,[userId,chatId],function () {
                     },function (err) {
                     });
 
@@ -242,18 +225,19 @@ class Chat{
 
     deleteGroupMember(uerId,chatId,contactId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql2 = "delete from groupMember where chatId=? and contactId=?";
-                tx.executeSql(sql,[chatId,contactId],function () {
+                db.run(sql,[chatId,contactId],function () {
                     resolve();
 
                     let sql3 = "delete from record where ownerUserId=? and chatId=? and senderUid=?";
-                    tx.executeSql(sql3,[userId,chatId,contactId],function () {
+                    db.run(sql3,[userId,chatId,contactId],function () {
                     },function (err) {
                     });
 
                     let sql4 = "delete from group_record_state where ownerUserId=? and chatId=? and reporterUid=?";
-                    tx.executeSql(sql4,[userId,chatId,contactId],function () {
+                    db.run(sql4,[userId,chatId,contactId],function () {
                     },function (err) {
                     });
 
@@ -266,9 +250,10 @@ class Chat{
 
     setGroupName(userId,chatId,name){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "update chat set name=? where id=? and ownerUserId=?";
-                tx.executeSql(sql,[name,chatId,userId],function () {
+                db.run(sql,[name,chatId,userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);

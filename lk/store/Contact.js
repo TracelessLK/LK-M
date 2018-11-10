@@ -1,23 +1,13 @@
+const DBProxy = require('./DBInit')
 
-const db = require('../../common/store/DataBase')
-db.transaction((tx)=>{
-    //include org members 0 & foreign contacts 1 & group contacts 2
-    let sql ="create table if not exists contact(id TEXT,name TEXT,pic TEXT,serverIP TEXT,serverPort INTEGER,relation INTEGER,orgId TEXT,mCode TEXT,ownerUserId TEXT,reserve1 TEXT,PRIMARY KEY(id,ownerUserId))";
-    tx.executeSql(sql,[],function () {
-    },function (err) {
-    });
-});
 class Contact{
     get(userId,contactId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "select * from contact where id=? and ownerUserId=?";
-                tx.executeSql(sql,[contactId,userId],function (tx,results) {
-                    if(results.rows.length>0){
-                        resolve(results.rows.item(0));
-                    }else{
-                        resolve(null);
-                    }
+                db.get(sql,[contactId,userId],function (row) {
+                    resolve(row);
                 },function (err) {
                     reject(err);
                 });
@@ -28,14 +18,11 @@ class Contact{
 
     getMembersByOrg(userId,orgId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "select * from contact where ownerUserId=? and relation=0 and orgId=? ";
-                tx.executeSql(sql,[userId,orgId],function (tx,results) {
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i));
-                    }
-                    resolve(ary);
+                db.getAll(sql,[userId,orgId],function (results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
@@ -45,23 +32,17 @@ class Contact{
 
     getAll(userId,relation){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
               let sql = "select * from contact where ownerUserId=?";
                 if(relation==0){
                     sql += " and relation=0";
                 }else if(relation==1){
                     sql += " and relation=1";
                 }
-                // console.log({
-                //   contactSql: sql,
-                //   userId
-                // })
-                tx.executeSql(sql,[userId],function (tx,results) {
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i));
-                    }
-                    resolve(ary);
+
+                db.getAll(sql,[userId],function (results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
@@ -72,14 +53,11 @@ class Contact{
 
     selectAllDevices(contactId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "select c.id as uid,c.serverIP,c.serverPort,c.mCode,d.id as did,d.publicKey from contact as c,device as d where c.id=d.contactId and c.id=?";
-                tx.executeSql(sql,[contactId],function (tx,results) {
-                    let ary = [];
-                    for(let i=0;i<results.rows.length;i++){
-                        ary.push(results.rows.item(i));
-                    }
-                    resolve(ary);
+                db.getAll(sql,[contactId],function (results) {
+                    resolve(results);
                 },function (err) {
                     reject(err);
                 });
@@ -95,7 +73,8 @@ class Contact{
 
     addNewMembers(members,userId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 if(members&&members.length>0){
                     let sql = "insert into contact(id,name,pic,serverIP,serverPort,relation,orgId,mCode,ownerUserId) values ";
                     var params=[];
@@ -116,7 +95,7 @@ class Contact{
                         params.push(userId);
                     }
 
-                    tx.executeSql(sql,params,function () {
+                    db.run(sql,params,function () {
                         resolve();
                     },function (err) {
                         reject(err);
@@ -129,9 +108,9 @@ class Contact{
     }
 
     addNewFriends(friends,userId){
-        console.log('contact.addNewFriends')
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 if(friends&&friends.length>0){
                     let sql = "insert into contact(id,name,pic,serverIP,serverPort,relation,orgId,mCode,ownerUserId) values ";
                     var params=[];
@@ -152,7 +131,7 @@ class Contact{
                         params.push(userId);
                     }
 
-                    tx.executeSql(sql,params,function () {
+                    db.run(sql,params,function () {
                         resolve();
                     },function (err) {
                         reject(err);
@@ -166,7 +145,8 @@ class Contact{
 
     addNewGroupContacts(contacts,userId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 if(contacts&&contacts.length>0){
                     let sql = "insert into contact(id,name,pic,serverIP,serverPort,relation,orgId,mCode,ownerUserId) values ";
                     var params=[];
@@ -187,7 +167,7 @@ class Contact{
                         params.push(userId);
                     }
 
-                    tx.executeSql(sql,params,function () {
+                    db.run(sql,params,function () {
                         resolve();
                     },function (err) {
                         reject(err);
@@ -202,9 +182,10 @@ class Contact{
 
     resetContacts(members,friends,groupContacts,userId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "delete from contact where ownerUserId=?";
-                tx.executeSql(sql,[userId], (tx,results) =>{
+                db.run(sql,[userId], (tx,results) =>{
                     Promise.all([this.addNewMembers(members,userId),this.addNewFriends(friends,userId),this.addNewGroupContacts(groupContacts,userId)]).then(function () {
                         resolve();
                     }).then(function (err) {
@@ -221,6 +202,7 @@ class Contact{
     removeContacts(ids,userId){
         return new Promise((resolve,reject)=>{
             if(ids&&ids.length>0){
+                let db = new DBProxy()
                 db.transaction((tx)=>{
                     let sql = "delete from contact where ownerUserId=? and id in(";
                         for(let i=0;i<ids.length;i++){
@@ -231,7 +213,7 @@ class Contact{
                         }
                     sql+=")";
                     let params = [userId];
-                    tx.executeSql(sql,params.concat(ids),function (tx,results) {
+                    db.run(sql,params.concat(ids),function (tx,results) {
                         resolve();
                     },function (err) {
                         reject(err);
@@ -263,9 +245,10 @@ class Contact{
 
     updateGroupContact2Friend(contactId,userId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "update contact set relation=1 where id=? and ownerUserId=?";
-                tx.executeSql(sql,[contactId,userId],function () {
+                db.run(sql,[contactId,userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -276,9 +259,10 @@ class Contact{
 
     removeAll(userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "delete from contact where ownerUserId=?";
-                tx.executeSql(sql,[userId], (tx,results) =>{
+                db.run(sql,[userId], () =>{
                     resolve();
 
                 },function (err) {

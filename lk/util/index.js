@@ -1,4 +1,4 @@
-import db from '../../common/store/DataBase'
+const DBProxy = require('../store/DBInit')
 import {Toast} from 'native-base'
 import {Text, View} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -89,13 +89,10 @@ class Util {
   }
   static query (sql) {
     return new Promise(resolve => {
+      let db = new DBProxy()
       db.transaction((tx) => {
-        tx.executeSql(sql, [], function (tx2, results) {
-          let ary = []
-          for (let i = 0; i < results.rows.length; i++) {
-            ary.push(results.rows.item(i))
-          }
-          resolve(ary)
+        db.getAll(sql, [], function (results) {
+          resolve(results)
         }, function (err) {
           console.log(err)
         })

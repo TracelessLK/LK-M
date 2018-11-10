@@ -1,22 +1,13 @@
-const db = require('../../common/store/DataBase')
-db.transaction((tx)=>{
-    let sql = "create table if not exists magicCode(ownerUserId TEXT PRIMARY KEY NOT NULL,orgMCode TEXT,memberMCode TEXT,reserve1 TEXT)";
-    tx.executeSql(sql,[],function () {
-    },function (err) {
-    });
-});
+const DBProxy = require('./DBInit')
+
 class MagicCode{
     getMagicCode(userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "select * from magicCode where ownerUserId=?";
-                tx.executeSql(sql,[userId],function (tx,results) {
-                    if(results.rows.length>0){
-                        resolve(results.rows.item(0));
-                    }else{
-                        resolve(null);
-                    }
-
+                db.get(sql,[userId],function (row) {
+                    resolve(row)
                 },function (err) {
                     reject(err);
                 });
@@ -26,9 +17,10 @@ class MagicCode{
 
     updateOrgMagicCode(code,userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "update magicCode set orgMCode=? where ownerUserId=?";
-                tx.executeSql(sql,[code,userId],function (tx,results) {
+                db.run(sql,[code,userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -39,9 +31,10 @@ class MagicCode{
 
     updateMemberMagicCode(code,userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "update magicCode set memberMCode=? where ownerUserId=?";
-                tx.executeSql(sql,[code,userId],function (tx,results) {
+                db.run(sql,[code,userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);
@@ -52,11 +45,12 @@ class MagicCode{
 
     reset(orgMCode,memberMCode,userId){
         return new Promise((resolve,reject)=>{
+            let db = new DBProxy()
             db.transaction((tx)=>{
                 let sql = "delete from magicCode where ownerUserId=?";
-                tx.executeSql(sql,[userId],function (tx,results) {
+                db.run(sql,[userId],function () {
                     let sql = "insert into magicCode(orgMCode,memberMCode,ownerUserId) values (?,?,?)";
-                    tx.executeSql(sql,[orgMCode,memberMCode,userId],function (tx,results) {
+                    db.run(sql,[orgMCode,memberMCode,userId],function () {
                        resolve();
                     },function (err) {
                         reject(err);
@@ -69,9 +63,10 @@ class MagicCode{
     }
     removeAll(userId){
         return new Promise((resolve,reject)=>{
-            db.transaction((tx)=>{
+            let db = new DBProxy()
+            db.transaction(()=>{
                 let sql = "delete from magicCode where ownerUserId=?";
-                tx.executeSql(sql,[userId],function (tx,results) {
+                db.run(sql,[userId],function () {
                     resolve();
                 },function (err) {
                     reject(err);
