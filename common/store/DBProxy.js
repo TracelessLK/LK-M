@@ -77,5 +77,7 @@ class DBProxy {
     }
 
 }
-
+DBProxy.saveFile = function(filePath,fileName,data){
+   return Application.getCurrentApp().getDataSource().saveFile(filePath,fileName,data);
+}
 module.exports = DBProxy
