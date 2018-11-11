@@ -12,7 +12,8 @@ const commonUtil = {
     })
   },
   getFolderId (filePath) {
-    return filePath.split('/')[6]
+    // console.log({filePath})
+    return filePath.split('/Application/')[1].split('/')[0]
   },
   getAvatarSource (pic, defaultPic) {
     let result

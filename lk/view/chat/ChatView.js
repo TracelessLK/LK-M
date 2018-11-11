@@ -453,7 +453,7 @@ export default class ChatView extends Component<{}> {
         result = <TouchableOpacity><Ionicons name="ios-document-outline" size={40} style={{marginRight: 5, lineHeight: 40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>
       } else if (rec.type === chatManager.MESSAGE_TYPE_AUDIO) {
         const {content} = rec
-        const {url} = JSON.parse(content)
+        let {url} = JSON.parse(content)
         // console.log({url})
         result = (
           <TouchableOpacity style={{width: 60, alignItems: 'center', justifyContent: 'center'}}
@@ -464,12 +464,14 @@ export default class ChatView extends Component<{}> {
                   this.audioRecorderPlayer.stopPlayer()
                 }
               })
+              url = this.getCurrentUrl(url)
               const ary = url.split('Documents')
               const baseUrl = ary[0]
               const fileName = _.last(ary[1].split('audio')[1].split('/'))
               const destination = `/private${baseUrl}tmp/${fileName}`
               // console.log({url})
               const exist = await RNFetchBlob.fs.exists(destination)
+              // console.log({exist})
               if (!exist) {
                 const data = await RNFetchBlob.fs.readFile(url, 'base64')
                 // console.log(data)
