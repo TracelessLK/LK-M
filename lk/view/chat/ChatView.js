@@ -23,6 +23,7 @@ import {
 import NetIndicator from '../common/NetIndicator'
 import MessageText from './MessageText'
 import {Header} from 'react-navigation'
+import AudioPlay from './AudioPlay'
 import AudioRecorderPlayer from 'react-native-audio-recorder-player'
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 const {getAvatarSource, getIconNameByState} = require('../../util')
@@ -427,8 +428,9 @@ export default class ChatView extends Component<{}> {
 
     _getMessage=(rec) => {
       // console.log({rec})
+      const {type, id} = rec
       let result
-      if (rec.type === chatManager.MESSAGE_TYPE_TEXT) {
+      if (type === chatManager.MESSAGE_TYPE_TEXT) {
         const text =
                 <MessageText currentMessage={
                   {text: rec.content}
@@ -455,37 +457,14 @@ export default class ChatView extends Component<{}> {
         const {content} = rec
         let {url} = JSON.parse(content)
         // console.log({url})
-        result = (
-          <TouchableOpacity style={{width: 60, alignItems: 'center', justifyContent: 'center'}}
-            onPress={async () => {
-              this.audioRecorderPlayer.addPlayBackListener((e) => {
-                // console.log({e})
-                if (e.current_position === e.duration) {
-                  this.audioRecorderPlayer.stopPlayer()
-                }
-              })
-              url = this.getCurrentUrl(url)
-              const ary = url.split('Documents')
-              const baseUrl = ary[0]
-              const fileName = _.last(ary[1].split('audio')[1].split('/'))
-              const destination = `/private${baseUrl}tmp/${fileName}`
-              // console.log({url})
-              const exist = await RNFetchBlob.fs.exists(destination)
-              // console.log({exist})
-              if (!exist) {
-                const data = await RNFetchBlob.fs.readFile(url, 'base64')
-                // console.log(data)
-                await RNFetchBlob.fs.writeFile(destination, data, 'base64')
-              }
-
-              // console.log({baseUrl, fileName, destination})
-              // console.log({exist})
-              await this.audioRecorderPlayer.startPlayer(fileName)
-            }}
-          >
-            <Ionicons name="ios-volume-up-outline" size={35}
-              style={{marginRight: 5, lineHeight: 35, color: '#a0a0a0'}}></Ionicons>
-          </TouchableOpacity>)
+        url = this.getCurrentUrl(url)
+        const option = {
+          url,
+          audioRecorderPlayer: this.audioRecorderPlayer,
+          key: id
+        }
+        result = <AudioPlay {...option}/>
+        // result = <AudioPlay url={url} audioRecorderPlayer={this.audioRecorderPlayer}/>
       }
       return result
     }
