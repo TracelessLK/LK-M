@@ -6,6 +6,9 @@ import {
   AsyncStorage
 } from 'react-native'
 import userProvider from '../../logic/provider/LKUserProvider'
+const {PushUtil} = require('@external/common')
+
+const {getAPNDeviceId} = PushUtil
 const Application = require('../../LKApplication')
 const lkApplication = Application.getCurrentApp()
 
@@ -26,6 +29,7 @@ export default class Loading extends Component<{}> {
     _bootstrapAsync = async () => {
       let routerName
       const currentUser = lkApplication.getCurrentUser()
+      const venderDid = await getAPNDeviceId()
 
       if (currentUser) {
         routerName = 'MainStack'
@@ -36,14 +40,14 @@ export default class Loading extends Component<{}> {
         if (length === 0) {
           routerName = 'ScanRegisterView'
         } else if (length === 1) {
-          lkApplication.setCurrentUser(userAry[0])
+          lkApplication.setCurrentUser(userAry[0], venderDid)
           routerName = 'MainStack'
         } else if (length > 1) {
           if (__DEV__) {
             const user = await AsyncStorage.getItem('user')
 
             if (user) {
-              lkApplication.setCurrentUser(JSON.parse(user)).catch(err => {
+              lkApplication.setCurrentUser(JSON.parse(user), venderDid).catch(err => {
                 throw err
               })
 
