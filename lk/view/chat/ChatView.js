@@ -491,12 +491,19 @@ export default class ChatView extends Component<{}> {
     getImageData = (img) => {
       // console.log({img})
       const {url} = img
-      let result = url
+      let result = this.getCurrentUrl(url)
+
+      return result
+    }
+
+    getCurrentUrl = (oldUrl) => {
+      let result = oldUrl
       if (Platform.OS === 'ios') {
-        result = url.replace(getFolderId(url), this.folderId)
+        result = oldUrl.replace(getFolderId(oldUrl), this.folderId)
       }
       return result
     }
+
     _onRefresh = () => {
       this.limit = this.limit + Constant.MESSAGE_PER_REFRESH
       if (this.limit > this.extra.maxCount) {

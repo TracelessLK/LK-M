@@ -96,17 +96,18 @@ const f = (error) => {
     content: error.stack.toString()
   })
 }
+const resetTime = 1000
 const option = {
   // todo error upload
   productionProcess: f,
   devProcess: f,
   ErrorUtilRN,
-  resetTime: 1000 * 10
+  resetTime
 }
 setGlobalErrorHandler(option)
 global.Promise = Promise
 
-const errorStock = new ErrorStock()
+const errorStock = new ErrorStock(resetTime)
 // console.log(global)
 global.onunhandledrejection = (error) => {
   console.log({error})
