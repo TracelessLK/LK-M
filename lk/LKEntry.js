@@ -20,7 +20,6 @@ const util = require('./util')
 const {appendToLog} = util
 const Application = require('./LKApplication')
 const lkApplication = Application.getCurrentApp()
-
 lkApplication.on('currentUserChanged', user => {
   if (user) {
     // console.log({user})
@@ -51,7 +50,7 @@ async function checkUpdate (user) {
 
     // console.log({appInfo})
     const checkUpdateUrl = `${base}${updateUrl}`
-    console.log({checkUpdateUrl})
+    // console.log({checkUpdateUrl})
     const manualDownloadUrl = `${base}/pkg/${Platform.OS}/${appName}.${Platform.OS === 'android' ? 'apk' : 'ipa'}`
 
     const option = {
@@ -129,12 +128,12 @@ export default class LKEntry extends Component<{}> {
       }
     }).catch(err => console.error('An error occurred', err))
     Linking.addEventListener('url', event => {
-      console.log({linkEvent: event})
+      // const {url} = event
     })
   }
   render () {
     const schemeName = 'lkapp'
-    const prefix = Platform.OS === 'android' ? `${schemeName}://${schemeName}/` : `${schemeName}://`;
+    const prefix = Platform.OS === 'android' ? `${schemeName}://${schemeName}/` : `${schemeName}://`
 
     return (
       <EntryView uriPrefix={prefix}></EntryView>
