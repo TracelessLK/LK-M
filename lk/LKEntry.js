@@ -133,8 +133,11 @@ export default class LKEntry extends Component<{}> {
     })
   }
   render () {
+    const schemeName = 'lkapp'
+    const prefix = Platform.OS === 'android' ? `${schemeName}://${schemeName}/` : `${schemeName}://`;
+
     return (
-      <EntryView uriPrefix='lkapp'></EntryView>
+      <EntryView uriPrefix={prefix}></EntryView>
     )
   }
 }
