@@ -12,7 +12,6 @@ const LKDeviceProvider = require('../logic/provider/LKDeviceProvider')
 const LKChatProvider = require('../logic/provider/LKChatProvider')
 const MFApplyManager = require('../core/MFApplyManager')
 const FlowCursor = require('../store/FlowCursor')
-const LKUtil  = require('../util')
 const LZBase64String = require('../../common/util/lz-base64-string')
 const CryptoJS = require("crypto-js")
 
@@ -100,7 +99,7 @@ class LKChannel extends WSChannel{
         });
     }
 
-    _onmessage = (message)=>{
+    _onmessage(message){
         let msg = JSON.parse(message.data);
         if(msg.forEach){
             msg.forEach((m)=> {
@@ -342,13 +341,7 @@ class LKChannel extends WSChannel{
     }
 
     async asyLogin(){
-        let venderDid = null;
-        try{
-            venderDid = await LKUtil.asyGetApplePushId();
-        }catch(e){
-
-        }
-        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("login",{venderDid:venderDid})]);
+        let result = await Promise.all([this.applyChannel(),this._asyNewRequest("login",{venderDid:Application.getCurrentApp().getVenderId()})]);
          result[0]._sendMessage(result[1]).then((msg)=>{
              if(!msg.body.content.err){
                  Application.getCurrentApp().setLogin(Application.getCurrentApp().getCurrentUser())

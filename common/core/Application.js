@@ -8,12 +8,17 @@ class Application extends EventTarget{
     Application._current = this
   }
 
-  setCurrentUser (user) {
-    this._user = user
+  setCurrentUser (user,venderId) {
+    this._user = user;
+    this._venderId = venderId;
   }
 
   getCurrentUser () {
     return this._user
+  }
+
+  getVenderId(){
+    return this._venderId;
   }
 
   setLoginHandler (h) {
