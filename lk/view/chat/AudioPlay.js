@@ -6,6 +6,7 @@ import {
 import PropTypes from 'prop-types'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import RNFetchBlob from 'react-native-fetch-blob'
+import AudioRecorderPlayer from 'react-native-audio-recorder-player'
 const _ = require('lodash')
 
 export default class AudioPlay extends Component<{}> {
@@ -16,15 +17,16 @@ export default class AudioPlay extends Component<{}> {
     }
     this.lastTime = 0
     this.interval = 100 * 2
+    this.audioRecorderPlayer = new AudioRecorderPlayer()
   }
 
   render () {
-    let {url, audioRecorderPlayer, key} = this.props
+    let {url, id} = this.props
     return (
-      <TouchableOpacity style={{width: 60, alignItems: 'flex-start', justifyContent: 'center'}}
-                        key = {key}
+      <TouchableOpacity style={{width: 60, alignItems: 'center', justifyContent: 'center'}}
+        key = {id}
         onPress={async () => {
-          audioRecorderPlayer.addPlayBackListener((e) => {
+          this.audioRecorderPlayer.addPlayBackListener((e) => {
             // console.log({e})
             const {current_position: currentPosition, duration} = e
             if (currentPosition - this.lastTime > this.interval) {
@@ -35,7 +37,9 @@ export default class AudioPlay extends Component<{}> {
             }
 
             if (currentPosition === duration) {
-              audioRecorderPlayer.stopPlayer()
+              // console.log({id})
+              this.audioRecorderPlayer.stopPlayer()
+              this.audioRecorderPlayer.removePlayBackListener()
               this.lastTime = 0
               this.setState({
                 toggle: true
@@ -57,11 +61,14 @@ export default class AudioPlay extends Component<{}> {
 
           // console.log({baseUrl, fileName, destination})
           // console.log({exist})
-          await audioRecorderPlayer.startPlayer(fileName)
+          await this.audioRecorderPlayer.startPlayer(fileName)
         }}
       >
-        <Ionicons name={this.state.toggle ? 'ios-volume-up-outline' : 'ios-volume-down-outline'} size={35}
-          style={{marginRight: 5, lineHeight: 35, color: '#a0a0a0'}}></Ionicons>
+        <View style={{width: 35, alignItems: 'flex-start', justifyContent: 'center'}}>
+          <Ionicons name={this.state.toggle ? 'ios-volume-up-outline' : 'ios-volume-down-outline'} size={35}
+            style={{marginRight: 5, lineHeight: 35, color: '#a0a0a0'}}></Ionicons>
+        </View>
+
       </TouchableOpacity>
     )
   }
@@ -73,6 +80,5 @@ AudioPlay.defaultProps = {
 
 AudioPlay.propTypes = {
   url: PropTypes.string.isRequired,
-  audioRecorderPlayer: PropTypes.object.isRequired,
-  key: PropTypes.string
+  id: PropTypes.string
 }

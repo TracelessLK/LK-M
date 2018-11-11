@@ -460,8 +460,7 @@ export default class ChatView extends Component<{}> {
         url = this.getCurrentUrl(url)
         const option = {
           url,
-          audioRecorderPlayer: this.audioRecorderPlayer,
-          key: id
+          id
         }
         result = <AudioPlay {...option}/>
         // result = <AudioPlay url={url} audioRecorderPlayer={this.audioRecorderPlayer}/>
