@@ -1,5 +1,6 @@
 
 import AuthStack from '../auth/AuthStack'
+import NotifyView from '../external/NotifyView'
 import MainStack from './MainStack'
 import Loading from './Loading'
 import { createSwitchNavigator, createStackNavigator } from 'react-navigation'
@@ -11,11 +12,19 @@ const switchNavigator = createSwitchNavigator({
   AuthStack
 })
 
+const withHeader = createStackNavigator({
+  NotifyView
+}, {
+  headerMode: 'float'
+})
 const EntryView = createStackNavigator({
   SwitchView: switchNavigator,
   ScanView: {
     screen: ScanView,
     path: 'scan'
+  },
+  NotifyView: {
+    screen: withHeader
   }
 }, {
   headerMode: 'none'

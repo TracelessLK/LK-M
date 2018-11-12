@@ -140,7 +140,7 @@ export default class BasicInfoView extends Component<{}> {
         {
           title: 'test',
           onPress: () => {
-            navigation.navigate('TestView')
+            navigation.navigate('NotifyView')
           }
         }
         // {
