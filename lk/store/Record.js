@@ -1,6 +1,4 @@
 const DBProxy = require('./DBInit')
-const RNFetchBlob = require('react-native-fetch-blob').default
-const dirs = RNFetchBlob.fs.dirs;
 
 class Record{
 
@@ -33,41 +31,17 @@ class Record{
                     fileDir="/audio/";
                     fileExt=content.ext;
                 }
-                var dir = dirs.DocumentDir+"/"+userId+fileDir+chatId;
-                var createFile = function () {
-                    var url = dir+"/"+msgId+"."+fileExt;
-                    RNFetchBlob.fs.createFile(url,content.data,'base64').then(()=>{
-                        if(type===this.MESSAGE_TYPE_IMAGE){
-                            content = JSON.stringify({width:content.width,height:content.height,url:url});
-                        }else{
-                            content = JSON.stringify({url:url});
-                        }
-                        insert2DB();
-                    }).catch(err=>{
-                      console.log(err)
-                        reject(err)
-                    });
-                }
-                RNFetchBlob.fs.exists(dir).then(
-                    exist=>{
-                        if(!exist){
-                            RNFetchBlob.fs.mkdir(dir).then(()=>{
-                                createFile();
-                            }).catch(err => {
-                              console.log(err)
-                            });
-                        }else{
-                            createFile();
-                        }
+                let filePath = "/"+userId+fileDir+chatId;
+                let fileName = msgId+"."+fileExt;
+                DBProxy.saveFile(filePath,fileName,content.data).then((url)=>{
+                    if(type===this.MESSAGE_TYPE_IMAGE){
+                        content = JSON.stringify({width:content.width,height:content.height,url:url});
+                    }else{
+                        content = JSON.stringify({url:url});
                     }
-                ).catch((err) => {
-                  console.log(err)
-                  reject(err)
-                });
+                    insert2DB();
+                })
             }
-
-
-
         });
     }
     _isAllUpdate(userId,chatId,msgIds,state){

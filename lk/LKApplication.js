@@ -1,14 +1,14 @@
-import Application from '../common/core/Application'
-import ConfigManager from '../common/core/ConfigManager'
-import RSAKey from 'react-native-rsa'
+const Application = require('../common/core/Application')
+const ConfigManager = require('../common/core/ConfigManager')
+const RSAKey = require('react-native-rsa')
 
 class LKApplication extends Application {
   constructor (name) {
     super(name)
   }
 
-  setCurrentUser (user) {
-    super.setCurrentUser(user)
+  setCurrentUser (user,venderId) {
+    super.setCurrentUser(user,venderId)
 
     if (user) {
       let rsa = new RSAKey()

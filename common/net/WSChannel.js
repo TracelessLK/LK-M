@@ -17,7 +17,9 @@ class WSChannel extends EventTarget{
                 return Promise.reject(e)
             }
             if(this._ws){
-                this._ws.onmessage = this._onmessage;
+                this._ws.onmessage = (msg)=>{
+                    this._onmessage(msg)
+                };
                 this._ws.onerror = (event) => {
                   this._onerror(event)
                 }
