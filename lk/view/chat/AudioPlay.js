@@ -26,6 +26,8 @@ export default class AudioPlay extends Component<{}> {
       <TouchableOpacity style={{width: 60, alignItems: 'center', justifyContent: 'center'}}
         key = {id}
         onPress={async () => {
+          this.audioRecorderPlayer.removePlayBackListener()
+
           this.audioRecorderPlayer.addPlayBackListener((e) => {
             // console.log({e})
             const {current_position: currentPosition, duration} = e
@@ -38,7 +40,10 @@ export default class AudioPlay extends Component<{}> {
 
             if (currentPosition === duration) {
               // console.log({id})
-              this.audioRecorderPlayer.stopPlayer()
+              this.audioRecorderPlayer.stopPlayer().catch(err=> {
+                // console.log({err})
+              })
+              console.log({id})
               this.audioRecorderPlayer.removePlayBackListener()
               this.lastTime = 0
               this.setState({
