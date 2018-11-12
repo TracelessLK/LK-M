@@ -8,7 +8,7 @@ import {Root} from 'native-base'
 import ConfigManager from './Manifest'
 let Application = ConfigManager.getApplication();
 import DataSource from './lk/store/RNSqlite'
-Application.getCurrentApp().start(DataSource)
+Application.getCurrentApp().start(Application.PLATFORM_RN,DataSource)
 import LKEntry from './lk/LKEntry'
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
