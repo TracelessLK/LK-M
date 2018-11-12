@@ -89,14 +89,18 @@ class Util {
   }
   static query (sql) {
     return new Promise(resolve => {
-      let db = new DBProxy()
-      db.transaction((tx) => {
-        db.getAll(sql, [], function (results) {
-          resolve(results)
-        }, function (err) {
-          console.log(err)
+      
+        lkApp.on("dbReady",function () {
+            let db = new DBProxy()
+            db.transaction((tx) => {
+                db.getAll(sql, [], function (results) {
+                    resolve(results)
+                }, function (err) {
+                    console.log(err)
+                })
+            })
         })
-      })
+
     })
   }
   static removeAllGroup () {

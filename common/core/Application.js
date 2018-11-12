@@ -1,5 +1,4 @@
 const EventTarget = require('./EventTarget')
-const ConfigManager = require('./ConfigManager')
 const cfg = require('../../app.json')
 class Application extends EventTarget{
   constructor (appName) {
@@ -39,8 +38,12 @@ class Application extends EventTarget{
   getName(){
     return this._appName;
   }
+  start(db){
+    this._dataSource = db;
+    this.fire("dbReady",db);
+  }
   getDataSource(){
-    return ConfigManager.getDataSource()
+    return this._dataSource
   }
 }
 Application.getCurrentApp = function () {

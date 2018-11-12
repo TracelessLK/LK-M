@@ -5,7 +5,10 @@ import {
   StyleSheet, View
 } from 'react-native'
 import {Root} from 'native-base'
-import N from './Manifest'
+import ConfigManager from './Manifest'
+let Application = ConfigManager.getApplication();
+import DataSource from './lk/store/RNSqlite'
+Application.getCurrentApp().start(DataSource)
 import LKEntry from './lk/LKEntry'
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
