@@ -6,7 +6,6 @@ import com.facebook.react.ReactApplication;
 import com.wenkesj.voice.VoicePackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import com.dooboolab.RNAudioRecorderPlayerPackage;
-import com.wenkesj.voice.VoicePackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.horcrux.svg.SvgPackage;
@@ -48,7 +47,6 @@ public class MainApplication extends Application implements ReactApplication {
             new VoicePackage(),
             new RNNetworkInfoPackage(),
             new RNAudioRecorderPlayerPackage(),
-            new VoicePackage(),
             new PickerPackage(),
             new ReactNativeRestartPackage(),
             new SvgPackage(),
