@@ -8,7 +8,12 @@ import {Root} from 'native-base'
 import ConfigManager from './Manifest'
 import DataSource from './lk/store/RNSqlite'
 import LKEntry from './lk/LKEntry'
-
+// const lkc = require('LK-C')
+// // console.log({lkc})
+// const {Manifest} = lkc
+// console.log({
+//   Manifest, ConfigManager
+// })
 let Application = ConfigManager.getApplication()
 Application.getCurrentApp().start(DataSource)
 
