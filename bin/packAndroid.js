@@ -9,13 +9,14 @@ const {CliUtil} = require('@ys/collection')
 const {execSync} = CliUtil
 const {FuncUtil} = require('@ys/vanilla')
 const {timeCount} = FuncUtil
-const {upload} = require('./util')
+const {upload, timeStamp} = require('./util')
 const {serverRoot} = config
 const fileName = `${appName}.apk`
 
 timeCount(() => {
   const localApkPath = path.resolve(__dirname, '../android/app/build/outputs/apk/app-release.apk')
   if (pack || !fs.existsSync(localApkPath)) {
+    timeStamp({packType: 'android'})
     console.log('packing apk ..................')
     execSync(`
         cd android && ./gradlew assembleRelease

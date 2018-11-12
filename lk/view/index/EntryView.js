@@ -13,7 +13,10 @@ const switchNavigator = createSwitchNavigator({
 
 const EntryView = createStackNavigator({
   SwitchView: switchNavigator,
-  ScanView
+  ScanView: {
+    screen: ScanView,
+    path: 'scan'
+  }
 }, {
   headerMode: 'none'
 })

@@ -23,6 +23,7 @@ import {
 import NetIndicator from '../common/NetIndicator'
 import MessageText from './MessageText'
 import {Header} from 'react-navigation'
+import AudioPlay from './AudioPlay'
 import AudioRecorderPlayer from 'react-native-audio-recorder-player'
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 const {getAvatarSource, getIconNameByState} = require('../../util')
@@ -93,6 +94,21 @@ export default class ChatView extends Component<{}> {
 
       const audioRecorderPlayer = new AudioRecorderPlayer()
       this.audioRecorderPlayer = audioRecorderPlayer
+      this._responder = {
+        onResponderMove (event) {
+          const {nativeEvent} = event
+          const {locationX, locationY, pageX, pageY} = nativeEvent
+
+          console.log({locationX, locationY, pageX, pageY})
+        },
+        onMoveShouldSetResponder (evt) {
+          console.log({evt})
+          return false
+        },
+        onResponderTerminationRequest () {
+          return true
+        }
+      }
     }
 
      refreshRecord = async (limit) => {
@@ -412,8 +428,9 @@ export default class ChatView extends Component<{}> {
 
     _getMessage=(rec) => {
       // console.log({rec})
+      const {type, id} = rec
       let result
-      if (rec.type === chatManager.MESSAGE_TYPE_TEXT) {
+      if (type === chatManager.MESSAGE_TYPE_TEXT) {
         const text =
                 <MessageText currentMessage={
                   {text: rec.content}
@@ -438,38 +455,15 @@ export default class ChatView extends Component<{}> {
         result = <TouchableOpacity><Ionicons name="ios-document-outline" size={40} style={{marginRight: 5, lineHeight: 40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>
       } else if (rec.type === chatManager.MESSAGE_TYPE_AUDIO) {
         const {content} = rec
-        const {url} = JSON.parse(content)
+        let {url} = JSON.parse(content)
         // console.log({url})
-        result = (
-          <TouchableOpacity style={{width: 60, alignItems: 'center', justifyContent: 'center'}}
-            onPress={async () => {
-              this.audioRecorderPlayer.addPlayBackListener((e) => {
-                // console.log({e})
-                if (e.current_position === e.duration) {
-                  console.log('finished')
-                  this.audioRecorderPlayer.stopPlayer()
-                }
-              })
-              const ary = url.split('Documents')
-              const baseUrl = ary[0]
-              const fileName = _.last(ary[1].split('audio')[1].split('/'))
-              const destination = `/private${baseUrl}tmp/${fileName}`
-              // console.log({url})
-              const exist = await RNFetchBlob.fs.exists(destination)
-              if (!exist) {
-                const data = await RNFetchBlob.fs.readFile(url, 'base64')
-                // console.log(data)
-                await RNFetchBlob.fs.writeFile(destination, data, 'base64')
-              }
-
-              // console.log({baseUrl, fileName, destination})
-              // console.log({exist})
-              await this.audioRecorderPlayer.startPlayer(fileName)
-            }}
-          >
-            <Ionicons name="ios-volume-up-outline" size={35}
-              style={{marginRight: 5, lineHeight: 35, color: '#a0a0a0'}}></Ionicons>
-          </TouchableOpacity>)
+        url = this.getCurrentUrl(url)
+        const option = {
+          url,
+          id
+        }
+        result = <AudioPlay {...option}/>
+        // result = <AudioPlay url={url} audioRecorderPlayer={this.audioRecorderPlayer}/>
       }
       return result
     }
@@ -477,12 +471,19 @@ export default class ChatView extends Component<{}> {
     getImageData = (img) => {
       // console.log({img})
       const {url} = img
-      let result = url
+      let result = this.getCurrentUrl(url)
+
+      return result
+    }
+
+    getCurrentUrl = (oldUrl) => {
+      let result = oldUrl
       if (Platform.OS === 'ios') {
-        result = url.replace(getFolderId(url), this.folderId)
+        result = oldUrl.replace(getFolderId(oldUrl), this.folderId)
       }
       return result
     }
+
     _onRefresh = () => {
       this.limit = this.limit + Constant.MESSAGE_PER_REFRESH
       if (this.limit > this.extra.maxCount) {
@@ -551,14 +552,18 @@ export default class ChatView extends Component<{}> {
 
   cancelRecord = async () => {
     const filePath = await this.audioRecorderPlayer.stopRecorder()
+    // console.log({filePath})
 
-    RNFetchBlob.fs.readFile(filePath.replace('file://', ''), 'base64').then((data) => {
-      // console.log({data})
-      const ext = _.last(filePath.split('.'))
-      lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
-        Alert.alert(err.toString())
+    if (filePath) {
+      RNFetchBlob.fs.readFile(filePath.replace('file://', ''), 'base64').then((data) => {
+        // console.log({data})
+        const ext = _.last(filePath.split('.'))
+        lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
+          Alert.alert(err.toString())
+        })
       })
-    })
+    }
+
     this.audioRecorderPlayer.removeRecordBackListener()
     this.setState({
       isRecording: false,
@@ -571,7 +576,8 @@ export default class ChatView extends Component<{}> {
     const size = 200
     const greyScale = 106
     const contentView =
-        <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}>
+        <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}
+        >
           {this.state.isRecording
             ? <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', top: '25%', zIndex: 2}}>
               <View style={{ width: size,
@@ -596,7 +602,8 @@ export default class ChatView extends Component<{}> {
               </View>
             </View> : null}
           <NetIndicator/>
-          <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}>
+          <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}
+          >
             <ScrollView ref={(ref) => { this.scrollView = ref }} style={{width: '100%', backgroundColor: '#d5e0f2'}}
               refreshControl={
                 <RefreshControl
@@ -604,6 +611,7 @@ export default class ChatView extends Component<{}> {
                   onRefresh={this._onRefresh}
                 />}
               onContentSizeChange={this.onContentSizeChange}
+
             >
               <View style={{width: '100%', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20}}>
                 {this.state.recordEls}
@@ -618,7 +626,8 @@ export default class ChatView extends Component<{}> {
               overflow: 'hidden',
               paddingVertical: 5,
               marginBottom: Platform.OS === 'ios' ? 0 : 20
-            }}>
+            }}
+            >
               <TouchableOpacity onPress={this.showVoiceRecorder}
                 style={{display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', borderWidth: 0}}>
                 <View style={{borderRadius: 15,
@@ -647,6 +656,7 @@ export default class ChatView extends Component<{}> {
                   marginHorizontal: 5
                 }}
                 onPressIn={this.record} onPressOut={this.cancelRecord}
+                hitSlop={{top: 500, left: 0, bottom: 100, right: 0}}
               >
                 <Text>按住说话</Text>
               </TouchableOpacity> : <TextInputWrapper onChangeText={(v) => {

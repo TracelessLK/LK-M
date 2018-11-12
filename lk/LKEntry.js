@@ -20,7 +20,6 @@ const util = require('./util')
 const {appendToLog} = util
 const Application = require('./LKApplication')
 const lkApplication = Application.getCurrentApp()
-
 lkApplication.on('currentUserChanged', user => {
   if (user) {
     // console.log({user})
@@ -51,7 +50,7 @@ async function checkUpdate (user) {
 
     // console.log({appInfo})
     const checkUpdateUrl = `${base}${updateUrl}`
-    console.log({checkUpdateUrl})
+    // console.log({checkUpdateUrl})
     const manualDownloadUrl = `${base}/pkg/${Platform.OS}/${appName}.${Platform.OS === 'android' ? 'apk' : 'ipa'}`
 
     const option = {
@@ -97,18 +96,21 @@ const f = (error) => {
     content: error.stack.toString()
   })
 }
+const resetTime = 1000
 const option = {
   // todo error upload
   productionProcess: f,
   devProcess: f,
   ErrorUtilRN,
-  resetTime: 1000 * 10
+  resetTime
 }
 setGlobalErrorHandler(option)
 global.Promise = Promise
 
-const errorStock = new ErrorStock()
-global.onunhandledrejection = function onunhandledrejection (error) {
+const errorStock = new ErrorStock(resetTime)
+// console.log(global)
+global.onunhandledrejection = (error) => {
+  console.log({error})
   if (error instanceof Error) {
     appendToLog({
       type: 'error',
@@ -123,16 +125,19 @@ export default class LKEntry extends Component<{}> {
   componentDidMount () {
     Linking.getInitialURL().then((url) => {
       if (url) {
-        console.log('Initial url is: ' + url)
+        console.log('Initial URL: ' + url)
       }
     }).catch(err => console.error('An error occurred', err))
     Linking.addEventListener('url', event => {
-      console.log({linkEvent: event})
+      // const {url} = event
     })
   }
   render () {
+    const schemeName = 'lkapp'
+    const prefix = Platform.OS === 'android' ? `${schemeName}://${schemeName}/` : `${schemeName}://`
+
     return (
-      <EntryView uriPrefix='lkapp'></EntryView>
+      <EntryView uriPrefix={prefix}></EntryView>
     )
   }
 }
