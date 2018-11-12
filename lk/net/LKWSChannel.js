@@ -422,7 +422,7 @@ class LKChannel extends WSChannel{
             sendContent = {type:content.type,data:{width:content.data.width,height:content.data.height,compress:true}};
             sendContent.data.data = LZBase64String.compressToUTF16(content.data.data);
         }else if(content.type===ChatManager.MESSAGE_TYPE_AUDIO){
-            sendContent = {type:content.type,data:{compress:true}};
+            sendContent = {type:content.type,data:{compress:true,ext:content.data.ext}};
             sendContent.data.data = LZBase64String.compressToUTF16(content.data.data);
         }
         let result = await Promise.all([this.applyChannel(),this._asyNewRequest("sendMsg",sendContent,{isGroup:isGroup,chatId:chatId,relativeMsgId:relativeMsgId})]);
