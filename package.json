@@ -54,6 +54,7 @@
     "react-native-svg": "7.0.2",
     "react-native-update": "^5.1.3",
     "react-native-vector-icons": "^4.6.0",
+    "react-native-voice": "^0.2.6",
     "react-navigation": "2.5.5",
     "react-redux": "^5.1.0",
     "redux": "^4.0.1"
