@@ -1,9 +1,5 @@
 const ConfigManager = require('./common/core/ConfigManager')
-
-const DataSource = require('./lk/store/RNSqlite')
-ConfigManager.configure('DataSource',DataSource)
-
-
+const Application = require('./lk/LKApplication')
 const WSChannel = require('./lk/net/LKWSChannel')
 const ChatManager = require('./lk/core/ChatManager')
 const ContactManager = require('./lk/core/ContactManager')
@@ -12,6 +8,7 @@ const UserManager = require('./lk/core/UserManager')
 const MagicCodeManager = require('./lk/core/MagicCodeManager')
 const MFApplyManager = require('./lk/core/MFApplyManager')
 
+ConfigManager.configure('Application', Application)
 ConfigManager.configure('WSChannel', WSChannel)
 ConfigManager.configure('ChatManager', ChatManager)
 ConfigManager.configure('ContactManager', ContactManager)
