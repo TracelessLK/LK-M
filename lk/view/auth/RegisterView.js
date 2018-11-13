@@ -9,7 +9,10 @@ import {
 import {Input, Item, Button, Label, Toast, Form} from 'native-base'
 import RSAKey from 'react-native-rsa'
 import deviceInfo from 'react-native-device-info'
-const lkApplication = require('../../LKApplication').getCurrentApp()
+const {engine} = require('LK-C')
+
+let Application = engine.getApplication()
+const lkApplication = Application.getCurrentApp()
 
 const uuid = require('uuid')
 const {PushUtil} = require('@external/common')

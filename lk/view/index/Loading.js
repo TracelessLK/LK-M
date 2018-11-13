@@ -5,11 +5,13 @@ import {
   View, ActivityIndicator,
   AsyncStorage
 } from 'react-native'
-import userProvider from '../../logic/provider/LKUserProvider'
 const {PushUtil} = require('@external/common')
 
 const {getAPNDeviceId} = PushUtil
-const Application = require('../../LKApplication')
+const {engine} = require('LK-C')
+const UserManager = engine.get('UserManager')
+
+let Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()
 
 const styles = StyleSheet.create({
@@ -34,7 +36,7 @@ export default class Loading extends Component<{}> {
       if (currentUser) {
         routerName = 'MainStack'
       } else {
-        const userAry = await userProvider.asyGetAll()
+        const userAry = await UserManager.asyGetAll()
         const {length} = userAry
 
         if (length === 0) {

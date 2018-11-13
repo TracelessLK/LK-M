@@ -5,10 +5,11 @@ import {
   Text,
   View
 } from 'react-native'
-import ChatManager from '../../core/ChatManager'
+const {engine} = require('LK-C')
+const ChatManager = engine.get('ChatManager')
 const {getAvatarSource} = require('../../util')
-const MFApplyManager = require('../../core/MFApplyManager')
-const ContactManager = require('../../core/ContactManager')
+const MFApplyManager = engine.get('MFApplyManager')
+const ContactManager = engine.get('ContactManager')
 const style = require('../style')
 const noUserImg = require('../image/noUser.png')
 const {CenterLayout} = require('@ys/react-native-collection')

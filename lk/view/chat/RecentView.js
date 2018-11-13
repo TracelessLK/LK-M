@@ -14,10 +14,12 @@ const {commonUtil, MessageList, PushUtil} = require('@external/common')
 const {removeNotify} = PushUtil
 const {debounceFunc} = commonUtil
 const {getAvatarSource, addExternalFriend} = require('../../util')
-const LKChatProvider = require('../../logic/provider/LKChatProvider')
-const LKContactProvider = require('../../logic/provider/LKContactProvider')
-const lkApp = require('../../LKApplication').getCurrentApp()
-const chatManager = require('../../core/ChatManager')
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
+const chatManager = engine.get('ChatManager')
+const ContactManager = engine.get('ContactManager')
 const _ = require('lodash')
 const addPng = require('../image/add.png')
 const {NetInfoUtil} = require('@ys/react-native-collection')
@@ -165,7 +167,7 @@ export default class RecentView extends Component<{}> {
       let result = {
         isGroup
       }
-      const msgAry = await LKChatProvider.asyGetMsgs(userId, chatId)
+      const msgAry = await chatManager.asyGetMsgs(userId, chatId)
       // console.log({msgAry})
       // console.log({createTime})
       const {length} = msgAry
@@ -188,7 +190,7 @@ export default class RecentView extends Component<{}> {
           obj.time = new Date(createTime)
         }
 
-        const memberAry = await LKChatProvider.asyGetGroupMembers(chatId)
+        const memberAry = await chatManager.asyGetGroupMembers(chatId)
 
         const picAry = memberAry.map(ele => ele.pic)
         obj.image = picAry
@@ -203,7 +205,7 @@ export default class RecentView extends Component<{}> {
       } else if (length) {
         const msg = _.last(msgAry)
         const {sendTime, content, type} = msg
-        const person = await LKContactProvider.asyGet(userId, chatId)
+        const person = await ContactManager.asyGet(userId, chatId)
         const {name, pic} = person
         obj.time = new Date(sendTime)
         obj.content = this.getMsgContent(content, type)
@@ -247,7 +249,7 @@ export default class RecentView extends Component<{}> {
     }
     async updateRecent () {
       const user = lkApp.getCurrentUser()
-      const allChat = await LKChatProvider.asyGetAll(user.id)
+      const allChat = await chatManager.asyGetAll(user.id)
       const msgAryPromise = []
       let contentAry
       // console.log({allChat})
@@ -299,7 +301,7 @@ export default class RecentView extends Component<{}> {
     })
 
     async deleteRow (chatId) {
-      await LKChatProvider.asyDeleteChat(this.user.id, chatId)
+      await chatManager.asyDeleteChat(this.user.id, chatId)
       this.update()
     }
 
@@ -307,7 +309,7 @@ export default class RecentView extends Component<{}> {
       if (container.connectionOK) {
         // console.log('resetHeaderTitle')
         const {navigation} = this.props
-        const num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
+        const num = await chatManager.asyGetAllMsgNotReadNum(this.user.id)
         navigation.setParams({
           headerTitle: '消息' + (num ? `(${num})` : '')
         })

@@ -9,12 +9,14 @@ import { ListItem } from 'react-native-elements'
 const common = require('@external/common')
 const {SearchBar, commonUtil, List, LoadingView} = common
 const {debounceFunc} = commonUtil
-const lkApp = require('../../LKApplication').getCurrentApp()
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
+const ContactManager = engine.get('ContactManager')
 const style = require('../style')
-const LKContactProvider = require('../../logic/provider/LKContactProvider')
 const {getAvatarSource, addExternalFriend} = require('../../util')
 const {HeaderRightButton, CenterLayout} = require('@ys/react-native-collection')
-const ContactManager = require('../../core/ContactManager')
 const noUserImg = require('../image/noUser.png')
 
 export default class ExternalView extends Component<{}> {
@@ -79,7 +81,7 @@ export default class ExternalView extends Component<{}> {
       }
       let ary = []
 
-      const friendAry = await LKContactProvider.asyGetAllFriends(user.id)
+      const friendAry = await ContactManager.asyGetAllFriends(user.id)
       console.log({friendAry})
       for (let ele of friendAry) {
         const obj = {}

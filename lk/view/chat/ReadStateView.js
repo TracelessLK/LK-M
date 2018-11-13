@@ -1,12 +1,14 @@
 import React, {Component} from 'react'
 import {
   ScrollView,
-  View, Text
+  View
 } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-const chatManager = require('../../core/ChatManager')
+const {engine} = require('LK-C')
+const chatManager = engine.get('ChatManager')
 const {getAvatarSource, getIconNameByState} = require('../../util')
-const lkApp = require('../../LKApplication').getCurrentApp()
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
 const common = require('@external/common')
 const {List} = common
 

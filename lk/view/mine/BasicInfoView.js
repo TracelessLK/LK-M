@@ -5,7 +5,10 @@ import {
   ScrollView
 } from 'react-native'
 import { ListItem } from 'react-native-elements'
-const lkApp = require('../../LKApplication').getCurrentApp()
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
 const common = require('@external/common')
 const { commonUtil } = common
 const {debounceFunc} = commonUtil

@@ -5,7 +5,6 @@ import {
   View
 } from 'react-native'
 import { Input, Item, Button, Label, Toast } from 'native-base'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 const {debounceFunc} = require('../../../common/util/commonUtil')
 
 export default class CheckCodeView extends Component<{}> {

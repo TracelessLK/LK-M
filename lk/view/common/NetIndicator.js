@@ -1,11 +1,14 @@
 import React, {Component} from 'react'
 import {
-  AppState,
   Text,
   View
 } from 'react-native'
 import {Icon} from 'native-base'
-const lkApp = require('../../LKApplication').getCurrentApp()
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
+
 const {NetInfoUtil} = require('@ys/react-native-collection')
 
 export default class NetIndicator extends Component<{}> {

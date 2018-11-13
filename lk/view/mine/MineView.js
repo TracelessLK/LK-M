@@ -20,9 +20,12 @@ const {debounceFunc} = commonUtil
 const {getAvatarSource} = require('../../util')
 const versionLocal = require('../../../package.json').version
 const config = require('../../config')
-const lkApp = require('../../LKApplication').getCurrentApp()
-const chatManager = require('../../core/ChatManager')
-const userManager = require('../../core/UserManager')
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
+const chatManager = engine.get('ChatManager')
+const userManager = engine.get('UserManager')
 
 export default class MineView extends Component<{}> {
     static navigationOptions =() => {

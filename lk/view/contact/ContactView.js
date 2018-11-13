@@ -7,9 +7,12 @@ import {
 const common = require('@external/common')
 const {SearchBar, commonUtil, List} = common
 const {debounceFunc} = commonUtil
-const lkApp = require('../../LKApplication').getCurrentApp()
-const LKContactProvider = require('../../logic/provider/LKContactProvider')
-const LKOrgProvider = require('../../logic/provider/LKOrgProvider')
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
+const ContactManager = engine.get('ContactManager')
+const OrgManager = engine.get('OrgManager')
 const {getAvatarSource} = require('../../util')
 const style = require('../style')
 
@@ -58,8 +61,8 @@ export default class ContactView extends Component<{}> {
 
     async asyncRender (filterText) {
       const user = lkApp.getCurrentUser()
-      let orgAry = await LKOrgProvider.asyGetChildren(null, user.id)
-      console.log({orgAry})
+      let orgAry = await OrgManager.asyGetChildren(null, user.id)
+      // console.log({orgAry})
       const sortFunc = (ele1, ele2) => {
         const result = (ele2.title < ele1.title)
 
@@ -90,7 +93,7 @@ export default class ContactView extends Component<{}> {
       ary.sort(sortFunc)
       dataAry = dataAry.concat(ary)
       ary = []
-      const memberAry = await LKContactProvider.asyGetAllMembers(user.id)
+      const memberAry = await ContactManager.asyGetAllMembers(user.id)
 
       for (let ele of memberAry) {
         const obj = {}

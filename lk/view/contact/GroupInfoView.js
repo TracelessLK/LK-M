@@ -9,10 +9,13 @@ import {
   ActivityIndicator
 } from 'react-native'
 const {getAvatarSource} = require('../../util')
-const lkApp = require('../../LKApplication').getCurrentApp()
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
 const common = require('@external/common')
 const {List} = common
-const chatManager = require('../../core/ChatManager')
+const chatManager = engine.get('ChatManager')
 const {runNetFunc} = require('../../util')
 const addPng = require('../image/add.png')
 

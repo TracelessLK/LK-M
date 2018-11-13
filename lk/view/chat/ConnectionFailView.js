@@ -6,7 +6,10 @@ import {
   Button
 } from 'react-native'
 import {Card, CardItem, Body} from 'native-base'
-const lkApp = require('../../LKApplication').getCurrentApp()
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
 
 export default class ConnectionFailView extends Component<{}> {
   static navigationOptions =() => {

@@ -4,11 +4,15 @@ const common = require('@external/common')
 const {List} = common
 const {FuncUtil} = require('@ys/vanilla')
 const {debounceFunc} = FuncUtil
-const lkApp = require('../../LKApplication').getCurrentApp()
-const LKContactProvider = require('../../logic/provider/LKContactProvider')
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
+
 const {getAvatarSource} = require('../../util')
 const _ = require('lodash')
-const chatManager = require('../../core/ChatManager')
+const chatManager = engine.get('ChatManager')
+const ContactManager = engine.get('ContactManager')
 const {runNetFunc} = require('../../util')
 const {CenterLayout} = require('@ys/react-native-collection')
 const style = require('../style')
@@ -81,7 +85,7 @@ export default class AddGroupMemberView extends Component<{}> {
     }
     let ary = []
 
-    let memberAry = await LKContactProvider.asyGetAllMembers(user.id)
+    let memberAry = await ContactManager.asyGetAllMembers(user.id)
     memberAry = memberAry.filter(ele => {
       return !memberIdAry.includes(ele.id)
     })
@@ -103,7 +107,7 @@ export default class AddGroupMemberView extends Component<{}> {
       }
     }
 
-    let friendAry = await LKContactProvider.asyGetAllFriends(user.id)
+    let friendAry = await ContactManager.asyGetAllFriends(user.id)
     friendAry = friendAry.filter(ele => {
       return !memberIdAry.includes(ele.id)
     })

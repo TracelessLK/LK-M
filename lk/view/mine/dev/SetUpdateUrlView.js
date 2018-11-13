@@ -8,7 +8,6 @@ import {
 import {
   Card, CardItem, Button
 } from 'native-base'
-import PropTypes from 'prop-types'
 
 export default class SetUpdateUrlView extends Component<{}> {
   constructor (props) {

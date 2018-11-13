@@ -10,8 +10,6 @@ import {
   CameraRoll,
   StatusBar
 } from 'react-native'
-// import ImagePicker from 'react-native-image-picker'
-// import ImageResizer from 'react-native-image-resizer'
 import RNFetchBlob from 'react-native-fetch-blob'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import ImageViewer from 'react-native-image-zoom-viewer'
@@ -28,11 +26,12 @@ import AudioRecorderPlayer from 'react-native-audio-recorder-player'
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 const {getAvatarSource, getIconNameByState} = require('../../util')
 const Constant = require('../state/Constant')
-const lkApp = require('../../LKApplication').getCurrentApp()
-const manifest = require('../../../Manifest')
-const chatManager = manifest.get('ChatManager')
-const LKChatProvider = require('../../logic/provider/LKChatProvider')
-const LKContactProvider = require('../../logic/provider/LKContactProvider')
+const {engine} = require('LK-C')
+
+let Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
+const chatManager = engine.get('ChatManager')
+const ContactManager = engine.get('ContactManager')
 const personImg = require('../image/person.png')
 const groupImg = require('../image/group.png')
 const _ = require('lodash')
@@ -116,9 +115,9 @@ export default class ChatView extends Component<{}> {
        let memberInfoObj
        let headerTitle
        if (this.isGroupChat) {
-         const chat = await LKChatProvider.asyGetChat(lkApp.getCurrentUser().id, this.otherSideId)
+         const chat = await chatManager.asyGetChat(lkApp.getCurrentUser().id, this.otherSideId)
          headerTitle = chat.name
-         const memberAry = await LKChatProvider.asyGetGroupMembers(this.otherSideId)
+         const memberAry = await chatManager.asyGetGroupMembers(this.otherSideId)
          // console.log({memberAry})
          memberInfoObj = memberAry.reduce((accumulator, ele) => {
            accumulator[ele.id] = ele
@@ -130,7 +129,7 @@ export default class ChatView extends Component<{}> {
            name: headerTitle
          }
        } else {
-         const otherSide = await LKContactProvider.asyGet(user.id, this.otherSideId)
+         const otherSide = await ContactManager.asyGet(user.id, this.otherSideId)
          this.otherSide = otherSide
          // console.log({otherSide})
          headerTitle = otherSide.name
@@ -141,7 +140,7 @@ export default class ChatView extends Component<{}> {
          headerTitle
        })
 
-       const msgAry = await LKChatProvider.asyGetMsgs(user.id, this.otherSideId, limit)
+       const msgAry = await chatManager.asyGetMsgs(user.id, this.otherSideId, limit)
        // console.log(msgAry)
        const msgOtherSideAry = msgAry.filter(msg => {
          return msg.senderUid !== user.id
@@ -211,7 +210,7 @@ export default class ChatView extends Component<{}> {
            // message received
 
            // fixme: 存在群成员不是好友的情况
-           const otherSide = await LKContactProvider.asyGet(user.id, msg.senderUid)
+           const otherSide = await ContactManager.asyGet(user.id, msg.senderUid)
            let otherPicSource = getAvatarSource(otherSide.pic)
 
            recordAry.push(<View key={id} style={style.recordEleStyle}>

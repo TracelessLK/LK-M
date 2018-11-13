@@ -6,7 +6,6 @@ import {
 import {
   Button
 } from 'native-base'
-import PropTypes from 'prop-types'
 import AudioRecorderPlayer from 'react-native-audio-recorder-player'
 
 export default class TestView extends Component<{}> {

@@ -7,11 +7,14 @@ const common = require('@external/common')
 const {List} = common
 const {FuncUtil} = require('@ys/vanilla')
 const {debounceFunc} = FuncUtil
-const lkApp = require('../../LKApplication').getCurrentApp()
-const LKContactProvider = require('../../logic/provider/LKContactProvider')
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
 const {getAvatarSource} = require('../../util')
 const _ = require('lodash')
-const chatManager = require('../../core/ChatManager')
+const chatManager = engine.get('ChatManager')
+const ContactManager = engine.get('ContactManager')
 const {runNetFunc} = require('../../util')
 
 export default class AddGroupView extends Component<{}> {
@@ -83,7 +86,7 @@ export default class AddGroupView extends Component<{}> {
     }
     let ary = []
 
-    const memberAry = await LKContactProvider.asyGetAllMembers(user.id)
+    const memberAry = await ContactManager.asyGetAllMembers(user.id)
     for (let ele of memberAry) {
       if (ele.id !== user.id) {
         const obj = {}
@@ -102,7 +105,7 @@ export default class AddGroupView extends Component<{}> {
       }
     }
 
-    const friendAry = await LKContactProvider.asyGetAllFriends(user.id)
+    const friendAry = await ContactManager.asyGetAllFriends(user.id)
     // console.log({memberAry, friendAry})
 
     for (let ele of friendAry) {

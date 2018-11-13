@@ -1,22 +1,15 @@
 
 import React, { Component } from 'react'
 import {
-  Alert,
-  AsyncStorage,
-  Button,
-  NativeModules,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View, Modal
+  View
 } from 'react-native'
-import PropTypes from 'prop-types'
-import userProvider from '../../logic/provider/LKUserProvider'
-const Application = require('../../LKApplication')
+const {engine} = require('LK-C')
+
+let Application = engine.getApplication()
+const UserManager = engine.get('UserManager')
 const lkApplication = Application.getCurrentApp()
 const common = require('@external/common')
-const {List, MessageList} = common
+const {MessageList} = common
 const {getAvatarSource} = require('../../util')
 
 export default class SelectUserView extends Component<{}> {
@@ -39,7 +32,7 @@ export default class SelectUserView extends Component<{}> {
   _bootstrapAsync = async () => {
     const {navigation} = this.props
     const currentUser = lkApplication.getCurrentUser()
-    const userAry = await userProvider.asyGetAll()
+    const userAry = await UserManager.asyGetAll()
     console.log({userAry, currentUser})
     const data = userAry.reduce((accumulator, ele) => {
       const {pic, id, name, serverIP, serverPort} = ele

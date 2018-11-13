@@ -5,7 +5,10 @@ import {
 } from 'react-native'
 import {Card} from 'react-native-elements'
 import DeviceInfo from 'react-native-device-info'
-const lkApp = require('../../../LKApplication').getCurrentApp()
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
 const packageJSON = require('../../../../package')
 const {version} = packageJSON
 

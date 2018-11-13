@@ -11,9 +11,10 @@ import {
   Card
 } from 'native-base'
 const {getAvatarSource} = require('../../util')
-const manifest = require('../../../Manifest')
-const ChatManager = manifest.get('ChatManager')
-const LKDeviceProvider = require('../../logic/provider/LKDeviceProvider')
+const {engine} = require('LK-C')
+
+const ChatManager = engine.get('ChatManager')
+const ContactManager = engine.get('ContactManager')
 
 export default class FriendInfoView extends Component<{}> {
     static navigationOptions =({ navigation }) => {
@@ -38,7 +39,7 @@ export default class FriendInfoView extends Component<{}> {
     }
 
     async componentDidMount () {
-      const deviceAry = await LKDeviceProvider.asyGetAll(this.friend.id)
+      const deviceAry = await ContactManager.asyGetAllDevice(this.friend.id)
       const str = deviceAry.map(ele => ele.id).join('\n')
       this.setState({
         allDevice: str || '无记录'

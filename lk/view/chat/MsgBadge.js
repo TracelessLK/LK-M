@@ -1,13 +1,13 @@
 import React, {Component} from 'react'
 import {
-  Text,
-  View
+  Text
 } from 'react-native'
-import PropTypes from 'prop-types'
 import {Badge} from 'native-base'
-const LKChatProvider = require('../../logic/provider/LKChatProvider')
-const chatManager = require('../../core/ChatManager')
-const lkApp = require('../../LKApplication').getCurrentApp()
+const {engine} = require('LK-C')
+const chatManager = engine.get('ChatManager')
+
+let Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
 
 export default class MsgBadge extends Component<{}> {
   constructor (props) {
@@ -19,7 +19,7 @@ export default class MsgBadge extends Component<{}> {
   }
 
   async componentDidMount () {
-    let num = await LKChatProvider.asyGetAllMsgNotReadNum(this.user.id)
+    let num = await chatManager.asyGetAllMsgNotReadNum(this.user.id)
     this.updateBadge(num)
     chatManager.on('msgBadgeChanged', this.updateBadge)
   }

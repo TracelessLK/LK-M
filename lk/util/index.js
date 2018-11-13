@@ -1,16 +1,20 @@
-const DBProxy = require('../store/DBInit')
 import {Toast} from 'native-base'
 import {Text, View} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import React from 'react'
+
+const {engine} = require('LK-C')
+const DBProxy = engine.get('DBProxy')
+let Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
+const chatManager = engine.get('ChatManager')
+
 const {commonUtil} = require('@external/common')
-const lkApp = require('../LKApplication').getCurrentApp()
 const {getAvatarSource} = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
 const container = require('../state')
 const {FuncUtil} = require('@ys/vanilla')
 const {runFunc} = FuncUtil
-const chatManager = require('../core/ChatManager')
 const {PushUtil} = require('@external/common')
 const {getAPNDeviceId} = PushUtil
 const lkStyle = require('../view/style')
@@ -89,7 +93,7 @@ class Util {
   }
   static query (sql) {
     return new Promise(resolve => {
-      
+
         lkApp.on("dbReady",function () {
             let db = new DBProxy()
             db.transaction((tx) => {

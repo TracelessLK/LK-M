@@ -5,10 +5,13 @@ import {
   TextInput
 } from 'react-native'
 import {Toast} from 'native-base'
-const lkApp = require('../../LKApplication').getCurrentApp()
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
 const style = require('../style')
 const {HeaderRightButton} = require('@ys/react-native-collection')
-const userManager = require('../../core/UserManager')
+const userManager = engine.get('UserManager')
 const {FuncUtil} = require('@ys/vanilla')
 const {debounceFunc} = FuncUtil
 

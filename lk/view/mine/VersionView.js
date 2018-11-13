@@ -9,9 +9,11 @@ const versionLocal = require('../../../package.json').version
 const config = require('../../config')
 const {FuncUtil} = require('@ys/vanilla')
 const {debounceFunc} = FuncUtil
-const lkApp = require('../../LKApplication').getCurrentApp()
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
+const lkApp = Application.getCurrentApp()
 const container = require('../../state')
-const {runNetFunc} = require('../../util')
 export default class VersionView extends Component<{}> {
     static navigationOptions = () => {
       return {
