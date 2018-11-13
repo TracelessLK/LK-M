@@ -19,7 +19,8 @@
     "pack:android": "node bin/packAndroid",
     "updateYS": "node bin/updateYS",
     "reinstall": "rm yarn.lock && rm -rf node_modules && npm run yarnInstall",
-    "jsBundle": " react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios"
+    "jsBundle": " react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",
+    "updateC": "rm -rf node_modules/LK-C && npm run yarnInstall"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
