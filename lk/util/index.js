@@ -146,7 +146,7 @@ class Util {
   // todo: should be putinto net channell
   static runNetFunc (func, {errorCb, showWarning = true} = {}) {
     // console.log({container})
-    const hasLogin = require('../LKApplication').getCurrentApp().getLogin()
+    const hasLogin = lkApp.getLogin()
     // console.log({hasLogin})
     const {connectionOK, NetInfoUtil} = container
 
