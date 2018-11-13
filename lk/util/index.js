@@ -93,18 +93,16 @@ class Util {
   }
   static query (sql) {
     return new Promise(resolve => {
-
-        lkApp.on("dbReady",function () {
-            let db = new DBProxy()
-            db.transaction((tx) => {
-                db.getAll(sql, [], function (results) {
-                    resolve(results)
-                }, function (err) {
-                    console.log(err)
-                })
-            })
+      lkApp.on('dbReady', function () {
+        let db = new DBProxy()
+        db.transaction(() => {
+          db.getAll(sql, [], function (results) {
+            resolve(results)
+          }, function (err) {
+            console.log(err)
+          })
         })
-
+      })
     })
   }
   static removeAllGroup () {
@@ -151,6 +149,7 @@ class Util {
     const hasLogin = require('../LKApplication').getCurrentApp().getLogin()
     // console.log({hasLogin})
     const {connectionOK, NetInfoUtil} = container
+
     if (connectionOK) {
       // console.log({hasLogin})
       if (hasLogin) {
