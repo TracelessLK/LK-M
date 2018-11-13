@@ -18,7 +18,9 @@ const {appInfoUrl} = config
 const ErrorUtilRN = require('ErrorUtils')
 const util = require('./util')
 const {appendToLog} = util
-const Application = require('./LKApplication')
+const {engine} = require('LK-C')
+
+const Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()
 lkApplication.on('currentUserChanged', user => {
   if (user) {
