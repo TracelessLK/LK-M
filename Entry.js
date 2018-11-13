@@ -6,16 +6,10 @@ import {
 } from 'react-native'
 import {Root} from 'native-base'
 import ConfigManager from './Manifest'
+let Application = ConfigManager.getApplication();
 import DataSource from './lk/store/RNSqlite'
+Application.getCurrentApp().start(DataSource,Application.PLATFORM_RN)
 import LKEntry from './lk/LKEntry'
-// const lkc = require('LK-C')
-// // console.log({lkc})
-// const {Manifest} = lkc
-// console.log({
-//   Manifest, ConfigManager
-// })
-let Application = ConfigManager.getApplication()
-Application.getCurrentApp().start(DataSource)
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
 
