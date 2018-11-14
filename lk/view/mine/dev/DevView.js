@@ -8,7 +8,7 @@ import {ListItem} from 'react-native-elements'
 import {Toast} from 'native-base'
 const {debounceFunc} = require('../../../../common/util/commonUtil')
 const config = require('../../../config')
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()

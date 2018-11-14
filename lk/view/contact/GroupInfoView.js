@@ -9,7 +9,7 @@ import {
   ActivityIndicator
 } from 'react-native'
 const {getAvatarSource} = require('../../util')
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()

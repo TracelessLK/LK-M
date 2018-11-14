@@ -4,7 +4,7 @@ const common = require('@external/common')
 const {List} = common
 const {FuncUtil} = require('@ys/vanilla')
 const {debounceFunc} = FuncUtil
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()

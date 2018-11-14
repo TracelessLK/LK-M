@@ -7,7 +7,7 @@ import {
 import {Root} from 'native-base'
 import DataSource from './lk/store/RNSqlite'
 import LKEntry from './lk/LKEntry'
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 let Application = engine.getApplication()
 Application.getCurrentApp().start(DataSource, Application.PLATFORM_RN)

@@ -8,7 +8,7 @@ import {
 const {PushUtil} = require('@external/common')
 
 const {getAPNDeviceId} = PushUtil
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 const UserManager = engine.get('UserManager')
 
 let Application = engine.getApplication()

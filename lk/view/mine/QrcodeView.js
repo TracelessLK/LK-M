@@ -5,7 +5,7 @@ import {
   View
 } from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()

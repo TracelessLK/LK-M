@@ -26,7 +26,7 @@ import AudioRecorderPlayer from 'react-native-audio-recorder-player'
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 const {getAvatarSource, getIconNameByState} = require('../../util')
 const Constant = require('../state/Constant')
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 let Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()

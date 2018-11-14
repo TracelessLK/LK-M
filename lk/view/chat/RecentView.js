@@ -14,7 +14,7 @@ const {commonUtil, MessageList, PushUtil} = require('@external/common')
 const {removeNotify} = PushUtil
 const {debounceFunc} = commonUtil
 const {getAvatarSource, addExternalFriend} = require('../../util')
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()

@@ -13,7 +13,7 @@ import {
   Toast
 } from 'native-base'
 const md5 = require('crypto-js/md5')
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 let Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()

@@ -9,7 +9,7 @@ import {
 import {Input, Item, Button, Label, Toast, Form} from 'native-base'
 import RSAKey from 'react-native-rsa'
 import deviceInfo from 'react-native-device-info'
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 let Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()

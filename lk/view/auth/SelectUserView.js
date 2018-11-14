@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import {
   View
 } from 'react-native'
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 let Application = engine.getApplication()
 const UserManager = engine.get('UserManager')

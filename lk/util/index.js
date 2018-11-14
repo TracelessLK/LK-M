@@ -3,7 +3,7 @@ import {Text, View} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import React from 'react'
 
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 const DBProxy = engine.get('DBProxy')
 let Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()

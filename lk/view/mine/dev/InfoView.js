@@ -5,7 +5,7 @@ import {
 } from 'react-native'
 import {Card} from 'react-native-elements'
 import DeviceInfo from 'react-native-device-info'
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()

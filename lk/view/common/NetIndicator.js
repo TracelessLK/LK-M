@@ -4,7 +4,7 @@ import {
   View
 } from 'react-native'
 import {Icon} from 'native-base'
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()

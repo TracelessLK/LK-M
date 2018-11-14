@@ -5,7 +5,7 @@ import {
   Text,
   View
 } from 'react-native'
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 const ChatManager = engine.get('ChatManager')
 const {getAvatarSource} = require('../../util')
 const MFApplyManager = engine.get('MFApplyManager')

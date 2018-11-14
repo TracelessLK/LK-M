@@ -3,7 +3,7 @@ import {
   Text
 } from 'react-native'
 import {Badge} from 'native-base'
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 const chatManager = engine.get('ChatManager')
 
 let Application = engine.getApplication()

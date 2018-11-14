@@ -18,7 +18,7 @@ const {appInfoUrl} = config
 const ErrorUtilRN = require('ErrorUtils')
 const util = require('./util')
 const {appendToLog} = util
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()

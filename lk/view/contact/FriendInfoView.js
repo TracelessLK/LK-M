@@ -11,7 +11,7 @@ import {
   Card
 } from 'native-base'
 const {getAvatarSource} = require('../../util')
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const ChatManager = engine.get('ChatManager')
 const ContactManager = engine.get('ContactManager')

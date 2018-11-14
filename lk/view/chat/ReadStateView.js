@@ -4,7 +4,7 @@ import {
   View
 } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 const chatManager = engine.get('ChatManager')
 const {getAvatarSource, getIconNameByState} = require('../../util')
 const Application = engine.getApplication()

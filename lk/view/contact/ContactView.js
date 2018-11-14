@@ -7,7 +7,7 @@ import {
 const common = require('@external/common')
 const {SearchBar, commonUtil, List} = common
 const {debounceFunc} = commonUtil
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()

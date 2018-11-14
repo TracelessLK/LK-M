@@ -5,7 +5,7 @@ import {
   ScrollView
 } from 'react-native'
 import { ListItem } from 'react-native-elements'
-const {engine} = require('LK-C')
+const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
