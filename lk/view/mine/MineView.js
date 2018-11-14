@@ -36,6 +36,7 @@ export default class MineView extends Component<{}> {
     constructor (props) {
       super(props)
       this.user = lkApp.getCurrentUser()
+      // console.log({user: this.user})
 
       let picUrl = this.user.pic
       const avatarSource = getAvatarSource(picUrl)
@@ -153,10 +154,12 @@ export default class MineView extends Component<{}> {
           }
           ws.onopen = () => {
             // console.log('open socket')
-            let msg = {}
-            msg.id = this.user.id
-            msg.serverIP = this.user.serverIP
-            msg.serverPort = this.user.serverPort
+            let msg = {
+              deviceId: this.user.deviceId,
+              id: this.user.id,
+              serverIP: this.user.serverIP,
+              serverPort: this.user.serverPort
+            }
             ws.send(JSON.stringify(msg))
             Toast.show({
               text: '请稍后...',
