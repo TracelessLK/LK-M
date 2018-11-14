@@ -88,13 +88,15 @@ export default class MineView extends Component<{}> {
       )
     }
 
-    showScanView=debounceFunc(() => {
+    showScanView = debounceFunc(() => {
       this.props.navigation.navigate('ScanView', {
-        onRead (event) {
-          const {data} = event
-          const {action} = data
+        onRead: (event) => {
+          let {data} = event
+          data = JSON.parse(data)
+          // console.log({data})
+          const {action, code} = data
 
-          if (action === 'authorize') {
+          if (code === 'LK' && action === 'authorize') {
             this.authorizeOther(data)
           }
         }
@@ -124,7 +126,6 @@ export default class MineView extends Component<{}> {
         if (serverIP) {
           let uri = serverIP + ':' + port
           let ws = new WebSocket('ws://' + uri)
-          const scanV = this
           ws.onmessage = (message) => {
             let msg = JSON.parse(message.data)
             if (msg.state) { // done
@@ -136,11 +137,12 @@ export default class MineView extends Component<{}> {
             } else if (msg.msg) {
               Toast.show({
                 text: msg.msg,
-                position: 'top'
+                position: 'top',
+                type: 'success'
               })
             }
           }
-          ws.onerror = function incoming (event) {
+          ws.onerror = (event) => {
             Toast.show({
               text: '网络连接错误 ' + (event ? event.toString() : ''),
               position: 'top'
@@ -149,7 +151,8 @@ export default class MineView extends Component<{}> {
           ws.onclose = () => {
 
           }
-          ws.onopen = function () {
+          ws.onopen = () => {
+            // console.log('open socket')
             let msg = {}
             msg.id = this.user.id
             msg.serverIP = this.user.serverIP

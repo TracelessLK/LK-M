@@ -2,7 +2,8 @@
 import React, { Component } from 'react'
 import {
   Alert,
-  ScrollView, Text, View
+  ScrollView, Text, View,
+  PushNotificationIOS
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
 import {Toast} from 'native-base'
@@ -141,17 +142,19 @@ export default class BasicInfoView extends Component<{}> {
           }
         },
         {
-          title: 'test',
+          title: 'NotifyView',
           onPress: () => {
             navigation.navigate('NotifyView')
           }
+        },
+        {
+          title: 'test',
+          onPress: () => {
+            PushNotificationIOS.presentLocalNotification({
+              alertBody: 'dsfs'
+            })
+          }
         }
-        // {
-        //   title: 'test',
-        //   onPress: () => {
-        //
-        //   }
-        // },
         // {
         //   title: 'test',
         //   onPress: () => {
