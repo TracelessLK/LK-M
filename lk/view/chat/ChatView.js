@@ -206,6 +206,9 @@ export default class ChatView extends Component<{}> {
          const style = {
            recordEleStyle: {flexDirection: 'row', justifyContent: 'flex-start', alignItems: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? 'flex-start' : 'flex-start', width: '100%', marginTop: 15}
          }
+         const msgBoxStyle = {
+           maxWidth: 200, borderWidth: 0, backgroundColor: '#f9e160', borderRadius: 5, marginLeft: -2, minHeight: 40, padding: 5, overflow: 'hidden'
+         }
          if (msg.senderUid !== user.id) {
            // message received
 
@@ -223,7 +226,7 @@ export default class ChatView extends Component<{}> {
                  : null}
                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start'}}>
                  <Image source={chatLeft} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
-                 <View style={{maxWidth: 200, borderWidth: 0, borderColor: '#e0e0e0', backgroundColor: '#f9e160', borderRadius: 5, marginLeft: -2, minHeight: 40, padding: 10, overflow: 'hidden'}}>
+                 <View style={{...msgBoxStyle, backgroundColor: '#f9e160'}}>
                    {this._getMessage(msg)}
                  </View>
                </View>
@@ -243,7 +246,7 @@ export default class ChatView extends Component<{}> {
              }}>
                <Ionicons name={iconName} size={20} style={{marginRight: 5, lineHeight: 40, color: msg.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}/>
              </TouchableOpacity>
-             <View style={{maxWidth: 200, borderWidth: 0, borderColor: '#e0e0e0', backgroundColor: '#ffffff', borderRadius: 5, minHeight: 40, padding: 10, overflow: 'hidden'}}>
+             <View style={{...msgBoxStyle, backgroundColor: '#ffffff'}}>
                {this._getMessage(msg)}
              </View>
              <Image source={chatRight} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
