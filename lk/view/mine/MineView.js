@@ -139,7 +139,8 @@ export default class MineView extends Component<{}> {
               Toast.show({
                 text: msg.msg,
                 position: 'top',
-                type: 'success'
+                type: 'error',
+                duration: 5000
               })
             }
           }

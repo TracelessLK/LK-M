@@ -5,7 +5,8 @@ import {
   TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native'
 import {Toast} from 'native-base'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import userProvider from '../../logic/provider/LKUserProvider'
+const {engine} = require('@lk/LK-C')
+const UserManager = engine.get('UserManager')
 const versionLocal = require('../../../package').version
 const lkStyle = require('../style')
 const {CryptoUtil} = require('@ys/vanilla')
@@ -31,7 +32,7 @@ export default class ScanRegisterView extends React.Component {
     }
 
   _bootstrapAsync = async () => {
-    const userAry = await userProvider.asyGetAll()
+    const userAry = await UserManager.asyGetAll()
     const {length} = userAry
 
     if (length !== 0) {
