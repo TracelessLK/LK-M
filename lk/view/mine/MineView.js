@@ -159,7 +159,8 @@ export default class MineView extends Component<{}> {
               deviceId: this.user.deviceId,
               id: this.user.id,
               serverIP: this.user.serverIP,
-              serverPort: this.user.serverPort
+              serverPort: this.user.serverPort,
+              name: this.user.name
             }
             ws.send(JSON.stringify(msg))
             Toast.show({

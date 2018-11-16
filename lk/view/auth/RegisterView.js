@@ -25,7 +25,7 @@ export default class RegisterView extends Component<{}> {
   constructor (props) {
     super(props)
     const obj = this.props.navigation.state.params.obj
-    console.log(obj)
+    // console.log(obj)
 
     this.state = {
       hasCheckCode: obj.hasCheckCode,
