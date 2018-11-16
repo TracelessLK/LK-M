@@ -56,8 +56,8 @@ export default class ScanRegisterView extends React.Component {
       const {data} = e
       const decryptedText = decryptAES(data)
       const obj = JSON.parse(decryptedText)
-      console.log({obj})
-      const userAry = await userProvider.asyGetAll()
+      // console.log({obj})
+      const userAry = await UserManager.asyGetAll()
       const {action, ip, port} = obj
       if (action === 'registerForAdmin') {
         this.props.navigation.navigate('CheckCodeView', {
