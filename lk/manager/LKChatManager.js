@@ -1,19 +1,15 @@
 const {engine} = require('@lk/LK-C')
 const ChatManager = engine.get('ChatManager')
 let Application = engine.getApplication()
-const lkApplication = Application.getCurrentApp()
-const user = lkApplication.getCurrentUser()
 
-class LKChatManager extends ChatManager {
-
-}
-
-const instance = new LKChatManager()
+const instance = ChatManager
 
 const update = async () => {
-  this.fire('recentChanged')
+  ChatManager.fire('recentChanged')
+  const lkApplication = Application.getCurrentApp()
+  const user = lkApplication.getCurrentUser()
   let num = await ChatManager.asyGetAllMsgNotReadNum(user.id)
-  this.fire('msgBadgeChanged', num)
+  ChatManager.fire('msgBadgeChanged', num)
 }
 instance.on('msgRead', update)
 
