@@ -416,7 +416,8 @@ export default class ChatView extends Component<{}> {
     doTouchMsgState= ({state, msgId}) => {
       // console.log({state}, this.isGroupChat)
       if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
-        // todo: resend
+        const channel = lkApp.getLKWSChannel()
+        channel.retrySend(this.otherSideId, msgId)
       } else {
         if (this.isGroupChat && (state === chatManager.MESSAGE_STATE_TARGET_READ || state === chatManager.MESSAGE_STATE_SERVER_RECEIVE)) {
           this.props.navigation.navigate('ReadStateView', {
