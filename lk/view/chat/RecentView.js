@@ -18,7 +18,7 @@ const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
-const chatManager = engine.get('ChatManager')
+const chatManager = require('../../manager/LKChatManager')
 const ContactManager = engine.get('ContactManager')
 const _ = require('lodash')
 const addPng = require('../image/add.png')

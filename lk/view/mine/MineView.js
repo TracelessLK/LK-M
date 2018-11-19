@@ -276,7 +276,7 @@ export default class MineView extends Component<{}> {
                   '设置头像',
                   '请选择头像设置方式',
                   [
-                    {text: '取消', onPress: () => {}},
+                    {text: '取消', onPress: null},
                     {text: '拍照',
                       onPress: () => {
                         ImagePicker.openCamera(pickerOption).then(image => {

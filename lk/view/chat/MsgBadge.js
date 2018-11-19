@@ -4,7 +4,7 @@ import {
 } from 'react-native'
 import {Badge} from 'native-base'
 const {engine} = require('@lk/LK-C')
-const chatManager = engine.get('ChatManager')
+const chatManager = require('../../manager/LKChatManager')
 
 let Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
