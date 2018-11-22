@@ -66,4 +66,8 @@ db.removeAllAttachment = function () {
     deleteFolder(dirs.DocumentDir+"/"+userId);
 }
 
+db.readFile = function (filePath) {
+    return RNFetchBlob.fs.readFile(filePath,'base64');
+}
+
 module.exports = db;
