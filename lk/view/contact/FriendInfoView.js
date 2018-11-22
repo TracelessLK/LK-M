@@ -63,12 +63,12 @@ export default class FriendInfoView extends Component<{}> {
           <TouchableOpacity onPress={this.sendMessage} style={{marginVertical: 30, width: '90%', height: 40, borderColor: 'gray', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
             <Text style={{fontSize: 18, textAlign: 'center', color: 'gray'}}>发消息</Text>
           </TouchableOpacity>
-          <View style={{marginVertical: 20}}>
-            <Card title='device id'
-              style={{marginVertical: 50, width: '95%', padding: 10, alignItems: 'center', justifyContent: 'center'}}>
-              <Text>{this.state.allDevice}</Text>
-            </Card>
-          </View>
+          {/*<View style={{marginVertical: 20}}>*/}
+            {/*<Card title='device id'*/}
+              {/*style={{marginVertical: 50, width: '95%', padding: 10, alignItems: 'center', justifyContent: 'center'}}>*/}
+              {/*<Text>{this.state.allDevice}</Text>*/}
+            {/*</Card>*/}
+          {/*</View>*/}
 
         </ScrollView>
       )
