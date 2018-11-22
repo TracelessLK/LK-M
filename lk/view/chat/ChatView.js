@@ -447,7 +447,7 @@ export default class ChatView extends Component<{}> {
 
         img.data = this.getImageData(img)
         const {height, width} = img
-        const widthMax = 200
+        const widthMax = 190
         const heightMax = 400
         const ratio = height / width
         let imgH = widthMax * ratio
