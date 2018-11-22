@@ -443,12 +443,22 @@ export default class ChatView extends Component<{}> {
         result = text
       } else if (rec.type === chatManager.MESSAGE_TYPE_IMAGE) {
         let img = JSON.parse(rec.content)
+        console.log({img})
 
         img.data = this.getImageData(img)
+        const {height, width} = img
+        const widthMax = 200
+        const heightMax = 400
+        const ratio = height / width
+        let imgH = widthMax * ratio
+        let imgW = widthMax
 
-        let imgUri = img
-        let imgW = 180
-        let imgH = 180
+        if (imgH > heightMax) {
+          imgH = heightMax
+          imgW = heightMax / ratio
+        }
+
+        let imgUri
         if (img && img.data) {
           imgUri = 'file://' + img.data
         }
