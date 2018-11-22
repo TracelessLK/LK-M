@@ -443,7 +443,7 @@ export default class ChatView extends Component<{}> {
         result = text
       } else if (rec.type === chatManager.MESSAGE_TYPE_IMAGE) {
         let img = JSON.parse(rec.content)
-        console.log({img})
+        // console.log({img})
 
         img.data = this.getImageData(img)
         const {height, width} = img

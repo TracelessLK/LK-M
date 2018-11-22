@@ -45,3 +45,4 @@ removePathAry.forEach(ele => {
 
 // print error sql
 execSync('node bin/log.js')
+console.log('postinstall finished')

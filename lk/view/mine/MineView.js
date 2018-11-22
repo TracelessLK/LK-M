@@ -133,7 +133,8 @@ export default class MineView extends Component<{}> {
               ws.close()
               Toast.show({
                 text: '授权成功',
-                position: 'top'
+                position: 'top',
+                type: 'success'
               })
             } else if (msg.msg) {
               Toast.show({
