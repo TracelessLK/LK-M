@@ -1,9 +1,9 @@
-const Application = require('../LKApplication')
+const {engine} = require('@lk/LK-C')
 const SQLite = require('react-native-sqlite-storage')
 const RNFetchBlob = require('react-native-fetch-blob').default
 const dirs = RNFetchBlob.fs.dirs;
 
-let dbName = Application.getCurrentApp().getName()||"default";
+let dbName = engine.getApplication().getCurrentApp().getName()||"default";
 const db = SQLite.openDatabase({name: dbName+'.db', location: 'default'}, function () {
 }, function (err) {
 });
@@ -36,6 +36,38 @@ db.saveFile = function (filePath,fileName,data) {
         });
     });
 
+}
+
+async function deleteFolder(p) {
+    let fs = RNFetchBlob.fs;
+    var files = [];
+    let exists = await fs.exists(p);
+    if(exists){
+        files = await fs.ls(p);
+        for(let i=0;i<files.length;i++){
+            let file = p+"/"+files[i];
+            let isDir = await fs.isDir(file);
+            if(isDir) {
+               await deleteFolder(file);
+            } else {
+               await fs.unlink(file);
+            }
+        }
+        try{
+            fs.unlink(p);
+        }catch(e){
+
+        }
+    }
+}
+
+db.removeAllAttachment = function () {
+    let userId = engine.getApplication().getCurrentApp().getCurrentUser().id;
+    deleteFolder(dirs.DocumentDir+"/"+userId);
+}
+
+db.readFile = function (filePath) {
+    return RNFetchBlob.fs.readFile(filePath,'base64');
 }
 
 module.exports = db;
