@@ -194,6 +194,12 @@ export default class MineView extends Component<{}> {
       })
   }
 
+  // todo: should have setting
+  isDevMode () {
+    let ary = ['dds', 'rbg', 'goofy', 'test', 'zcy']
+    return ary.includes(this.user.name)
+  }
+
   render () {
     const {navigation} = this.props
     const list2 = [
@@ -225,7 +231,7 @@ export default class MineView extends Component<{}> {
       }
     ]
 
-    if (config.isDevMode) {
+    if (this.isDevMode()) {
       list2.push(
         {
           title: `开发者工具`,
