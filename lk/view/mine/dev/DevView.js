@@ -163,6 +163,12 @@ export default class BasicInfoView extends Component<{}> {
               alertBody: 'dsfs'
             })
           }
+        },
+        {
+          title: 'throw error',
+          onPress: () => {
+            throw new Error('this is a test')
+          }
         }
         // {
         //   title: 'test',
