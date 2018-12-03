@@ -17,7 +17,7 @@ const {UpdateUtil} = require('@ys/react-native-collection')
 const {appInfoUrl} = config
 const ErrorUtilRN = require('ErrorUtils')
 const util = require('./util')
-const {writeToLog} = util
+const {writeToLog, appendToLog} = util
 const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
@@ -97,6 +97,10 @@ const f = (error) => {
     type: 'error',
     content: error.stack.toString()
   })
+  writeToLog({
+    type: 'now',
+    content: error.stack
+  })
 }
 const resetTime = 1000
 const option = {
@@ -116,6 +120,10 @@ global.onunhandledrejection = (error) => {
   if (error instanceof Error) {
     writeToLog({
       type: 'error',
+      content: error.stack
+    })
+    writeToLog({
+      type: 'now',
       content: error.stack
     })
     errorStock.processError({error})

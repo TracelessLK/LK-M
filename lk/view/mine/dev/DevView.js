@@ -63,6 +63,15 @@ export default class BasicInfoView extends Component<{}> {
           }
         },
         {
+          title: '查看即时日志',
+          onPress: () => {
+            this.props.navigation.navigate('LogView', {
+              path: logPath.now,
+              type: 'now'
+            })
+          }
+        },
+        {
           title: '查看错误日志',
           onPress: () => {
             this.props.navigation.navigate('LogView', {

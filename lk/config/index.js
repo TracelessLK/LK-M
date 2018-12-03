@@ -13,7 +13,8 @@ const config = {
   logPath: {
     error: RNFS.DocumentDirectoryPath + '/error.txt',
     debug: RNFS.DocumentDirectoryPath + '/debug.txt',
-    info: RNFS.DocumentDirectoryPath + '/info.txt'
+    info: RNFS.DocumentDirectoryPath + '/info.txt',
+    now: RNFS.DocumentDirectoryPath + '/now.txt'
   },
   maxChatDisplay: 100
 }
