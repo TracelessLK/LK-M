@@ -44,6 +44,21 @@ class Util {
       console.log(err)
     })
   }
+  static writeToLog (option) {
+    const {content, type} = option
+    // console.log({option})
+    const appendPath = logPath[type]
+    if (__DEV__) {
+      console.log({
+        content, type
+      })
+    }
+    const now = new Date()
+    const str = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}: \n ${content} \n\n\n \n`
+    RNFS.writeFile(appendPath, str, 'utf8').catch((err) => {
+      console.log(err)
+    })
+  }
   static getTabLogo (title, focused, iconName, iconSize = 26, badge) {
     let color = focused ? lkStyle.color.mainColor : '#a0a0a0'
     let style = {display: 'flex', justifyContent: 'center', alignItems: 'center'}

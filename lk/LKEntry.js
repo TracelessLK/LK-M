@@ -17,7 +17,7 @@ const {UpdateUtil} = require('@ys/react-native-collection')
 const {appInfoUrl} = config
 const ErrorUtilRN = require('ErrorUtils')
 const util = require('./util')
-const {appendToLog} = util
+const {writeToLog} = util
 const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
@@ -93,7 +93,7 @@ const {ErrorUtil, ErrorStock} = require('@ys/react-native-collection')
 const {setGlobalErrorHandler} = ErrorUtil
 const f = (error) => {
   console.log({stack: error.stack})
-  appendToLog({
+  writeToLog({
     type: 'error',
     content: error.stack.toString()
   })
@@ -114,7 +114,7 @@ const errorStock = new ErrorStock(resetTime)
 global.onunhandledrejection = (error) => {
   console.log({error})
   if (error instanceof Error) {
-    appendToLog({
+    writeToLog({
       type: 'error',
       content: error.stack
     })
