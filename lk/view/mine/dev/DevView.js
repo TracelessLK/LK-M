@@ -71,15 +71,15 @@ export default class BasicInfoView extends Component<{}> {
             })
           }
         },
-        {
-          title: '查看错误日志',
-          onPress: () => {
-            this.props.navigation.navigate('LogView', {
-              path: logPath.error,
-              type: 'error'
-            })
-          }
-        },
+        // {
+        //   title: '查看错误日志',
+        //   onPress: () => {
+        //     this.props.navigation.navigate('LogView', {
+        //       path: logPath.error,
+        //       type: 'error'
+        //     })
+        //   }
+        // },
         {
           title: '查看信息日志',
           onPress: () => {
@@ -167,6 +167,10 @@ export default class BasicInfoView extends Component<{}> {
         {
           title: 'throw error',
           onPress: () => {
+            Toast.show({
+              text: 'throw an error',
+              position: 'top'
+            })
             throw new Error('this is a test')
           }
         }

@@ -4,7 +4,8 @@ import {
   AsyncStorage,
   Platform,
   YellowBox,
-  Linking
+  Linking,
+  Alert
 } from 'react-native'
 import EntryView from './view/index/EntryView'
 import Promise from 'bluebird'
@@ -93,14 +94,16 @@ const {ErrorUtil, ErrorStock} = require('@ys/react-native-collection')
 const {setGlobalErrorHandler} = ErrorUtil
 const f = (error) => {
   console.log({stack: error.stack})
-  writeToLog({
-    type: 'error',
-    content: error.stack.toString()
-  })
+
   writeToLog({
     type: 'now',
-    content: error.stack
+    content: error.toString() + '\n' + error.stack
   })
+  const user = lkApplication.getCurrentUser()
+  const ary = ['zcy', 'dds', 'rbg', 'goofy']
+  if (user && ary.includes(user.name)) {
+    Alert.alert(error.toString())
+  }
 }
 const resetTime = 1000
 const option = {
@@ -115,16 +118,13 @@ global.Promise = Promise
 
 const errorStock = new ErrorStock(resetTime)
 // console.log(global)
+
 global.onunhandledrejection = (error) => {
   console.log({error})
   if (error instanceof Error) {
     writeToLog({
-      type: 'error',
-      content: error.stack
-    })
-    writeToLog({
       type: 'now',
-      content: error.stack
+      content: error.toString() + '\n' + error.stack
     })
     errorStock.processError({error})
   }
