@@ -52,19 +52,34 @@ export default class RecentView extends Component<{}> {
       // todo: store all not undefined value
       this.channel = lkApp.getLKWSChannel()
       this.user = lkApp.getCurrentUser()
+      const checkNotify = (res) => {
+        console.log({onNotfication: res})
+        const {_data, _alert} = res
+        if (_data) {
+          const {type} = _data
+          if (type === 'notify') {
+            this.props.navigation.navigate('NotifyView', {
+              msg: _alert
+            })
+          }
+        }
+      }
       new PushUtil({
         onNotfication: res => {
-          // console.log({onNotfication: res})
+          checkNotify(res)
         },
         onInitialNotification: res => {
           if (res) {
+            checkNotify(res)
             const {_data: data} = res
             const {senderId, chatId, isGroup} = data
             console.log({onInitialNotification: res})
-            this.chat({
-              otherSideId: isGroup ? chatId : senderId,
-              isGroup
-            })
+            if (isGroup) {
+              this.chat({
+                otherSideId: isGroup ? chatId : senderId,
+                isGroup
+              })
+            }
           }
         }
       })

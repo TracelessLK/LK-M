@@ -38,9 +38,10 @@ export default class NotifyView extends Component<{}> {
   }
 
   render () {
+    const {msg} = this.props.navigation.state.params
     return (
-      <View>
-        <Text>ExternalView</Text>
+      <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '2em'}}>
+        <Text>{msg}</Text>
       </View>
     )
   }

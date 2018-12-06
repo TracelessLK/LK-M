@@ -8,7 +8,7 @@
     "lint": "eslint --ext .js .",
     "start": "export BLUEBIRD_W_FORGOTTEN_RETUR=false && node node_modules/react-native/local-cli/cli.js start",
     "start:android": "react-native run-android",
-    "start:ios": "react-native run-ios",
+    "start:ios": "node bin/startIOS",
     "test": "npm run lint && jest",
     "try": "jest",
     "getAndroidData": "node bin/getAndroidData",
