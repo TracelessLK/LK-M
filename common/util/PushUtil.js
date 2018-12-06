@@ -10,25 +10,9 @@ const {engine} = require('@lk/LK-C')
 const Application = engine.getApplication()
 const lkapp = Application.getCurrentApp()
 
-if (Platform.OS === 'ios') {
-  PushNotificationIOS.requestPermissions().then(() => {
-    PushNotificationIOS.addEventListener('registrationError', (reason) => {
-      throw new Error(reason)
-    })
-    PushNotificationIOS.addEventListener('register', (deviceId) => {
-      const user = lkapp.getCurrentUser()
-      if (user.name === 'zcy') {
-        Alert.alert(deviceId + '')
-      }
-      AsyncStorage.setItem('deviceIdAPN', deviceId)
-    })
-  })
-}
 class PushUtil {
   constructor ({onNotfication, onInitialNotification}) {
     if (Platform.OS === 'ios') {
-      // 必须要调用requestPermissions,否则无法接受到register事件获取deviceId
-
       PushNotificationIOS.getInitialNotification().then(onInitialNotification)
 
       PushUtil.removeNotify()
@@ -49,6 +33,23 @@ class PushUtil {
 
         }
       })
+
+      if (Platform.OS === 'ios') {
+        // 必须要调用requestPermissions,否则无法接受到register事件获取deviceId
+
+        PushNotificationIOS.requestPermissions().then(() => {
+          PushNotificationIOS.addEventListener('register', (deviceId) => {
+            // console.log({deviceId})
+            const user = lkapp.getCurrentUser()
+
+            AsyncStorage.setItem('deviceIdAPN', deviceId)
+          })
+          PushNotificationIOS.addEventListener('registrationError', (reason) => {
+            console.log({registrationError: reason})
+            throw new Error(reason)
+          })
+        })
+      }
     }
   }
 
