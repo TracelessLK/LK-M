@@ -40,7 +40,6 @@ class PushUtil {
         PushNotificationIOS.requestPermissions().then(() => {
           PushNotificationIOS.addEventListener('register', (deviceId) => {
             // console.log({deviceId})
-            const user = lkapp.getCurrentUser()
 
             AsyncStorage.setItem('deviceIdAPN', deviceId)
           })
