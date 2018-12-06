@@ -219,7 +219,7 @@ export default class ChatView extends Component<{}> {
            recordAry.push(<View key={id} style={style.recordEleStyle}>
              <Image source={otherPicSource} style={{width: 40, height: 40, marginLeft: 5, marginRight: 8}} resizeMode="contain"></Image>
              <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
-               {this.isGroupChat
+               {this.isGroupChat && memberInfoObj[msg.senderUid]
                  ? <View style={{marginBottom: 8, marginLeft: 5}}>
                    <Text style={{color: '#808080', fontSize: 13}}> {memberInfoObj[msg.senderUid].name}</Text>
                  </View>

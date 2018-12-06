@@ -5,6 +5,10 @@ import {
   AsyncStorage
 } from 'react-native'
 // import {Toast} from 'native-base'
+const {engine} = require('@lk/LK-C')
+
+const Application = engine.getApplication()
+const lkapp = Application.getCurrentApp()
 
 if (Platform.OS === 'ios') {
   PushNotificationIOS.requestPermissions().then(() => {
@@ -12,10 +16,10 @@ if (Platform.OS === 'ios') {
       throw new Error(reason)
     })
     PushNotificationIOS.addEventListener('register', (deviceId) => {
-      if (__DEV__ && Platform.OS === 'ios') {
-        // console.log(`deviceId APN: ${deviceId}`)
+      const user = lkapp.getCurrentUser()
+      if (user.name === 'zcy') {
+        Alert.alert(deviceId + '')
       }
-      // Alert.alert(deviceId + '')
       AsyncStorage.setItem('deviceIdAPN', deviceId)
     })
   })
