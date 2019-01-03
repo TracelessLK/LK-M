@@ -5,7 +5,10 @@ import {
 } from 'react-native'
 import {Card} from 'react-native-elements'
 import DeviceInfo from 'react-native-device-info'
-const {engine} = require('@lk/LK-C')
+import {isFirstTime} from 'react-native-update'
+
+const LKC = require('@lk/LK-C')
+const {engine} = LKC
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
@@ -35,6 +38,8 @@ export default class InfoView extends Component<{}> {
       `uid:  ${this.user.id}`,
       `clientId:  ${this.user.deviceId}`,
       `bundleId:  ${DeviceInfo.getBundleId()}`,
+      `isFirstTime: ${isFirstTime}`,
+      `engineVersion: ${require('@lk/LK-C/package').version}`,
       `__DEV__:  ${__DEV__ ? '是' : '否'}`,
       `uniqueId:  ${DeviceInfo.getUniqueID()}`,
       `原生版本:  ${DeviceInfo.getVersion()}`,
