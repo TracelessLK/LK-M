@@ -5,14 +5,23 @@ import {
   StyleSheet, View
 } from 'react-native'
 import {Root} from 'native-base'
+import {isFirstTime} from 'react-native-update'
+
 import DataSource from './lk/store/RNSqlite'
 import LKEntry from './lk/LKEntry'
 const {engine} = require('@lk/LK-C')
 
+const packageJson = require('./package.json')
+const {dropExtraTable} = require('./lk/util')
+
 let Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 lkApp.on('dbReady', () => {
-  console.log('dbReady')
+  if (isFirstTime) {
+    if (packageJson.version === '0.0.11') {
+      dropExtraTable()
+    }
+  }
 })
 lkApp.start(DataSource, Application.PLATFORM_RN)
 

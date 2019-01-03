@@ -9,7 +9,6 @@ import {
 } from 'react-native'
 import EntryView from './view/index/EntryView'
 import Promise from 'bluebird'
-import {isFirstTime} from 'react-native-update'
 
 const container = require('./state')
 const config = require('./config')
@@ -25,8 +24,6 @@ const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()
-
-console.log({isFirstTime})
 
 lkApplication.on('currentUserChanged', user => {
   if (user) {
