@@ -168,18 +168,19 @@ class Util {
 
     if (connectionOK) {
       // console.log({hasLogin})
-      if (hasLogin) {
-        func()
-      } else {
-        if (showWarning) {
-          Toast.show({
-            text: '用户身份无法确认,无法使用该功能',
-            position: 'top',
-            type: 'warning',
-            duration: 5000
-          })
-        }
-      }
+      func()
+      // if (hasLogin) {
+      //   func()
+      // } else {
+      //   if (showWarning) {
+      //     Toast.show({
+      //       text: '用户身份无法确认,无法使用该功能',
+      //       position: 'top',
+      //       type: 'warning',
+      //       duration: 5000
+      //     })
+      //   }
+      // }
     } else {
       runFunc(errorCb)
       if (showWarning) {
