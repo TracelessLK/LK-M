@@ -10,7 +10,11 @@ import LKEntry from './lk/LKEntry'
 const {engine} = require('@lk/LK-C')
 
 let Application = engine.getApplication()
-Application.getCurrentApp().start(DataSource, Application.PLATFORM_RN)
+const lkApp = Application.getCurrentApp()
+lkApp.on('dbReady', () => {
+  console.log('dbReady')
+})
+lkApp.start(DataSource, Application.PLATFORM_RN)
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
 

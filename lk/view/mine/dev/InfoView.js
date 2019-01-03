@@ -38,7 +38,7 @@ export default class InfoView extends Component<{}> {
       `uid:  ${this.user.id}`,
       `clientId:  ${this.user.deviceId}`,
       `bundleId:  ${DeviceInfo.getBundleId()}`,
-      `isFirstTime: ${isFirstTime}`,
+      `isFirstTime: ${isFirstTime ? '是' : '否'}`,
       `engineVersion: ${require('@lk/LK-C/package').version}`,
       `__DEV__:  ${__DEV__ ? '是' : '否'}`,
       `uniqueId:  ${DeviceInfo.getUniqueID()}`,

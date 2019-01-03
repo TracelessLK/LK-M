@@ -7,9 +7,12 @@ import {
 } from 'react-native'
 import {ListItem} from 'react-native-elements'
 import {Toast} from 'native-base'
+
+const {engine} = require('@lk/LK-C')
+
 const {debounceFunc} = require('../../../../common/util/commonUtil')
 const config = require('../../../config')
-const {engine} = require('@lk/LK-C')
+const {dropExtraTable} = require('../../../util')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
@@ -173,13 +176,14 @@ export default class BasicInfoView extends Component<{}> {
             })
             throw new Error('this is a test')
           }
+        },
+        {
+          title: 'drop extra table',
+          onPress: () => {
+            dropExtraTable()
+
+          }
         }
-        // {
-        //   title: 'test',
-        //   onPress: () => {
-        //
-        //   }
-        // }
       ]
       const list2 = ary.map(ele => {
         return {

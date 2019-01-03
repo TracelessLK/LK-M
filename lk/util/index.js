@@ -2,6 +2,7 @@ import {Toast} from 'native-base'
 import {Text, View} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import React from 'react'
+import RNRestart from 'react-native-restart'
 
 const {engine} = require('@lk/LK-C')
 const DBProxy = engine.get('DBProxy')
@@ -197,6 +198,34 @@ class Util {
         }
       }
     }
+  }
+
+  static dropExtraTable () {
+    let db = new DBProxy()
+    const tableAry = [
+      'device', 'group_record_state',
+      'magicCode', 'mfapply', 'org',
+      'record']
+    const psAry = []
+    db.transaction(() => {
+      for (let ele of tableAry) {
+        const sql = `
+      drop table ${ele}
+    `
+        const ps = new Promise(resolve => {
+          db.run(sql, [], () => {
+            console.log({sql})
+            resolve()
+          }, (err) => {
+            console.log(sql, err)
+          })
+        })
+        psAry.push(ps)
+      }
+      Promise.all(psAry).then(() => {
+        RNRestart.Restart()
+      })
+    })
   }
 }
 
