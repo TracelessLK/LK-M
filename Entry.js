@@ -5,7 +5,7 @@ import {
   StyleSheet, View
 } from 'react-native'
 import {Root} from 'native-base'
-import {isFirstTime} from 'react-native-update'
+import {isFirstTime, markSuccess} from 'react-native-update'
 
 import DataSource from './lk/store/RNSqlite'
 import LKEntry from './lk/LKEntry'
@@ -18,6 +18,7 @@ let Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 lkApp.on('dbReady', () => {
   if (isFirstTime) {
+    markSuccess()
     if (packageJson.version === '0.0.11') {
       dropExtraTable()
     }
