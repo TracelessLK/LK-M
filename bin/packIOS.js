@@ -30,8 +30,8 @@ timeCount(() => {
   if (archive) {
     console.log('archive ios ....')
     execSync(`
-    cd ios && xcodebuild  -allowProvisioningUpdates  archive -scheme ${scheme} -archivePath "${archivePath}"
-`)
+      cd ios && xcodebuild  -allowProvisioningUpdates  archive -scheme ${scheme} -archivePath "${archivePath}"
+    `)
     console.log('archive success')
   }
   fixFramework()
@@ -42,7 +42,7 @@ timeCount(() => {
   const exportOptionsPath = path.resolve(rootPath, 'ios/ExportOptions.plist')
   execSync(`
     xcodebuild -exportArchive  -allowProvisioningUpdates  -archivePath "${archivePath}.xcarchive" -exportPath "${exportPath}" -exportOptionsPlist '${exportOptionsPath}'
-`)
+  `)
 
   console.log('ipa generated successfully')
   const fileName = `${devConfig.appName}.ipa`
