@@ -8,13 +8,13 @@ const db = SQLite.openDatabase({name: dbName+'.db', location: 'default'}, functi
 }, function (err) {
 });
 
-db.saveFile = function (filePath,fileName,data) {
+db.saveFile = function (filePath,fileName,data,param) {
     return new Promise((resolve,reject)=>{
         var dir = dirs.DocumentDir+filePath;
         var createFile = function () {
             var url = dir+"/"+fileName;
             RNFetchBlob.fs.createFile(url,data,'base64').then(()=>{
-                resolve(url)
+                resolve({url,param})
             }).catch(err=>{
                 reject(err)
             });
