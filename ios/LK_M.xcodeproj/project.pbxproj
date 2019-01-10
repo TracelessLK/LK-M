@@ -55,6 +55,7 @@
 		CF1ABA8062B94815B4E6C203 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 592D96BDFCA14ED784B9F59F /* libRNSVG.a */; };
 		E7537B34C5004356A2A6D892 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 04F8853137F4445C9D03C1CF /* Feather.ttf */; };
 		FBADCEF6BAA04180A9522B7D /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C6B1707F2CD4456B0B0523F /* MaterialCommunityIcons.ttf */; };
+		FD54EB5221E6F12D004104A7 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD7BDC9221917FED007E18C6 /* libRCTCameraRoll.a */; };
 		FD9FE74E211405130079F0E3 /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9FE74C211405120079F0E3 /* QBImagePicker.framework */; };
 		FD9FE74F211405130079F0E3 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9FE74D211405120079F0E3 /* RSKImageCropper.framework */; };
 		FD9FE750211405680079F0E3 /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9FE74C211405120079F0E3 /* QBImagePicker.framework */; };
@@ -607,6 +608,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD54EB5221E6F12D004104A7 /* libRCTCameraRoll.a in Frameworks */,
 				FDFFF669210CD8F3007CDCE7 /* libRCTPushNotification.a in Frameworks */,
 				FDFFF65F210CD7EB007CDCE7 /* libbz2.1.0.tbd in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,

@@ -274,10 +274,8 @@ export default class ChatView extends Component<{}> {
         if (this.extra.contentHeight + headerHeight < keyY) {
           change.msgViewHeight = keyY - headerHeight
         } else {
-          // console.log({height, keyY})
           change.heightAnim = height - keyY
         }
-        // console.log({change})
 
         this.setState(change)
       }
@@ -311,7 +309,6 @@ export default class ChatView extends Component<{}> {
 
     componentWillUnmount =() => {
       chatManager.un('msgChanged', this.msgChange)
-      // console.log(this.keyboardDidShowListener, this.keyboardDidHideListener)
       // todo: could be null
       const ary = ['keyboardDidShow', 'keyboardDidHide']
       ary.forEach(ele => {
@@ -395,7 +392,6 @@ export default class ChatView extends Component<{}> {
           const maxWidth = 1000
           const maxHeight = 1000
           ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null).then((res) => {
-            console.log({path: res.path})
             RNFetchBlob.fs.readFile(res.path, 'base64').then((data) => {
               this.sendImage({data, width: maxWidth, height: maxHeight})
             })
@@ -408,13 +404,11 @@ export default class ChatView extends Component<{}> {
 
     showBiggerImage= (imgUri, msgId) => {
       const biggerImageIndex = this.imageIndexer[msgId]
-      // console.log( msgId,this.imageIndexer)
 
       this.setState({biggerImageVisible: true, biggerImageUri: imgUri, biggerImageIndex})
     }
 
     doTouchMsgState= ({state, msgId}) => {
-      // console.log({state}, this.isGroupChat)
       if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
         const channel = lkApp.getLKWSChannel()
         channel.retrySend(this.otherSideId, msgId)
@@ -430,7 +424,6 @@ export default class ChatView extends Component<{}> {
     }
 
     _getMessage=(rec) => {
-      // console.log({rec})
       const {type, id} = rec
       let result
       if (type === chatManager.MESSAGE_TYPE_TEXT) {
@@ -443,7 +436,6 @@ export default class ChatView extends Component<{}> {
         result = text
       } else if (rec.type === chatManager.MESSAGE_TYPE_IMAGE) {
         let img = JSON.parse(rec.content)
-        // console.log({img})
 
         img.data = this.getImageData(img)
         const {height, width} = img
@@ -469,20 +461,17 @@ export default class ChatView extends Component<{}> {
       } else if (rec.type === chatManager.MESSAGE_TYPE_AUDIO) {
         const {content} = rec
         let {url} = JSON.parse(content)
-        // console.log({url})
         url = this.getCurrentUrl(url)
         const option = {
           url,
           id
         }
         result = <AudioPlay {...option}/>
-        // result = <AudioPlay url={url} audioRecorderPlayer={this.audioRecorderPlayer}/>
       }
       return result
     }
 
     getImageData = (img) => {
-      // console.log({img})
       const {url} = img
       let result = this.getCurrentUrl(url)
 
@@ -512,7 +501,6 @@ export default class ChatView extends Component<{}> {
         this.refreshRecord(this.limit)
       }
     }
-    /* eslint-disable no-unused-vars */
     onContentSizeChange=(contentWidth, contentHeight) => {
       this.extra.lastContentHeight = this.extra.msgViewHeight
       this.extra.contentHeight = contentHeight
@@ -551,11 +539,9 @@ export default class ChatView extends Component<{}> {
       const audioPath = 'lk.m4a'
       await this.audioRecorderPlayer.startRecorder(audioPath)
       this.audioRecorderPlayer.addRecordBackListener((e) => {
-        // console.log({e})
         const {current_position: recordTimeRaw} = e
         const time = this.audioRecorderPlayer.mmssss(Math.floor(recordTimeRaw))
         this.recordTimeRaw = recordTimeRaw
-        // console.log({recordTimeRaw})
         this.setState({
           recordTime: time
         })
@@ -565,11 +551,9 @@ export default class ChatView extends Component<{}> {
 
   cancelRecord = async () => {
     const filePath = await this.audioRecorderPlayer.stopRecorder()
-    // console.log({filePath})
 
     if (filePath) {
       RNFetchBlob.fs.readFile(filePath.replace('file://', ''), 'base64').then((data) => {
-        // console.log({data})
         const ext = _.last(filePath.split('.'))
         lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
           Alert.alert(err.toString())
@@ -691,6 +675,7 @@ export default class ChatView extends Component<{}> {
               onClick={this.closeImage}
               onSave={(url) => {
                 CameraRoll.saveToCameraRoll(url)
+                //todo: toast will be overlapped
                 Alert.alert(
                   '',
                   '图片成功保存到系统相册',
