@@ -436,7 +436,7 @@ export default class ChatView extends Component<{}> {
       if (type === chatManager.MESSAGE_TYPE_TEXT) {
         const text =
                 <MessageText currentMessage={
-                  {text: rec.content}
+                  {text: rec.content.replace(/&nbsp;/g, ' ')}
                 } textStyle={{fontSize: 16, lineHeight: 19, color: rec.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}
                 ></MessageText>
 
