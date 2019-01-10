@@ -18,15 +18,23 @@ import ImageResizer from 'react-native-image-resizer'
 import {
   Toast
 } from 'native-base'
+import {Header} from 'react-navigation'
+import AudioRecorderPlayer from 'react-native-audio-recorder-player'
+
 import NetIndicator from '../common/NetIndicator'
 import MessageText from './MessageText'
-import {Header} from 'react-navigation'
 import AudioPlay from './AudioPlay'
-import AudioRecorderPlayer from 'react-native-audio-recorder-player'
+import commonStyle from '../style/common'
+import style from './ChatView.style'
+
+const {engine} = require('@lk/LK-C')
+const _ = require('lodash')
+const uuid = require('uuid')
+const {DelayIndicator, TextInputWrapper} = require('@ys/react-native-collection')
+
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 const {getAvatarSource, getIconNameByState} = require('../../util')
 const Constant = require('../state/Constant')
-const {engine} = require('@lk/LK-C')
 
 let Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
@@ -34,11 +42,8 @@ const chatManager = engine.get('ChatManager')
 const ContactManager = engine.get('ContactManager')
 const personImg = require('../image/person.png')
 const groupImg = require('../image/group.png')
-const _ = require('lodash')
-const {DelayIndicator, TextInputWrapper} = require('@ys/react-native-collection')
 const chatLeft = require('../image/chat-y-l.png')
 const chatRight = require('../image/chat-w-r.png')
-const uuid = require('uuid')
 const {runNetFunc} = require('../../util')
 
 export default class ChatView extends Component<{}> {
@@ -50,11 +55,12 @@ export default class ChatView extends Component<{}> {
       if (otherSideId) {
         result = {
           headerTitle,
-          headerRight:
-                    <TouchableOpacity onPress={navigation.getParam('navigateToInfo')}
-                      style={{marginRight: 20}}>
-                      <Image source={isGroup ? groupImg : personImg} style={{width: 22, height: 22}} resizeMode="contain"/>
-                    </TouchableOpacity>
+          headerRight: (
+            <TouchableOpacity onPress={navigation.getParam('navigateToInfo')}
+              style={commonStyle.topRightIcon}>
+              <Image source={isGroup ? groupImg : personImg} style={commonStyle.iconImg} resizeMode="contain"/>
+            </TouchableOpacity>
+          )
         }
       }
       return result
@@ -675,7 +681,7 @@ export default class ChatView extends Component<{}> {
               onClick={this.closeImage}
               onSave={(url) => {
                 CameraRoll.saveToCameraRoll(url)
-                //todo: toast will be overlapped
+                // todo: toast will be overlapped
                 Alert.alert(
                   '',
                   '图片成功保存到系统相册',
