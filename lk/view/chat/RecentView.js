@@ -183,8 +183,6 @@ export default class RecentView extends Component<{}> {
         isGroup
       }
       const msgAry = await chatManager.asyGetMsgs(userId, chatId)
-      // console.log({msgAry})
-      // console.log({createTime})
       const {length} = msgAry
       let obj = {
         deletePress: () => {
@@ -216,7 +214,6 @@ export default class RecentView extends Component<{}> {
           }
           this.chat(param)
         }
-        // console.log({picAry})
       } else if (length) {
         const msg = _.last(msgAry)
         const {sendTime, content, type} = msg
@@ -245,11 +242,9 @@ export default class RecentView extends Component<{}> {
     }
 
     getMsgContent (content, type) {
-      // console.log({content})
       const maxDisplay = 15
       if (type === chatManager.MESSAGE_TYPE_TEXT) {
         const {length} = content
-        // console.log({content,length})
         if (length > maxDisplay) {
           content = stripNewline(content.substring(0, maxDisplay)) + '......'
         }
@@ -294,7 +289,6 @@ export default class RecentView extends Component<{}> {
         //   return obj1.sendTime - obj2.sendTime
         // })
         const data = recentAry.map(ele => ele.item)
-        // console.log({data, recentAry})
         contentAry = <MessageList data={data}/>
       } else {
         contentAry =

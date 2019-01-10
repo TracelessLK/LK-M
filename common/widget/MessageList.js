@@ -81,7 +81,6 @@ export default class MessageList extends Component<{}> {
           key = {id}
         />
       )
-      // rowEle = content
       contentAry.push(rowEle)
     }
     return contentAry
