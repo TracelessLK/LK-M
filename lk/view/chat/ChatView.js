@@ -103,8 +103,6 @@ export default class ChatView extends Component<{}> {
         onResponderMove (event) {
           const {nativeEvent} = event
           const {locationX, locationY, pageX, pageY} = nativeEvent
-
-          console.log({locationX, locationY, pageX, pageY})
         },
         onMoveShouldSetResponder (evt) {
           console.log({evt})
@@ -185,13 +183,9 @@ export default class ChatView extends Component<{}> {
        for (let msg of msgAry) {
          let picSource = getAvatarSource(user.pic)
          const {sendTime, id} = msg
-         if (!id) {
-           console.log({noId: msg})
-         }
          if (msgSet.has(id)) {
            continue
          } else {
-           // console.log({id})
            msgSet.add(id)
          }
          msgSet.add(id)
@@ -269,7 +263,6 @@ export default class ChatView extends Component<{}> {
      }
 
     _keyboardDidShow=(e) => {
-      // console.log({e})
       this.keyBoardShowCount++
       const {height} = Dimensions.get('window')
       let keyY = e.endCoordinates.screenY
