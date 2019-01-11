@@ -16,16 +16,19 @@ import ImageViewer from 'react-native-image-zoom-viewer'
 import ImagePicker from 'react-native-image-picker'
 import ImageResizer from 'react-native-image-resizer'
 import {
-  Toast
+  Toast,
+  Radio
 } from 'native-base'
 import {Header} from 'react-navigation'
 import AudioRecorderPlayer from 'react-native-audio-recorder-player'
+import RadioForm from 'react-native-simple-radio-button'
 
 import NetIndicator from '../common/NetIndicator'
 import MessageText from './MessageText'
 import AudioPlay from './AudioPlay'
 import commonStyle from '../style/common'
-import style from './ChatView.style'
+import style, {iconSize, iconColor} from './ChatView.style'
+import TransModal from './TransModal'
 
 const {engine} = require('@lk/LK-C')
 const _ = require('lodash')
@@ -81,7 +84,8 @@ export default class ChatView extends Component<{}> {
         isInited: false,
         showVoiceRecorder: false,
         isRecording: false,
-        recordTime: ''
+        recordTime: '',
+        showMore: false
       }
       this.otherSideId = otherSideId
       this.text = ''
@@ -135,9 +139,7 @@ export default class ChatView extends Component<{}> {
        } else {
          const otherSide = await ContactManager.asyGet(user.id, this.otherSideId)
          this.otherSide = otherSide
-         // console.log({otherSide})
          headerTitle = otherSide.name
-         // console.log({headerTitle})
        }
        const {navigation} = this.props
        navigation.setParams({
@@ -145,7 +147,6 @@ export default class ChatView extends Component<{}> {
        })
 
        const msgAry = await chatManager.asyGetMsgs(user.id, this.otherSideId, limit)
-       // console.log(msgAry)
        const msgOtherSideAry = msgAry.filter(msg => {
          return msg.senderUid !== user.id
        })
@@ -200,7 +201,6 @@ export default class ChatView extends Component<{}> {
              timeStr += date.getMonth() + 1 + '月' + date.getDate() + '日 '
            }
            timeStr += date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
-           // console.log({lastShowingTime})
            recordAry.push(<Text style={{marginVertical: 10, color: '#a0a0a0', fontSize: 11}} key={lastShowingTime || uuid()}>{timeStr}</Text>)
          }
          const style = {
@@ -567,10 +567,35 @@ export default class ChatView extends Component<{}> {
     })
   }
 
+  getIconButtonAry = (option) => {
+    return option.map(ele => {
+      const {iconName, label, onPress} = ele
+      return (
+        <TouchableOpacity style={style.iconButtonWrap} key={iconName} onPress={onPress}>
+          <View style={style.iconButton}>
+            <Ionicons name={iconName} size={38} />
+          </View>
+          <Text style={{color: iconColor}}>{label}</Text>
+        </TouchableOpacity>
+      )
+    })
+  }
+
   render () {
-    let iconColor = '#6f7378'
     const size = 200
     const greyScale = 106
+    const option = [{
+      iconName: 'ios-camera-outline',
+      label: '图片',
+      onPress: this.showImagePicker
+    }, {
+      iconName: 'ios-flame',
+      label: '阅后即焚',
+      onPress: () => {
+       this.refs.modal.show()
+      }
+    }]
+    const iconButtonAry = this.getIconButtonAry(option)
     const contentView =
         <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}
         >
@@ -625,11 +650,12 @@ export default class ChatView extends Component<{}> {
             }}
             >
               <TouchableOpacity onPress={this.showVoiceRecorder}
-                style={{display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', borderWidth: 0}}>
-                <View style={{borderRadius: 15,
+                style={{display: 'flex', alignItems: 'flex-start', justifyContent: 'center', borderWidth: 0}}>
+                <View style={{borderRadius: 17,
                   borderWidth: 1,
-                  width: 30,
-                  marginHorizontal: 5,
+                  width: 34,
+                  height: 34,
+                  marginHorizontal: 2,
                   alignItems: 'center',
                   justifyContent: 'center',
                   borderColor: iconColor}}>
@@ -659,11 +685,16 @@ export default class ChatView extends Component<{}> {
                 this.text = v ? v.trim() : ''
               }} onSubmitEditing={this.send} ref='text'></TextInputWrapper>}
 
-              <TouchableOpacity onPress={this.showImagePicker}
+              <TouchableOpacity onPress={() => {this.setState({showMore: !this.state.showMore})}}
                 style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'center'}}>
-                <Ionicons name="ios-camera-outline" size={38} style={{marginRight: 5}}/>
+                <Ionicons name="ios-add-circle-outline" size={40} style={{marginRight: 5}} color={iconColor}/>
               </TouchableOpacity>
             </View>
+            {this.state.showMore? (
+              <View style={{marginBottom: 20, flexDirection: 'row', justifyContent: 'space-around', width: '100%'}}>
+              {iconButtonAry}
+              </View>): null}
+
           </View>
 
           <Modal visible={this.state.biggerImageVisible} transparent={false} animationType={'fade'}
@@ -685,6 +716,41 @@ export default class ChatView extends Component<{}> {
               index={this.state.biggerImageIndex}
             />
           </Modal>
+
+          <TransModal title='设置阅后即焚时长' ref='modal'>
+            <View style={{alignItems: 'flex-start', justifyContent: 'space-around', marginLeft: 10}}>
+              <RadioForm
+                radio_props={[
+                  {label: '关闭', value: 0 },
+                  {label: '自定义', value: -1 },
+                  {label: '3 秒', value: 1 },
+                  {label: '4 秒', value: 1 },
+                  {label: '5 秒', value: 1 },
+                  {label: '6 秒', value: 1 },
+                  {label: '7 秒', value: 1 },
+                  {label: '8 秒', value: 1 },
+                  {label: '9 秒', value: 1 },
+                  {label: '9 秒', value: 1 },
+                  {label: '9 秒', value: 1 },
+                  {label: '9 秒', value: 1 },
+                  {label: '9 秒', value: 1 },
+                  {label: '9 秒', value: 1 },
+                  {label: '9 秒', value: 1 },
+                  {label: '9 秒', value: 1 },
+                  {label: '9 秒', value: 1 },
+                  {label: '9 秒', value: 1 },
+                  {label: '9 秒', value: 1 }
+                ]}
+                initial={0}
+                onPress={(value) => { this.setState({value}) }}
+                labelStyle = {
+                  {marginHorizontal: 20}
+                }
+                radioStyle={{marginVertical: 15}}
+              />
+            </View>
+
+          </TransModal>
         </View>
     const loadingView = <DelayIndicator/>
     return this.state.isInited ? contentView : loadingView
