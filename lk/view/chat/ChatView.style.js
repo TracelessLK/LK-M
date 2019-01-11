@@ -29,7 +29,30 @@ const obj = {
   },
   iconButtonWrap: {
     ...center
+  },
+  recordEleStyle: {
+    flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start', width: '100%', marginTop: 15
+  },
+  msgBoxStyle: {
+    maxWidth: 200,
+    borderWidth: 0,
+    backgroundColor: '#f9e160',
+    borderRadius: 5,
+    marginLeft: -2,
+    minHeight: 40,
+    padding: 5,
+    overflow: 'hidden'
   }
 }
-
-export default StyleSheet.create(obj)
+// todo: export
+// export default StyleSheet.create(obj)
+/*
+  {
+  "img": 167,
+  "iconButton": 168,
+  "iconButtonWrap": 169,
+  "recordEleStyle": 170,
+  "msgBoxStyle": 171
+}
+   */
+export default obj
