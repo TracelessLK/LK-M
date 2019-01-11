@@ -19,7 +19,8 @@ const lkApp = Application.getCurrentApp()
 lkApp.on('dbReady', () => {
   if (isFirstTime) {
     markSuccess()
-    if (packageJson.version === '0.0.11') {
+    const ary = ['0.0.11', '0.0.15']
+    if (ary.includes(packageJson.version)) {
       dropExtraTable()
     }
   }
