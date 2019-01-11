@@ -8,7 +8,8 @@ import {
   Platform, ScrollView, Text, TextInput, TouchableOpacity, View,
   Alert, RefreshControl,
   CameraRoll,
-  StatusBar
+  StatusBar,
+  AsyncStorage
 } from 'react-native'
 import RNFetchBlob from 'react-native-fetch-blob'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -29,11 +30,12 @@ import AudioPlay from './AudioPlay'
 import commonStyle from '../style/common'
 import style, {iconSize, iconColor} from './ChatView.style'
 import TransModal from './TransModal'
+import TextInputWrapper from './TextInputWrapper'
 
 const {engine} = require('@lk/LK-C')
 const _ = require('lodash')
 const uuid = require('uuid')
-const {DelayIndicator, TextInputWrapper} = require('@ys/react-native-collection')
+const {DelayIndicator} = require('@ys/react-native-collection')
 
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 const {getAvatarSource, getIconNameByState} = require('../../util')
@@ -85,7 +87,8 @@ export default class ChatView extends Component<{}> {
         showVoiceRecorder: false,
         isRecording: false,
         recordTime: '',
-        showMore: false
+        showMore: false,
+        burnValue: {}
       }
       this.otherSideId = otherSideId
       this.text = ''
@@ -268,7 +271,9 @@ export default class ChatView extends Component<{}> {
       let keyY = e.endCoordinates.screenY
       const _f = () => {
         const headerHeight = Header.HEIGHT
-        let change = {}
+        let change = {
+          showMore: false
+        }
 
         if (this.extra.contentHeight + headerHeight < keyY) {
           change.msgViewHeight = keyY - headerHeight
@@ -326,6 +331,11 @@ export default class ChatView extends Component<{}> {
 
       this.refreshRecord(this.limit)
       this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
+      const burnValue = await AsyncStorage.getItem('burnValue')
+      console.log('getBurn', burnValue)
+      this.setState({
+        burnValue: JSON.parse(burnValue)
+      })
     }
 
     _navigateToInfo = () => {
@@ -592,9 +602,10 @@ export default class ChatView extends Component<{}> {
       iconName: 'ios-flame',
       label: '阅后即焚',
       onPress: () => {
-       this.refs.modal.show()
+        this.refs.modal.show()
       }
     }]
+    console.log({burnValue: this.state.burnValue})
     const iconButtonAry = this.getIconButtonAry(option)
     const contentView =
         <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}
@@ -665,7 +676,8 @@ export default class ChatView extends Component<{}> {
                 </View>
 
               </TouchableOpacity>
-              <TextInput ref='text2' style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
+              <TextInput ref='text2'
+                         style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
               {this.state.showVoiceRecorder ? <TouchableOpacity
                 style={{
                   flex: 1,
@@ -683,17 +695,19 @@ export default class ChatView extends Component<{}> {
                 <Text>按住说话</Text>
               </TouchableOpacity> : <TextInputWrapper onChangeText={(v) => {
                 this.text = v ? v.trim() : ''
-              }} onSubmitEditing={this.send} ref='text'></TextInputWrapper>}
+              }} onSubmitEditing={this.send} ref='text' textInputProp={{
+                placeholder: this.state.burnValue? `本消息会在${this.state.burnValue.label}阅后即焚`: ''
+              }}></TextInputWrapper>}
 
-              <TouchableOpacity onPress={() => {this.setState({showMore: !this.state.showMore})}}
+              <TouchableOpacity onPress={() => { this.setState({showMore: !this.state.showMore}) }}
                 style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'center'}}>
                 <Ionicons name="ios-add-circle-outline" size={40} style={{marginRight: 5}} color={iconColor}/>
               </TouchableOpacity>
             </View>
-            {this.state.showMore? (
+            {this.state.showMore ? (
               <View style={{marginBottom: 20, flexDirection: 'row', justifyContent: 'space-around', width: '100%'}}>
-              {iconButtonAry}
-              </View>): null}
+                {iconButtonAry}
+              </View>) : null}
 
           </View>
 
@@ -717,32 +731,35 @@ export default class ChatView extends Component<{}> {
             />
           </Modal>
 
-          <TransModal title='设置阅后即焚时长' ref='modal'>
+          <TransModal title='设置阅后即焚时长' ref='modal' confirm={async () => {
+            console.log('radioValue', this.radioValue)
+            await AsyncStorage.setItem('burnValue', JSON.stringify(this.radioValue))
+            this.setState({
+              burnValue: this.radioValue
+            })
+          }
+          }>
             <View style={{alignItems: 'flex-start', justifyContent: 'space-around', marginLeft: 10}}>
               <RadioForm
                 radio_props={[
-                  {label: '关闭', value: 0 },
-                  {label: '自定义', value: -1 },
-                  {label: '3 秒', value: 1 },
-                  {label: '4 秒', value: 1 },
-                  {label: '5 秒', value: 1 },
-                  {label: '6 秒', value: 1 },
-                  {label: '7 秒', value: 1 },
-                  {label: '8 秒', value: 1 },
-                  {label: '9 秒', value: 1 },
-                  {label: '9 秒', value: 1 },
-                  {label: '9 秒', value: 1 },
-                  {label: '9 秒', value: 1 },
-                  {label: '9 秒', value: 1 },
-                  {label: '9 秒', value: 1 },
-                  {label: '9 秒', value: 1 },
-                  {label: '9 秒', value: 1 },
-                  {label: '9 秒', value: 1 },
-                  {label: '9 秒', value: 1 },
-                  {label: '9 秒', value: 1 }
+                  {label: '关闭',
+                    value: {
+                      label: '关闭',
+                      time: 0
+                    } },
+                  {label: '自定义',
+                    value: {
+                      label: '自定义',
+                      time: -1
+                    } },
+                  {label: '3 秒',
+                    value: {
+                      label: '3秒',
+                      time: 3
+                    } }
                 ]}
                 initial={0}
-                onPress={(value) => { this.setState({value}) }}
+                onPress={(value) => {this.radioValue = value}}
                 labelStyle = {
                   {marginHorizontal: 20}
                 }

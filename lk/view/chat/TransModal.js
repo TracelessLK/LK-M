@@ -5,7 +5,6 @@ import {
   Modal, ScrollView, TouchableOpacity
 } from 'react-native'
 import PropTypes from 'prop-types'
-import RadioForm from "react-native-simple-radio-button";
 
 export default class TransModal extends Component<{}> {
   constructor (props) {
@@ -37,8 +36,11 @@ export default class TransModal extends Component<{}> {
 
   render () {
     return (
-      <Modal transparent visible={this.state.visible}  animationType='fade'>
-        <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center',
+      <Modal transparent visible={this.state.visible} animationType='fade' onRequestClose={this.hide}>
+        <View style={{width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
           backgroundColor: 'rgba(60,60,60, 0.8)'}}>
           <View style={{backgroundColor: 'white', padding: 20, borderRadius: 10, width: '85%', maxHeight: '80%'}}>
             <View style={{marginBottom: 20}}>
@@ -58,7 +60,10 @@ export default class TransModal extends Component<{}> {
                   取消
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                this.props.confirm()
+                this.hide()
+              }}>
                 <Text style={{fontSize: 18, fontWeight: 'bold'}}>
                   确定
                 </Text>
@@ -72,9 +77,13 @@ export default class TransModal extends Component<{}> {
 }
 
 TransModal.defaultProps = {
-  title: ''
+  title: '',
+  confirm: () => {
+
+  }
 }
 
 TransModal.propTypes = {
-  title: PropTypes.string
+  title: PropTypes.string,
+  confirm: PropTypes.func
 }
