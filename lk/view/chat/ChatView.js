@@ -24,8 +24,6 @@ import AudioRecorderPlayer from 'react-native-audio-recorder-player'
 import RadioForm from 'react-native-simple-radio-button'
 
 import NetIndicator from '../common/NetIndicator'
-import MessageText from './MessageText'
-import AudioPlay from './AudioPlay'
 import commonStyle from '../style/common'
 import style, {iconSize, iconColor} from './ChatView.style'
 import TransModal from './TransModal'
@@ -47,8 +45,6 @@ const chatManager = engine.get('ChatManager')
 const ContactManager = engine.get('ContactManager')
 const personImg = require('../image/person.png')
 const groupImg = require('../image/group.png')
-const chatLeft = require('../image/chat-y-l.png')
-const chatRight = require('../image/chat-w-r.png')
 const {runNetFunc} = require('../../util')
 
 export default class ChatView extends Component<{}> {
@@ -185,7 +181,6 @@ export default class ChatView extends Component<{}> {
        let lastShowingTime
        const msgSet = new Set()
        for (let msg of msgAry) {
-         let picSource = getAvatarSource(user.pic)
          const {sendTime, id} = msg
          if (msgSet.has(id)) {
            continue
@@ -206,12 +201,6 @@ export default class ChatView extends Component<{}> {
            timeStr += date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
            recordAry.push(<Text style={{marginVertical: 10, color: '#a0a0a0', fontSize: 11}} key={lastShowingTime || uuid()}>{timeStr}</Text>)
          }
-         const style = {
-           recordEleStyle: {flexDirection: 'row', justifyContent: 'flex-start', alignItems: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? 'flex-start' : 'flex-start', width: '100%', marginTop: 15}
-         }
-         const msgBoxStyle = {
-           maxWidth: 200, borderWidth: 0, backgroundColor: '#f9e160', borderRadius: 5, marginLeft: -2, minHeight: 40, padding: 5, overflow: 'hidden'
-         }
          const option = {
            msg,
            isGroupChat: this.isGroupChat,
@@ -219,53 +208,6 @@ export default class ChatView extends Component<{}> {
            onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? () => { this.showBiggerImage(imgUri, rec.id) } : () => {}
          }
          recordAry.push(<MessageItem key={id} {...option}/>)
-         // if (msg.senderUid !== user.id) {
-         //   // message received
-         //
-         //   // fixme: 存在群成员不是好友的情况
-         //   const otherSide = await ContactManager.asyGet(user.id, msg.senderUid)
-         //   let otherPicSource = getAvatarSource(otherSide.pic)
-         //
-         //   recordAry.push(<View key={id} style={style.recordEleStyle}>
-         //     <Image source={otherPicSource} style={{width: 40, height: 40, marginLeft: 5, marginRight: 8}} resizeMode="contain"></Image>
-         //     <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
-         //       {this.isGroupChat && memberInfoObj[msg.senderUid]
-         //         ? <View style={{marginBottom: 8, marginLeft: 5}}>
-         //           <Text style={{color: '#808080', fontSize: 13}}> {memberInfoObj[msg.senderUid].name}</Text>
-         //         </View>
-         //         : null}
-         //       <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start'}}>
-         //         <Image source={chatLeft} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
-         //         <View style={{...msgBoxStyle, backgroundColor: '#f9e160'}}>
-         //           {this._getMessage(msg)}
-         //         </View>
-         //       </View>
-         //     </View>
-         //     <View style={{marginVertical: 10, marginHorizontal: 10}}>
-         //       <Text style={{color: 'red'}}>10s</Text>
-         //     </View>
-         //   </View>)
-         // } else {
-         //   // message sent
-         //   // console.log({sentMsg: msg})
-         //   let iconName = getIconNameByState(msg.state)
-         //   recordAry.push(<View key={id} style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10}}>
-         //     <TouchableOpacity onPress={() => {
-         //       const option = {
-         //         msgId: id,
-         //         state: msg.state
-         //       }
-         //       this.doTouchMsgState(option)
-         //     }}>
-         //       <Ionicons name={iconName} size={20} style={{marginRight: 5, lineHeight: 40, color: msg.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}/>
-         //     </TouchableOpacity>
-         //     <View style={{...msgBoxStyle, backgroundColor: '#ffffff'}}>
-         //       {this._getMessage(msg)}
-         //     </View>
-         //     <Image source={chatRight} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
-         //     <Image source={picSource} style={{width: 40, height: 40, marginRight: 5, marginLeft: 8}} resizeMode="contain"></Image>
-         //   </View>)
-         // }
        }
        this.setState({
          recordEls: recordAry,
@@ -424,69 +366,6 @@ export default class ChatView extends Component<{}> {
       const biggerImageIndex = this.imageIndexer[msgId]
 
       this.setState({biggerImageVisible: true, biggerImageUri: imgUri, biggerImageIndex})
-    }
-
-    doTouchMsgState= ({state, msgId}) => {
-      if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
-        const channel = lkApp.getLKWSChannel()
-        channel.retrySend(this.otherSideId, msgId)
-      } else {
-        if (this.isGroupChat && (state === chatManager.MESSAGE_STATE_TARGET_READ || state === chatManager.MESSAGE_STATE_SERVER_RECEIVE)) {
-          this.props.navigation.navigate('ReadStateView', {
-            msgId,
-            chatId: this.otherSideId,
-            group: this.otherSide
-          })
-        }
-      }
-    }
-
-    _getMessage=(rec) => {
-      const {type, id} = rec
-      let result
-      if (type === chatManager.MESSAGE_TYPE_TEXT) {
-        const text =
-                <MessageText currentMessage={
-                  {text: rec.content.replace(/&nbsp;/g, ' ')}
-                } textStyle={{fontSize: 16, lineHeight: 19, color: rec.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}
-                ></MessageText>
-
-        result = text
-      } else if (rec.type === chatManager.MESSAGE_TYPE_IMAGE) {
-        let img = JSON.parse(rec.content)
-
-        img.data = this.getImageData(img)
-        const {height, width} = img
-        const widthMax = 190
-        const heightMax = 400
-        const ratio = height / width
-        let imgH = widthMax * ratio
-        let imgW = widthMax
-
-        if (imgH > heightMax) {
-          imgH = heightMax
-          imgW = heightMax / ratio
-        }
-
-        let imgUri
-        if (img && img.data) {
-          imgUri = 'file://' + img.data
-        }
-        result = <TouchableOpacity onPress={() => { this.showBiggerImage(imgUri, rec.id) }}><Image source={{uri: imgUri}} style={{width: imgW, height: imgH}} resizeMode="contain"/></TouchableOpacity>
-      } else if (rec.type === chatManager.MESSAGE_TYPE_FILE) {
-        let file = JSON.parse(rec.content)
-        result = <TouchableOpacity><Ionicons name="ios-document-outline" size={40} style={{marginRight: 5, lineHeight: 40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>
-      } else if (rec.type === chatManager.MESSAGE_TYPE_AUDIO) {
-        const {content} = rec
-        let {url} = JSON.parse(content)
-        url = this.getCurrentUrl(url)
-        const option = {
-          url,
-          id
-        }
-        result = <AudioPlay {...option}/>
-      }
-      return result
     }
 
     getImageData = (img) => {
