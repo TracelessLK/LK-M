@@ -17,8 +17,7 @@ import ImageViewer from 'react-native-image-zoom-viewer'
 import ImagePicker from 'react-native-image-picker'
 import ImageResizer from 'react-native-image-resizer'
 import {
-  Toast,
-  Radio
+  Toast
 } from 'native-base'
 import {Header} from 'react-navigation'
 import AudioRecorderPlayer from 'react-native-audio-recorder-player'
@@ -234,6 +233,9 @@ export default class ChatView extends Component<{}> {
                  </View>
                </View>
              </View>
+             <View style={{marginVertical: 10, marginHorizontal: 10}}>
+               <Text style={{color: 'red'}}>10s</Text>
+             </View>
            </View>)
          } else {
            // message sent
@@ -332,7 +334,6 @@ export default class ChatView extends Component<{}> {
       this.refreshRecord(this.limit)
       this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
       const burnValue = await AsyncStorage.getItem('burnValue')
-      console.log('getBurn', burnValue)
       this.setState({
         burnValue: JSON.parse(burnValue)
       })
@@ -605,7 +606,6 @@ export default class ChatView extends Component<{}> {
         this.refs.modal.show()
       }
     }]
-    console.log({burnValue: this.state.burnValue})
     const iconButtonAry = this.getIconButtonAry(option)
     const contentView =
         <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}
@@ -677,7 +677,7 @@ export default class ChatView extends Component<{}> {
 
               </TouchableOpacity>
               <TextInput ref='text2'
-                         style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
+                style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
               {this.state.showVoiceRecorder ? <TouchableOpacity
                 style={{
                   flex: 1,
@@ -696,7 +696,7 @@ export default class ChatView extends Component<{}> {
               </TouchableOpacity> : <TextInputWrapper onChangeText={(v) => {
                 this.text = v ? v.trim() : ''
               }} onSubmitEditing={this.send} ref='text' textInputProp={{
-                placeholder: this.state.burnValue? `本消息会在${this.state.burnValue.label}阅后即焚`: ''
+                placeholder: this.state.burnValue ? `本消息会在${this.state.burnValue.label}阅后即焚` : ''
               }}></TextInputWrapper>}
 
               <TouchableOpacity onPress={() => { this.setState({showMore: !this.state.showMore}) }}
@@ -708,9 +708,7 @@ export default class ChatView extends Component<{}> {
               <View style={{marginBottom: 20, flexDirection: 'row', justifyContent: 'space-around', width: '100%'}}>
                 {iconButtonAry}
               </View>) : null}
-
           </View>
-
           <Modal visible={this.state.biggerImageVisible} transparent={false} animationType={'fade'}
             onRequestClose={this.closeImage}
           >
@@ -759,7 +757,7 @@ export default class ChatView extends Component<{}> {
                     } }
                 ]}
                 initial={0}
-                onPress={(value) => {this.radioValue = value}}
+                onPress={(value) => { this.radioValue = value }}
                 labelStyle = {
                   {marginHorizontal: 20}
                 }
