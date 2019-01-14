@@ -3,6 +3,7 @@ import React from 'react'
 import {
   StatusBar, Image
 } from 'react-native'
+
 import ContactView from '../contact/ContactView'
 import AddContactView from '../contact/AddContactView'
 import FriendInfoView from '../contact/FriendInfoView'
@@ -22,6 +23,8 @@ import LogView from '../mine/dev/LogView'
 import SetUpdateUrlView from '../mine/dev/SetUpdateUrlView'
 import InfoView from '../mine/dev/InfoView'
 import TestView from '../mine/dev/TestView'
+import TestView3 from '../mine/dev/testView/View3'
+import TestView1 from '../mine/dev/testView/View1'
 import BasicInfoView from '../mine/BasicInfoView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
@@ -134,7 +137,9 @@ const MainStack = createStackNavigator({
   AddGroupMemberView,
   SetUpdateUrlView,
   LogView,
-  TestView
+  TestView,
+  TestView3,
+  TestView1
 }, stackNavigatorConfig)
 
 export default MainStack

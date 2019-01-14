@@ -185,9 +185,9 @@ export default class BasicInfoView extends Component<{}> {
           }
         },
         {
-          title: 'TestView',
+          title: 'animation',
           onPress: () => {
-            navigation.navigate('TestView')
+            navigation.navigate('TestView1')
           }
         },
       ]
