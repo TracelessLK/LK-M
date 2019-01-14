@@ -156,6 +156,7 @@ android {
 }
 
 dependencies {
+    compile project(':lottie-react-native')
     compile project(':react-native-voice')
     compile project(':react-native-network-info')
     compile project(':react-native-audio-recorder-player')

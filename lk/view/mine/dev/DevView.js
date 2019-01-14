@@ -183,7 +183,13 @@ export default class BasicInfoView extends Component<{}> {
             dropExtraTable()
 
           }
-        }
+        },
+        {
+          title: 'TestView',
+          onPress: () => {
+            navigation.navigate('TestView')
+          }
+        },
       ]
       const list2 = ary.map(ele => {
         return {

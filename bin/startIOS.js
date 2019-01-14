@@ -3,15 +3,17 @@ const {CliUtil} = require('@ys/collection')
 const childProcess = require('child_process')
 const chalk = require('chalk')
 const inquirer = require('inquirer')
+const verbose = require('debug')('verbose')
+const {FuncUtil} = require('@ys/vanilla')
 
 const {execSync} = CliUtil
 const path = require('path')
 const rootDir = path.resolve(__dirname, '../')
 const config = require(path.resolve(rootDir, 'config/devConfig'))
 const {udid} = config
-const verbose = require('debug')('verbose')
+const {timeCount} = FuncUtil
 
-start()
+timeCount(start)
 
 async function start () {
   let deviceUdid
