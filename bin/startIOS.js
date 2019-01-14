@@ -19,10 +19,9 @@ async function start () {
   // config in the config file
   if (udid) {
     deviceUdid = udid
-
   } else {
     const result = childProcess.execSync('instruments -s devices').toString()
-    // udid, length 40, like '93ab5ffa6efe55b21d59385bcc782cabcdea5414]'
+    // udid, length 40, like '93ab5ffa6efe55b21d59385bcc782cabcdea5414'
     let regSrc = '\\n.+\\(.+\\)\\s\\[([a-z]|[0-9]){40}\\]'
     const matchAry = result.match(new RegExp(regSrc, 'g'))
 
@@ -67,7 +66,7 @@ react-native run-ios --udid ${udidParam}
 }
 
 function getUdid (str) {
-  const ary = str.match(/\[(([a-z]|[0-9]){40})\]/)
+  const ary = str.match(/\[(([a-z]|[0-9]){40})]/)
 
   return ary[1]
 }

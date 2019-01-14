@@ -3,10 +3,11 @@
   "version": "0.0.15",
   "private": true,
   "scripts": {
+    "start": "npm run start:ios",
     "coverage": "node bin/coverage",
     "flow": "flow",
     "lint": "eslint --ext .js .",
-    "start": "export BLUEBIRD_W_FORGOTTEN_RETUR=false && node node_modules/react-native/local-cli/cli.js start",
+    "start:packager": "export BLUEBIRD_W_FORGOTTEN_RETUR=false && node node_modules/react-native/local-cli/cli.js start",
     "start:android": "react-native run-android",
     "start:ios": "node bin/startIOS",
     "test": "npm run lint && jest",

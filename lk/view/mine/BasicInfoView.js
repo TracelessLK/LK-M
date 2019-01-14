@@ -12,7 +12,7 @@ const lkApp = Application.getCurrentApp()
 const common = require('@external/common')
 const { commonUtil } = common
 const {debounceFunc} = commonUtil
-const userManager = require('../../core/UserManager')
+const userManager = engine.get('UserManager')
 
 export default class BasicInfoView extends Component<{}> {
     static navigationOptions = () => {
