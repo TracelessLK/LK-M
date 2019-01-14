@@ -617,7 +617,6 @@ export default class ChatView extends Component<{}> {
           </Modal>
 
           <TransModal title='设置阅后即焚时长' ref='modal' confirm={async () => {
-            console.log('radioValue', this.radioValue)
             await AsyncStorage.setItem('burnValue', JSON.stringify(this.radioValue))
             this.setState({
               burnValue: this.radioValue
