@@ -19,7 +19,9 @@ const obj = {
   'MotionCorpse-Jrcanest': require('../../../../../resource/animations/MotionCorpse-Jrcanest.json'),
   'PinJump': require('../../../../../resource/animations/PinJump.json'),
   'TwitterHeart': require('../../../../../resource/animations/TwitterHeart.json'),
-  'Watermelon': require('../../../../../resource/animations/Watermelon.json')
+  'Watermelon': require('../../../../../resource/animations/Watermelon.json'),
+  'loading': require('../../../../../resource/animations/loading.json'),
+  'sending': require('../../../../../resource/animations/sending.json')
 }
 const ary = Object.keys(obj)
 

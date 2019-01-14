@@ -15,7 +15,7 @@ const {engine} = require('@lk/LK-C')
 
 const chatLeft = require('../image/chat-y-l.png')
 const chatRight = require('../image/chat-w-r.png')
-const {getAvatarSource, getIconNameByState} = require('../../util')
+const {getAvatarSource, getIconNameByState, getIconByState} = require('../../util')
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 
 let Application = engine.getApplication()
@@ -124,7 +124,7 @@ export default class MessageItem extends Component<{}> {
     const {msg, memberInfoObj, isGroupChat} = this.props
     const user = lkApp.getCurrentUser()
     const picSource = getAvatarSource(user.pic)
-    const {id, senderUid} = msg
+    const {id, senderUid, state} = msg
     let content = null
 
     if (senderUid !== user.id) {
@@ -157,17 +157,17 @@ export default class MessageItem extends Component<{}> {
       )
     } else {
       // message sent
-      let iconName = getIconNameByState(msg.state)
+      const icon = getIconByState(state)
       content = (
         <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10}}>
           <TouchableOpacity onPress={() => {
             const option = {
               msgId: id,
-              state: msg.state
+              state
             }
             this.doTouchMsgState(option)
           }}>
-            <Ionicons name={iconName} size={20} style={{marginRight: 5, lineHeight: 40, color: msg.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}/>
+            {icon}
           </TouchableOpacity>
           <View style={{...msgBoxStyle, backgroundColor: '#ffffff'}}>
             {this._getMessage(msg)}

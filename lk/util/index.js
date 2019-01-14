@@ -1,8 +1,10 @@
 import {Toast} from 'native-base'
-import {Text, View} from 'react-native'
+import {Text, TouchableOpacity, View} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import React from 'react'
 import RNRestart from 'react-native-restart'
+import Ionicons from "react-native-vector-icons/Ionicons"
+import LottieView from 'lottie-react-native'
 
 const {engine} = require('@lk/LK-C')
 const DBProxy = engine.get('DBProxy')
@@ -139,6 +141,29 @@ class Util {
       return 'ios-bonfire-outline'
     }
     return 'ios-help'
+  }
+
+  static getIconByState (state) {
+    let result = <Ionicons name={Util.getIconNameByState(state)} size={20} style={{marginRight: 5, lineHeight: 40, color: state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}/>
+
+    // if (state === chatManager.MESSAGE_STATE_SENDING) {
+    if (false) {
+      const option = {
+        autoplay: true,
+        loop: true,
+        source: require('../../resource/animations/loading.json'),
+        style: {
+          width: 200,
+          height: 200,
+          borderWidth: 2,
+          boderColor: 'black'
+        },
+        autoSize: true
+      }
+      result = <LottieView  {...option}/>
+    }
+    return result
+
   }
   static deleteTable (tableName) {
     if (Array.isArray(tableName)) {

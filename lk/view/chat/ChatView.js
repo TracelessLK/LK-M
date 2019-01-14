@@ -29,11 +29,11 @@ import style, {iconSize, iconColor} from './ChatView.style'
 import TransModal from './TransModal'
 import TextInputWrapper from './TextInputWrapper'
 import MessageItem from './MessageItem'
+import DelayIndicator from './DelayIndicator'
 
 const {engine} = require('@lk/LK-C')
 const _ = require('lodash')
 const uuid = require('uuid')
-const {DelayIndicator} = require('@ys/react-native-collection')
 
 const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
 const {getAvatarSource, getIconNameByState} = require('../../util')

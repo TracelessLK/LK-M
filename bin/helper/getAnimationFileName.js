@@ -5,7 +5,9 @@ const clipboardy = require('clipboardy')
 const rootDir = path.resolve(__dirname, '../../')
 const ary = fs.readdirSync(path.resolve(rootDir, 'resource/animations'))
 const obj = ary.reduce((accumulator, curVal) => {
-  accumulator[`'${curVal.replace('.json', '')}'`] = `require('../../../../../resource/animations/${curVal}')`
+  if (!curVal.startsWith('.')) {
+    accumulator[`'${curVal.replace('.json', '')}'`] = `require('../../../../../resource/animations/${curVal}')`
+  }
   return accumulator
 }, {})
 
