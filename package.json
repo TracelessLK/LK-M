@@ -68,7 +68,6 @@
     "redux": "^4.0.1"
   },
   "devDependencies": {
-    "@ys/eslint-config-rn": "github:spirit1453/codebase#react_native_eslint",
     "babel-jest": "23.4.2",
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "babel-plugin-transform-remove-console": "^6.9.4",
@@ -77,6 +76,8 @@
     "clipboardy": "^1.2.3",
     "debug": "^4.1.1",
     "eslint": "^5.12.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-react": "^7.12.4",
     "inquirer": "^6.2.1",
     "jest": "23.4.2",
     "node-ssh": "^5.1.2",

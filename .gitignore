@@ -67,3 +67,6 @@ coverage
 main.jsbundle*
 unversioned*
 lk/app.json
+
+# mac
+._*

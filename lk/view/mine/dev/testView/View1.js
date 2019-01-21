@@ -20,8 +20,11 @@ const obj = {
   'PinJump': require('../../../../../resource/animations/PinJump.json'),
   'TwitterHeart': require('../../../../../resource/animations/TwitterHeart.json'),
   'Watermelon': require('../../../../../resource/animations/Watermelon.json'),
+  'loading2': require('../../../../../resource/animations/loading2.json'),
   'loading': require('../../../../../resource/animations/loading.json'),
-  'sending': require('../../../../../resource/animations/sending.json')
+  'sending': require('../../../../../resource/animations/sending.json'),
+  'listening': require('../../../../../resource/animations/listening.json'),
+  'loader': require('../../../../../resource/animations/loader.json')
 }
 const ary = Object.keys(obj)
 
