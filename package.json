@@ -29,7 +29,6 @@
     "@expo/react-native-action-sheet": "^1.0.2",
     "@external/common": "file:common",
     "@lk/LK-C": "file:submodule/LK-C",
-    "@ys/collection": "github:spirit1453/node_collection#publish",
     "@ys/react-native-collection": "github:spirit1453/react_native_collection#publish",
     "@ys/vanilla": "github:spirit1453/vanilla_js#publish",
     "aes-js": "^3.1.1",

@@ -1,3 +1,7 @@
 [submodule "submodule/LK-C"]
 	path = submodule/LK-C
 	url = https://github.com/tracelessman/LK-C.git
+[submodule "submodule/node_collection"]
+	path = submodule/node_collection
+	url = https://github.com/spirit1453/node_collection.git
+	branch = publish
