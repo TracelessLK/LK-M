@@ -27,8 +27,10 @@ const {msgBoxStyle} = style
 export default class MessageItem extends Component<{}> {
   constructor (props) {
     super(props)
+    this.timeTotal = 10
     this.state = {
-      content: null
+      content: null,
+      timeLeft: this.timeTotal
     }
   }
 
@@ -120,7 +122,24 @@ export default class MessageItem extends Component<{}> {
     }
   }
 
-  asyncRender = async () => {
+  asyncRender = () => {
+
+
+    const fade = () => {
+      setTimeout(() => {
+        if (this.state.timeLeft > 0) {
+          this.setState({
+            timeLeft: this.state.timeLeft - 1
+          })
+          fade()
+        }
+      }, 1000)
+    }
+
+    fade()
+  }
+
+  render () {
     const {msg, memberInfoObj, isGroupChat, otherSide} = this.props
     const user = lkApp.getCurrentUser()
     const picSource = getAvatarSource(user.pic)
@@ -143,14 +162,14 @@ export default class MessageItem extends Component<{}> {
             <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start'}}>
               <Image source={chatLeft} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
               <View style={[msgBoxStyle, {
-                backgroundColor: '#f9e160'
+                backgroundColor: `rgba(249,225,96, ${this.state.timeLeft/this.timeTotal})`
               }]}>
                 {this._getMessage(msg)}
               </View>
             </View>
           </View>
-          <View style={{marginVertical: 10, marginHorizontal: 10}}>
-            <Text style={{color: 'red'}}>10s</Text>
+          <View style={{marginVertical: 30, marginHorizontal: 5}}>
+            {/*<Text style={{color: 'red'}}>10s</Text>*/}
           </View>
         </View>
       )
@@ -176,13 +195,7 @@ export default class MessageItem extends Component<{}> {
         </View>
       )
     }
-    this.setState({
-      content
-    })
-  }
-
-  render () {
-    return this.state.content
+    return content
   }
 }
 
