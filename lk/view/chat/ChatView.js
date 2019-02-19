@@ -207,6 +207,9 @@ export default class ChatView extends Component<{}> {
            memberInfoObj,
            onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? () => { this.showBiggerImage(imgUri, rec.id) } : () => {}
          }
+         if(msg.senderUid !== user.id) {
+           option.otherSide = await ContactManager.asyGet(user.id, msg.senderUid)
+         }
          recordAry.push(<MessageItem key={id} {...option}/>)
        }
        this.setState({

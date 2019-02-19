@@ -121,7 +121,7 @@ export default class MessageItem extends Component<{}> {
   }
 
   asyncRender = async () => {
-    const {msg, memberInfoObj, isGroupChat} = this.props
+    const {msg, memberInfoObj, isGroupChat, otherSide} = this.props
     const user = lkApp.getCurrentUser()
     const picSource = getAvatarSource(user.pic)
     const {id, senderUid, state} = msg
@@ -130,7 +130,6 @@ export default class MessageItem extends Component<{}> {
     if (senderUid !== user.id) {
       // message received
       // fixme: 存在群成员不是好友的情况
-      const otherSide = await ContactManager.asyGet(user.id, senderUid)
       let otherPicSource = getAvatarSource(otherSide.pic)
       content = (
         <View style={style.recordEleStyle}>
