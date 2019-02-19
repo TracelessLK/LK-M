@@ -151,7 +151,9 @@ export default class MessageItem extends Component<{}> {
       // fixme: 存在群成员不是好友的情况
       let otherPicSource = getAvatarSource(otherSide.pic)
       content = (
-        <View style={style.recordEleStyle}>
+        <View style={[style.recordEleStyle,{
+          // backgroundColor: 'red'
+        }]}>
           <Image source={otherPicSource} style={{width: 40, height: 40, marginLeft: 5, marginRight: 8}} resizeMode="contain"></Image>
           <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
             {isGroupChat && memberInfoObj[msg.senderUid]
@@ -162,7 +164,7 @@ export default class MessageItem extends Component<{}> {
             <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start'}}>
               <Image source={chatLeft} style={{width: 11, height: 18, marginTop: 11}} resizeMode="contain"></Image>
               <View style={[msgBoxStyle, {
-                backgroundColor: `rgba(249,225,96, ${this.state.timeLeft/this.timeTotal})`
+                backgroundColor: '#f9e160'
               }]}>
                 {this._getMessage(msg)}
               </View>
