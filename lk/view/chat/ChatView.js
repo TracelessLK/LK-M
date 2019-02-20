@@ -180,6 +180,9 @@ export default class ChatView extends Component<{}> {
        const recordAry = []
        let lastShowingTime
        const msgSet = new Set()
+       const {length: msgLength} = msgAry
+       let opacity = 1
+       const interval = 1/ (msgLength)
        for (let msg of msgAry) {
          const {sendTime, id} = msg
          if (msgSet.has(id)) {
@@ -205,12 +208,14 @@ export default class ChatView extends Component<{}> {
            msg,
            isGroupChat: this.isGroupChat,
            memberInfoObj,
-           onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? () => { this.showBiggerImage(imgUri, rec.id) } : () => {}
+           onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? () => { this.showBiggerImage(imgUri, rec.id) } : () => {},
+           opacity
          }
          if(msg.senderUid !== user.id) {
            option.otherSide = await ContactManager.asyGet(user.id, msg.senderUid)
          }
          recordAry.push(<MessageItem key={id} {...option}/>)
+         opacity -= interval
        }
        this.setState({
          recordEls: recordAry,

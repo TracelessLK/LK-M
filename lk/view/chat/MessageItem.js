@@ -27,10 +27,8 @@ const {msgBoxStyle} = style
 export default class MessageItem extends Component<{}> {
   constructor (props) {
     super(props)
-    this.timeTotal = 10
     this.state = {
       content: null,
-      timeLeft: this.timeTotal
     }
   }
 
@@ -124,27 +122,20 @@ export default class MessageItem extends Component<{}> {
 
   asyncRender = () => {
 
-
-    const fade = () => {
-      setTimeout(() => {
-        if (this.state.timeLeft > 0) {
-          this.setState({
-            timeLeft: this.state.timeLeft - 1
-          })
-          fade()
-        }
-      }, 1000)
-    }
-
-    fade()
   }
 
   render () {
-    const {msg, memberInfoObj, isGroupChat, otherSide} = this.props
+    const {msg, memberInfoObj, isGroupChat, otherSide, opacity} = this.props
     const user = lkApp.getCurrentUser()
     const picSource = getAvatarSource(user.pic)
     const {id, senderUid, state} = msg
     let content = null
+
+    const overLay = (
+      <View style={{position:'absolute', top:0, left: 0,backgroundColor:`rgba(	213, 224, 242,${opacity})`,width: '100%', height: '100%',zIndex: 10}}>
+
+      </View>
+    )
 
     if (senderUid !== user.id) {
       // message received
@@ -154,6 +145,8 @@ export default class MessageItem extends Component<{}> {
         <View style={[style.recordEleStyle,{
           // backgroundColor: 'red'
         }]}>
+          {overLay}
+
           <Image source={otherPicSource} style={{width: 40, height: 40, marginLeft: 5, marginRight: 8}} resizeMode="contain"></Image>
           <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
             {isGroupChat && memberInfoObj[msg.senderUid]
@@ -170,6 +163,9 @@ export default class MessageItem extends Component<{}> {
               </View>
             </View>
           </View>
+          <View style={{marginVertical: 25, marginLeft: -5}}>
+            <Image source={require('../image/fire.gif')} style={{width: 40, height:40}} resizeMode="contain"></Image>
+          </View>
           <View style={{marginVertical: 30, marginHorizontal: 5}}>
             {/*<Text style={{color: 'red'}}>10s</Text>*/}
           </View>
@@ -180,6 +176,7 @@ export default class MessageItem extends Component<{}> {
       const icon = getIconByState(state)
       content = (
         <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10}}>
+          {overLay}
           <TouchableOpacity onPress={() => {
             const option = {
               msgId: id,
@@ -212,5 +209,6 @@ MessageItem.propTypes = {
   isGroupChat: PropTypes.bool,
   memberInfoObj: PropTypes.object,
   onPress: PropTypes.func,
-  otherSide: PropTypes.object
+  otherSide: PropTypes.object,
+  opacity: PropTypes.number
 }
