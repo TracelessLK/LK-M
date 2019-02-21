@@ -107,6 +107,7 @@ module.exports = {
     "no-loop-func": 0,
     "no-underscore-dangle": 0,
     "react/forbid-prop-types": 0,
+    "react/require-default-props": 0,
 
     //fixme: in ChatView.js `import ImageResizer from 'react-native-image-resizer'`
     "import/no-unresolved": 0

@@ -5,36 +5,35 @@ import {
   ScrollView, Text, View,
   PushNotificationIOS
 } from 'react-native'
-import {ListItem} from 'react-native-elements'
-import {Toast} from 'native-base'
+import { ListItem } from 'react-native-elements'
+import { Toast } from 'native-base'
 
-const {engine} = require('@lk/LK-C')
+const { engine } = require('@lk/LK-C')
 
-const {debounceFunc} = require('../../../../common/util/commonUtil')
+const { debounceFunc } = require('../../../../common/util/commonUtil')
 const config = require('../../../config')
-const {dropExtraTable} = require('../../../util')
+const { dropExtraTable } = require('../../../util')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const container = require('../../../state')
 const versionLocal = require('../../../../package.json').version
-const {logPath} = config
+
+const { logPath } = config
 
 export default class BasicInfoView extends Component<{}> {
-    static navigationOptions =() => {
-      return {
-        headerTitle: '开发者工具'
+    static navigationOptions =() => ({
+      headerTitle: '开发者工具'
 
-      }
-    }
+    })
 
-    constructor () {
+    constructor() {
       super()
       this.user = lkApp.getCurrentUser()
     }
 
-    render () {
-      const {navigation} = this.props
+    render() {
+      const { navigation } = this.props
       const style = {
         listItem: {
           display: 'flex',
@@ -62,13 +61,13 @@ export default class BasicInfoView extends Component<{}> {
         {
           title: '软件信息',
           onPress: () => {
-            this.props.navigation.navigate('InfoView')
+            navigation.navigate('InfoView')
           }
         },
         {
           title: '查看即时日志',
           onPress: () => {
-            this.props.navigation.navigate('LogView', {
+            navigation.navigate('LogView', {
               path: logPath.now,
               type: 'now'
             })
@@ -86,7 +85,7 @@ export default class BasicInfoView extends Component<{}> {
         {
           title: '查看信息日志',
           onPress: () => {
-            this.props.navigation.navigate('LogView', {
+            navigation.navigate('LogView', {
               path: logPath.info,
               type: 'info'
             })
@@ -95,50 +94,29 @@ export default class BasicInfoView extends Component<{}> {
         {
           title: '查看调试日志',
           onPress: () => {
-            this.props.navigation.navigate('LogView', {
+            navigation.navigate('LogView', {
               path: logPath.debug,
               type: 'debug'
             })
           }
         },
         {
-          title: '重置',
-          onPress: () => {
-            Alert.alert(
-              '提示',
-              '重置后会删除当前账号的所有数据,请确认是否继续本操作?',
-              [
-                {text: '取消', onPress: () => {}, style: 'cancel'},
-                {text: '确认',
-                  onPress: () => {
-                    (async () => {
-                      await lkApp.asyUnRegister()
-                      this.props.navigation.navigate('AuthStack')
-                    })()
-                  }
-                }
-              ],
-              { cancelable: false }
-            )
-          }
-        },
-        {
           title: '设置检查更新服务器地址',
           onPress: () => {
-            this.props.navigation.navigate('SetUpdateUrlView')
+            navigation.navigate('SetUpdateUrlView')
           }
         },
         {
           title: 'updateAnyWay',
           onPress: () => {
-            const {updateUtil} = container
+            const { updateUtil } = container
 
             const option = {
               customInfo: {
                 id: this.user.id,
                 name: this.user.name
               },
-              'updateAnyWay': true,
+              updateAnyWay: true,
               versionLocal,
               checkUpdateErrorCb: (error) => {
                 console.log(error)
@@ -181,7 +159,6 @@ export default class BasicInfoView extends Component<{}> {
           title: 'drop extra table',
           onPress: () => {
             dropExtraTable()
-
           }
         },
         {
@@ -189,39 +166,36 @@ export default class BasicInfoView extends Component<{}> {
           onPress: () => {
             navigation.navigate('TestView1')
           }
-        },
-      ]
-      const list2 = ary.map(ele => {
-        return {
-          title: (
-            <View style={style.listItem}>
-              <View>
-                <Text style={style.titleStyle}>
-                  {ele.title}
-                </Text>
-              </View>
-              <View>
-                <Text style={style.contentStyle}>
-                </Text>
-              </View>
-            </View>),
-          onPress: debounceFunc(ele.onPress)
         }
-      })
+      ]
+      const list2 = ary.map(ele => ({
+        title: (
+          <View style={style.listItem}>
+            <View>
+              <Text style={style.titleStyle}>
+                {ele.title}
+              </Text>
+            </View>
+            <View>
+              <Text style={style.contentStyle} />
+            </View>
+          </View>),
+        onPress: debounceFunc(ele.onPress)
+      }))
 
       return (
-        <ScrollView >
+        <ScrollView>
           <View style={style.listStyle}>
             {
-              list2.map((item, i) =>
+              list2.map((item, i) => (
                 <ListItem
                   key={i}
                   title={item.title}
                   component={item.label}
-                  rightIcon={item.rightIconColor ? {style: {color: item.rightIconColor}} : {}}
+                  rightIcon={item.rightIconColor ? { style: { color: item.rightIconColor } } : {}}
                   onPress={item.onPress}
                 />
-              )
+              ))
             }
           </View>
         </ScrollView>

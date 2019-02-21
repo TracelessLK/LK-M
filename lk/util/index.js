@@ -197,8 +197,22 @@ class Util {
   }
 
   static dropTable(tableName) {
-    const sql = `drop table ${tableName}`
+    const sql = `drop table if exists ${tableName}`
     return Util.query(sql)
+  }
+
+  static truncateTable(option) {
+    const f = (tableName) => {
+      const sql = `delete from ${tableName}`
+      return Util.query(sql)
+    }
+    let result
+    if (Array.isArray(option)) {
+      result = Promise.all(option.map(f))
+    } else {
+      result = f(option)
+    }
+    return result
   }
 
   // todo: should be putinto net channell
@@ -279,7 +293,8 @@ const tableAry = [
   // 'record'
 ];
 (async () => {
-  // Util.dropTable('groupMember')
+  // Util.truncateTable(tableAry)
+
   // const friendAry = await Util.query('select * from contact where relation=1')
   // console.log({friendAry})
   // await Util.removeAllGroup()

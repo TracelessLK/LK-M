@@ -14,13 +14,15 @@ import {
 import RNFetchBlob from 'react-native-fetch-blob'
 import ImageResizer from 'react-native-image-resizer'
 import { NetworkInfo } from 'react-native-network-info'
+
 const common = require('@external/common')
-const {commonUtil} = common
-const {debounceFunc} = commonUtil
-const {getAvatarSource} = require('../../util')
+
+const { commonUtil } = common
+const { debounceFunc } = commonUtil
+const { getAvatarSource } = require('../../util')
 const versionLocal = require('../../../package.json').version
 const config = require('../../config')
-const {engine} = require('@lk/LK-C')
+const { engine } = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
@@ -28,17 +30,16 @@ const chatManager = engine.get('ChatManager')
 const userManager = engine.get('UserManager')
 
 export default class MineView extends Component<{}> {
-    static navigationOptions =() => {
-      return {
-        headerTitle: '我'
-      }
-    }
-    constructor (props) {
+    static navigationOptions =() => ({
+      headerTitle: '我'
+    })
+
+    constructor(props) {
       super(props)
       this.user = lkApp.getCurrentUser()
       // console.log({user: this.user})
 
-      let picUrl = this.user.pic
+      const picUrl = this.user.pic
       const avatarSource = getAvatarSource(picUrl)
       this.state = {
         avatarSource,
@@ -47,16 +48,16 @@ export default class MineView extends Component<{}> {
       this.eventAry = ['nameChanged', 'picChanged']
     }
 
-    componentDidMount () {
-      for (let ele of this.eventAry) {
+    componentDidMount() {
+      for (const ele of this.eventAry) {
         userManager.on(ele, () => {
           this.update(ele)
         })
       }
     }
 
-    componentWillUnmount () {
-      for (let ele of this.eventAry) {
+    componentWillUnmount() {
+      for (const ele of this.eventAry) {
         userManager.un(ele, this.update)
       }
     }
@@ -64,8 +65,8 @@ export default class MineView extends Component<{}> {
     update = (ele) => {
       // console.log({event: ele})
       this.user = lkApp.getCurrentUser()
-      const {name, pic} = this.user
-      this.setState({name, avatarSource: getAvatarSource(pic)})
+      const { name, pic } = this.user
+      this.setState({ name, avatarSource: getAvatarSource(pic) })
     }
 
     clear=() => {
@@ -73,8 +74,9 @@ export default class MineView extends Component<{}> {
         '提示',
         '清除聊天记录后不可恢复,请确认是否继续本操作?',
         [
-          {text: '取消', style: 'cancel'},
-          {text: '确认',
+          { text: '取消', style: 'cancel' },
+          {
+            text: '确认',
             onPress: () => {
               chatManager.clear()
               Toast.show({
@@ -83,7 +85,8 @@ export default class MineView extends Component<{}> {
                 type: 'success',
                 duration: 1000
               })
-            }}
+            }
+          }
         ],
         { cancelable: false }
       )
@@ -92,10 +95,10 @@ export default class MineView extends Component<{}> {
     showScanView = debounceFunc(() => {
       this.props.navigation.navigate('ScanView', {
         onRead: (event) => {
-          let {data} = event
+          let { data } = event
           data = JSON.parse(data)
           // console.log({data})
-          const {action, code} = data
+          const { action, code } = data
 
           if (code === 'LK' && action === 'authorize') {
             this.authorizeOther(data)
@@ -105,8 +108,8 @@ export default class MineView extends Component<{}> {
     })
 
   authorizeOther = (data) => {
-    const {addresses, port} = data
-    NetworkInfo.getIPAddress(ip => {
+    const { addresses, port } = data
+    NetworkInfo.getIPAddress((ip) => {
       try {
         let ipSeg = ip.substring(0, ip.lastIndexOf('.'))
         let serverIP
@@ -125,10 +128,10 @@ export default class MineView extends Component<{}> {
           }
         }
         if (serverIP) {
-          let uri = serverIP + ':' + port
-          let ws = new WebSocket('ws://' + uri)
+          const uri = `${serverIP}:${port}`
+          const ws = new WebSocket(`ws://${uri}`)
           ws.onmessage = (message) => {
-            let msg = JSON.parse(message.data)
+            const msg = JSON.parse(message.data)
             if (msg.state) { // done
               ws.close()
               Toast.show({
@@ -147,7 +150,7 @@ export default class MineView extends Component<{}> {
           }
           ws.onerror = (event) => {
             Toast.show({
-              text: '网络连接错误 ' + (event ? event.toString() : ''),
+              text: `网络连接错误 ${event ? event.toString() : ''}`,
               position: 'top'
             })
           }
@@ -156,7 +159,7 @@ export default class MineView extends Component<{}> {
           }
           ws.onopen = () => {
             // console.log('open socket')
-            let msg = {
+            const msg = {
               deviceId: this.user.deviceId,
               id: this.user.id,
               serverIP: this.user.serverIP,
@@ -181,51 +184,74 @@ export default class MineView extends Component<{}> {
     })
   }
 
-  setAvatar (image) {
+  setAvatar(image) {
     RNFetchBlob.fs.readFile(image.path, 'base64')
       .then(async (data) => {
-        const uri = 'data:image/jpeg;base64,' + data
+        const uri = `data:image/jpeg;base64,${data}`
         const maxSize = 500
         const resized = await ImageResizer.createResizedImage(uri, maxSize, maxSize, 'JPEG', 70, 0, null)
         let resizedUri = await RNFetchBlob.fs.readFile(resized.path, 'base64')
-        resizedUri = 'data:image/jpeg;base64,' + resizedUri
+        resizedUri = `data:image/jpeg;base64,${resizedUri}`
         // console.log({resizedUri, uri})
         await userManager.setUserPic(resizedUri)
       })
   }
 
   // todo: should have setting
-  isDevMode () {
-    let ary = ['dds', 'rbg', 'goofy', 'test', 'zcy', 'iphonework1', 'iphonework2']
+  isDevMode() {
+    const ary = ['dds', 'rbg', 'goofy', 'test', 'zcy', 'iphonework1', 'iphonework2']
     return ary.includes(this.user.name)
   }
 
-  render () {
-    const {navigation} = this.props
+  render() {
+    const { navigation } = this.props
     const list2 = [
       {
-        title: `个人基本信息`,
+        title: '个人基本信息',
         icon: 'contacts',
         onPress: debounceFunc(() => {
-          this.props.navigation.navigate('BasicInfoView')
+          navigation.navigate('BasicInfoView')
         })
       },
       {
-        title: `清除聊天记录`,
-        icon: 'refresh',
+        title: '清除聊天记录',
+        icon: 'delete',
         onPress: this.clear
       },
 
       {
-        title: `扫码授权`,
+        title: '扫码授权',
         icon: 'crop-free',
         onPress: this.showScanView
+      },
+      {
+        title: '重置当前账号',
+        icon: 'refresh',
+        onPress: () => {
+          Alert.alert(
+            '提示',
+            '重置后会删除当前账号的所有数据,请确认是否继续本操作?',
+            [
+              { text: '取消', onPress: () => {}, style: 'cancel' },
+              {
+                text: '确认',
+                onPress: () => {
+                  (async () => {
+                    await lkApp.asyUnRegister()
+                    navigation.navigate('AuthStack')
+                  })()
+                }
+              }
+            ],
+            { cancelable: false }
+          )
+        }
       },
       {
         title: config.isPreviewVersion ? `预览版本:${versionLocal}` : `当前版本:${versionLocal}`,
         icon: 'new-releases',
         onPress: debounceFunc(() => {
-          this.props.navigation.navigate('VersionView', {
+          navigation.navigate('VersionView', {
           })
         })
       }
@@ -234,13 +260,14 @@ export default class MineView extends Component<{}> {
     if (this.isDevMode()) {
       list2.push(
         {
-          title: `开发者工具`,
+          title: '开发者工具',
           icon: 'https',
           onPress: debounceFunc(() => {
-            this.props.navigation.navigate('DevView', {
+            navigation.navigate('DevView', {
             })
           })
-        })
+        }
+      )
     }
 
     const pickerOption = {
@@ -259,8 +286,12 @@ export default class MineView extends Component<{}> {
         <View style={style.listStyle}>
           <ListItem
             title={this.state.name}
-            rightIcon={
-              <Icon name='qrcode' type="font-awesome" iconStyle={{margin: 10}} color='gray'
+            rightIcon={(
+              <Icon
+                name="qrcode"
+                type="font-awesome"
+                iconStyle={{ margin: 10 }}
+                color="gray"
                 raised
                 onPress={debounceFunc(() => {
                   // this.props.navigation.navigate('QrcodeView', {
@@ -273,68 +304,80 @@ export default class MineView extends Component<{}> {
                   //   avatarUrl: this.state.avatarSource.uri
                   // })
                 })}
-              />}
-            avatar={<Avatar
-              large
-              containerStyle={{marginRight: 5}}
-              source={this.state.avatarSource}
-              onPress={() => {
-                Alert.alert(
-                  '设置头像',
-                  '请选择头像设置方式',
-                  [
-                    {text: '取消', onPress: null},
-                    {text: '拍照',
-                      onPress: () => {
-                        ImagePicker.openCamera(pickerOption).then(image => {
-                          this.setAvatar(image)
-                        }).catch(err => {
-                          console.log(err)
-                        })
-                      }},
-                    {text: '从相册获得',
-                      onPress: () => {
-                        ImagePicker.openPicker(pickerOption).then(image => {
-                          this.setAvatar(image)
-                        }).catch(err => {
-                          console.log(err)
-                        })
-                      }}
-                  ],
-                  { cancelable: false }
-                )
-              }}
-              activeOpacity={0.7}
-            />}
-            titleStyle={{fontSize: 18, color: '#424242'}}
+              />
+)}
+            avatar={(
+              <Avatar
+                large
+                containerStyle={{ marginRight: 5 }}
+                source={this.state.avatarSource}
+                onPress={() => {
+                  Alert.alert(
+                    '设置头像',
+                    '请选择头像设置方式',
+                    [
+                      { text: '取消', onPress: null },
+                      {
+                        text: '拍照',
+                        onPress: () => {
+                          ImagePicker.openCamera(pickerOption).then((image) => {
+                            this.setAvatar(image)
+                          }).catch((err) => {
+                            console.log(err)
+                          })
+                        }
+                      },
+                      {
+                        text: '从相册获得',
+                        onPress: () => {
+                          ImagePicker.openPicker(pickerOption).then((image) => {
+                            this.setAvatar(image)
+                          }).catch((err) => {
+                            console.log(err)
+                          })
+                        }
+                      }
+                    ],
+                    { cancelable: false }
+                  )
+                }}
+                activeOpacity={0.7}
+              />
+)}
+            titleStyle={{ fontSize: 18, color: '#424242' }}
           />
 
         </View>
         <View style={style.listStyle}>
           {
-            list2.map((item, i) =>
+            list2.map((item, i) => (
               <ListItem
                 key={i}
                 title={item.title}
 
-                rightIcon={item.rightIconColor ? {style: {color: item.rightIconColor}} : {}}
-                leftIcon={{name: item.icon, style: {}}}
+                rightIcon={item.rightIconColor ? { style: { color: item.rightIconColor } } : {}}
+                leftIcon={{ name: item.icon, style: {} }}
                 subtitle={item.subtitle}
                 onPress={item.onPress}
               />
-            )
+            ))
           }
         </View>
-        <TouchableOpacity style={{backgroundColor: 'white',
-          marginVertical: 40,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 12}} onPress={() => {
-          lkApp.setCurrentUser(null)
-          navigation.navigate('SelectUserView')
-        }}>
-          <Text style={{fontSize: 17, color: '#e53d59'}} >退出登录</Text>
+        <TouchableOpacity
+          style={{
+            backgroundColor: 'white',
+            marginVertical: 40,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 12
+          }}
+          onPress={() => {
+            lkApp.setCurrentUser(null)
+            navigation.navigate('SelectUserView')
+          }}
+        >
+          <Text style={{ fontSize: 17, color: '#e53d59' }}>退出登录</Text>
         </TouchableOpacity>
       </ScrollView>
     )
