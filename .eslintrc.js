@@ -97,7 +97,7 @@ module.exports = {
     "no-useless-computed-key": 2,
     "no-duplicate-imports": 2,
     "radix": [2, "as-needed"],
-    'no-unused-vars': ["error", {"args": "after-used"}],
+    'no-unused-vars': ["error", {"args": "all"}],
     "no-var": 2,
     "semi": [2, "never"],
     "comma-dangle": ["error", "never"],

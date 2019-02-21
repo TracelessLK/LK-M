@@ -209,7 +209,9 @@ export default class ChatView extends Component<{}> {
              isGroupChat: this.isGroupChat,
              memberInfoObj,
              onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE
-               ? () => { this.showBiggerImage(imgUri, rec.id) } : () => {},
+               ? () => {
+                 this.showBiggerImage(id)
+               } : null,
              // opacity: 0 + (msgLength - i) * (1/20)
              opacity: 0
            }
@@ -375,7 +377,7 @@ export default class ChatView extends Component<{}> {
       })
     }
 
-    showBiggerImage= (imgUri, msgId) => {
+    showBiggerImage= (msgId) => {
       const biggerImageIndex = this.imageIndexer[msgId]
 
       this.setState({ biggerImageVisible: true, biggerImageIndex })
@@ -494,6 +496,9 @@ export default class ChatView extends Component<{}> {
   })
 
   render() {
+    const {
+      msgViewHeight, isRecording, recordTime, refreshing, recordEls, showVoiceRecorder
+    } = this.state
     const size = 200
     const greyScale = 106
     const option = [{
@@ -509,8 +514,8 @@ export default class ChatView extends Component<{}> {
     }]
     const iconButtonAry = this.getIconButtonAry(option)
     const contentView = (
-      <View style={{ backgroundColor: '#f0f0f0', height: this.state.msgViewHeight }}>
-        {this.state.isRecording
+      <View style={{ backgroundColor: '#f0f0f0', height: msgViewHeight }}>
+        {isRecording
           ? (
             <View style={{
               position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', top: '25%', zIndex: 2
@@ -534,7 +539,7 @@ export default class ChatView extends Component<{}> {
                 </View>
                 <View style={{ marginTop: 10 }}>
                   <Text style={{ fontSize: 20, color: 'white' }}>
-                    {this.state.recordTime}
+                    {recordTime}
                   </Text>
                 </View>
 
@@ -551,7 +556,7 @@ export default class ChatView extends Component<{}> {
             style={{ width: '100%', backgroundColor: '#d5e0f2' }}
             refreshControl={(
               <RefreshControl
-                refreshing={this.state.refreshing}
+                refreshing={refreshing}
                 onRefresh={this._onRefresh}
               />
 )}
@@ -561,7 +566,7 @@ export default class ChatView extends Component<{}> {
               width: '100%', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20
             }}
             >
-              {this.state.recordEls}
+              {recordEls}
             </View>
           </ScrollView>
           <View style={{
@@ -595,7 +600,7 @@ export default class ChatView extends Component<{}> {
               >
 
                 <Ionicons
-                  name={this.state.showVoiceRecorder ? 'ios-keypad-outline' : 'ios-mic-outline'}
+                  name={showVoiceRecorder ? 'ios-keypad-outline' : 'ios-mic-outline'}
                   size={25}
                   color={iconColor}
                   style={{}}
@@ -609,7 +614,7 @@ export default class ChatView extends Component<{}> {
                 height: 0, width: 0, backgroundColor: 'red', display: 'none'
               }}
             />
-            {this.state.showVoiceRecorder ? (
+            {showVoiceRecorder ? (
               <TouchableOpacity
                 style={{
                   flex: 1,
