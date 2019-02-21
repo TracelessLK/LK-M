@@ -134,9 +134,11 @@ export default class MessageItem extends Component<{}> {
     let content = null
 
     const overLay = (
-      <View style={{
-        position: 'absolute', top: 0, left: 0, backgroundColor: `rgba(213, 224, 242, ${opacity})`, width: '100%', height: '100%', zIndex: 10
-      }} pointerEvents='box-none'
+      <View
+        style={{
+          position: 'absolute', top: 0, left: 0, backgroundColor: `rgba(213, 224, 242, ${opacity})`, width: '100%', height: '100%', zIndex: 10
+        }}
+        pointerEvents="box-none"
       />
     )
 

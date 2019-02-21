@@ -159,9 +159,14 @@ export default class ChatView extends Component<{}> {
        }
        const imageUrls = []
        const imageIndexer = {}
+       const otherSideCache = {}
        let index = 0
        for (let i = 0; i < msgAry.length; i++) {
          const record = msgAry[i]
+         const { senderUid } = record
+         if (!otherSideCache[senderUid]) {
+           otherSideCache[senderUid] = await ContactManager.asyGet(user.id, senderUid)
+         }
          if (record.type === chatManager.MESSAGE_TYPE_IMAGE) {
            const img = JSON.parse(record.content)
 
@@ -216,7 +221,7 @@ export default class ChatView extends Component<{}> {
              opacity: 0
            }
            if (msg.senderUid !== user.id) {
-             option.otherSide = await ContactManager.asyGet(user.id, msg.senderUid)
+             option.otherSide = otherSideCache[msg.senderUid]
            }
            recordAry.push(<MessageItem key={id} {...option} />)
          }
@@ -505,13 +510,15 @@ export default class ChatView extends Component<{}> {
       iconName: 'ios-camera-outline',
       label: '图片',
       onPress: this.showImagePicker
-    }, {
-      iconName: 'ios-flame',
-      label: '阅后即焚',
-      onPress: () => {
-        this.refs.modal.show()
-      }
-    }]
+    },
+    //   {
+    //   iconName: 'ios-flame',
+    //   label: '阅后即焚',
+    //   onPress: () => {
+    //     this.refs.modal.show()
+    //   }
+    // }
+    ]
     const iconButtonAry = this.getIconButtonAry(option)
     const contentView = (
       <View style={{ backgroundColor: '#f0f0f0', height: msgViewHeight }}>
