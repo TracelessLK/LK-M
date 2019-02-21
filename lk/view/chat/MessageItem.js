@@ -126,7 +126,7 @@ export default class MessageItem extends Component<{}> {
 
   render() {
     const {
-      msg, memberInfoObj, isGroupChat, otherSide, opacity
+      msg, memberInfoObj, isGroupChat, sender, opacity
     } = this.props
     const user = lkApp.getCurrentUser()
     const picSource = getAvatarSource(user.pic)
@@ -145,7 +145,7 @@ export default class MessageItem extends Component<{}> {
     if (senderUid !== user.id) {
       // message received
       // fixme: 存在群成员不是好友的情况
-      const otherPicSource = getAvatarSource(otherSide.pic)
+      const otherPicSource = getAvatarSource(sender.pic)
       content = (
         <View style={[style.recordEleStyle, {
           // backgroundColor: 'red'
@@ -239,5 +239,7 @@ MessageItem.propTypes = {
   memberInfoObj: PropTypes.object,
   onPress: PropTypes.func,
   otherSide: PropTypes.object,
-  opacity: PropTypes.number
+  sender: PropTypes.object,
+  opacity: PropTypes.number,
+  navigation: PropTypes.object
 }

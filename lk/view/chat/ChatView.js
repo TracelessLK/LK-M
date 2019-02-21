@@ -159,13 +159,13 @@ export default class ChatView extends Component<{}> {
        }
        const imageUrls = []
        const imageIndexer = {}
-       const otherSideCache = {}
+       const senderCache = {}
        let index = 0
        for (let i = 0; i < msgAry.length; i++) {
          const record = msgAry[i]
          const { senderUid } = record
-         if (!otherSideCache[senderUid]) {
-           otherSideCache[senderUid] = await ContactManager.asyGet(user.id, senderUid)
+         if (!senderCache[senderUid]) {
+           senderCache[senderUid] = await ContactManager.asyGet(user.id, senderUid)
          }
          if (record.type === chatManager.MESSAGE_TYPE_IMAGE) {
            const img = JSON.parse(record.content)
@@ -218,10 +218,12 @@ export default class ChatView extends Component<{}> {
                  this.showBiggerImage(id)
                } : null,
              // opacity: 0 + (msgLength - i) * (1/20)
-             opacity: 0
+             opacity: 0,
+             navigation,
+             otherSide: this.otherSide
            }
            if (msg.senderUid !== user.id) {
-             option.otherSide = otherSideCache[msg.senderUid]
+             option.sender = senderCache[msg.senderUid]
            }
            recordAry.push(<MessageItem key={id} {...option} />)
          }
@@ -420,15 +422,18 @@ export default class ChatView extends Component<{}> {
     }
 
     onContentSizeChange = (contentWidth, contentHeight) => {
-      this.extra.lastContentHeight = this.extra.msgViewHeight
+      const { msgViewHeight } = this.state
+      this.extra.lastContentHeight = msgViewHeight
       this.extra.contentHeight = contentHeight
       this.extra.count++
+      // console.log(this.extra.contentHeight, this.extra.lastContentHeight)
       const offset = Math.floor(this.extra.contentHeight - this.extra.lastContentHeight)
 
       const point = 1
       if (this.extra.count === point) {
         this.scrollView.scrollToEnd({ animated: false })
       } else if (this.extra.count > point) {
+        // console.log('refresing', this.extra.isRefreshingControl)
         if (this.extra.isRefreshingControl) {
           this.scrollView.scrollTo({ x: 0, y: offset, animated: false })
           this.extra.isRefreshingControl = false
