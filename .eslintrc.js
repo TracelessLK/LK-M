@@ -2,15 +2,12 @@
 module.exports = {
   "env": {
     "es6": true,
-    node: true,
     "jest/globals": true,
-    "browser": true,
   },
   "parser": "babel-eslint",
   "plugins": [
     "flowtype",
-    "jest",
-    "plugin:react/recommended"
+    "jest"
   ],
   settings: {
     react: {
@@ -23,7 +20,8 @@ module.exports = {
   "extends": [
     "eslint:recommended",
     "standard",
-    "airbnb"
+    "airbnb",
+    "plugin:react/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": 2018,
@@ -35,7 +33,6 @@ module.exports = {
   },
   "rules": {
     'react/prop-types': 0,
-
     "no-inner-declarations": 0,
     "consistent-return": 2,
     "no-proto": 2,
@@ -102,6 +99,15 @@ module.exports = {
     "radix": [2, "as-needed"],
     'no-unused-vars': ["error", {"args": "after-used"}],
     "no-var": 2,
+    "semi": [2, "never"],
+    "comma-dangle": ["error", "never"],
+    "react/jsx-filename-extension": 0,
+    "no-plusplus": 0,
+    "no-restricted-syntax": 0,
+    "no-loop-func": 0,
+
+    //fixme: in ChatView.js `import ImageResizer from 'react-native-image-resizer'`
+    "import/no-unresolved": 0
 
   },
   globals: {

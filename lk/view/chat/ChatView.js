@@ -19,37 +19,36 @@ import ImageResizer from 'react-native-image-resizer'
 import {
   Toast
 } from 'native-base'
-import {Header} from 'react-navigation'
+import { Header } from 'react-navigation'
 import AudioRecorderPlayer from 'react-native-audio-recorder-player'
 import RadioForm from 'react-native-simple-radio-button'
 
 import NetIndicator from '../common/NetIndicator'
 import commonStyle from '../style/common'
-import style, {iconSize, iconColor} from './ChatView.style'
+import style, { iconColor } from './ChatView.style'
 import TransModal from './TransModal'
 import TextInputWrapper from './TextInputWrapper'
 import MessageItem from './MessageItem'
 import DelayIndicator from './DelayIndicator'
 
-const {engine} = require('@lk/LK-C')
+const { engine } = require('@lk/LK-C')
 const _ = require('lodash')
 const uuid = require('uuid')
 
-const {debounceFunc, getFolderId} = require('../../../common/util/commonUtil')
-const {getAvatarSource, getIconNameByState} = require('../../util')
+const { debounceFunc, getFolderId } = require('../../../common/util/commonUtil')
 const Constant = require('../state/Constant')
 
-let Application = engine.getApplication()
+const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const chatManager = engine.get('ChatManager')
 const ContactManager = engine.get('ContactManager')
 const personImg = require('../image/person.png')
 const groupImg = require('../image/group.png')
-const {runNetFunc} = require('../../util')
+const { runNetFunc } = require('../../util')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions = ({ navigation }) => {
-      const {otherSideId, isGroup} = navigation.state.params
+      const { otherSideId, isGroup } = navigation.state.params
       let headerTitle = navigation.getParam('headerTitle')
       headerTitle = headerTitle || ''
       let result
@@ -57,9 +56,11 @@ export default class ChatView extends Component<{}> {
         result = {
           headerTitle,
           headerRight: (
-            <TouchableOpacity onPress={navigation.getParam('navigateToInfo')}
-              style={commonStyle.topRightIcon}>
-              <Image source={isGroup ? groupImg : personImg} style={commonStyle.iconImg} resizeMode="contain"/>
+            <TouchableOpacity
+              onPress={navigation.getParam('navigateToInfo')}
+              style={commonStyle.topRightIcon}
+            >
+              <Image source={isGroup ? groupImg : personImg} style={commonStyle.iconImg} resizeMode="contain" />
             </TouchableOpacity>
           )
         }
@@ -67,16 +68,16 @@ export default class ChatView extends Component<{}> {
       return result
     }
 
-    constructor (props) {
+    constructor(props) {
       super(props)
       this.minHeight = 35
-      const {isGroup, otherSideId} = this.props.navigation.state.params
+      const { navigation } = this.props
+      const { isGroup, otherSideId } = navigation.state.params
       this.isGroupChat = isGroup
       this.originalContentHeight = Dimensions.get('window').height - Header.HEIGHT
       this.state = {
         biggerImageVisible: false,
         heightAnim: 0,
-        height: this.minHeight,
         refreshing: false,
         msgViewHeight: this.originalContentHeight,
         isInited: false,
@@ -102,19 +103,21 @@ export default class ChatView extends Component<{}> {
 
       const audioRecorderPlayer = new AudioRecorderPlayer()
       this.audioRecorderPlayer = audioRecorderPlayer
-      this._responder = {
-        onResponderMove (event) {
-          const {nativeEvent} = event
-          const {locationX, locationY, pageX, pageY} = nativeEvent
-        },
-        onMoveShouldSetResponder (evt) {
-          console.log({evt})
-          return false
-        },
-        onResponderTerminationRequest () {
-          return true
-        }
-      }
+      // this._responder = {
+      //   onResponderMove(event) {
+      //     const { nativeEvent } = event
+      //     const {
+      //       locationX, locationY, pageX, pageY
+      //     } = nativeEvent
+      //   },
+      //   onMoveShouldSetResponder(evt) {
+      //     console.log({ evt })
+      //     return false
+      //   },
+      //   onResponderTerminationRequest() {
+      //     return true
+      //   }
+      // }
     }
 
      refreshRecord = async (limit) => {
@@ -140,16 +143,14 @@ export default class ChatView extends Component<{}> {
          this.otherSide = otherSide
          headerTitle = otherSide.name
        }
-       const {navigation} = this.props
+       const { navigation } = this.props
        navigation.setParams({
          headerTitle
        })
 
        const msgAry = await chatManager.asyGetMsgs(user.id, this.otherSideId, limit)
-       const msgOtherSideAry = msgAry.filter(msg => {
-         return msg.senderUid !== user.id
-       })
-       const {length: msgOtherSideAryLength} = msgOtherSideAry
+       const msgOtherSideAry = msgAry.filter(msg => msg.senderUid !== user.id)
+       const { length: msgOtherSideAryLength } = msgOtherSideAry
 
        if (msgOtherSideAryLength) {
          this.relativeMsgId = _.last(msgOtherSideAry).id
@@ -162,12 +163,12 @@ export default class ChatView extends Component<{}> {
        for (let i = 0; i < msgAry.length; i++) {
          const record = msgAry[i]
          if (record.type === chatManager.MESSAGE_TYPE_IMAGE) {
-           let img = JSON.parse(record.content)
+           const img = JSON.parse(record.content)
 
            img.data = this.getImageData(img)
 
            imageUrls.push({
-             url: 'file://' + img.data,
+             url: `file://${img.data}`,
              props: {
              }
            })
@@ -180,42 +181,43 @@ export default class ChatView extends Component<{}> {
        const recordAry = []
        let lastShowingTime
        const msgSet = new Set()
-       const {length: msgLength} = msgAry
+       const { length: msgLength } = msgAry
        let opacity = 1
-       const interval = 1/ (msgLength)
-       for (let msg of msgAry) {
-         const {sendTime, id} = msg
-         if (msgSet.has(id)) {
-           continue
-         } else {
+       const interval = 1 / msgLength
+       for (const msg of msgAry) {
+         const { sendTime, id } = msg
+         if (!msgSet.has(id)) {
            msgSet.add(id)
-         }
-         msgSet.add(id)
-         let now = new Date()
-         if ((lastShowingTime && sendTime - lastShowingTime > 10 * 60 * 1000) || !lastShowingTime) {
-           lastShowingTime = sendTime
-           let timeStr = ''
-           let date = new Date(lastShowingTime)
-           if (now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate()) {
-             timeStr += '今天 '
-           } else if (now.getFullYear() === date.getFullYear()) {
-             timeStr += date.getMonth() + 1 + '月' + date.getDate() + '日 '
+           const now = new Date()
+           if ((lastShowingTime && sendTime - lastShowingTime > 10 * 60 * 1000)
+             || !lastShowingTime) {
+             lastShowingTime = sendTime
+             let timeStr = ''
+             const date = new Date(lastShowingTime)
+             if (now.getFullYear() === date.getFullYear()
+               && now.getMonth() === date.getMonth()
+               && now.getDate() === date.getDate()) {
+               timeStr += '今天 '
+             } else if (now.getFullYear() === date.getFullYear()) {
+               timeStr += `${date.getMonth() + 1}月${date.getDate()}日 `
+             }
+             timeStr += `${date.getHours()}:${date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()}`
+             recordAry.push(<Text style={{ marginVertical: 10, color: '#a0a0a0', fontSize: 11 }} key={lastShowingTime || uuid()}>{timeStr}</Text>)
            }
-           timeStr += date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
-           recordAry.push(<Text style={{marginVertical: 10, color: '#a0a0a0', fontSize: 11}} key={lastShowingTime || uuid()}>{timeStr}</Text>)
+           const option = {
+             msg,
+             isGroupChat: this.isGroupChat,
+             memberInfoObj,
+             onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE
+               ? () => { this.showBiggerImage(imgUri, rec.id) } : () => {},
+             opacity
+           }
+           if (msg.senderUid !== user.id) {
+             option.otherSide = await ContactManager.asyGet(user.id, msg.senderUid)
+           }
+           recordAry.push(<MessageItem key={id} {...option} />)
+           opacity -= interval
          }
-         const option = {
-           msg,
-           isGroupChat: this.isGroupChat,
-           memberInfoObj,
-           onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE ? () => { this.showBiggerImage(imgUri, rec.id) } : () => {},
-           opacity
-         }
-         if(msg.senderUid !== user.id) {
-           option.otherSide = await ContactManager.asyGet(user.id, msg.senderUid)
-         }
-         recordAry.push(<MessageItem key={id} {...option}/>)
-         opacity -= interval
        }
        this.setState({
          recordEls: recordAry,
@@ -227,11 +229,11 @@ export default class ChatView extends Component<{}> {
 
     _keyboardDidShow=(e) => {
       this.keyBoardShowCount++
-      const {height} = Dimensions.get('window')
-      let keyY = e.endCoordinates.screenY
+      const { height } = Dimensions.get('window')
+      const keyY = e.endCoordinates.screenY
       const _f = () => {
         const headerHeight = Header.HEIGHT
-        let change = {
+        const change = {
           showMore: false
         }
 
@@ -244,7 +246,7 @@ export default class ChatView extends Component<{}> {
         this.setState(change)
       }
       if (Platform.OS === 'ios') {
-        const {screenY: screenYStart} = e.startCoordinates
+        const { screenY: screenYStart } = e.startCoordinates
         // fix keyboard, in ios, event emits 3 times
         if (screenYStart === height || this.keyBoardShowCount === 3) {
           _f()
@@ -253,8 +255,9 @@ export default class ChatView extends Component<{}> {
         _f()
       }
     }
+
     _keyboardDidHide=() => {
-      this.setState({heightAnim: 0, msgViewHeight: this.originalContentHeight})
+      this.setState({ heightAnim: 0, msgViewHeight: this.originalContentHeight })
     }
 
     msgChange= async () => {
@@ -275,7 +278,7 @@ export default class ChatView extends Component<{}> {
       chatManager.un('msgChanged', this.msgChange)
       // todo: could be null
       const ary = ['keyboardDidShow', 'keyboardDidHide']
-      ary.forEach(ele => {
+      ary.forEach((ele) => {
         Keyboard.removeListener(ele)
       })
     }
@@ -290,7 +293,7 @@ export default class ChatView extends Component<{}> {
       Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
       this.refreshRecord(this.limit)
-      this.props.navigation.setParams({navigateToInfo: debounceFunc(this._navigateToInfo)})
+      this.props.navigation.setParams({ navigateToInfo: debounceFunc(this._navigateToInfo) })
       const burnValue = await AsyncStorage.getItem('burnValue')
       this.setState({
         burnValue: JSON.parse(burnValue)
@@ -299,9 +302,9 @@ export default class ChatView extends Component<{}> {
 
     _navigateToInfo = () => {
       if (this.isGroupChat) {
-        this.props.navigation.navigate('GroupInfoView', {group: this.otherSide})
+        this.props.navigation.navigate('GroupInfoView', { group: this.otherSide })
       } else {
-        this.props.navigation.navigate('FriendInfoView', {friend: this.otherSide})
+        this.props.navigation.navigate('FriendInfoView', { friend: this.otherSide })
       }
     }
 
@@ -329,16 +332,16 @@ export default class ChatView extends Component<{}> {
       }
     }
 
-    sendImage = ({data, width, height}) => {
+    sendImage = ({ data, width, height }) => {
       runNetFunc(() => {
-        lkApp.getLKWSChannel().sendImage(this.otherSideId, data, width, height, this.relativeMsgId, this.isGroupChat).catch(err => {
+        lkApp.getLKWSChannel().sendImage(this.otherSideId, data, width, height, this.relativeMsgId, this.isGroupChat).catch((err) => {
           Alert.alert(err.toString())
         })
       })
     }
 
     showImagePicker=() => {
-      let options = {
+      const options = {
         title: '选择图片',
         cancelButtonTitle: '取消',
         takePhotoButtonTitle: '拍照',
@@ -355,13 +358,13 @@ export default class ChatView extends Component<{}> {
         } else if (response.error) {
         } else if (response.customButton) {
         } else {
-          let imageUri = response.uri
+          const imageUri = response.uri
 
           const maxWidth = 1000
           const maxHeight = 1000
           ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null).then((res) => {
             RNFetchBlob.fs.readFile(res.path, 'base64').then((data) => {
-              this.sendImage({data, width: maxWidth, height: maxHeight})
+              this.sendImage({ data, width: maxWidth, height: maxHeight })
             })
           }).catch((err) => {
             console.log(err)
@@ -373,12 +376,12 @@ export default class ChatView extends Component<{}> {
     showBiggerImage= (imgUri, msgId) => {
       const biggerImageIndex = this.imageIndexer[msgId]
 
-      this.setState({biggerImageVisible: true, biggerImageUri: imgUri, biggerImageIndex})
+      this.setState({ biggerImageVisible: true, biggerImageUri: imgUri, biggerImageIndex })
     }
 
     getImageData = (img) => {
-      const {url} = img
-      let result = this.getCurrentUrl(url)
+      const { url } = img
+      const result = this.getCurrentUrl(url)
 
       return result
     }
@@ -406,6 +409,7 @@ export default class ChatView extends Component<{}> {
         this.refreshRecord(this.limit)
       }
     }
+
     onContentSizeChange=(contentWidth, contentHeight) => {
       this.extra.lastContentHeight = this.extra.msgViewHeight
       this.extra.contentHeight = contentHeight
@@ -414,23 +418,23 @@ export default class ChatView extends Component<{}> {
 
       const point = 1
       if (this.extra.count === point) {
-        this.scrollView.scrollToEnd({animated: false})
+        this.scrollView.scrollToEnd({ animated: false })
       } else if (this.extra.count > point) {
         if (this.extra.isRefreshingControl) {
-          this.scrollView.scrollTo({x: 0, y: offset, animated: false})
+          this.scrollView.scrollTo({ x: 0, y: offset, animated: false })
           this.extra.isRefreshingControl = false
         } else {
-          this.scrollView.scrollToEnd({animated: false})
+          this.scrollView.scrollToEnd({ animated: false })
         }
       }
     }
 
     closeImage = () => {
-      this.setState({biggerImageVisible: false, biggerImageUri: null})
+      this.setState({ biggerImageVisible: false, biggerImageUri: null })
     }
 
   showVoiceRecorder = () => {
-    const {showVoiceRecorder} = this.state
+    const { showVoiceRecorder } = this.state
     this.setState({
       showVoiceRecorder: !showVoiceRecorder
     })
@@ -444,7 +448,7 @@ export default class ChatView extends Component<{}> {
       const audioPath = 'lk.m4a'
       await this.audioRecorderPlayer.startRecorder(audioPath)
       this.audioRecorderPlayer.addRecordBackListener((e) => {
-        const {current_position: recordTimeRaw} = e
+        const { current_position: recordTimeRaw } = e
         const time = this.audioRecorderPlayer.mmssss(Math.floor(recordTimeRaw))
         this.recordTimeRaw = recordTimeRaw
         this.setState({
@@ -460,7 +464,7 @@ export default class ChatView extends Component<{}> {
     if (filePath) {
       RNFetchBlob.fs.readFile(filePath.replace('file://', ''), 'base64').then((data) => {
         const ext = _.last(filePath.split('.'))
-        lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch(err => {
+        lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch((err) => {
           Alert.alert(err.toString())
         })
       })
@@ -473,21 +477,19 @@ export default class ChatView extends Component<{}> {
     })
   }
 
-  getIconButtonAry = (option) => {
-    return option.map(ele => {
-      const {iconName, label, onPress} = ele
-      return (
-        <TouchableOpacity style={style.iconButtonWrap} key={iconName} onPress={onPress}>
-          <View style={style.iconButton}>
-            <Ionicons name={iconName} size={38} />
-          </View>
-          <Text style={{color: iconColor}}>{label}</Text>
-        </TouchableOpacity>
-      )
-    })
-  }
+  getIconButtonAry = option => option.map((ele) => {
+    const { iconName, label, onPress } = ele
+    return (
+      <TouchableOpacity style={style.iconButtonWrap} key={iconName} onPress={onPress}>
+        <View style={style.iconButton}>
+          <Ionicons name={iconName} size={38} />
+        </View>
+        <Text style={{ color: iconColor }}>{label}</Text>
+      </TouchableOpacity>
+    )
+  })
 
-  render () {
+  render() {
     const size = 200
     const greyScale = 106
     const option = [{
@@ -502,78 +504,109 @@ export default class ChatView extends Component<{}> {
       }
     }]
     const iconButtonAry = this.getIconButtonAry(option)
-    const contentView =
-        <View style={{backgroundColor: '#f0f0f0', height: this.state.msgViewHeight}}
-        >
-          {this.state.isRecording
-            ? <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', top: '25%', zIndex: 2}}>
-              <View style={{ width: size,
+    const contentView = (
+      <View style={{ backgroundColor: '#f0f0f0', height: this.state.msgViewHeight }}>
+        {this.state.isRecording
+          ? (
+            <View style={{
+              position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', top: '25%', zIndex: 2
+            }}
+            >
+              <View style={{
+                width: size,
                 height: size,
                 backgroundColor: `rgba(${greyScale}, ${greyScale}, ${greyScale}, 0.9)`,
                 justifyContent: 'center',
                 alignItems: 'center',
-                borderRadius: 5}}>
-                <Ionicons name={'ios-mic-outline'} size={45} color='white'/>
+                borderRadius: 5
+              }}
+              >
+                <Ionicons name="ios-mic-outline" size={45} color="white" />
 
                 <View>
-                  <Text style={{fontSize: 15, color: 'white'}}>
+                  <Text style={{ fontSize: 15, color: 'white' }}>
                     正在录音...
                   </Text>
                 </View>
-                <View style={{marginTop: 10}}>
-                  <Text style={{fontSize: 20, color: 'white'}}>
+                <View style={{ marginTop: 10 }}>
+                  <Text style={{ fontSize: 20, color: 'white' }}>
                     {this.state.recordTime}
                   </Text>
                 </View>
 
               </View>
-            </View> : null}
-          <NetIndicator/>
-          <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim}}
+            </View>
+          ) : null}
+        <NetIndicator />
+        <View style={{
+          flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim
+        }}
+        >
+          <ScrollView
+            ref={(ref) => { this.scrollView = ref }}
+            style={{ width: '100%', backgroundColor: '#d5e0f2' }}
+            refreshControl={(
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+)}
+            onContentSizeChange={this.onContentSizeChange}
           >
-            <ScrollView ref={(ref) => { this.scrollView = ref }} style={{width: '100%', backgroundColor: '#d5e0f2'}}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh}
-                />}
-              onContentSizeChange={this.onContentSizeChange}
-
-            >
-              <View style={{width: '100%', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20}}>
-                {this.state.recordEls}
-              </View>
-            </ScrollView>
-            <View style={{width: '100%',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderTopWidth: 1,
-              borderColor: '#d0d0d0',
-              overflow: 'hidden',
-              paddingVertical: 5,
-              marginBottom: Platform.OS === 'ios' ? 0 : 20
+            <View style={{
+              width: '100%', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20
             }}
             >
-              <TouchableOpacity onPress={this.showVoiceRecorder}
-                style={{display: 'flex', alignItems: 'flex-start', justifyContent: 'center', borderWidth: 0}}>
-                <View style={{borderRadius: 17,
-                  borderWidth: 1,
-                  width: 34,
-                  height: 34,
-                  marginHorizontal: 2,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderColor: iconColor}}>
+              {this.state.recordEls}
+            </View>
+          </ScrollView>
+          <View style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderTopWidth: 1,
+            borderColor: '#d0d0d0',
+            overflow: 'hidden',
+            paddingVertical: 5,
+            marginBottom: Platform.OS === 'ios' ? 0 : 20
+          }}
+          >
+            <TouchableOpacity
+              onPress={this.showVoiceRecorder}
+              style={{
+                display: 'flex', alignItems: 'flex-start', justifyContent: 'center', borderWidth: 0
+              }}
+            >
+              <View style={{
+                borderRadius: 17,
+                borderWidth: 1,
+                width: 34,
+                height: 34,
+                marginHorizontal: 2,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderColor: iconColor
+              }}
+              >
 
-                  <Ionicons name={this.state.showVoiceRecorder ? 'ios-keypad-outline' : 'ios-mic-outline'} size={25} color={iconColor}
-                    style={{}}/>
-                </View>
+                <Ionicons
+                  name={this.state.showVoiceRecorder ? 'ios-keypad-outline' : 'ios-mic-outline'}
+                  size={25}
+                  color={iconColor}
+                  style={{}}
+                />
+              </View>
 
-              </TouchableOpacity>
-              <TextInput ref='text2'
-                style={{height: 0, width: 0, backgroundColor: 'red', display: 'none'}}></TextInput>
-              {this.state.showVoiceRecorder ? <TouchableOpacity
+            </TouchableOpacity>
+            <TextInput
+              ref="text2"
+              style={{
+                height: 0, width: 0, backgroundColor: 'red', display: 'none'
+              }}
+            />
+            {this.state.showVoiceRecorder ? (
+              <TouchableOpacity
                 style={{
                   flex: 1,
                   alignItems: 'center',
@@ -584,84 +617,116 @@ export default class ChatView extends Component<{}> {
                   padding: 10,
                   marginHorizontal: 5
                 }}
-                onPressIn={this.record} onPressOut={this.cancelRecord}
-                hitSlop={{top: 500, left: 0, bottom: 100, right: 0}}
+                onPressIn={this.record}
+                onPressOut={this.cancelRecord}
+                hitSlop={{
+                  top: 500, left: 0, bottom: 100, right: 0
+                }}
               >
                 <Text>按住说话</Text>
-              </TouchableOpacity> : <TextInputWrapper onChangeText={(v) => {
-                this.text = v ? v.trim() : ''
-              }} onSubmitEditing={this.send} ref='text' textInputProp={{
-                placeholder: this.state.burnValue ? `本消息会在${this.state.burnValue.label}阅后即焚` : ''
-              }}></TextInputWrapper>}
-
-              <TouchableOpacity onPress={() => { this.setState({showMore: !this.state.showMore}) }}
-                style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'center'}}>
-                <Ionicons name="ios-add-circle-outline" size={40} style={{marginRight: 5}} color={iconColor}/>
               </TouchableOpacity>
-            </View>
-            {this.state.showMore ? (
-              <View style={{marginBottom: 20, flexDirection: 'row', justifyContent: 'space-around', width: '100%'}}>
-                {iconButtonAry}
-              </View>) : null}
+            ) : (
+              <TextInputWrapper
+                onChangeText={(v) => {
+                  this.text = v ? v.trim() : ''
+                }}
+                onSubmitEditing={this.send}
+                ref="text"
+                textInputProp={{
+                  placeholder: this.state.burnValue ? `本消息会在${this.state.burnValue.label}阅后即焚` : ''
+                }}
+              />
+            )}
+
+            <TouchableOpacity
+              onPress={() => { this.setState({ showMore: !this.state.showMore }) }}
+              style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
+            >
+              <Ionicons name="ios-add-circle-outline" size={40} style={{ marginRight: 5 }} color={iconColor} />
+            </TouchableOpacity>
           </View>
-          <Modal visible={this.state.biggerImageVisible} transparent={false} animationType={'fade'}
-            onRequestClose={this.closeImage}
-          >
-            <StatusBar hidden />
-            <ImageViewer imageUrls={this.state.imageUrls}
-              onClick={this.closeImage}
-              onSave={(url) => {
-                CameraRoll.saveToCameraRoll(url)
-                // todo: toast will be overlapped
-                Alert.alert(
-                  '',
-                  '图片成功保存到系统相册',
+          {this.state.showMore ? (
+            <View style={{
+              marginBottom: 20, flexDirection: 'row', justifyContent: 'space-around', width: '100%'
+            }}
+            >
+              {iconButtonAry}
+            </View>
+          ) : null}
+        </View>
+        <Modal
+          visible={this.state.biggerImageVisible}
+          transparent={false}
+          animationType="fade"
+          onRequestClose={this.closeImage}
+        >
+          <StatusBar hidden />
+          <ImageViewer
+            imageUrls={this.state.imageUrls}
+            onClick={this.closeImage}
+            onSave={(url) => {
+              CameraRoll.saveToCameraRoll(url)
+              // todo: toast will be overlapped
+              Alert.alert(
+                '',
+                '图片成功保存到系统相册',
 
-                  { cancelable: true }
-                )
-              }}
-              index={this.state.biggerImageIndex}
-            />
-          </Modal>
+                { cancelable: true }
+              )
+            }}
+            index={this.state.biggerImageIndex}
+          />
+        </Modal>
 
-          <TransModal title='设置阅后即焚时长' ref='modal' confirm={async () => {
+        <TransModal
+          title="设置阅后即焚时长"
+          ref="modal"
+          confirm={async () => {
             await AsyncStorage.setItem('burnValue', JSON.stringify(this.radioValue))
             this.setState({
               burnValue: this.radioValue
             })
           }
-          }>
-            <View style={{alignItems: 'flex-start', justifyContent: 'space-around', marginLeft: 10}}>
-              <RadioForm
-                radio_props={[
-                  {label: '关闭',
-                    value: {
-                      label: '关闭',
-                      time: 0
-                    } },
-                  {label: '自定义',
-                    value: {
-                      label: '自定义',
-                      time: -1
-                    } },
-                  {label: '3 秒',
-                    value: {
-                      label: '3秒',
-                      time: 3
-                    } }
-                ]}
-                initial={0}
-                onPress={(value) => { this.radioValue = value }}
-                labelStyle = {
-                  {marginHorizontal: 20}
+          }
+        >
+          <View style={{ alignItems: 'flex-start', justifyContent: 'space-around', marginLeft: 10 }}>
+            <RadioForm
+              radio_props={[
+                {
+                  label: '关闭',
+                  value: {
+                    label: '关闭',
+                    time: 0
+                  }
+                },
+                {
+                  label: '自定义',
+                  value: {
+                    label: '自定义',
+                    time: -1
+                  }
+                },
+                {
+                  label: '3 秒',
+                  value: {
+                    label: '3秒',
+                    time: 3
+                  }
                 }
-                radioStyle={{marginVertical: 15}}
-              />
-            </View>
+              ]}
+              initial={0}
+              onPress={(value) => { this.radioValue = value }}
+              labelStyle={
+                  { marginHorizontal: 20 }
+                }
+              radioStyle={{ marginVertical: 15 }}
+            />
+          </View>
 
-          </TransModal>
-        </View>
-    const loadingView = <DelayIndicator/>
+        </TransModal>
+      </View>
+    )
+    const loadingView = <DelayIndicator />
     return this.state.isInited ? contentView : loadingView
   }
 }
