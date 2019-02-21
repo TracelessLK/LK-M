@@ -182,8 +182,9 @@ export default class MessageItem extends Component<{}> {
               </View>
             </View>
           </View>
-          <View style={{ marginVertical: 25, marginLeft: -5 }}>
-            <Image source={fireGif} style={{ width: 40, height: 40 }} resizeMode="contain" />
+          <View style={{ marginVertical: 5, marginLeft: 0 }}>
+            <Text>🔥</Text>
+            {/* <Image source={fireGif} style={{ width: 40, height: 40 }} resizeMode="contain" /> */}
           </View>
           <View style={{ marginVertical: 30, marginHorizontal: 5 }}>
             {/* <Text style={{color: 'red'}}>10s</Text> */}

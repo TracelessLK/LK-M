@@ -182,9 +182,9 @@ export default class ChatView extends Component<{}> {
        let lastShowingTime
        const msgSet = new Set()
        const { length: msgLength } = msgAry
-       let opacity = 1
-       const interval = 1 / msgLength
-       for (const msg of msgAry) {
+
+       for (let i = 0; i < msgLength; i++) {
+         const msg = msgAry[i]
          const { sendTime, id } = msg
          if (!msgSet.has(id)) {
            msgSet.add(id)
@@ -210,13 +210,12 @@ export default class ChatView extends Component<{}> {
              memberInfoObj,
              onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE
                ? () => { this.showBiggerImage(imgUri, rec.id) } : () => {},
-             opacity
+             opacity: 0 + (msgLength - i) * (1/20)
            }
            if (msg.senderUid !== user.id) {
              option.otherSide = await ContactManager.asyGet(user.id, msg.senderUid)
            }
            recordAry.push(<MessageItem key={id} {...option} />)
-           opacity -= interval
          }
        }
        this.setState({
@@ -284,6 +283,7 @@ export default class ChatView extends Component<{}> {
     }
 
     componentDidMount= async () => {
+      const { navigation } = this.props
       const num = await chatManager.asyGetNewMsgNum(this.otherSideId)
       if (num) {
         chatManager.asyReadMsgs(this.otherSideId, num)
@@ -293,7 +293,7 @@ export default class ChatView extends Component<{}> {
       Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
       this.refreshRecord(this.limit)
-      this.props.navigation.setParams({ navigateToInfo: debounceFunc(this._navigateToInfo) })
+      navigation.setParams({ navigateToInfo: debounceFunc(this._navigateToInfo) })
       const burnValue = await AsyncStorage.getItem('burnValue')
       this.setState({
         burnValue: JSON.parse(burnValue)
@@ -301,10 +301,11 @@ export default class ChatView extends Component<{}> {
     }
 
     _navigateToInfo = () => {
+      const { navigation } = this.props
       if (this.isGroupChat) {
-        this.props.navigation.navigate('GroupInfoView', { group: this.otherSide })
+        navigation.navigate('GroupInfoView', { group: this.otherSide })
       } else {
-        this.props.navigation.navigate('FriendInfoView', { friend: this.otherSide })
+        navigation.navigate('FriendInfoView', { friend: this.otherSide })
       }
     }
 
@@ -464,9 +465,11 @@ export default class ChatView extends Component<{}> {
     if (filePath) {
       RNFetchBlob.fs.readFile(filePath.replace('file://', ''), 'base64').then((data) => {
         const ext = _.last(filePath.split('.'))
-        lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId, this.isGroupChat, this.recordTimeRaw).catch((err) => {
-          Alert.alert(err.toString())
-        })
+        lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId,
+          this.isGroupChat, this.recordTimeRaw)
+          .catch((err) => {
+            Alert.alert(err.toString())
+          })
       })
     }
 
