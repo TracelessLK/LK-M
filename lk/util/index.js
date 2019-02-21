@@ -1,39 +1,44 @@
-import {Toast} from 'native-base'
-import {Text, TouchableOpacity, View} from 'react-native'
+import { Toast } from 'native-base'
+import { Text, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import React from 'react'
 import RNRestart from 'react-native-restart'
-import Ionicons from "react-native-vector-icons/Ionicons"
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import LottieView from 'lottie-react-native'
 
-const {engine} = require('@lk/LK-C')
+const { engine } = require('@lk/LK-C')
+
 const DBProxy = engine.get('DBProxy')
-let Application = engine.getApplication()
+const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const chatManager = engine.get('ChatManager')
 
-const {commonUtil} = require('@external/common')
-const {getAvatarSource} = commonUtil
+const { commonUtil } = require('@external/common')
+
+const { getAvatarSource } = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
 const container = require('../state')
-const {FuncUtil} = require('@ys/vanilla')
-const {runFunc} = FuncUtil
-const {PushUtil} = require('@external/common')
-const {getAPNDeviceId} = PushUtil
+const { FuncUtil } = require('@ys/vanilla')
+
+const { runFunc } = FuncUtil
+const { PushUtil } = require('@external/common')
+
+const { getAPNDeviceId } = PushUtil
 const lkStyle = require('../view/style')
 const RNFS = require('react-native-fs')
-const {logPath} = require('../config')
+const { logPath } = require('../config')
 
 class Util {
   /**
    * 获取IOS推送id
    * @returns {Promise} Promise resolve IOS推送id {string}
    */
-  static asyGetApplePushId () {
+  static asyGetApplePushId() {
     return getAPNDeviceId()
   }
-  static appendToLog (option) {
-    const {content, type} = option
+
+  static appendToLog(option) {
+    const { content, type } = option
     // console.log({option})
     const appendPath = logPath[type]
     if (__DEV__) {
@@ -47,8 +52,9 @@ class Util {
       console.log(err)
     })
   }
-  static writeToLog (option) {
-    const {content, type} = option
+
+  static writeToLog(option) {
+    const { content, type } = option
     // console.log({option})
     const appendPath = logPath[type]
     if (__DEV__) {
@@ -62,25 +68,30 @@ class Util {
       console.log(err)
     })
   }
-  static getTabLogo (title, focused, iconName, iconSize = 26, badge) {
-    let color = focused ? lkStyle.color.mainColor : '#a0a0a0'
-    let style = {display: 'flex', justifyContent: 'center', alignItems: 'center'}
+
+  static getTabLogo(title, focused, iconName, iconSize = 26, badge) {
+    const color = focused ? lkStyle.color.mainColor : '#a0a0a0'
+    const style = { display: 'flex', justifyContent: 'center', alignItems: 'center' }
     return (
       <View style={style}>
         {badge || null}
-        <Icon name={iconName} size={iconSize} color={color}/>
-        <Text style={{fontSize: 10, color}}>{title}</Text>
+        <Icon name={iconName} size={iconSize} color={color} />
+        <Text style={{ fontSize: 10, color }}>{title}</Text>
       </View>
     )
   }
-  static getAvatarSource (pic) {
+
+  static getAvatarSource(pic) {
     return getAvatarSource(pic, defaultAvatar)
   }
-  static addExternalFriend ({navigation}) {
+
+  static addExternalFriend({ navigation }) {
     navigation.navigate('ScanView', {
-      onRead (e) {
-        const {data} = e
-        const {action, code, ip, port, id} = JSON.parse(data)
+      onRead(e) {
+        const { data } = e
+        const {
+          action, code, ip, port, id
+        } = JSON.parse(data)
         console.log(data)
         if (code === 'LK' && action === 'addFriend') {
           lkApp.getLKWSChannel().applyMF(id, ip, port)
@@ -101,50 +112,54 @@ class Util {
       }
     })
   }
-  static async showAll (tableName) {
-    let sql = `select * from ${tableName}`
+
+  static async showAll(tableName) {
+    const sql = `select * from ${tableName}`
     const ary = await Util.query(sql)
 
     const obj = {}
     obj[tableName] = ary
-    // console.log(obj)
+    console.log(obj)
   }
-  static query (sql) {
-    return new Promise(resolve => {
-      lkApp.on('dbReady', function () {
-        let db = new DBProxy()
+
+  static query(sql) {
+    return new Promise((resolve) => {
+      lkApp.on('dbReady', () => {
+        const db = new DBProxy()
         db.transaction(() => {
-          db.getAll(sql, [], function (results) {
+          db.getAll(sql, [], (results) => {
             resolve(results)
-          }, function (err) {
+          }, (err) => {
             console.log(err)
           })
         })
       })
     })
   }
-  static removeAllGroup () {
+
+  static removeAllGroup() {
     return Util.deleteTable([''])
   }
+
   static getIconNameByState=function (state) {
     if (state === chatManager.MESSAGE_STATE_SENDING) {
       return 'md-arrow-round-up'
-    } else if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
+    } if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
       return 'md-refresh'
-    } else if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
+    } if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
       return 'md-checkmark-circle-outline'
-    } else if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
+    } if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
       return 'ios-checkmark-circle-outline'
-    } else if (state === chatManager.MESSAGE_STATE_TARGET_READ) {
+    } if (state === chatManager.MESSAGE_STATE_TARGET_READ) {
       return 'ios-mail-open-outline'
-    } else if (state === 5) {
+    } if (state === 5) {
       return 'ios-bonfire-outline'
     }
     return 'ios-help'
   }
 
-  static getIconByState (state) {
-    let result = <Ionicons name={Util.getIconNameByState(state)} size={20} style={{marginRight: 5, lineHeight: 40, color: state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black'}}/>
+  static getIconByState(state) {
+    let result = <Ionicons name={Util.getIconNameByState(state)} size={20} style={{ marginRight: 5, lineHeight: 40, color: state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black' }} />
 
     // if (state === chatManager.MESSAGE_STATE_SENDING) {
     if (false) {
@@ -160,36 +175,38 @@ class Util {
         },
         autoSize: true
       }
-      result = <LottieView  {...option}/>
+      result = <LottieView {...option} />
     }
     return result
-
   }
-  static deleteTable (tableName) {
+
+  static deleteTable(tableName) {
     if (Array.isArray(tableName)) {
       const promiseAry = []
-      for (let ele of tableName) {
+      for (const ele of tableName) {
         promiseAry.push(Util._deleteTable(ele))
       }
       return Promise.all(promiseAry)
-    } else {
-      return Util._deleteTable(tableName)
     }
+    return Util._deleteTable(tableName)
   }
-  static _deleteTable (tableName) {
+
+  static _deleteTable(tableName) {
     const sql = `delete from ${tableName}`
     return Util.query(sql)
   }
-  static dropTable (tableName) {
+
+  static dropTable(tableName) {
     const sql = `drop table ${tableName}`
     return Util.query(sql)
   }
+
   // todo: should be putinto net channell
-  static runNetFunc (func, {errorCb, showWarning = true} = {}) {
+  static runNetFunc(func, { errorCb, showWarning = true } = {}) {
     // console.log({container})
     const hasLogin = lkApp.getLogin()
     // console.log({hasLogin})
-    const {connectionOK, NetInfoUtil} = container
+    const { connectionOK, NetInfoUtil } = container
 
     if (connectionOK) {
       // console.log({hasLogin})
@@ -226,21 +243,21 @@ class Util {
     }
   }
 
-  static dropExtraTable () {
-    let db = new DBProxy()
+  static dropExtraTable() {
+    const db = new DBProxy()
     const tableAry = [
       'device', 'group_record_state',
       'magicCode', 'mfapply', 'org',
       'record']
     const psAry = []
     db.transaction(() => {
-      for (let ele of tableAry) {
+      for (const ele of tableAry) {
         const sql = `
       drop table ${ele}
     `
-        const ps = new Promise(resolve => {
+        const ps = new Promise((resolve) => {
           db.run(sql, [], () => {
-            console.log({sql})
+            console.log({ sql })
             resolve()
           }, (err) => {
             console.log(sql, err)
@@ -257,16 +274,16 @@ class Util {
 
 const tableAry = [
   // 'device', 'mfapply', 'contact', 'record',
-  // 'chat', 'groupMember'
-  'record'
-]
-
-;(async () => {
-  // Util.dropTable('group_record_state')
+  // 'chat',
+  // 'groupMember'
+  // 'record'
+];
+(async () => {
+  // Util.dropTable('groupMember')
   // const friendAry = await Util.query('select * from contact where relation=1')
   // console.log({friendAry})
   // await Util.removeAllGroup()
-  for (let ele of tableAry) {
+  for (const ele of tableAry) {
     Util.showAll(ele)
   }
 })()
