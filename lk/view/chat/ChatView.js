@@ -210,7 +210,8 @@ export default class ChatView extends Component<{}> {
              memberInfoObj,
              onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE
                ? () => { this.showBiggerImage(imgUri, rec.id) } : () => {},
-             opacity: 0 + (msgLength - i) * (1/20)
+             // opacity: 0 + (msgLength - i) * (1/20)
+             opacity: 0
            }
            if (msg.senderUid !== user.id) {
              option.otherSide = await ContactManager.asyGet(user.id, msg.senderUid)
@@ -377,7 +378,7 @@ export default class ChatView extends Component<{}> {
     showBiggerImage= (imgUri, msgId) => {
       const biggerImageIndex = this.imageIndexer[msgId]
 
-      this.setState({ biggerImageVisible: true, biggerImageUri: imgUri, biggerImageIndex })
+      this.setState({ biggerImageVisible: true, biggerImageIndex })
     }
 
     getImageData = (img) => {
@@ -431,7 +432,7 @@ export default class ChatView extends Component<{}> {
     }
 
     closeImage = () => {
-      this.setState({ biggerImageVisible: false, biggerImageUri: null })
+      this.setState({ biggerImageVisible: false })
     }
 
   showVoiceRecorder = () => {

@@ -6,6 +6,7 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import RNFetchBlob from 'react-native-fetch-blob'
 
 import style from './ChatView.style'
 import MessageText from './MessageText'
@@ -17,16 +18,16 @@ const chatLeft = require('../image/chat-y-l.png')
 const chatRight = require('../image/chat-w-r.png')
 const { getAvatarSource, getIconByState } = require('../../util')
 const { getFolderId } = require('../../../common/util/commonUtil')
-const fireGif = require('../image/fire.gif')
+// const fireGif = require('../image/fire.gif')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const chatManager = engine.get('ChatManager')
 const { msgBoxStyle } = style
-
+const folderId = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
 export default class MessageItem extends Component<{}> {
   componentDidMount() {
-    this.asyncRender()
+
   }
 
   componentWillUnmount() {
@@ -43,7 +44,7 @@ export default class MessageItem extends Component<{}> {
   getCurrentUrl = (oldUrl) => {
     let result = oldUrl
     if (Platform.OS === 'ios') {
-      result = oldUrl.replace(getFolderId(oldUrl), this.folderId)
+      result = oldUrl.replace(getFolderId(oldUrl), folderId)
     }
     return result
   }
@@ -121,10 +122,6 @@ export default class MessageItem extends Component<{}> {
         group: otherSide
       })
     }
-  }
-
-  asyncRender = () => {
-
   }
 
   render() {
