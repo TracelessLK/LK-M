@@ -419,7 +419,7 @@ export default class ChatView extends Component<{}> {
       }
     }
 
-    onContentSizeChange=(contentWidth, contentHeight) => {
+    onContentSizeChange = (contentWidth, contentHeight) => {
       this.extra.lastContentHeight = this.extra.msgViewHeight
       this.extra.contentHeight = contentHeight
       this.extra.count++
