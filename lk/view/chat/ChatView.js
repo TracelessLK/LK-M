@@ -422,18 +422,15 @@ export default class ChatView extends Component<{}> {
     }
 
     onContentSizeChange = (contentWidth, contentHeight) => {
-      const { msgViewHeight } = this.state
-      this.extra.lastContentHeight = msgViewHeight
+      this.extra.lastContentHeight = this.extra.contentHeight ? this.extra.contentHeight : 0
       this.extra.contentHeight = contentHeight
       this.extra.count++
-      // console.log(this.extra.contentHeight, this.extra.lastContentHeight)
       const offset = Math.floor(this.extra.contentHeight - this.extra.lastContentHeight)
 
       const point = 1
       if (this.extra.count === point) {
         this.scrollView.scrollToEnd({ animated: false })
       } else if (this.extra.count > point) {
-        // console.log('refresing', this.extra.isRefreshingControl)
         if (this.extra.isRefreshingControl) {
           this.scrollView.scrollTo({ x: 0, y: offset, animated: false })
           this.extra.isRefreshingControl = false
@@ -554,7 +551,6 @@ export default class ChatView extends Component<{}> {
                     {recordTime}
                   </Text>
                 </View>
-
               </View>
             </View>
           ) : null}

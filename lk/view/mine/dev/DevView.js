@@ -1,7 +1,6 @@
 
 import React, { Component } from 'react'
 import {
-  Alert,
   ScrollView, Text, View,
   PushNotificationIOS
 } from 'react-native'
