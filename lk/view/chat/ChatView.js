@@ -95,7 +95,8 @@ export default class ChatView extends Component<{}> {
         lastContentHeight: 0,
         contentHeight: 0,
         count: 0,
-        isRefreshingControl: false
+        isRefreshingControl: false,
+        maxCount: Constant.MESSAGE_PER_REFRESH * 3
       }
 
       // keyboard fix
@@ -217,8 +218,8 @@ export default class ChatView extends Component<{}> {
                ? () => {
                  this.showBiggerImage(id)
                } : null,
-             // opacity: 0 + (msgLength - i) * (1/20)
-             opacity: 0,
+             opacity: 0 + (msgLength - i) * (1/this.extra.maxCount),
+             // opacity: 0,
              navigation,
              otherSide: this.otherSide
            }
@@ -409,7 +410,7 @@ export default class ChatView extends Component<{}> {
       this.limit = this.limit + Constant.MESSAGE_PER_REFRESH
       if (this.limit > this.extra.maxCount) {
         Toast.show({
-          text: '没有更早的消息记录',
+          text: '更早的消息记录已焚毁',
           position: 'top'
         })
       } else {
