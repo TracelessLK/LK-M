@@ -3,12 +3,14 @@ const fs = require('fs')
 const path = require('path')
 const _ = require('lodash')
 
+const LK_S_path = '/Volumes/Samsung_T5/entry/code/working_on/work/LK_S'
+
 const devConfig = {
   appId: 'LK_M',
   appName: 'LK',
-  exportIpaFolderPath: '/Users/spirit/entry/git/working_on/LK-S/static/public/ios',
-  exportPPKFolderPath: '/Users/spirit/entry/git/working_on/LK-S/static/public/ppk',
-  exportApkFolderPath: '/Users/spirit/entry/git/working_on/LK-S/static/public/android',
+  exportIpaFolderPath: path.resolve(LK_S_path, 'static/public/ios'),
+  exportPPKFolderPath: path.resolve(LK_S_path, 'static/public/ppk'),
+  exportApkFolderPath: path.resolve(LK_S_path, 'static/public/android'),
   ip: txServerIp,
   sshInfo: {
     username: 'root'
