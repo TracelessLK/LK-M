@@ -57,7 +57,6 @@
 		CF1ABA8062B94815B4E6C203 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 592D96BDFCA14ED784B9F59F /* libRNSVG.a */; };
 		E7537B34C5004356A2A6D892 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 04F8853137F4445C9D03C1CF /* Feather.ttf */; };
 		FBADCEF6BAA04180A9522B7D /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C6B1707F2CD4456B0B0523F /* MaterialCommunityIcons.ttf */; };
-		FD41AF3C21EC75B300B053C3 /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD41AF3521EC74FA00B053C3 /* Lottie.framework */; };
 		FD41AF3D21EC75B300B053C3 /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FD41AF3521EC74FA00B053C3 /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FD54EB5221E6F12D004104A7 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD7BDC9221917FED007E18C6 /* libRCTCameraRoll.a */; };
 		FD9FE74E211405130079F0E3 /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9FE74C211405120079F0E3 /* QBImagePicker.framework */; };
@@ -664,7 +663,6 @@
 				FDFFF65F210CD7EB007CDCE7 /* libbz2.1.0.tbd in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				FD9FE752211405680079F0E3 /* RSKImageCropper.framework in Frameworks */,
-				FD41AF3C21EC75B300B053C3 /* Lottie.framework in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
