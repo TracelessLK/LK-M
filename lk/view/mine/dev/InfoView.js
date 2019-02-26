@@ -26,7 +26,14 @@ export default class InfoView extends Component<{}> {
 
   async componentDidMount () {
     const deviceIdAPN = await AsyncStorage.getItem('deviceIdAPN')
-    let appJSON = require('../../../app.json')
+    let appJSON = {
+
+    }
+    try {
+      appJSON = require('../../../app.json')
+    } catch (err) {
+
+    }
     const {packType = '', packTime = ''} = appJSON
     this.setState({
       deviceIdAPN, packType, packTime
