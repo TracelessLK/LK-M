@@ -87,7 +87,8 @@ export default class ChatView extends Component<{}> {
         recordTime: '',
         showMore: false,
         burnValue: {},
-        showScrollBottom: false
+        showScrollBottom: false,
+        showMsg: false
       }
       this.otherSideId = otherSideId
       this.text = ''
@@ -444,9 +445,9 @@ export default class ChatView extends Component<{}> {
           this.scrollView.scrollToEnd({ animated: false })
         }
       }
-      // this.setState({
-      //   hideScrollView: true
-      // })
+      this.setState({
+        showMsg: true
+      })
     }
 
     closeImage = () => {
@@ -583,7 +584,8 @@ export default class ChatView extends Component<{}> {
           >
 
             <View style={{
-              width: '100%', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20
+              width: '100%', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20,
+              opacity: this.state.showMsg ? 1 : 0
             }}
             >
               {this.state.showScrollBottom ? <ScrollBottom /> : null}

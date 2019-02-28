@@ -44,7 +44,7 @@ export default class ScrollBottom extends Component<{}> {
 更早的消息记录已焚毁
         </Text>
         <LottieView
-          source={require('../../../resource/animations/firework.json')}
+          source={require('../../../resource/animations/firework2.json')}
           autoPlay
           loop
         />
