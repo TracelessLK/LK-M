@@ -30,6 +30,7 @@ import TransModal from './TransModal'
 import TextInputWrapper from './TextInputWrapper'
 import MessageItem from './MessageItem'
 import DelayIndicator from './DelayIndicator'
+import ScrollBottom from './ScrollBottom'
 
 const { engine } = require('@lk/LK-C')
 const _ = require('lodash')
@@ -85,7 +86,8 @@ export default class ChatView extends Component<{}> {
         isRecording: false,
         recordTime: '',
         showMore: false,
-        burnValue: {}
+        burnValue: {},
+        showScrollBottom: false
       }
       this.otherSideId = otherSideId
       this.text = ''
@@ -409,6 +411,10 @@ export default class ChatView extends Component<{}> {
     _onRefresh = () => {
       this.limit = this.limit + Constant.MESSAGE_PER_REFRESH
       if (this.limit > this.extra.maxCount) {
+        this.extra.isRefreshingControl = true
+        this.setState({
+          showScrollBottom: true
+        })
         Toast.show({
           text: '更早的消息记录已焚毁',
           position: 'top'
@@ -433,12 +439,15 @@ export default class ChatView extends Component<{}> {
         this.scrollView.scrollToEnd({ animated: false })
       } else if (this.extra.count > point) {
         if (this.extra.isRefreshingControl) {
-          this.scrollView.scrollTo({ x: 0, y: offset, animated: false })
+          this.scrollView.scrollTo({ x: 0, y: offset - 40, animated: false })
           this.extra.isRefreshingControl = false
         } else {
           this.scrollView.scrollToEnd({ animated: false })
         }
       }
+      // this.setState({
+      //   hideScrollView: true
+      // })
     }
 
     closeImage = () => {
@@ -575,6 +584,7 @@ export default class ChatView extends Component<{}> {
               width: '100%', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20
             }}
             >
+              {this.state.showScrollBottom ? <ScrollBottom /> : null}
               {recordEls}
             </View>
           </ScrollView>
