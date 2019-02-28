@@ -220,7 +220,7 @@ export default class ChatView extends Component<{}> {
                ? () => {
                  this.showBiggerImage(id)
                } : null,
-             opacity: 0 + (msgLength - i) * (1/this.extra.maxCount),
+             opacity: 0 + (msgLength - i - 2) * (1/this.extra.maxCount),
              // opacity: 0,
              navigation,
              otherSide: this.otherSide
@@ -415,10 +415,7 @@ export default class ChatView extends Component<{}> {
         this.setState({
           showScrollBottom: true
         })
-        Toast.show({
-          text: '更早的消息记录已焚毁',
-          position: 'top'
-        })
+
       } else {
         this.setState({
           refreshing: true
@@ -439,7 +436,9 @@ export default class ChatView extends Component<{}> {
         this.scrollView.scrollToEnd({ animated: false })
       } else if (this.extra.count > point) {
         if (this.extra.isRefreshingControl) {
-          this.scrollView.scrollTo({ x: 0, y: offset - 40, animated: false })
+          if (!this.state.showScrollBottom) {
+            this.scrollView.scrollTo({ x: 0, y: offset - 40, animated: false })
+          }
           this.extra.isRefreshingControl = false
         } else {
           this.scrollView.scrollToEnd({ animated: false })
@@ -565,10 +564,12 @@ export default class ChatView extends Component<{}> {
             </View>
           ) : null}
         <NetIndicator />
+
         <View style={{
           flex: 1, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', bottom: this.state.heightAnim
         }}
         >
+
           <ScrollView
             ref={(ref) => { this.scrollView = ref }}
             style={{ width: '100%', backgroundColor: '#d5e0f2' }}
@@ -577,9 +578,10 @@ export default class ChatView extends Component<{}> {
                 refreshing={refreshing}
                 onRefresh={this._onRefresh}
               />
-)}
+            )}
             onContentSizeChange={this.onContentSizeChange}
           >
+
             <View style={{
               width: '100%', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20
             }}
