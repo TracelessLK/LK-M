@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import {
   Text,
   View,
@@ -7,64 +7,84 @@ import {
 import PropTypes from 'prop-types'
 
 export default class TransModal extends Component<{}> {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       visible: false
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
 
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
 
   }
 
-  show () {
+  show() {
     this.setState({
       visible: true
     })
   }
 
-  hide () {
+  hide() {
     this.setState({
       visible: false
     })
   }
 
-  render () {
+  render() {
     return (
-      <Modal transparent visible={this.state.visible} animationType='fade' onRequestClose={this.hide}>
-        <View style={{width: '100%',
+      <Modal transparent visible={this.state.visible} animationType="fade" onRequestClose={this.hide}>
+        <View style={{
+          width: '100%',
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: 'rgba(60,60,60, 0.8)'}}>
-          <View style={{backgroundColor: 'white', padding: 20, borderRadius: 10, width: '85%', maxHeight: '80%'}}>
-            <View style={{marginBottom: 20}}>
-              <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+          backgroundColor: 'rgba(60,60,60, 0.8)'
+        }}
+        >
+          <View style={{
+            backgroundColor: 'white', padding: 20, borderRadius: 10, width: '85%', maxHeight: '80%'
+          }}
+          >
+            <View style={{ marginBottom: 20 }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
                 {this.props.title}
               </Text>
             </View>
-            <ScrollView>
-              {this.props.children}
-            </ScrollView>
-            <View style={{borderWidth: 1, borderColor: '#f0f0f0', marginVertical: 20}} />
-            <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-              <TouchableOpacity style={{marginHorizontal: 20}} onPress={() => {
-                this.hide()
-              }}>
-                <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+            {this.props.useScrollView
+              ? (
+                <ScrollView>
+                  {this.props.children}
+                </ScrollView>
+              )
+              : (
+                <View>
+                  {this.props.children}
+                </View>
+              )
+            }
+
+            <View style={{ borderWidth: 1, borderColor: '#f0f0f0', marginVertical: 20 }} />
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <TouchableOpacity
+                style={{ marginHorizontal: 20 }}
+                onPress={() => {
+                  this.hide()
+                }}
+              >
+                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
                   取消
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => {
                 this.props.confirm()
                 this.hide()
-              }}>
-                <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+              }}
+              >
+                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
                   确定
                 </Text>
               </TouchableOpacity>
@@ -80,10 +100,12 @@ TransModal.defaultProps = {
   title: '',
   confirm: () => {
 
-  }
+  },
+  useScrollView: false
 }
 
 TransModal.propTypes = {
   title: PropTypes.string,
-  confirm: PropTypes.func
+  confirm: PropTypes.func,
+  useScrollView: PropTypes.bool
 }

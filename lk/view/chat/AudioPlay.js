@@ -51,10 +51,17 @@ export default class AudioPlay extends Component<{}> {
               })
             }
           })
-          const ary = url.split('Documents')
-          const baseUrl = ary[0]
-          const fileName = _.last(ary[1].split('audio')[1].split('/'))
-          const destination = `/private${baseUrl}tmp/${fileName}`
+          let destination
+          const fileName = _.last(url.split('/'))
+          if (url.startsWith('/private')) {
+            destination = url
+          } else {
+            const ary = url.split('Documents')
+            const baseUrl = ary[0]
+
+            destination = `/private${baseUrl}tmp/${fileName}`
+          }
+
           const exist = await RNFetchBlob.fs.exists(destination)
           if (!exist) {
             const data = await RNFetchBlob.fs.readFile(url, 'base64')
@@ -82,6 +89,6 @@ AudioPlay.defaultProps = {
 }
 
 AudioPlay.propTypes = {
-  url: PropTypes.string.isRequired,
+  url: PropTypes.string,
   id: PropTypes.string
 }

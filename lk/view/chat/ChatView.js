@@ -31,6 +31,7 @@ import TextInputWrapper from './TextInputWrapper'
 import MessageItem from './MessageItem'
 import DelayIndicator from './DelayIndicator'
 import ScrollBottom from './ScrollBottom'
+import AudioPlay from './AudioPlay'
 
 const { engine } = require('@lk/LK-C')
 const _ = require('lodash')
@@ -101,27 +102,13 @@ export default class ChatView extends Component<{}> {
         isRefreshingControl: false,
         maxCount: Constant.MESSAGE_PER_REFRESH * 3
       }
+      this.audioFilePath = null
 
       // keyboard fix
       this.keyBoardShowCount = 0
 
       const audioRecorderPlayer = new AudioRecorderPlayer()
       this.audioRecorderPlayer = audioRecorderPlayer
-      // this._responder = {
-      //   onResponderMove(event) {
-      //     const { nativeEvent } = event
-      //     const {
-      //       locationX, locationY, pageX, pageY
-      //     } = nativeEvent
-      //   },
-      //   onMoveShouldSetResponder(evt) {
-      //     console.log({ evt })
-      //     return false
-      //   },
-      //   onResponderTerminationRequest() {
-      //     return true
-      //   }
-      // }
     }
 
      refreshRecord = async (limit) => {
@@ -221,7 +208,7 @@ export default class ChatView extends Component<{}> {
                ? () => {
                  this.showBiggerImage(id)
                } : null,
-             opacity: 0 + (msgLength - i - 2) * (1/this.extra.maxCount),
+             opacity: 0 + (msgLength - i - 2) * (1 / this.extra.maxCount),
              // opacity: 0,
              navigation,
              otherSide: this.otherSide
@@ -416,7 +403,6 @@ export default class ChatView extends Component<{}> {
         this.setState({
           showScrollBottom: true
         })
-
       } else {
         this.setState({
           refreshing: true
@@ -480,23 +466,13 @@ export default class ChatView extends Component<{}> {
   }
 
   cancelRecord = async () => {
+    this.refs.modal2.show()
     const filePath = await this.audioRecorderPlayer.stopRecorder()
-
-    if (filePath) {
-      RNFetchBlob.fs.readFile(filePath.replace('file://', ''), 'base64').then((data) => {
-        const ext = _.last(filePath.split('.'))
-        lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId,
-          this.isGroupChat, this.recordTimeRaw)
-          .catch((err) => {
-            Alert.alert(err.toString())
-          })
-      })
-    }
+    this.audioFilePath = filePath.replace('file://', '')
 
     this.audioRecorderPlayer.removeRecordBackListener()
     this.setState({
-      isRecording: false,
-      recordTime: ''
+      isRecording: false
     })
   }
 
@@ -522,7 +498,7 @@ export default class ChatView extends Component<{}> {
       iconName: 'ios-camera-outline',
       label: '图片',
       onPress: this.showImagePicker
-    },
+    }
     //   {
     //   iconName: 'ios-flame',
     //   label: '阅后即焚',
@@ -550,7 +526,6 @@ export default class ChatView extends Component<{}> {
               }}
               >
                 <Ionicons name="ios-mic-outline" size={45} color="white" />
-
                 <View>
                   <Text style={{ fontSize: 15, color: 'white' }}>
                     正在录音...
@@ -584,7 +559,11 @@ export default class ChatView extends Component<{}> {
           >
 
             <View style={{
-              width: '100%', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20,
+              width: '100%',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              marginBottom: 20,
               opacity: this.state.showMsg ? 1 : 0
             }}
             >
@@ -755,6 +734,45 @@ export default class ChatView extends Component<{}> {
             />
           </View>
 
+        </TransModal>
+        <TransModal
+          ref="modal2"
+          title="发送语音"
+          confirm={async () => {
+            if (this.audioFilePath) {
+              RNFetchBlob.fs.readFile(this.audioFilePath, 'base64').then((data) => {
+                const ext = _.last(this.audioFilePath.split('.'))
+                lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId,
+                  this.isGroupChat, this.recordTimeRaw)
+                  .catch((err) => {
+                    Alert.alert(err.toString())
+                  })
+              })
+            } else {
+              Alert.alert('录音失败,请重试!')
+            }
+
+            this.setState({
+              recordTime: ''
+            })
+          }
+                    }
+        >
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity style={style.iconButtonWrap} onPress={() => {}}>
+              <View>
+                <View style={[style.iconButton, {
+                  backgroundColor: '#f0f0f0', marginVertical: 5
+                }]}
+                >
+                  <AudioPlay url={this.audioFilePath} />
+                </View>
+                <Text>{this.state.recordTime}</Text>
+              </View>
+
+              <Text style={{ color: iconColor }}>点击试听</Text>
+            </TouchableOpacity>
+          </View>
         </TransModal>
       </View>
     )

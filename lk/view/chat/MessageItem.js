@@ -101,8 +101,7 @@ export default class MessageItem extends Component<{}> {
       let { url } = JSON.parse(content)
       url = this.getCurrentUrl(url)
       const option = {
-        url,
-        id
+        url
       }
       result = <AudioPlay {...option} />
     }
