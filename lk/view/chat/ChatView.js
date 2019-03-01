@@ -225,6 +225,8 @@ export default class ChatView extends Component<{}> {
          isInited: true,
          imageUrls
        })
+       const allMsg = await chatManager.asyGetMsgs(user.id, this.otherSideId)
+       this.msgCount = allMsg.length
      }
 
     _keyboardDidShow=(e) => {
@@ -397,25 +399,32 @@ export default class ChatView extends Component<{}> {
     }
 
     _onRefresh = async () => {
-      this.limit = this.limit + Constant.MESSAGE_PER_REFRESH
-      if (this.limit > this.extra.maxCount) {
-        if (!this.state.showScrollBottom) {
-          this.extra.isRefreshingControl = true
-          this.setState({
-            showScrollBottom: true
-          })
-        } else {
-          Toast.show({
-            text: '更早之前的消息已焚毁',
-            position: 'top'
-          })
-        }
-      } else {
-        this.setState({
-          refreshing: true
+      if (this.limit > this.msgCount) {
+        Toast.show({
+          text: '没有更多的消息',
+          position: 'top'
         })
-        this.extra.isRefreshingControl = true
-        this.refreshRecord(this.limit)
+      } else {
+        this.limit = this.limit + Constant.MESSAGE_PER_REFRESH
+        if (this.limit > this.extra.maxCount) {
+          if (!this.state.showScrollBottom) {
+            this.extra.isRefreshingControl = true
+            this.setState({
+              showScrollBottom: true
+            })
+          } else {
+            Toast.show({
+              text: '更早之前的消息已焚毁',
+              position: 'top'
+            })
+          }
+        } else {
+          this.setState({
+            refreshing: true
+          })
+          this.extra.isRefreshingControl = true
+          this.refreshRecord(this.limit)
+        }
       }
     }
 
