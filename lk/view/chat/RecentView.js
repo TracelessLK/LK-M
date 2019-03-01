@@ -10,39 +10,45 @@ import {
   AppState
 } from 'react-native'
 import NetIndicator from '../common/NetIndicator'
-const {commonUtil, MessageList, PushUtil} = require('@external/common')
-const {removeNotify} = PushUtil
-const {debounceFunc} = commonUtil
-const {getAvatarSource, addExternalFriend} = require('../../util')
-const {engine} = require('@lk/LK-C')
+
+const { commonUtil, MessageList, PushUtil } = require('@external/common')
+
+const { removeNotify } = PushUtil
+const { debounceFunc } = commonUtil
+const { getAvatarSource, addExternalFriend } = require('../../util')
+const { engine } = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const chatManager = require('../../manager/LKChatManager')
+
 const ContactManager = engine.get('ContactManager')
 const _ = require('lodash')
 const addPng = require('../image/add.png')
-const {NetInfoUtil} = require('@ys/react-native-collection')
+const { NetInfoUtil } = require('@ys/react-native-collection')
 const container = require('../../state')
+
 container.NetInfoUtil = NetInfoUtil
-const {runNetFunc} = require('../../util')
-const {StringUtil} = require('@ys/vanilla')
-const {stripNewline} = StringUtil
+const { runNetFunc } = require('../../util')
+const { StringUtil } = require('@ys/vanilla')
+
+const { stripNewline } = StringUtil
 
 export default class RecentView extends Component<{}> {
-    static navigationOptions =({navigation}) => {
+    static navigationOptions =({ navigation }) => {
       const size = 20
       let headerTitle = navigation.getParam('headerTitle')
       headerTitle = headerTitle || '消息'
       return {
         headerTitle,
         headerRight:
-        <TouchableOpacity onPress={navigation.getParam('optionToChoose')}>
-          <Image source={addPng} style={{width: size, height: size, marginHorizontal: 10}} resizeMode='contain'/>
-        </TouchableOpacity>
+  <TouchableOpacity onPress={navigation.getParam('optionToChoose')}>
+    <Image source={addPng} style={{ width: size, height: size, marginHorizontal: 10 }} resizeMode="contain" />
+  </TouchableOpacity>
       }
     }
-    constructor (props) {
+
+    constructor(props) {
       super(props)
       this.state = {
         contentAry: null,
@@ -53,10 +59,9 @@ export default class RecentView extends Component<{}> {
       this.channel = lkApp.getLKWSChannel()
       this.user = lkApp.getCurrentUser()
       const checkNotify = (res) => {
-        console.log({onNotfication: res})
-        const {_data, _alert} = res
+        const { _data, _alert } = res
         if (_data) {
-          const {type} = _data
+          const { type } = _data
           if (type === 'notify') {
             this.props.navigation.navigate('NotifyView', {
               msg: _alert
@@ -65,15 +70,14 @@ export default class RecentView extends Component<{}> {
         }
       }
       new PushUtil({
-        onNotfication: res => {
+        onNotfication: (res) => {
           checkNotify(res)
         },
-        onInitialNotification: res => {
+        onInitialNotification: (res) => {
           if (res) {
             checkNotify(res)
-            const {_data: data} = res
-            const {senderId, chatId, isGroup} = data
-            console.log({onInitialNotification: res})
+            const { _data: data } = res
+            const { senderId, chatId, isGroup } = data
             if (isGroup) {
               this.chat({
                 otherSideId: isGroup ? chatId : senderId,
@@ -113,7 +117,7 @@ export default class RecentView extends Component<{}> {
     }
 
     componentWillUnmount =() => {
-      for (let event of this.eventAry) {
+      for (const event of this.eventAry) {
         chatManager.un(event, this.update)
       }
       this.channel.un('connectionFail', this.connectionFail)
@@ -122,13 +126,13 @@ export default class RecentView extends Component<{}> {
     }
 
     componentDidMount=() => {
-      const {navigation} = this.props
+      const { navigation } = this.props
 
-      for (let event of this.eventAry) {
+      for (const event of this.eventAry) {
         chatManager.on(event, this.update)
       }
       this.updateRecent()
-      navigation.setParams({optionToChoose: this.optionToChoose})
+      navigation.setParams({ optionToChoose: this.optionToChoose })
 
       this.channel.on('connectionFail', this.connectionFail)
       this.channel.on('connectionOpen', this.connectionOpen)
@@ -138,13 +142,13 @@ export default class RecentView extends Component<{}> {
     _handleAppStateChange = (appState) => {
       // console.log({appState})
       if (appState === 'active') {
-        this.asyGetAllDetainedMsg({minTime: 500})
+        this.asyGetAllDetainedMsg({ minTime: 500 })
         removeNotify()
       }
     }
 
     connectionFail = () => {
-      const {navigation} = this.props
+      const { navigation } = this.props
       navigation.setParams({
         headerTitle: '消息(未连接)'
       })
@@ -162,7 +166,7 @@ export default class RecentView extends Component<{}> {
       }
     }
 
-    getConnectionMsg () {
+    getConnectionMsg() {
       let result
       if (NetInfoUtil.online) {
         result = '与服务器的连接已断开'
@@ -177,13 +181,15 @@ export default class RecentView extends Component<{}> {
       this.resetHeaderTitle()
     }
 
-    async getMsg (option) {
-      const {userId, chatId, newMsgNum, isGroup, chatName, createTime} = option
-      let result = {
+    async getMsg(option) {
+      const {
+        userId, chatId, newMsgNum, isGroup, chatName, createTime
+      } = option
+      const result = {
         isGroup
       }
       const msgAry = await chatManager.asyGetMsgs(userId, chatId)
-      const {length} = msgAry
+      const { length } = msgAry
       let obj = {
         deletePress: () => {
           this.deleteRow(chatId)
@@ -216,9 +222,9 @@ export default class RecentView extends Component<{}> {
         }
       } else if (length) {
         const msg = _.last(msgAry)
-        const {sendTime, content, type} = msg
+        const { sendTime, content, type } = msg
         const person = await ContactManager.asyGet(userId, chatId)
-        const {name, pic} = person
+        const { name, pic } = person
         obj.time = new Date(sendTime)
         obj.content = this.getMsgContent(content, type)
         obj.sendTime = sendTime
@@ -241,12 +247,13 @@ export default class RecentView extends Component<{}> {
       return result
     }
 
-    getMsgContent (content, type) {
+    getMsgContent(content, type) {
       const maxDisplay = 15
       if (type === chatManager.MESSAGE_TYPE_TEXT) {
-        const {length} = content
+        const { length } = content
+        content = content.replace(/&nbsp;/g, ' ')
         if (length > maxDisplay) {
-          content = stripNewline(content.substring(0, maxDisplay)) + '......'
+          content = `${stripNewline(content.substring(0, maxDisplay))}......`
         }
       } else if (type === chatManager.MESSAGE_TYPE_IMAGE) {
         content = '[图片]'
@@ -257,16 +264,19 @@ export default class RecentView extends Component<{}> {
       }
       return content
     }
-    async updateRecent () {
+
+    async updateRecent() {
       const user = lkApp.getCurrentUser()
       const allChat = await chatManager.asyGetAll(user.id)
       const msgAryPromise = []
       let contentAry
       // console.log({allChat})
-      const {length} = allChat
+      const { length } = allChat
       if (length) {
-        for (let chat of allChat) {
-          const {isGroup, name, createTime, id: chatId} = chat
+        for (const chat of allChat) {
+          const {
+            isGroup, name, createTime, id: chatId
+          } = chat
           const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
           // console.log({newMsgNum, chatId})
           const option = {
@@ -281,22 +291,26 @@ export default class RecentView extends Component<{}> {
           msgAryPromise.push(msgPromise)
         }
         let recentAry = await Promise.all(msgAryPromise)
-        recentAry = recentAry.filter(ele => {
-          return ele.item || ele.isGroup
-        })
+        recentAry = recentAry.filter(ele => ele.item || ele.isGroup)
 
         // recentAry.sort((obj1, obj2) => {
         //   return obj1.sendTime - obj2.sendTime
         // })
         const data = recentAry.map(ele => ele.item)
-        contentAry = <MessageList data={data}/>
+        contentAry = <MessageList data={data} />
       } else {
-        contentAry =
-          <View style={{justifyContent: 'flex-start', alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => { this.props.navigation.navigate('ContactTab') }} style={{marginTop: 30, width: '90%', height: 50, borderColor: 'gray', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{fontSize: 18, textAlign: 'center', color: 'gray'}}>开始和好友聊天吧!</Text>
+        contentAry = (
+          <View style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={() => { this.props.navigation.navigate('ContactTab') }}
+              style={{
+                marginTop: 30, width: '90%', height: 50, borderColor: 'gray', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
+              }}
+            >
+              <Text style={{ fontSize: 18, textAlign: 'center', color: 'gray' }}>开始和好友聊天吧!</Text>
             </TouchableOpacity>
           </View>
+        )
       }
 
       this.setState({
@@ -309,7 +323,7 @@ export default class RecentView extends Component<{}> {
       this.props.navigation.navigate('ChatView', option)
     })
 
-    async deleteRow (chatId) {
+    async deleteRow(chatId) {
       await chatManager.asyDeleteChat(this.user.id, chatId)
       this.update()
     }
@@ -317,17 +331,17 @@ export default class RecentView extends Component<{}> {
     resetHeaderTitle = async () => {
       if (container.connectionOK) {
         // console.log('resetHeaderTitle')
-        const {navigation} = this.props
+        const { navigation } = this.props
         const num = await chatManager.asyGetAllMsgNotReadNum(this.user.id)
         navigation.setParams({
-          headerTitle: '消息' + (num ? `(${num})` : '')
+          headerTitle: `消息${num ? `(${num})` : ''}`
         })
       }
     }
 
   asyGetAllDetainedMsg = (option = {}) => {
-    const {minTime = 0, refreshControl, showWarning = false} = option
-    const {navigation} = this.props
+    const { minTime = 0, refreshControl, showWarning = false } = option
+    const { navigation } = this.props
 
     runNetFunc(async () => {
       if (refreshControl) {
@@ -351,21 +365,27 @@ export default class RecentView extends Component<{}> {
       let diff = minTime - (Date.now() - start)
       diff = diff > 0 ? diff : 0
       setTimeout(reset, diff)
-    }, {showWarning})
+    }, { showWarning })
   }
 
-  render () {
+  render() {
     return (
-      <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'}}>
-        <NetIndicator/>
-        <ScrollView style={{width: '100%', paddingTop: 10}} keyboardShouldPersistTaps="always"
-          refreshControl={
+      <View style={{
+        flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'
+      }}
+      >
+        <NetIndicator />
+        <ScrollView
+          style={{ width: '100%', paddingTop: 10 }}
+          keyboardShouldPersistTaps="always"
+          refreshControl={(
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={() => {
-                this.asyGetAllDetainedMsg({refreshControl: true, showWarning: true, minTime: 1000})
+                this.asyGetAllDetainedMsg({ refreshControl: true, showWarning: true, minTime: 1000 })
               }}
-            />}
+            />
+)}
         >
           {this.state.contentAry}
         </ScrollView>

@@ -30,7 +30,7 @@ import TransModal from './TransModal'
 import TextInputWrapper from './TextInputWrapper'
 import MessageItem from './MessageItem'
 import DelayIndicator from './DelayIndicator'
-import ScrollBottom from './ScrollBottom'
+import ScrollBottom from './ScrollBottom2'
 import AudioPlay from './AudioPlay'
 
 const { engine } = require('@lk/LK-C')
@@ -396,13 +396,20 @@ export default class ChatView extends Component<{}> {
       return result
     }
 
-    _onRefresh = () => {
+    _onRefresh = async () => {
       this.limit = this.limit + Constant.MESSAGE_PER_REFRESH
       if (this.limit > this.extra.maxCount) {
-        this.extra.isRefreshingControl = true
-        this.setState({
-          showScrollBottom: true
-        })
+        if (!this.state.showScrollBottom) {
+          this.extra.isRefreshingControl = true
+          this.setState({
+            showScrollBottom: true
+          })
+        } else {
+          Toast.show({
+            text: '更早之前的消息已焚毁',
+            position: 'top'
+          })
+        }
       } else {
         this.setState({
           refreshing: true
