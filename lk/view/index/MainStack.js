@@ -23,6 +23,7 @@ import LogView from '../mine/dev/LogView'
 import SetUpdateUrlView from '../mine/dev/SetUpdateUrlView'
 import InfoView from '../mine/dev/InfoView'
 import TestView from '../mine/dev/TestView'
+import DbView from '../mine/dev/DbView'
 import TestView3 from '../mine/dev/testView/View3'
 import TestView1 from '../mine/dev/testView/View1'
 import BasicInfoView from '../mine/BasicInfoView'
@@ -31,6 +32,7 @@ import UidView from '../mine/UidView'
 import VersionView from '../mine/VersionView'
 import RenameView from '../mine/RenameView'
 import MsgBadge from '../chat/MsgBadge'
+
 const {getTabLogo} = require('../../util')
 const style = require('../style')
 const backImg = require('../image/back-icon.png')
@@ -139,7 +141,8 @@ const MainStack = createStackNavigator({
   LogView,
   TestView,
   TestView3,
-  TestView1
+  TestView1,
+  DbView
 }, stackNavigatorConfig)
 
 export default MainStack

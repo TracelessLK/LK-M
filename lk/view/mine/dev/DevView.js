@@ -165,6 +165,12 @@ export default class BasicInfoView extends Component<{}> {
           onPress: () => {
             navigation.navigate('TestView1')
           }
+        },
+        {
+          title: 'DbView',
+          onPress: () => {
+            navigation.navigate('DbView')
+          }
         }
       ]
       const list2 = ary.map(ele => ({

@@ -26,7 +26,7 @@ export default class ScrollBottom extends Component<{}> {
   render() {
     const { height } = Dimensions.get('window')
     const headerHeight = Header.HEIGHT
-    const contentHeight = height - headerHeight - 100
+    const contentHeight = height - headerHeight
     return (
       <View style={{
         height: contentHeight,
@@ -36,7 +36,8 @@ export default class ScrollBottom extends Component<{}> {
         alignItems: 'center'
       }}
       >
-        <Image source={require('../image/fire.gif')} style={{height:contentHeight}}/>
+        <Image source={require('../image/grayLogo.png')} style={{height:contentHeight}}
+               style={{height: contentHeight/3}} resizeMode='contain'/>
       </View>
 
     )
