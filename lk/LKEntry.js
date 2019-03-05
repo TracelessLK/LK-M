@@ -7,25 +7,32 @@ import {
   Linking,
   Alert
 } from 'react-native'
-import EntryView from './view/index/EntryView'
 import Promise from 'bluebird'
+import RNShake from 'react-native-shake'
+import {ActionSheet} from 'native-base'
+
+import EntryView from './view/index/EntryView'
 
 const container = require('./state')
 const config = require('./config')
-const {appId, appName} = config
+
+const { appId, appName } = config
 const packageJson = require('../package.json')
-const {version: versionLocal} = packageJson
-const {UpdateUtil} = require('@ys/react-native-collection')
-const {appInfoUrl} = config
+
+const { version: versionLocal } = packageJson
+const { UpdateUtil } = require('@ys/react-native-collection')
+
+const { appInfoUrl } = config
 const ErrorUtilRN = require('ErrorUtils')
 const util = require('./util')
-const {writeToLog} = util
-const {engine} = require('@lk/LK-C')
+
+const { writeToLog } = util
+const { engine } = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()
 
-lkApplication.on('currentUserChanged', user => {
+lkApplication.on('currentUserChanged', (user) => {
   if (user) {
     // console.log({user})
     checkUpdate(user)
@@ -41,12 +48,12 @@ lkApplication.on('netStateChanged', (result) => {
   container.connectionOK = result
 })
 
-async function checkUpdate (user) {
+async function checkUpdate(user) {
   if (container.NetInfoUtil.online) {
-    const {serverIP, id, name} = user
+    const { serverIP, id, name } = user
     const response = await fetch(appInfoUrl)
     const appInfo = await response.json()
-    const {updateUrl, httpProtocol, port} = appInfo
+    const { updateUrl, httpProtocol, port } = appInfo
     let base = `${httpProtocol}://${serverIP}:${port}`
     const updateUrlBase = await AsyncStorage.getItem('updateUrlBase')
     if (updateUrlBase) {
@@ -92,14 +99,15 @@ YellowBox.ignoreWarnings([
 console.disableYellowBox = true
 // console.log(process.env)
 
-const {ErrorUtil, ErrorStock} = require('@ys/react-native-collection')
-const {setGlobalErrorHandler} = ErrorUtil
+const { ErrorUtil, ErrorStock } = require('@ys/react-native-collection')
+
+const { setGlobalErrorHandler } = ErrorUtil
 const f = (error) => {
-  console.log({stack: error.stack})
+  console.log({ stack: error.stack })
 
   writeToLog({
     type: 'now',
-    content: error.toString() + '\n' + error.stack
+    content: `${error.toString()}\n${error.stack}`
   })
   const user = lkApplication.getCurrentUser()
   const ary = ['zcy', 'dds', 'rbg', 'goofy']
@@ -122,34 +130,72 @@ const errorStock = new ErrorStock(resetTime)
 // console.log(global)
 
 global.onunhandledrejection = (error) => {
-  console.log({error})
+  console.log({ error })
   if (error instanceof Error) {
     writeToLog({
       type: 'now',
-      content: error.toString() + '\n' + error.stack
+      content: `${error.toString()}\n${error.stack}`
     })
-    errorStock.processError({error})
+    errorStock.processError({ error })
   }
 }
 // console.log(global)
 
 export default class LKEntry extends Component<{}> {
-  componentDidMount () {
+  shakeCount = 0
+
+  componentDidMount() {
     Linking.getInitialURL().then((url) => {
       if (url) {
-        console.log('Initial URL: ' + url)
+        console.log(`Initial URL: ${url}`)
       }
     }).catch(err => console.error('An error occurred', err))
-    Linking.addEventListener('url', event => {
+    Linking.addEventListener('url', (event) => {
       // const {url} = event
     })
   }
-  render () {
+
+  componentWillMount() {
+    RNShake.addEventListener('ShakeEvent', () => {
+      this.shakeCount++
+      console.log(this.shakeCount)
+      if (this.shakeCount > 1) {
+        const BUTTONS = ['热更新',
+          // '添加外部好友',
+          '取消']
+        const CANCEL_INDEX = BUTTONS.length - 1
+
+        ActionSheet.show(
+          {
+            options: BUTTONS,
+            cancelButtonIndex: CANCEL_INDEX,
+            title: ''
+          },
+          (buttonIndex) => {
+            if (buttonIndex === 0) {
+
+            } else if (buttonIndex === 1) {
+              console.log('热更新')
+            }
+          }
+        )
+      }
+      setTimeout(() => {
+        this.shakeCount = 0
+      }, 1000 * 10)
+    })
+  }
+
+  componentWillUnmount() {
+    RNShake.removeEventListener('ShakeEvent')
+  }
+
+  render() {
     const schemeName = 'lkapp'
     const prefix = Platform.OS === 'android' ? `${schemeName}://${schemeName}/` : `${schemeName}://`
 
     return (
-      <EntryView uriPrefix={prefix}></EntryView>
+      <EntryView uriPrefix={prefix} />
     )
   }
 }

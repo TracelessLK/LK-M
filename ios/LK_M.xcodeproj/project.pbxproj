@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -72,6 +71,7 @@
 		FDFFF65F210CD7EB007CDCE7 /* libbz2.1.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FDFFF65D210CD4C0007CDCE7 /* libbz2.1.0.tbd */; };
 		FDFFF669210CD8F3007CDCE7 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDFFF666210CD8E8007CDCE7 /* libRCTPushNotification.a */; };
 		FE15737FBBB74D1C84796512 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 306DC77C03BF45DBBD4ADF16 /* Ionicons.ttf */; };
+		00747697FB2C4A0CBB0D5341 /* libRNShakeEvent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B9769975B99C406FAB6FCDA7 /* libRNShakeEvent.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -639,6 +639,8 @@
 		FDFFF660210CD8E8007CDCE7 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		FDFFF66A210CEC3A007CDCE7 /* LK_M.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = LK_M.entitlements; path = LK_M/LK_M.entitlements; sourceTree = "<group>"; };
 		FFB9516F72C34B29AAAD92A3 /* libVoice.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libVoice.a; sourceTree = "<group>"; };
+		2D3CEEEC97CD4B7E841DAFBB /* RNShakeEvent.xcodeproj */ = {isa = PBXFileReference; name = "RNShakeEvent.xcodeproj"; path = "../node_modules/react-native-shake/ios/RNShakeEvent.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		B9769975B99C406FAB6FCDA7 /* libRNShakeEvent.a */ = {isa = PBXFileReference; name = "libRNShakeEvent.a"; path = "libRNShakeEvent.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -696,6 +698,7 @@
 				2A3B6DE566CD43109EAE7AA1 /* libRNNetworkInfo.a in Frameworks */,
 				A4F7372B733846B096B30E7E /* libLottie.a in Frameworks */,
 				3324372BFF5C419EA96DFEA2 /* libLottieReactNative.a in Frameworks */,
+				00747697FB2C4A0CBB0D5341 /* libRNShakeEvent.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,6 +909,7 @@
 				A149214054BD4370B5BC7D31 /* Voice.xcodeproj */,
 				DE4D2CBB27394F3FA62086B3 /* Lottie.xcodeproj */,
 				82A019AF6FDE466A9CE97966 /* LottieReactNative.xcodeproj */,
+				2D3CEEEC97CD4B7E841DAFBB /* RNShakeEvent.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1947,12 +1951,14 @@
 					"$(SRCROOT)/../node_modules/react-native-voice/ios/Voice",
 					"$(SRCROOT)/../node_modules/lottie-ios/lottie-ios/Classes/**",
 					"$(SRCROOT)/../node_modules/lottie-react-native/src/ios/LottieReactNative",
+					"$(SRCROOT)/../node_modules/react-native-shake/ios",
 				);
 				INFOPLIST_FILE = LK_MTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1995,12 +2001,14 @@
 					"$(SRCROOT)/../node_modules/react-native-voice/ios/Voice",
 					"$(SRCROOT)/../node_modules/lottie-ios/lottie-ios/Classes/**",
 					"$(SRCROOT)/../node_modules/lottie-react-native/src/ios/LottieReactNative",
+					"$(SRCROOT)/../node_modules/react-native-shake/ios",
 				);
 				INFOPLIST_FILE = LK_MTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -2048,6 +2056,7 @@
 					"$(SRCROOT)/../node_modules/react-native-voice/ios/Voice",
 					"$(SRCROOT)/../node_modules/lottie-ios/lottie-ios/Classes/**",
 					"$(SRCROOT)/../node_modules/lottie-react-native/src/ios/LottieReactNative",
+					"$(SRCROOT)/../node_modules/react-native-shake/ios",
 				);
 				INFOPLIST_FILE = LK_M/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2092,6 +2101,7 @@
 					"$(SRCROOT)/../node_modules/react-native-voice/ios/Voice",
 					"$(SRCROOT)/../node_modules/lottie-ios/lottie-ios/Classes/**",
 					"$(SRCROOT)/../node_modules/lottie-react-native/src/ios/LottieReactNative",
+					"$(SRCROOT)/../node_modules/react-native-shake/ios",
 				);
 				INFOPLIST_FILE = LK_M/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

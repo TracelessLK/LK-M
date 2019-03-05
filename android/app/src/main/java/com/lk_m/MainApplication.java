@@ -3,6 +3,7 @@ package com.lk_m;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.clipsub.RNShake.RNShakeEventPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.wenkesj.voice.VoicePackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
@@ -45,6 +46,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNShakeEventPackage(),
             new LottiePackage(),
             new VoicePackage(),
             new RNNetworkInfoPackage(),

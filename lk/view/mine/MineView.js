@@ -200,7 +200,7 @@ export default class MineView extends Component<{}> {
   // todo: should have setting
   isDevMode() {
     const ary = ['dds', 'rbg', 'goofy', 'test', 'zcy', 'iphonework1', 'iphonework2']
-    return ary.includes(this.user.name)
+    return ary.includes(this.user.name) || __DEV__
   }
 
   render() {
