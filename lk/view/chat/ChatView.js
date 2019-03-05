@@ -93,7 +93,10 @@ export default class ChatView extends Component<{}> {
       }
       this.otherSideId = otherSideId
       this.text = ''
-      this.folderId = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
+      this.folderId = null
+      if (Platform.OS === 'ios') {
+        this.folderId = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
+      }
       this.limit = Constant.MESSAGE_PER_REFRESH
       this.extra = {
         lastContentHeight: 0,
