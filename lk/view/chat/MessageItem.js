@@ -24,7 +24,10 @@ const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const chatManager = engine.get('ChatManager')
 const { msgBoxStyle } = style
-const folderId = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
+let folderId
+if (Platform.OS === 'ios') {
+  folderId = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
+}
 export default class MessageItem extends Component<{}> {
   componentDidMount() {
 
@@ -51,7 +54,7 @@ export default class MessageItem extends Component<{}> {
 
   _getMessage=(rec) => {
     const { onPress } = this.props
-    const { type, id } = rec
+    const { type } = rec
     let result
     if (type === chatManager.MESSAGE_TYPE_TEXT) {
       const text = (
