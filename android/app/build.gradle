@@ -98,11 +98,16 @@ android {
         jumboMode true
     }
      compileSdkVersion 26
-     buildToolsVersion "26.0.1"
+
+       compileOptions {
+             sourceCompatibility 1.8
+             targetCompatibility 1.8
+         }
+
 
     defaultConfig {
         applicationId "com.lk_m"
-        minSdkVersion 16
+        minSdkVersion 25
         targetSdkVersion 22
         versionCode 1
         versionName "0.0.16"
@@ -170,10 +175,10 @@ dependencies {
     compile project(':react-native-camera')
     compile project(':react-native-device-info')
     compile project(':react-native-vector-icons')
-     compile project(':react-native-sqlite-storage')
+    compile project(':react-native-sqlite-storage')
     compile project(':react-native-fs')
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.android.support:appcompat-v7:27.1.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
 }
 
