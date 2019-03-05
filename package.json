@@ -29,7 +29,7 @@
     "@external/common": "file:common",
     "@lk/LK-C": "file:submodule/LK-C",
     "@ys/collection": "file:submodule/node_collection",
-    "@ys/react-native-collection": "github:spirit1453/react_native_collection#publish",
+    "@ys/react-native-collection": "file:submodule/react_native_collection",
     "@ys/vanilla": "github:spirit1453/vanilla_js#publish",
     "aes-js": "^3.1.1",
     "bluebird": "^3.5.2",

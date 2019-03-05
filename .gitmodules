@@ -5,3 +5,7 @@
 	path = submodule/node_collection
 	url = https://github.com/spirit1453/node_collection.git
 	branch = publish
+[submodule "submodule/react_native_collection"]
+	path = submodule/react_native_collection
+	url = https://github.com/spirit1453/react_native_collection
+	branch = publish

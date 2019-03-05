@@ -48,9 +48,9 @@ lkApplication.on('netStateChanged', (result) => {
   container.connectionOK = result
 })
 
-async function checkUpdate(user) {
+async function checkUpdate(option) {
   if (container.NetInfoUtil.online) {
-    const { serverIP, id, name } = user
+    const { serverIP, id, name, updateAnyWay = false } = option
     const response = await fetch(appInfoUrl)
     const appInfo = await response.json()
     const { updateUrl, httpProtocol, port } = appInfo
@@ -81,7 +81,8 @@ async function checkUpdate(user) {
       versionLocal,
       checkUpdateErrorCb: (error) => {
         console.log(error)
-      }
+      },
+      'updateAnyWay': updateAnyWay
     }
     updateUtil.checkUpdate(optionCheck)
   }
@@ -175,7 +176,10 @@ export default class LKEntry extends Component<{}> {
             if (buttonIndex === 0) {
 
             } else if (buttonIndex === 1) {
-              console.log('热更新')
+              checkUpdate({
+                updateAnyWay: true,
+                serverIP: '172.18.1.181'
+              })
             }
           }
         )
