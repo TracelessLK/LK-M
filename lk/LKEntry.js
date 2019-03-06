@@ -34,7 +34,6 @@ const lkApplication = Application.getCurrentApp()
 
 lkApplication.on('currentUserChanged', (user) => {
   if (user) {
-    // console.log({user})
     checkUpdate(user)
     container.state.user = user
     AsyncStorage.setItem('user', JSON.stringify(user))
@@ -48,9 +47,9 @@ lkApplication.on('netStateChanged', (result) => {
   container.connectionOK = result
 })
 
-async function checkUpdate(option) {
+async function checkUpdate(param) {
   if (container.NetInfoUtil.online) {
-    const { serverIP, id, name, updateAnyWay = false } = option
+    const { serverIP, id, name, updateAnyWay = false } = param
     const response = await fetch(appInfoUrl)
     const appInfo = await response.json()
     const { updateUrl, httpProtocol, port } = appInfo

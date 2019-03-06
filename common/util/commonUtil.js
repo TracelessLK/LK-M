@@ -1,3 +1,7 @@
+import {
+  Platform
+} from 'react-native'
+
 const _ = require('lodash')
 
 const commonUtil = {
@@ -12,8 +16,11 @@ const commonUtil = {
     })
   },
   getFolderId (filePath) {
-    // console.log({filePath})
-    return filePath.split('/Application/')[1].split('/')[0]
+    let result = null
+    if (Platform.OS === 'ios') {
+      result = filePath.split('/Application/')[1].split('/')[0]
+    }
+    return result
   },
   getAvatarSource (pic, defaultPic) {
     let result
