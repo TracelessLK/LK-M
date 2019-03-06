@@ -14,7 +14,7 @@ const {serverRoot} = config
 const fileName = `${appName}.apk`
 
 timeCount(() => {
-  const localApkPath = path.resolve(__dirname, '../android/app/build/outputs/apk/app-release.apk')
+  const localApkPath = path.resolve(__dirname, '../android/app/build/outputs/apk/release/app-release.apk')
   if (pack || !fs.existsSync(localApkPath)) {
     timeStamp({packType: 'android'})
     console.log('packing apk ..................')

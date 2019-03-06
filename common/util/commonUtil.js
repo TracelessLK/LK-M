@@ -18,7 +18,13 @@ const commonUtil = {
   getFolderId (filePath) {
     let result = null
     if (Platform.OS === 'ios') {
-      result = filePath.split('/Application/')[1].split('/')[0]
+      try {
+        if (filePath.contains('/Application/')) {
+          result = filePath.split('/Application/')[1].split('/')[0]
+        }
+      } catch(error) {
+
+      }
     }
     return result
   },
