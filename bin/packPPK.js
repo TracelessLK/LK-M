@@ -1,4 +1,5 @@
 const {FuncUtil} = require('@ys/vanilla')
+const inquirer = require('inquirer')
 const {timeCount} = FuncUtil
 const childProcess = require('child_process')
 const NodeSSH = require('node-ssh')
@@ -12,11 +13,20 @@ const {upload, timeStamp} = require('./util')
 
 start()
 
-function start () {
-  const cmd = `npx pushy bundle --platform ios --verbose --output ${outputPath}`
+async function start () {
+  const question =  [{
+    type: 'list',
+    name: 'platform',
+    message: 'What platform to pack?',
+    choices: ['ios', 'android']
+  }]
+  const answer = await inquirer.prompt(question)
+  const {platform} = answer
+  const cmd = `npx pushy bundle --platform ${platform} --verbose --output ${outputPath}`
 
   timeCount(async () => {
     console.log('ppk export started')
+    console.log(`outputPath: ${outputPath}`)
     console.log({cmd})
     // fixme: 解决异步的问题
     timeStamp({packType: 'ppk'})
@@ -38,6 +48,4 @@ function start () {
       process.exit()
     }
   })
-
-  // clipboardy.writeSync(cmd)
 }
