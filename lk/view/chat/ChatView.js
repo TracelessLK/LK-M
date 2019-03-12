@@ -761,8 +761,8 @@ export default class ChatView extends Component<{}> {
             if (this.audioFilePath) {
               RNFetchBlob.fs.readFile(this.audioFilePath, 'base64').then((data) => {
                 const ext = _.last(this.audioFilePath.split('.'))
-                lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.relativeMsgId,
-                  this.isGroupChat, this.recordTimeRaw)
+                lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.recordTimeRaw, this.relativeMsgId,
+                  this.isGroupChat)
                   .catch((err) => {
                     Alert.alert(err.toString())
                   })
