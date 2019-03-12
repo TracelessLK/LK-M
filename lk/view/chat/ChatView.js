@@ -490,7 +490,12 @@ export default class ChatView extends Component<{}> {
   cancelRecord = async () => {
     this.refs.modal2.show()
     const filePath = await this.audioRecorderPlayer.stopRecorder()
-    this.audioFilePath = filePath.replace('file://', '')
+
+    this.audioFilePath = Platform.select({
+      ios: filePath.replace('file://', ''),
+      android: 'sdcard/lk.mp4'
+
+    })
 
     this.audioRecorderPlayer.removeRecordBackListener()
     this.setState({

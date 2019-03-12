@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import {
   TouchableOpacity,
-  View
+  View,
+  Platform
 } from 'react-native'
 import PropTypes from 'prop-types'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -31,7 +32,6 @@ export default class AudioPlay extends Component<{}> {
           this.audioRecorderPlayer.removePlayBackListener()
 
           this.audioRecorderPlayer.addPlayBackListener((e) => {
-            // console.log({e})
             const { current_position: currentPosition, duration } = e
             if (currentPosition - this.lastTime > this.interval) {
               this.setState({
@@ -50,24 +50,28 @@ export default class AudioPlay extends Component<{}> {
               })
             }
           })
-          let destination
           const fileName = _.last(url.split('/'))
-          if (url.startsWith('/private')) {
-            destination = url
-          } else {
-            const ary = url.split('Documents')
-            const baseUrl = ary[0]
 
-            destination = `/private${baseUrl}tmp/${fileName}`
+          if (Platform.OS === 'ios') {
+            let destination
+            if (url.startsWith('/private')) {
+              destination = url
+            } else {
+              const ary = url.split('Documents')
+              const baseUrl = ary[0]
+
+              destination = `/private${baseUrl}tmp/${fileName}`
+            }
+
+            const exist = await RNFetchBlob.fs.exists(destination)
+            if (!exist) {
+              const data = await RNFetchBlob.fs.readFile(url, 'base64')
+              await RNFetchBlob.fs.writeFile(destination, data, 'base64')
+            }
           }
 
-          const exist = await RNFetchBlob.fs.exists(destination)
-          if (!exist) {
-            const data = await RNFetchBlob.fs.readFile(url, 'base64')
-            await RNFetchBlob.fs.writeFile(destination, data, 'base64')
-          }
 
-          await this.audioRecorderPlayer.startPlayer(fileName)
+          await this.audioRecorderPlayer.startPlayer(Platform.OS === 'ios' ? fileName : url)
         }}
       >
         <View style={{ width: logoSize, alignItems: 'flex-start', justifyContent: 'center' }}>
