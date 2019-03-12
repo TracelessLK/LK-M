@@ -159,7 +159,7 @@ export default class LKEntry extends Component<{}> {
     RNShake.addEventListener('ShakeEvent', () => {
       this.shakeCount++
       console.log(this.shakeCount)
-      if (this.shakeCount > 3) {
+      if (this.shakeCount > 5) {
         const BUTTONS = ['热更新',
           // '添加外部好友',
           '取消']

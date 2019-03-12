@@ -471,7 +471,10 @@ export default class ChatView extends Component<{}> {
       this.setState({
         isRecording: true
       })
-      const audioPath = 'lk.m4a'
+      const audioPath = Platform.select({
+        ios: 'lk.m4a',
+        android: 'sdcard/lk.mp4' // should give extra dir name in android. Won't grant permission to the first level of dir.
+      })
       await this.audioRecorderPlayer.startRecorder(audioPath)
       this.audioRecorderPlayer.addRecordBackListener((e) => {
         const { current_position: recordTimeRaw } = e

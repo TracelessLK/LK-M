@@ -22,12 +22,11 @@ export default class AudioPlay extends Component<{}> {
   }
 
   render() {
-    const { url, id } = this.props
+    const { url } = this.props
     const logoSize = 40
     return (
       <TouchableOpacity
         style={{ width: 60, alignItems: 'center', justifyContent: 'center' }}
-        key={id}
         onPress={async () => {
           this.audioRecorderPlayer.removePlayBackListener()
 
@@ -89,6 +88,5 @@ AudioPlay.defaultProps = {
 }
 
 AudioPlay.propTypes = {
-  url: PropTypes.string,
-  id: PropTypes.string
+  url: PropTypes.string
 }
