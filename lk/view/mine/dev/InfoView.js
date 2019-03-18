@@ -30,7 +30,7 @@ export default class InfoView extends Component<{}> {
 
     }
     try {
-      appJSON = require('../../../app.json')
+      // appJSON = require('../../../app.json')
     } catch (err) {
 
     }
