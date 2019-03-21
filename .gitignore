@@ -61,7 +61,6 @@ buck-out/
 coverage
 
 
-*.lock
 *.log
 
 main.jsbundle*
