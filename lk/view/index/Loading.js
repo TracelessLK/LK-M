@@ -5,11 +5,15 @@ import {
   View, ActivityIndicator,
   AsyncStorage
 } from 'react-native'
+import DataSource from '../../store/RNSqlite'
+
 const {PushUtil} = require('@external/common')
 
 const {getAPNDeviceId} = PushUtil
 const {engine} = require('@lk/LK-C')
 const UserManager = engine.get('UserManager')
+
+
 
 let Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()
@@ -29,6 +33,9 @@ export default class Loading extends Component<{}> {
   }
 
     _bootstrapAsync = async () => {
+    // 准备数据库
+      await lkApplication.start(DataSource, Application.PLATFORM_RN)
+
       let routerName
       const currentUser = lkApplication.getCurrentUser()
       const venderDid = await getAPNDeviceId()

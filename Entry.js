@@ -7,25 +7,17 @@ import {
 import {Root} from 'native-base'
 import {isFirstTime, markSuccess} from 'react-native-update'
 
-import DataSource from './lk/store/RNSqlite'
+
 import LKEntry from './lk/LKEntry'
 const {engine} = require('@lk/LK-C')
 
 const packageJson = require('./package.json')
-const {dropExtraTable} = require('./lk/util')
 
-let Application = engine.getApplication()
+const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
-lkApp.on('dbReady', () => {
-  if (isFirstTime) {
-    markSuccess()
-    const ary = ['0.0.11', '0.0.15']
-    if (ary.includes(packageJson.version)) {
-      dropExtraTable()
-    }
-  }
-})
-lkApp.start(DataSource, Application.PLATFORM_RN)
+if (isFirstTime) {
+  markSuccess()
+}
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
 
