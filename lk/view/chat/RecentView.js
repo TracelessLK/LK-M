@@ -142,7 +142,7 @@ export default class RecentView extends Component<{}> {
     _handleAppStateChange = (appState) => {
       // console.log({appState})
       if (appState === 'active') {
-        this.asyGetAllDetainedMsg({ minTime: 500 })
+        // this.asyGetAllDetainedMsg({ minTime: 500 })
         removeNotify()
       }
     }
@@ -177,7 +177,7 @@ export default class RecentView extends Component<{}> {
     }
 
     connectionOpen = () => {
-      this.asyGetAllDetainedMsg()
+      // this.asyGetAllDetainedMsg()
       this.resetHeaderTitle()
     }
 
