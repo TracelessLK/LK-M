@@ -24,6 +24,7 @@ import SetUpdateUrlView from '../mine/dev/SetUpdateUrlView'
 import InfoView from '../mine/dev/InfoView'
 import TestView from '../mine/dev/TestView'
 import DbView from '../mine/dev/DbView'
+import DbViewTable from '../mine/dev/DbViewTable'
 import TestView3 from '../mine/dev/testView/View3'
 import TestView1 from '../mine/dev/testView/View1'
 import BasicInfoView from '../mine/BasicInfoView'
@@ -142,7 +143,8 @@ const MainStack = createStackNavigator({
   TestView,
   TestView3,
   TestView1,
-  DbView
+  DbView,
+  DbViewTable
 }, stackNavigatorConfig)
 
 export default MainStack

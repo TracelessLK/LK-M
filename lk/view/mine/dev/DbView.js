@@ -1,57 +1,95 @@
 import React, { Component } from 'react'
 import {
-  Text,
-  StyleSheet,
-  View
+  ScrollView, Text, View,
+  PushNotificationIOS
 } from 'react-native'
-import PropTypes from 'prop-types'
-import { Table, Row, Rows } from 'react-native-table-component'
+import { ListItem } from 'react-native-elements'
+
+const { engine } = require('@lk/LK-C')
+const common = require('@external/common')
+
+const { commonUtil } = common
+const { debounceFunc } = commonUtil
+const ChatManager = engine.get('ChatManager')
+
 
 export default class DbView extends Component<{}> {
   constructor(props) {
     super(props)
-    this.state1 = {
-      tableHead: ['Head', 'Head2', 'Head3', 'Head4'],
-      tableData: [
-        ['1', '2', '3', '4'],
-        ['a', 'b', 'c', 'd'],
-        ['1', '2', '3', '456\n789'],
-        ['a', 'b', 'c', 'd']
-      ]
-
-    }
+      this.state = {
+        tableNameAry: []
+      }
   }
 
-  componentDidMount() {
-
-  }
-
-  componentWillUnmount() {
+  async componentDidMount() {
+      const tableNameAry = await ChatManager.getAllTableAry()
+      this.setState({
+          tableNameAry
+      })
 
   }
 
   render() {
-    const styles = StyleSheet.create({
-      container: {
-        flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff'
+    const { navigation } = this.props
+    const style = {
+      listItem: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row'
       },
-      head: { height: 40, backgroundColor: '#f1f8ff' },
-      text: { margin: 6 }
-    })
-    const state = this.state1
+      listStyle: {
+        backgroundColor: 'white', marginTop: 20
+      },
+      titleStyle: {
+        fontSize: 18,
+        marginLeft: 10,
+        color: '#606060'
+
+      },
+      contentStyle: {
+        color: '#a0a0a0',
+        fontSize: 18
+      },
+      contentContainer: {
+      }
+    }
+    const ary =this.state.tableNameAry
+    const list2 = ary.map(ele => ({
+      title: (
+          <View style={style.listItem}>
+            <View>
+              <Text style={style.titleStyle}>
+                {ele}
+              </Text>
+            </View>
+            <View>
+              <Text style={style.contentStyle} />
+            </View>
+          </View>),
+      onPress: ()=>{
+        this.props.navigation.navigate('DbViewTable',{
+          tablename:ele
+        })
+      }
+    }))
 
     return (
-      <View style={styles.container}>
-        <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
-          <Row data={state.tableHead} style={styles.head} textStyle={styles.text} />
-          <Rows data={state.tableData} textStyle={styles.text} />
-        </Table>
-      </View>
+      <ScrollView>
+        <View style={style.listStyle}>
+          {
+              list2.map((item, i) => (
+                <ListItem
+                  key={i}
+                  title={item.title}
+                  component={item.label}
+                  rightIcon={item.rightIconColor ? { style: { color: item.rightIconColor } } : {}}
+                  onPress={item.onPress}
+                />
+              ))
+            }
+        </View>
+      </ScrollView>
     )
   }
 }
-
-
-DbView.defaultProps = {}
-
-DbView.propTypes = {}
