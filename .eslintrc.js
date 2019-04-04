@@ -32,6 +32,7 @@ module.exports = {
     }
   },
   "rules": {
+    'react/destructuring-assignment': 0,
     'react/prop-types': 0,
     "no-inner-declarations": 0,
     "consistent-return": 2,

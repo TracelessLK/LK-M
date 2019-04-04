@@ -13,6 +13,10 @@ import {ActionSheet} from 'native-base'
 
 import EntryView from './view/index/EntryView'
 
+Promise.config({
+  warnings: false
+})
+
 const container = require('./state')
 const config = require('./config')
 
