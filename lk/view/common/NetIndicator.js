@@ -57,7 +57,7 @@ export default class NetIndicator extends Component<{}> {
   }
 
   connectionOpen = () => {
-    this.channel.asyGetAllDetainedMsg()
+    // this.channel.asyGetAllDetainedMsg()
     this.setState({
       connectionOK: true
     })
