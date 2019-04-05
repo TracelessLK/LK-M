@@ -1,5 +1,4 @@
 const NodeSSH = require('node-ssh')
-const ssh = new NodeSSH()
 const config = require('../config/devConfig')
 const path = require('path')
 const rootDir = path.resolve(__dirname, '..')
@@ -16,6 +15,7 @@ class util {
         username: config.sshInfo.username,
         password: config.sshInfo.password
       }
+      const ssh = new NodeSSH()
       await ssh.connect(option)
       ssh.putFiles([{local, remote}]).then(() => {
         console.log(`upload ${local} to ${remote} in the server`)
@@ -29,10 +29,11 @@ class util {
       })
     })
   }
-  static timeStamp ({packType}) {
-    const obj = {}
-    obj.packTime = getTimeDisplay()
-    obj.packType = packType
+  static timeStamp (option) {
+    const obj = {
+      packTime: getTimeDisplay(),
+      ...option
+    }
     fs.writeFileSync(appJSONPath, JSON.stringify(obj))
   }
 }

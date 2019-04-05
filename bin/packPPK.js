@@ -1,51 +1,82 @@
-const {FuncUtil} = require('@ys/vanilla')
+const { FuncUtil } = require('@ys/vanilla')
 const inquirer = require('inquirer')
-const {timeCount} = FuncUtil
+const chalk = require('chalk')
+
+const { timeCount } = FuncUtil
 const childProcess = require('child_process')
 const NodeSSH = require('node-ssh')
-const ssh = new NodeSSH()
-const config = require('../config/devConfig')
 const path = require('path')
-const {exportPPKFolderPath, serverRoot, appName} = config
+const fse = require('fs-extra')
+
+const config = require('../config/devConfig')
+
+const { exportPPKFolderPath, serverRoot, appName } = config
 const fileName = `${appName}.ppk`
-const outputPath = `${exportPPKFolderPath}/${fileName}`
-const {upload, timeStamp} = require('./util')
+
+const { upload, timeStamp } = require('./util')
 
 start()
 
-async function start () {
-  const question =  [{
+async function start() {
+  const question = [{
     type: 'list',
     name: 'platform',
     message: 'What platform to pack?',
-    choices: ['ios', 'android']
+    choices: ['all', 'ios', 'android']
   }]
   const answer = await inquirer.prompt(question)
-  const {platform} = answer
-  const cmd = `npx pushy bundle --platform ${platform} --verbose --output ${outputPath}`
+  const { platform } = answer
 
   timeCount(async () => {
-    console.log('ppk export started')
-    console.log(`outputPath: ${outputPath}`)
-    console.log({cmd})
-    // fixme: 解决异步的问题
-    timeStamp({packType: 'ppk'})
-    childProcess.execSync(cmd)
-
-    console.log('ppk export end')
-    const option = {
-      host: config.ip,
-      username: config.sshInfo.username,
-      password: config.sshInfo.password
+    let platformAry = []
+    if (platform !== 'all') {
+      platformAry.push(platform)
+    } else {
+      platformAry = ['ios', 'android']
     }
-    await ssh.connect(option)
-    const remotePath = path.resolve(serverRoot, `static/public/ppk/${fileName}`)
-    // console.log(remotePath)
-
-    return upload({local: outputPath, remote: remotePath})
+    //fixme:  'Timed out while waiting for handshake' when run parallel
+    for(let ele of platformAry) {
+      await generatePpk(ele)
+    }
   }, {
-    callback () {
+    callback() {
       process.exit()
     }
   })
+}
+
+// 根据平台build和上传ppk文件
+/*
+*  platform, ios 或android
+ */
+async function generatePpk(platform) {
+  console.log(wrap(platform, `ppk export started`))
+  const exportFolder = path.resolve(exportPPKFolderPath, platform)
+  fse.ensureDirSync(exportFolder)
+  const outputPath = path.resolve(exportFolder, fileName)
+  console.log(wrap(platform, `outputPath: ${outputPath}`))
+  const cmd = `npx pushy bundle --platform ${platform} --verbose --output ${outputPath}`
+
+  console.log(wrap(platform,`executing: ${cmd}`))
+  // fixme: 解决异步的问题
+  timeStamp({ packType: 'ppk', platform })
+  childProcess.execSync(cmd)
+  console.log(wrap(platform, 'ppk export end'))
+  const option = {
+    host: config.ip,
+    username: config.sshInfo.username,
+    password: config.sshInfo.password
+  }
+  const ssh = new NodeSSH()
+
+  await ssh.connect(option)
+  const remotePath = path.resolve(serverRoot, `static/public/ppk/${platform}/${fileName}`)
+  // console.log(remotePath)
+  await upload({ local: outputPath, remote: remotePath })
+  ssh.dispose()
+}
+
+// add platform info
+function wrap(platform, msg) {
+  return `[${chalk.green(platform)}] ${msg}`
 }
