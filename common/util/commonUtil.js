@@ -19,10 +19,11 @@ const commonUtil = {
     let result = null
     if (Platform.OS === 'ios') {
       try {
-        if (filePath.contains('/Application/')) {
+        if (filePath.includes('/Application/')) {
           result = filePath.split('/Application/')[1].split('/')[0]
         }
       } catch(error) {
+        console.log({error})
 
       }
     }

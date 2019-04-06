@@ -184,7 +184,7 @@ export default class MessageItem extends Component<{}> {
             </View>
           </View>
           <View style={{ marginVertical: isGroupChat ? 25 : 5, marginLeft: 0 }}>
-            <Text>🔥</Text>
+            {/*<Text>🔥</Text>*/}
             {/* <Image source={fireGif} style={{ width: 40, height: 40 }} resizeMode="contain" /> */}
           </View>
           <View style={{ marginVertical: 30, marginHorizontal: 5 }}>
