@@ -1,15 +1,15 @@
 
 import React, { Component } from 'react'
 import {
-  ScrollView, Text, View,
-  PushNotificationIOS
+  PushNotificationIOS,
+  Alert
 } from 'react-native'
-import { ListItem } from 'react-native-elements'
 import { Toast } from 'native-base'
+
+import NavigateList from '../../common/NavigateList'
 
 const { engine } = require('@lk/LK-C')
 
-const { debounceFunc } = require('../../../../common/util/commonUtil')
 const config = require('../../../config')
 const { dropExtraTable } = require('../../../util')
 
@@ -33,29 +33,6 @@ export default class BasicInfoView extends Component<{}> {
 
     render() {
       const { navigation } = this.props
-      const style = {
-        listItem: {
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexDirection: 'row'
-        },
-        listStyle: {
-          backgroundColor: 'white', marginTop: 20
-        },
-        titleStyle: {
-          fontSize: 18,
-          marginLeft: 10,
-          color: '#606060'
-
-        },
-        contentStyle: {
-          color: '#a0a0a0',
-          fontSize: 18
-        },
-        contentContainer: {
-        }
-      }
       const ary = [
         {
           title: '软件信息',
@@ -139,10 +116,9 @@ export default class BasicInfoView extends Component<{}> {
         {
           title: 'test',
           onPress: () => {
-            PushNotificationIOS.presentLocalNotification({
-              alertBody: 'dsfs'
-            })
-          }
+            Alert.alert('haha')
+          },
+          pressOnce: false
         },
         {
           title: 'throw error',
@@ -173,37 +149,7 @@ export default class BasicInfoView extends Component<{}> {
           }
         }
       ]
-      const list2 = ary.map(ele => ({
-        title: (
-          <View style={style.listItem}>
-            <View>
-              <Text style={style.titleStyle}>
-                {ele.title}
-              </Text>
-            </View>
-            <View>
-              <Text style={style.contentStyle} />
-            </View>
-          </View>),
-        onPress: debounceFunc(ele.onPress)
-      }))
 
-      return (
-        <ScrollView>
-          <View style={style.listStyle}>
-            {
-              list2.map((item, i) => (
-                <ListItem
-                  key={i}
-                  title={item.title}
-                  component={item.label}
-                  rightIcon={item.rightIconColor ? { style: { color: item.rightIconColor } } : {}}
-                  onPress={item.onPress}
-                />
-              ))
-            }
-          </View>
-        </ScrollView>
-      )
+      return <NavigateList itemAry={ary} />
     }
 }
