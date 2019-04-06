@@ -56,7 +56,7 @@ export default class AddGroupMemberView extends Component<{}> {
         alert('请选择需要新增群成员')
       } else {
         // console.log({selectedAry: this.selectedAry})
-        await chatManager.newGroupMembers(this.group.id, this.selectedAry)
+        await chatManager.newGroupMembers(this.group.id,this.group.name, this.selectedAry)
         this.props.navigation.goBack()
       }
     })
