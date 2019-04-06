@@ -13,7 +13,7 @@ db.saveFile = function (filePath,fileName,data,param) {
         var dir = dirs.DocumentDir+filePath;
         var createFile = function () {
             var url = dir+"/"+fileName;
-            RNFetchBlob.fs.createFile(url,data,'base64').then(()=>{
+            RNFetchBlob.fs.writeFile(url,data,'base64').then(()=>{
                 resolve({url,param})
             }).catch(err=>{
                 reject(err)
