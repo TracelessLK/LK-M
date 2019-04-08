@@ -12,6 +12,7 @@ const {engine} = require('@lk/LK-C')
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const ContactManager = engine.get('ContactManager')
+const UserManager = engine.get('UserManager')
 const OrgManager = engine.get('OrgManager')
 const {getAvatarSource} = require('../../util')
 const style = require('../style')
@@ -36,19 +37,23 @@ export default class ContactView extends Component<{}> {
 
     componentDidMount () {
       // for(let event of this.eventAry){
-      //     // Store.on(event,this.update);
+      //     ContactManager.on(event,this.update);
       // }
+      UserManager.on('nameChanged', this.update)
+      UserManager.on('picChanged', this.update)
       this.asyncRender()
     }
 
     componentWillUnmount =() => {
       // for(let event of this.eventAry){
-      //     // Store.un(event,this.update);
+      //     ContactManager.un(event,this.update);
       // }
+        UserManager.un('nameChanged', this.update)
+        UserManager.un('picChanged', this.update)
     }
 
     update = () => {
-      this.setState({update: true})
+        this.asyncRender()
     }
 
     go2FriendInfoView=debounceFunc((f) => {
