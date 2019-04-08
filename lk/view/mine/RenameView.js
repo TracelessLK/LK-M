@@ -49,6 +49,11 @@ export default class RenameView extends Component<{}> {
             text: '昵称不能为空',
             position: 'top'
           })
+        }else if (this.refs.input._lastNativeText.indexOf(" ") >=0) {
+            Toast.show({
+                text: '昵称不能为空格',
+                position: 'top'
+            })
         } else {
           await userManager.setUserName(this.refs.input._lastNativeText)
           this.props.navigation.goBack()
