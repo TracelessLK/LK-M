@@ -40,6 +40,7 @@ export default class ContactView extends Component<{}> {
       //     ContactManager.on(event,this.update);
       // }
       UserManager.on('nameChanged', this.update)
+      UserManager.on('picChanged', this.update)
       this.asyncRender()
     }
 
@@ -48,6 +49,7 @@ export default class ContactView extends Component<{}> {
       //     ContactManager.un(event,this.update);
       // }
         UserManager.un('nameChanged', this.update)
+        UserManager.un('picChanged', this.update)
     }
 
     update = () => {
