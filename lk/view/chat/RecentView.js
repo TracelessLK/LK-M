@@ -188,8 +188,8 @@ export default class RecentView extends Component<{}> {
       const result = {
         isGroup
       }
-      const msgAry = await chatManager.asyGetMsgs(userId, chatId)
-      const { length } = msgAry
+      // const msgAry = await chatManager.asyGetMsgs(userId, chatId)
+      const lastMsg = await chatManager.asyGetLastMsg(userId, chatId)
       let obj = {
         deletePress: () => {
           this.deleteRow(chatId)
@@ -200,8 +200,7 @@ export default class RecentView extends Component<{}> {
         obj.id = chatId
         obj.name = chatName
         obj.newMsgNum = newMsgNum
-        if (length) {
-          const lastMsg = _.last(msgAry)
+        if (lastMsg) {
           obj.content = this.getMsgContent(lastMsg.content, lastMsg.type)
           obj.time = new Date(lastMsg.sendTime)
         } else {
@@ -220,8 +219,8 @@ export default class RecentView extends Component<{}> {
           }
           this.chat(param)
         }
-      } else if (length) {
-        const msg = _.last(msgAry)
+      } else if (lastMsg) {
+        const msg = lastMsg
         const { sendTime, content, type } = msg
         const person = await ContactManager.asyGet(userId, chatId)
         const { name, pic } = person
@@ -293,9 +292,6 @@ export default class RecentView extends Component<{}> {
         let recentAry = await Promise.all(msgAryPromise)
         recentAry = recentAry.filter(ele => ele.item || ele.isGroup)
 
-        // recentAry.sort((obj1, obj2) => {
-        //   return obj1.sendTime - obj2.sendTime
-        // })
         const data = recentAry.map(ele => ele.item)
         contentAry = <MessageList data={data} />
       } else {
