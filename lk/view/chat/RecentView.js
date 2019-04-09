@@ -1,5 +1,5 @@
 
-//@flow
+// @flow
 
 import React, { Component } from 'react'
 import {
@@ -35,6 +35,15 @@ const { runNetFunc } = require('../../util')
 const { StringUtil } = require('@ys/vanilla')
 
 const { stripNewline } = StringUtil
+
+type GetMsgOption = {
+  userId: string,
+  chatId: string,
+  newMsgNum: number,
+  isGroup: boolean,
+  chatName: string,
+  createTime: string
+}
 
 export default class RecentView extends Component<{}> {
     static navigationOptions =({ navigation }) => {
@@ -183,7 +192,7 @@ export default class RecentView extends Component<{}> {
       this.resetHeaderTitle()
     }
 
-    async getMsg(option) {
+    async getMsg(option: GetMsgOption) {
       const {
         userId, chatId, newMsgNum, isGroup, chatName, createTime
       } = option
