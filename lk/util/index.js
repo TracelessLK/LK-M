@@ -262,6 +262,7 @@ class Util {
     const tableAry = [
       'device', 'group_record_state',
       'magicCode', 'mfapply', 'org',
+      'contact', 'db_version',
       'record']
     const psAry = []
     db.transaction(() => {
@@ -280,7 +281,7 @@ class Util {
         psAry.push(ps)
       }
       Promise.all(psAry).then(() => {
-        RNRestart.Restart()
+        // RNRestart.Restart()
       })
     })
   }
