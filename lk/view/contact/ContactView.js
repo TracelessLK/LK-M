@@ -39,8 +39,7 @@ export default class ContactView extends Component<{}> {
       // for(let event of this.eventAry){
       //     ContactManager.on(event,this.update);
       // }
-      UserManager.on('nameChanged', this.update)
-      UserManager.on('picChanged', this.update)
+        ContactManager.on('contactChanged', this.update)
       this.asyncRender()
     }
 
@@ -48,8 +47,7 @@ export default class ContactView extends Component<{}> {
       // for(let event of this.eventAry){
       //     ContactManager.un(event,this.update);
       // }
-        UserManager.un('nameChanged', this.update)
-        UserManager.un('picChanged', this.update)
+        ContactManager.un('contactChanged', this.update)
     }
 
     update = () => {
