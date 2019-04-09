@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react'
 import {
+  Platform,
   View,
   TouchableOpacity,
   Image
@@ -21,6 +22,12 @@ export default class MessageList extends Component<{}> {
   }
 
   render () {
+    let widths
+    if(Platform.OS === 'android') {
+      widths='72%'
+    }else{
+      widths='80%'
+    }
     const contentAry = []
     const avatarLength = 50
     const {data} = this.props
@@ -37,7 +44,7 @@ export default class MessageList extends Component<{}> {
             height: 55,
             alignItems: 'center'}}>
           {Array.isArray(image) ? <GroupAvatar defaultPic={defaultAvatar} avatarStyle={avatarStyle} picAry={image}></GroupAvatar> : <Image resizeMode="cover" style={avatarStyle} source={image} />}
-          <View style={{flexDirection: 'row', width: '80%', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10}}>
+          <View style={{flexDirection: 'row', width: widths, justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10}}>
             <View style={{flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start', height: '100%'}}>
               <View >
                 <Text style={{fontSize: 18, fontWeight: '500'}}>
@@ -45,13 +52,13 @@ export default class MessageList extends Component<{}> {
                 </Text>
               </View>
               <View>
-                <Text style={{fontSize: 15, fontWeight: '400', color: '#a0a0a0', marginTop: 3}}>
+                <Text style={{fontSize: 10, fontWeight: '400', color: '#a0a0a0', marginTop: 3}}>
                   {msgContent}
                 </Text>
               </View>
             </View>
             <View style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', height: '100%'}}>
-              <Text style={{fontSize: 15, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
+              <Text style={{fontSize: 10, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
                 {time ? dateTimeUtil.getDisplayTime(time) : null}
               </Text>
               <View>
