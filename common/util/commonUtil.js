@@ -5,6 +5,11 @@ import {
 const _ = require('lodash')
 
 const commonUtil = {
+  runFunc (func) {
+    if (func) {
+      func()
+    }
+  },
   getTimeDisplay () {
     const date = new Date()
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`

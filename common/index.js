@@ -4,15 +4,13 @@ import ActivityIndicator from './widget/ActivityIndicator'
 import List from './widget/List'
 import MessageList from './widget/MessageList'
 import LoadingView from './view/LoadingView'
-const commonModule = require('@hfs/react-native-collection')
-const {ScanView, commonUtil} = commonModule
+const commonUtil = require('./util/commonUtil')
 const PushUtil = require('./util/PushUtil')
 
 const commonStyle = require('./view/style')
 const common = {
   commonUtil,
   SearchBar,
-  ScanView,
   List,
   MessageList,
   commonStyle,
