@@ -9,6 +9,9 @@ import { Toast } from 'native-base'
 import NavigateList from '../../common/NavigateList'
 
 const { engine } = require('@lk/LK-C')
+const { commonUtil} = require('@external/common')
+
+const { debounceFunc } = commonUtil
 
 const config = require('../../../config')
 const { dropExtraTable } = require('../../../util')
@@ -114,10 +117,27 @@ export default class BasicInfoView extends Component<{}> {
           }
         },
         {
-          title: 'test',
+          title: 'test_multiple',
           onPress: () => {
-            Alert.alert('haha')
+            console.log('haha')
+            // Alert.alert('haha')
           },
+          pressOnce: false
+        },
+        {
+          title: 'test_once',
+          onPress: () => {
+            console.log('haha')
+            // Alert.alert('haha')
+          },
+          pressOnce: true
+        },
+        {
+          title: 'test_debounce',
+          onPress: debounceFunc(() => {
+            console.log('haha')
+            // Alert.alert('haha')
+          }),
           pressOnce: false
         },
         {
