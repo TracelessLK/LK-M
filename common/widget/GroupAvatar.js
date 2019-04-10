@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react'
 import {
+  Platform,
   Image,
   View
 } from 'react-native'
@@ -26,19 +27,39 @@ export default class GroupAvatar extends Component<{}> {
         avatarAry.push(<Image key={i} source={getAvatarSource(pic, defaultPic)} style={{width: 22, height: 22, margin: 0.5, borderRadius: 1}} resizeMode="contain"></Image>)
       }
     }
-    const defaultAvatarStyle = {display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'row',
-      borderWidth: 1,
-      borderRadius: 1,
-      borderColor: '#e0e0e0',
-      backgroundColor: '#f0f0f0',
-      width: 51,
-      height: 51,
-      marginBottom: 20,
-      flexWrap: 'wrap',
-      padding: 1
+    let defaultAvatarStyle ={}
+    if(Platform.OS === 'android'){
+      defaultAvatarStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderRadius: 1,
+        borderColor: '#e0e0e0',
+        backgroundColor: '#f0f0f0',
+        width: 51,
+        height: 51,
+        marginBottom: 10,
+        flexWrap: 'wrap',
+        padding: 1
+      }
+    }else{
+      defaultAvatarStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderRadius: 1,
+        borderColor: '#e0e0e0',
+        backgroundColor: '#f0f0f0',
+        width: 51,
+        height: 51,
+        marginBottom: 20,
+        flexWrap: 'wrap',
+        padding: 1
+      }
     }
     _.merge(defaultAvatarStyle, avatarStyle)
     return (
