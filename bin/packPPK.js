@@ -23,9 +23,16 @@ async function start() {
     name: 'platform',
     message: 'What platform to pack?',
     choices: ['all', 'ios', 'android']
-  }]
+  },
+  {
+    type: 'confirm',
+    name: 'shouldUpload',
+    message: 'Do you upload the ppk file to your server?',
+    default: false
+  }
+  ]
   const answer = await inquirer.prompt(question)
-  const { platform } = answer
+  const { platform, shouldUpload} = answer
 
   timeCount(async () => {
     let platformAry = []
@@ -34,9 +41,9 @@ async function start() {
     } else {
       platformAry = ['ios', 'android']
     }
-    //fixme:  'Timed out while waiting for handshake' when run parallel
-    for(let ele of platformAry) {
-      await generatePpk(ele)
+    // fixme:  'Timed out while waiting for handshake' when run parallel
+    for (const ele of platformAry) {
+      await generatePpk(ele, shouldUpload)
     }
   }, {
     callback() {
@@ -49,15 +56,15 @@ async function start() {
 /*
 *  platform, ios 或android
  */
-async function generatePpk(platform) {
-  console.log(wrap(platform, `ppk export started`))
+async function generatePpk(platform, shouldUpload) {
+  console.log(wrap(platform, 'ppk export started'))
   const exportFolder = path.resolve(exportPPKFolderPath, platform)
   fse.ensureDirSync(exportFolder)
   const outputPath = path.resolve(exportFolder, fileName)
   console.log(wrap(platform, `outputPath: ${outputPath}`))
-  const cmd = `npx pushy bundle --platform ${platform} --verbose --output ${outputPath}`
+  const cmd = `npx pushy bundle --platform ${platform} --output ${outputPath}`
 
-  console.log(wrap(platform,`executing: ${cmd}`))
+  console.log(wrap(platform, `executing: ${cmd}`))
   // fixme: 解决异步的问题
   timeStamp({ packType: 'ppk', platform })
   childProcess.execSync(cmd)
@@ -72,7 +79,9 @@ async function generatePpk(platform) {
   await ssh.connect(option)
   const remotePath = path.resolve(serverRoot, `static/public/ppk/${platform}/${fileName}`)
   // console.log(remotePath)
-  await upload({ local: outputPath, remote: remotePath })
+  if (shouldUpload) {
+    await upload({ local: outputPath, remote: remotePath })
+  }
   ssh.dispose()
 }
 
