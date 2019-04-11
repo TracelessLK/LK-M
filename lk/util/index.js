@@ -113,32 +113,17 @@ class Util {
     })
   }
 
-  static async showAll(tableName) {
-    const sql = `select * from ${tableName}`
-    const ary = await Util.query(sql)
-
-    const obj = {}
-    obj[tableName] = ary
-    console.log(obj)
-  }
-
   static query(sql) {
     return new Promise((resolve) => {
-      lkApp.on('dbReady', () => {
-        const db = new DBProxy()
-        db.transaction(() => {
-          db.getAll(sql, [], (results) => {
-            resolve(results)
-          }, (err) => {
-            console.log(err)
-          })
+      const db = new DBProxy()
+      db.transaction(() => {
+        db.getAll(sql, [], (results) => {
+          resolve(results)
+        }, (err) => {
+          console.log(err)
         })
       })
     })
-  }
-
-  static removeAllGroup() {
-    return Util.deleteTable([''])
   }
 
   static getIconNameByState=function (state) {
@@ -180,35 +165,31 @@ class Util {
     return result
   }
 
-  static deleteTable(tableName) {
+  static dropTable(tableName) {
     let result
 
     if (Array.isArray(tableName)) {
-      result = tableName.map(ele => Util.deleteTable(ele))
+      result = Promise.all(tableName.map(ele => Util.dropTable(ele)))
     } else {
-      const sql = `delete from ${tableName}`
-      result = Util.query(sql)
+      const sql = `drop table if exists ${tableName}`
+      result = Util.query(sql).then(()=>{
+        console.log({sql})
+      })
     }
 
     return result
   }
 
-  static dropTable(tableName) {
-    const sql = `drop table if exists ${tableName}`
-    return Util.query(sql)
-  }
-
-  static truncateTable(option) {
-    const f = (tableName) => {
-      const sql = `delete from ${tableName}`
-      return Util.query(sql)
-    }
+  static truncateTable(tableName) {
     let result
-    if (Array.isArray(option)) {
-      result = Promise.all(option.map(f))
+
+    if (Array.isArray(tableName)) {
+      result = tableName.map(ele => Util.truncateTable(ele))
     } else {
-      result = f(option)
+      const sql = `delete from ${tableName}`
+      result = Util.query(sql)
     }
+
     return result
   }
 
@@ -255,51 +236,18 @@ class Util {
   }
 
   static dropExtraTable() {
-    const db = new DBProxy()
-    const tableAry = [
-      'device', 'group_record_state',
-      'magicCode', 'mfapply', 'org',
-      'contact', 'db_version',
-      'record']
-    const psAry = []
-    db.transaction(() => {
-      for (const ele of tableAry) {
-        const sql = `
-      drop table ${ele}
-    `
-        const ps = new Promise((resolve) => {
-          db.run(sql, [], () => {
-            console.log({ sql })
-            resolve()
-          }, (err) => {
-            console.log(sql, err)
-          })
-        })
-        psAry.push(ps)
-      }
-      Promise.all(psAry).then(() => {
-        // RNRestart.Restart()
-      })
+    console.log('dropTable')
+    return Util.dropTable([
+      'contact', 'device', 'group_record_state',
+      'magicCode', 'mfapply', 'org', 'groupMember',
+      'record', 'chat', 'flowCursor'
+    ]).then(() => {
+      console.log('restart')
+      RNRestart.Restart()
     })
   }
 }
 
-const tableAry = [
-  // 'device', 'mfapply', 'contact', 'record',
-  // 'chat',
-  // 'groupMember'
-  // 'record'
-];
-(async () => {
-  // Util.truncateTable(tableAry)
-
-  // const friendAry = await Util.query('select * from contact where relation=1')
-  // console.log({friendAry})
-  // await Util.removeAllGroup()
-  for (const ele of tableAry) {
-    Util.showAll(ele)
-  }
-})()
 
 Object.freeze(Util)
 

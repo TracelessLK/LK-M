@@ -7,6 +7,7 @@ import {
 import { Toast } from 'native-base'
 
 import NavigateList from '../../common/NavigateList'
+import ScreenWrapper from '../../common/ScreenWrapper'
 
 const { engine } = require('@lk/LK-C')
 const { commonUtil} = require('@external/common')
@@ -23,7 +24,7 @@ const versionLocal = require('../../../../package.json').version
 
 const { logPath } = config
 
-export default class BasicInfoView extends Component<{}> {
+export default class BasicInfoView extends ScreenWrapper {
     static navigationOptions =() => ({
       headerTitle: '开发者工具'
 
@@ -34,7 +35,7 @@ export default class BasicInfoView extends Component<{}> {
       this.user = lkApp.getCurrentUser()
     }
 
-    render() {
+    subRender() {
       const { navigation } = this.props
       const ary = [
         {

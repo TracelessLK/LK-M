@@ -287,6 +287,7 @@ export default class RecentView extends Component<{}> {
           const {
             isGroup, name, createTime, id: chatId
           } = chat
+          // todo: move to sql
           const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
           // console.log({newMsgNum, chatId})
           const option = {
