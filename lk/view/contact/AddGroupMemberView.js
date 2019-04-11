@@ -24,7 +24,7 @@ export default class AddGroupMemberView extends Component<{}> {
     const {hasOneToAdd} = params
     const headerRight = hasOneToAdd ? (
       <TouchableOpacity style={{marginRight: 20}}>
-        <Button color="#fff" title="确定"
+        <Button title="确定"
           onPress={debounceFunc(() => {
             params.navigateAddGroupPress()
           })}
