@@ -52,13 +52,13 @@ export default class MessageList extends Component<{}> {
                 </Text>
               </View>
               <View>
-                <Text style={{fontSize: 10, fontWeight: '400', color: '#a0a0a0', marginTop: 3}}>
+                <Text style={{fontSize: 12, fontWeight: '400', color: '#a0a0a0', marginTop: 3}}>
                   {msgContent}
                 </Text>
               </View>
             </View>
             <View style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', height: '100%'}}>
-              <Text style={{fontSize: 10, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
+              <Text style={{fontSize: 12, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
                 {time ? dateTimeUtil.getDisplayTime(time) : null}
               </Text>
               <View>
