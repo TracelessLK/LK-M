@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import { AndroidBackHandler } from 'react-navigation-backhandler'
 import {
-  StyleSheet, View, ScrollView, Text
+  StyleSheet, View, Text
 } from 'react-native'
 import CustomeTable from '../../common/CustomTable'
 
