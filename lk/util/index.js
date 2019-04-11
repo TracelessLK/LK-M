@@ -181,19 +181,16 @@ class Util {
   }
 
   static deleteTable(tableName) {
-    if (Array.isArray(tableName)) {
-      const promiseAry = []
-      for (const ele of tableName) {
-        promiseAry.push(Util._deleteTable(ele))
-      }
-      return Promise.all(promiseAry)
-    }
-    return Util._deleteTable(tableName)
-  }
+    let result
 
-  static _deleteTable(tableName) {
-    const sql = `delete from ${tableName}`
-    return Util.query(sql)
+    if (Array.isArray(tableName)) {
+      result = tableName.map(ele => Util.deleteTable(ele))
+    } else {
+      const sql = `delete from ${tableName}`
+      result = Util.query(sql)
+    }
+
+    return result
   }
 
   static dropTable(tableName) {

@@ -1,62 +1,41 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { AndroidBackHandler } from 'react-navigation-backhandler'
 import {
   StyleSheet, View, ScrollView, Text
 } from 'react-native'
-import { Table, Row } from 'react-native-table-component'
+import CustomeTable from '../../common/CustomTable'
 
-const _ = require('lodash')
 const { engine } = require('@lk/LK-C')
 
 const ChatManager = engine.get('ChatManager')
 
 
 export default class DbViewTable extends Component<{}> {
-  constructor(props) {
-    super(props)
-    this.state = {
-      tableHead: [],
-      tableData: [],
-      noRecord: false,
-      widthArr: []
-    }
-    this.tablename = this.props.navigation.state.params.tablename
+  state = {
+    tableDataAry: [],
+    noRecord: false,
+    totalCount: ''
   }
 
-  async componentDidMount() {
-    console.log(this.tablename)
-    const tableDataAry = await ChatManager.asyGetAllData(this.tablename)
-    console.log({ tableDataAry })
-    const datas = tableDataAry
-    if (!datas.length) {
-      this.setState({
-        noRecord: true
-      })
-    } else {
-      const first = datas[0]
-      const tableHead = Object.keys(first)
-      const widthArr = Array(tableHead.length).fill(200, 0)
+  tablename = this.props.navigation.state.params.tablename
 
-      const tableData = []
-      for (let i = 0; i < datas.length; i += 1) {
-        const data = datas[i]
-        const rowData = []
-        for (const key in data) {
-          const val = data[key]
-          let displayContent = val
-          if (String(val).length > 100) {
-            displayContent = '内容太多无法展示'
-          }
-          rowData.push(displayContent)
-        }
-        tableData.push(rowData)
-      }
-      this.setState({
-        tableHead,
-        tableData,
-        widthArr
-      })
+  async componentDidMount() {
+    const tableDataAry = await ChatManager.asyGetAllData(this.tablename)
+    const totalCount = tableDataAry.length
+    let noRecord = false
+    if (!totalCount) {
+      noRecord = true
     }
+    this.setState({
+      totalCount,
+      noRecord
+    })
+    setTimeout(() => {
+      this.setState({
+        tableDataAry
+      })
+    }, 0)
   }
 
   componentWillUnmount() {
@@ -64,8 +43,7 @@ export default class DbViewTable extends Component<{}> {
   }
 
   render() {
-    const { state } = this
-    const tableData1 = state.tableData
+    const {tableDataAry} = this.state
     const styles = StyleSheet.create({
       container: {
         flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff'
@@ -77,35 +55,25 @@ export default class DbViewTable extends Component<{}> {
     })
     return (
       <View style={styles.container}>
-        <ScrollView horizontal>
-          <View>
-            <Table borderStTableyle={{ borderColor: '#C1C0B9' }}>
-              <Row data={state.tableHead} widthArr={state.widthArr} style={styles.header} textStyle={styles.text} />
-            </Table>
-            <ScrollView style={styles.dataWrapper}>
-              <Table borderStyle={{ borderColor: '#C1C0B9' }}>
-                {
-                                    tableData1.map((rowData, index) => (
-                                      <Row
-                                        key={index}
-                                        data={rowData}
-                                        widthArr={state.widthArr}
-                                        style={[styles.row, index % 2 && { backgroundColor: '#F7F6E7' }]}
-                                        textStyle={styles.text}
-                                      />
-                                    ))
-                                }
-              </Table>
-              {this.state.noRecord ? (
-                <View>
-                  <Text>
-                                    no record
-                  </Text>
-                </View>
-              ) : null}
-            </ScrollView>
+        <View style={{margin: 5}}>
+          <Text>表名: {this.tablename}</Text>
+        </View>
+        <View style={{margin: 5}}>
+          <Text>总计: {this.state.totalCount} 条</Text>
+        </View>
+        {this.state.noRecord ? (
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Text>
+              no record
+            </Text>
           </View>
-        </ScrollView>
+        )
+          : <CustomeTable data={tableDataAry} />
+        }
+        <AndroidBackHandler onBackPress={()=>{
+          this.props.navigation.goBack()
+          return true
+        }} />
       </View>
     )
   }

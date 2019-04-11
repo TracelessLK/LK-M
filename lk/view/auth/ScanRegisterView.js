@@ -67,19 +67,20 @@ export default class ScanRegisterView extends React.Component {
         const user = userAry.find(ele => {
           return ele.serverPort === port && ele.serverIP === ip
         })
-        if (user) {
-          const {name} = user
-          Toast.show({
-            text: `已经在服务器有注册用户:${name}`,
-            position: 'top',
-            duration: 5000
-          })
-        } else {
-          this.props.navigation.navigate('RegisterView', {
-            obj,
-            qrcode: data
-          })
-        }
+        // if (user) {
+        //   const {name} = user
+        //   Toast.show({
+        //     text: `已经在服务器有注册用户:${name}`,
+        //     position: 'top',
+        //     duration: 5000
+        //   })
+        // } else {
+        //
+        // }
+        this.props.navigation.navigate('RegisterView', {
+          obj,
+          qrcode: data
+        })
       } else {
         Toast.show({
           text: '该二维码无效',
