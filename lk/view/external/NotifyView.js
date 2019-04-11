@@ -2,8 +2,10 @@ import React, {Component} from 'react'
 import {
   Text,
   View,
-  StatusBar, Image
+  StatusBar, Image,Button
 } from 'react-native'
+import { AndroidBackHandler } from 'react-navigation-backhandler'
+
 const style = require('../style')
 const backImg = require('../image/back-icon.png')
 
@@ -32,16 +34,21 @@ export default class NotifyView extends Component<{}> {
     }
   }
 
-  constructor (props) {
-    super(props)
-    this.state = {}
-  }
 
   render () {
     const {msg} = this.props.navigation.state.params
     return (
-      <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '2em'}}>
-        <Text>{msg}</Text>
+      <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{fontSize: 30}}>{msg}</Text>
+        {/*<AndroidBackHandler onBackPress={() => {*/}
+        {/*  this.props.navigation.goBack()*/}
+        {/*  return true*/}
+        {/*}}*/}
+        {/*/>*/}
+        <Button title='click' onPress={() => {
+          //fixme: can't go back
+          this.props.navigation.goBack()
+        }}></Button>
       </View>
     )
   }

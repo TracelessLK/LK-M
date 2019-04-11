@@ -69,10 +69,11 @@ export default class DbViewTable extends Component<{}> {
         )
           : <CustomeTable data={tableDataAry} />
         }
-        <AndroidBackHandler onBackPress={()=>{
+        <AndroidBackHandler onBackPress={() => {
           this.props.navigation.goBack()
           return true
-        }} />
+        }}
+        />
       </View>
     )
   }

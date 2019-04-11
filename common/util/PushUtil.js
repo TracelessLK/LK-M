@@ -57,7 +57,13 @@ class PushUtil {
     }
   }
   static getAPNDeviceId () {
-    return AsyncStorage.getItem('deviceIdAPN')
+    // fixme: AsyncStorage 始终无法getItem
+    const psAry = [AsyncStorage.getItem('deviceIdAPN'), new Promise((res) => {
+      setTimeout(() => {
+        res()
+      }, 1000 * 2)
+    })]
+    return Promise.race([psAry])
   }
   static removeNotify () {
     if (Platform.OS === 'ios') {

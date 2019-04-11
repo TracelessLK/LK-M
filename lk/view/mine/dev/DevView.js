@@ -113,7 +113,9 @@ export default class BasicInfoView extends Component<{}> {
         {
           title: 'NotifyView',
           onPress: () => {
-            navigation.navigate('NotifyView')
+            navigation.navigate('NotifyView', {
+              msg: 'test content'
+            })
           }
         },
         {

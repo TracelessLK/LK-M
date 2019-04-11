@@ -34,16 +34,20 @@ export default class Loading extends Component<{}> {
 
     _bootstrapAsync = async () => {
     // 准备数据库
+      const start = Date.now()
       await lkApplication.start(DataSource, Application.PLATFORM_RN)
-
+      console.log(`loading db: ${(Date.now() - start) / 1000} s`)
       let routerName
       const currentUser = lkApplication.getCurrentUser()
       const venderDid = await getAPNDeviceId()
+      console.log(`getAPNDeviceId: ${(Date.now() - start) / 1000} s`)
 
       if (currentUser) {
         routerName = 'MainStack'
       } else {
         const userAry = await UserManager.asyGetAll()
+        console.log(`asyGetAllUser: ${(Date.now() - start) / 1000} s`)
+
         const {length} = userAry
 
         if (length === 0) {
@@ -52,7 +56,16 @@ export default class Loading extends Component<{}> {
           lkApplication.setCurrentUser(userAry[0], venderDid)
           routerName = 'MainStack'
         } else if (length > 1) {
-          const user = await AsyncStorage.getItem('user')
+          // fixme: AsyncStorage 始终无法getItem
+          const user = await Promise.race([
+            AsyncStorage.getItem('user'),
+            new Promise(res => {
+              setTimeout(() => {
+                res(null)
+              }, 1000 * 2)
+            })
+          ])
+          console.log(`AsyncStorage Get User: ${(Date.now() - start) / 1000} s`)
 
           if (user) {
             lkApplication.setCurrentUser(JSON.parse(user), venderDid)

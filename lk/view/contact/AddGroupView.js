@@ -1,7 +1,9 @@
 import React, { Component} from 'react'
 import {
   ActivityIndicator,
-  Button, ScrollView, Text, TextInput, TouchableOpacity, View, Platform
+  Button, ScrollView, Text,
+  TextInput,
+  TouchableOpacity, View, Platform
 } from 'react-native'
 const common = require('@external/common')
 const {List} = common
@@ -144,13 +146,16 @@ export default class AddGroupView extends Component<{}> {
     this.asyncRender()
   }
   render () {
+    // fixme: autofocus
+    // java.lang.IndexOutOfBoundsException: charAt: -1 < 0
+    //         at android.text.SpannableStringBuilder.charAt(SpannableStringBuilder.java:121)
     return (
       <ScrollView>
         {this.state.isWating ? <ActivityIndicator size='large' style={{position: 'absolute', top: '50%'}}/> : null}
         <View>
           <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', width: '96%', height: 40, marginTop: 10, marginLeft: 10}}>
             <Text style={{color: '#a0a0a0'}}>群名称：</Text>
-            <TextInput autoFocus style={{flex: 1}} underlineColorAndroid='transparent' defaultValue={''} onChangeText={this.nameTextChange} />
+            <TextInput  style={{flex: 1}} underlineColorAndroid='transparent' defaultValue={''} onChangeText={this.nameTextChange} />
           </View>
           <View style={{width: '100%', height: 0, borderTopWidth: 1, borderColor: '#f0f0f0'}}>
           </View>

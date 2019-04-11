@@ -5,6 +5,8 @@ import {
   TextInput
 } from 'react-native'
 import {Toast} from 'native-base'
+import ScreenWrapper from '../common/ScreenWrapper'
+
 const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
@@ -15,7 +17,7 @@ const userManager = engine.get('UserManager')
 const {FuncUtil} = require('@ys/vanilla')
 const {debounceFunc} = FuncUtil
 
-export default class RenameView extends Component<{}> {
+export default class RenameView extends ScreenWrapper {
     static navigationOptions = ({navigation}) => {
       // console.log(navigation.getParam('save'))
       const prop = {
@@ -74,7 +76,7 @@ export default class RenameView extends Component<{}> {
 
     }
 
-    render () {
+    subRender () {
       return (
         <ScrollView >
           <View style={{backgroundColor: 'white', marginVertical: 20, width: '100%', padding: 12}}>

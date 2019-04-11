@@ -5,6 +5,8 @@ import {
   ScrollView
 } from 'react-native'
 import { ListItem } from 'react-native-elements'
+import ScreenWrapper from '../common/ScreenWrapper'
+
 const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
@@ -14,7 +16,7 @@ const { commonUtil } = common
 const {debounceFunc} = commonUtil
 const userManager = engine.get('UserManager')
 
-export default class BasicInfoView extends Component<{}> {
+export default class BasicInfoView extends ScreenWrapper {
     static navigationOptions = () => {
       return {
         headerTitle: '个人信息'
@@ -40,7 +42,7 @@ export default class BasicInfoView extends Component<{}> {
       userManager.un('nameChanged', this.update)
     }
 
-    render () {
+    subRender () {
       const style = {
         listItem: {
           display: 'flex',

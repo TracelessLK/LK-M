@@ -1,10 +1,10 @@
+import { createSwitchNavigator, createStackNavigator } from 'react-navigation'
 
 import AuthStack from '../auth/AuthStack'
 import NotifyView from '../external/NotifyView'
 import MainStack from './MainStack'
 import Loading from './Loading'
-import { createSwitchNavigator, createStackNavigator } from 'react-navigation'
-const {ScanView} = require('@ys/react-native-collection')
+import ScanView from '../common/ScanView'
 
 const switchNavigator = createSwitchNavigator({
   Loading,
