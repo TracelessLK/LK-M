@@ -4,8 +4,9 @@ import {
   View
 } from 'react-native'
 import PropTypes from 'prop-types'
+import ScreenWrapper from '../../../common/ScreenWrapper'
 
-export default class View4 extends Component<{}> {
+export default class View4 extends ScreenWrapper {
   constructor(props) {
     super(props)
     this.state = {}
@@ -19,7 +20,7 @@ export default class View4 extends Component<{}> {
 
   }
 
-  render() {
+  subRender() {
     return (
       <View>
         <Text>View4</Text>

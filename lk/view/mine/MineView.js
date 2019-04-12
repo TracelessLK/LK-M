@@ -4,13 +4,15 @@ import {
   Alert,
   ScrollView, Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  BackHandler
 } from 'react-native'
 import { Avatar, Icon, ListItem } from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker'
 import {
   Toast
 } from 'native-base'
+import ScreenWrapper from '../common/ScreenWrapper'
 import RNFetchBlob from 'react-native-fetch-blob'
 import ImageResizer from 'react-native-image-resizer'
 import { NetworkInfo } from 'react-native-network-info'
@@ -29,7 +31,7 @@ const lkApp = Application.getCurrentApp()
 const chatManager = engine.get('ChatManager')
 const userManager = engine.get('UserManager')
 
-export default class MineView extends Component<{}> {
+export default class MineView extends ScreenWrapper {
     static navigationOptions =() => ({
       headerTitle: '我'
     })
@@ -60,6 +62,10 @@ export default class MineView extends Component<{}> {
       for (const ele of this.eventAry) {
         userManager.un(ele, this.update)
       }
+    }
+
+    onBackPress = () => {
+        BackHandler.exitApp()
     }
 
     update = (ele) => {
@@ -203,7 +209,7 @@ export default class MineView extends Component<{}> {
     return ary.includes(this.user.name) || __DEV__
   }
 
-  render() {
+    subRender () {
     const { navigation } = this.props
     const list2 = [
       {

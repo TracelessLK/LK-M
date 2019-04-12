@@ -4,6 +4,7 @@ import {
   PushNotificationIOS
 } from 'react-native'
 import { ListItem } from 'react-native-elements'
+import ScreenWrapper from '../../common/ScreenWrapper'
 
 const { engine } = require('@lk/LK-C')
 const common = require('@external/common')
@@ -13,7 +14,7 @@ const { debounceFunc } = commonUtil
 const ChatManager = engine.get('ChatManager')
 
 
-export default class DbView extends Component<{}> {
+export default class DbView extends ScreenWrapper {
   constructor(props) {
     super(props)
       this.state = {
@@ -29,7 +30,7 @@ export default class DbView extends Component<{}> {
 
   }
 
-  render() {
+  subRender() {
     const { navigation } = this.props
     const style = {
       listItem: {

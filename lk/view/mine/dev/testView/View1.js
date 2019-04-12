@@ -8,6 +8,7 @@ import {
 import PropTypes from 'prop-types'
 import LottieView from 'lottie-react-native'
 import {ListItem} from 'react-native-elements'
+import ScreenWrapper from '../../../common/ScreenWrapper'
 
 const obj = {
   '9squares-AlBoardman': require('../../../../../resource/animations/9squares-AlBoardman.json'),
@@ -29,7 +30,7 @@ const obj = {
 const ary = Object.keys(obj)
 
 
-export default class View1 extends Component<{}> {
+export default class View1 extends ScreenWrapper {
   constructor(props) {
     super(props)
     this.state = {
@@ -45,7 +46,7 @@ export default class View1 extends Component<{}> {
 
   }
 
-  render() {
+  subRender() {
     let eleAry = ary.map(ele => {
         return (
           <ListItem key={ele} title={ele} onPress={() => {
