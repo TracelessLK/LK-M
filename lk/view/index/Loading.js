@@ -36,18 +36,14 @@ export default class Loading extends Component<{}> {
     // 准备数据库
       const start = Date.now()
       await lkApplication.start(DataSource, Application.PLATFORM_RN)
-      console.log(`loading db: ${(Date.now() - start) / 1000} s`)
       let routerName
       const currentUser = lkApplication.getCurrentUser()
       const venderDid = await getAPNDeviceId()
-      console.log(`getAPNDeviceId: ${(Date.now() - start) / 1000} s`)
 
       if (currentUser) {
         routerName = 'MainStack'
       } else {
         const userAry = await UserManager.asyGetAll()
-        console.log(`asyGetAllUser: ${(Date.now() - start) / 1000} s`)
-
         const {length} = userAry
 
         if (length === 0) {

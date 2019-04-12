@@ -63,7 +63,7 @@ class PushUtil {
         res()
       }, 1000 * 2)
     })]
-    return Promise.race([psAry])
+    return Promise.race(psAry)
   }
   static removeNotify () {
     if (Platform.OS === 'ios') {
