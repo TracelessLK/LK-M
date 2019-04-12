@@ -8,6 +8,7 @@ import {
   View,
   ActivityIndicator
 } from 'react-native'
+import {ListItem} from "react-native-elements";
 const {getAvatarSource} = require('../../util')
 const {engine} = require('@lk/LK-C')
 
@@ -79,8 +80,22 @@ export default class GroupInfoView extends Component<{}> {
   }
 
   render () {
+    const {navigation} = this.props
     const state = this.state
     const {memberInfoObj} = state.groups
+    const list = [
+      {
+        title: '群聊名称',
+        onPress: () => {
+          navigation.navigate('GroupRenameView',state.groups)
+        }
+      }
+    ]
+    const style = {
+      listStyle: {
+        backgroundColor: 'white', marginTop: 20
+      }
+    }
     const dataAry = []
     for (let key in memberInfoObj) {
       const value = memberInfoObj[key]
@@ -102,6 +117,19 @@ export default class GroupInfoView extends Component<{}> {
           {this.state.isWating ? <ActivityIndicator size='large' style={{position: 'absolute', top: '50%'}}/> : null}
           <View style={{marginVertical: 20}}>
             <List data={dataAry}></List>
+            <View style={style.listStyle}>
+              {
+                list.map((item, i) => (
+                    <ListItem
+                        key={i}
+                        title={item.title}
+                        component={item.label}
+                        rightIcon={item.rightIconColor ? { style: { color: item.rightIconColor } } : {}}
+                        onPress={item.onPress}
+                    />
+                ))
+              }
+            </View>
             <TouchableOpacity style={{backgroundColor: 'white',
               marginVertical: 60,
               display: 'flex',
@@ -113,7 +141,7 @@ export default class GroupInfoView extends Component<{}> {
                   isWating: true
                 })
                 await chatManager.leaveGroup(this.group.id)
-                this.props.navigation.navigate('RecentTab')
+                this.props.navigation.navigate('RecentView')
               })
             }}>
               <Text style={{fontSize: 17, color: '#e53d59'}} >退出群聊</Text>

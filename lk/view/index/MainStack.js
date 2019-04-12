@@ -17,6 +17,7 @@ import ConnectionFailView from '../chat/ConnectionFailView'
 import ReadStateView from '../chat/ReadStateView'
 import RequestView from '../contact/RequestView'
 import AddGroupView from '../contact/AddGroupView'
+import GroupRenameView from '../contact/GroupRenameView'
 import MineView from '../mine/MineView'
 import DevView from '../mine/dev/DevView'
 import LogView from '../mine/dev/LogView'
@@ -135,6 +136,7 @@ const MainStack = createStackNavigator({
   RequestView,
   AddGroupView,
   GroupInfoView,
+  GroupRenameView,
   ConnectionFailView,
   ReadStateView,
   AddGroupMemberView,
