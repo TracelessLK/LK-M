@@ -9,9 +9,11 @@ import {
   Text,
   TouchableOpacity,
   RefreshControl,
-  AppState
+  AppState,
+  BackHandler
 } from 'react-native'
 import NetIndicator from '../common/NetIndicator'
+import ScreenWrapper from '../common/ScreenWrapper'
 
 const { commonUtil, MessageList, PushUtil } = require('@external/common')
 
@@ -45,7 +47,7 @@ type GetMsgOption = {
   createTime: string
 }
 
-export default class RecentView extends Component<{}> {
+export default class RecentView extends ScreenWrapper {
     static navigationOptions =({ navigation }) => {
       const size = 20
       let headerTitle = navigation.getParam('headerTitle')
@@ -99,7 +101,9 @@ export default class RecentView extends Component<{}> {
         }
       })
     }
-
+  onBackPress = () => {
+    BackHandler.exitApp()
+  }
   optionToChoose = () => {
     this.props.navigation.navigate('AddGroupView')
     // const {navigation} = this.props
@@ -376,7 +380,7 @@ export default class RecentView extends Component<{}> {
     }, { showWarning })
   }
 
-  render() {
+  subRender () {
     return (
       <View style={{
         flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'

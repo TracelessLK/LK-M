@@ -5,11 +5,12 @@ import {
   StatusBar, Image,Button
 } from 'react-native'
 import { AndroidBackHandler } from 'react-navigation-backhandler'
+import ScreenWrapper from "../common/ScreenWrapper";
 
 const style = require('../style')
 const backImg = require('../image/back-icon.png')
 
-export default class NotifyView extends Component<{}> {
+export default class NotifyView extends ScreenWrapper {
   static navigationOptions = () => {
     return {
       headerTitle: '通知',
@@ -35,7 +36,7 @@ export default class NotifyView extends Component<{}> {
   }
 
 
-  render () {
+  subRender () {
     const {msg} = this.props.navigation.state.params
     return (
       <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>

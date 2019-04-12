@@ -5,6 +5,7 @@ import {
 } from 'react-native'
 import {Card} from 'react-native-elements'
 import {Button, Icon, Text, Toast, Spinner} from 'native-base'
+import ScreenWrapper from '../common/ScreenWrapper'
 const versionLocal = require('../../../package.json').version
 const config = require('../../config')
 const {FuncUtil} = require('@ys/vanilla')
@@ -14,7 +15,7 @@ const {engine} = require('@lk/LK-C')
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const container = require('../../state')
-export default class VersionView extends Component<{}> {
+export default class VersionView extends ScreenWrapper{
     static navigationOptions = () => {
       return {
         headerTitle: '版本信息'
@@ -27,7 +28,7 @@ export default class VersionView extends Component<{}> {
       this.user = lkApp.getCurrentUser()
     }
 
-    render () {
+  subRender () {
       const {width} = Dimensions.get('window')
       const style = {
         itemStyle: {

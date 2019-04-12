@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 import {
   Text,
   View,
-  ScrollView
+  ScrollView,
+  BackHandler
 } from 'react-native'
+import ScreenWrapper from '../common/ScreenWrapper'
 const common = require('@external/common')
 const {SearchBar, commonUtil, List} = common
 const {debounceFunc} = commonUtil
 const {engine} = require('@lk/LK-C')
-
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const ContactManager = engine.get('ContactManager')
@@ -17,7 +18,7 @@ const OrgManager = engine.get('OrgManager')
 const {getAvatarSource} = require('../../util')
 const style = require('../style')
 
-export default class ContactView extends Component<{}> {
+export default class ContactView extends ScreenWrapper {
     static navigationOptions =() => {
       return {
         headerTitle: '通讯录'
@@ -48,6 +49,10 @@ export default class ContactView extends Component<{}> {
       //     ContactManager.un(event,this.update);
       // }
         ContactManager.un('contactChanged', this.update)
+    }
+
+    onBackPress = () => {
+        BackHandler.exitApp()
     }
 
     update = () => {
@@ -132,7 +137,7 @@ export default class ContactView extends Component<{}> {
       this.asyncRender(t)
     }
 
-    render () {
+    subRender () {
       return (
         <ScrollView>
           <SearchBar

@@ -6,6 +6,7 @@ import {
 import {Card} from 'react-native-elements'
 import DeviceInfo from 'react-native-device-info'
 import {isFirstTime} from 'react-native-update'
+import ScreenWrapper from '../../common/ScreenWrapper'
 
 const LKC = require('@lk/LK-C')
 const {engine} = LKC
@@ -15,7 +16,7 @@ const lkApp = Application.getCurrentApp()
 const packageJSON = require('../../../../package')
 const {version} = packageJSON
 
-export default class InfoView extends Component<{}> {
+export default class InfoView extends ScreenWrapper{
   constructor (props) {
     super(props)
     this.user = lkApp.getCurrentUser()
@@ -40,7 +41,7 @@ export default class InfoView extends Component<{}> {
     })
   }
 
-  render () {
+  subRender () {
     const ary = [
       `uid:  ${this.user.id}`,
       `clientId:  ${this.user.deviceId}`,
