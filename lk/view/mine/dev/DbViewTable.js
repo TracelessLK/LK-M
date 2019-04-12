@@ -4,13 +4,14 @@ import {
   StyleSheet, View, Text
 } from 'react-native'
 import CustomeTable from '../../common/CustomTable'
+import ScreenWrapper from '../../common/ScreenWrapper'
 
 const { engine } = require('@lk/LK-C')
 
 const ChatManager = engine.get('ChatManager')
 
 
-export default class DbViewTable extends Component<{}> {
+export default class DbViewTable extends ScreenWrapper {
   state = {
     tableDataAry: [],
     noRecord: false,
@@ -41,7 +42,7 @@ export default class DbViewTable extends Component<{}> {
 
   }
 
-  render() {
+  subRender() {
     const {tableDataAry} = this.state
     const styles = StyleSheet.create({
       container: {

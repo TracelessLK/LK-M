@@ -7,8 +7,9 @@ import {
   Button
 } from 'native-base'
 import AudioRecorderPlayer from 'react-native-audio-recorder-player'
+import ScreenWrapper from '../../../common/ScreenWrapper'
 
-export default class TestView extends Component<{}> {
+export default class TestView extends ScreenWrapper {
   constructor (props) {
     super(props)
     this.state = {}
@@ -22,7 +23,7 @@ export default class TestView extends Component<{}> {
 
   }
 
-  render () {
+    subRender () {
     return (
       <View>
         <Button info onPress={async () => {

@@ -5,9 +5,9 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 import LottieView from 'lottie-react-native';
+import ScreenWrapper from '../../../common/ScreenWrapper'
 
-
-export default class View3 extends Component<{}> {
+export default class View3 extends ScreenWrapper {
   constructor(props) {
     super(props)
     this.state = {}
@@ -21,7 +21,7 @@ export default class View3 extends Component<{}> {
 
   }
 
-  render() {
+  subRender() {
     return (
       <LottieView
         source={this.props.navigation.state.params.source}

@@ -4,10 +4,11 @@ import {
 } from 'react-native'
 import {Button, Icon, Text} from 'native-base'
 import {Card} from 'react-native-elements'
+import ScreenWrapper from '../../common/ScreenWrapper'
 
 const RNFS = require('react-native-fs')
 
-export default class LogView extends Component<{}> {
+export default class LogView extends ScreenWrapper {
   static navigationOptions =({navigation}) => {
     return {
       headerTitle: (navigation.state.params.type || '')
@@ -38,7 +39,7 @@ export default class LogView extends Component<{}> {
       })
     }
 
-    render () {
+  subRender () {
       return (
         <ScrollView style={{}}
           contentContainerStyle={{marginVertical: 20, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>

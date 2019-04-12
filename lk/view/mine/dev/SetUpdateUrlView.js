@@ -8,8 +8,9 @@ import {
 import {
   Card, CardItem, Button
 } from 'native-base'
+import ScreenWrapper from '../../common/ScreenWrapper'
 
-export default class SetUpdateUrlView extends Component<{}> {
+export default class SetUpdateUrlView extends ScreenWrapper {
   constructor (props) {
     super(props)
     this.state = {}
@@ -31,7 +32,7 @@ export default class SetUpdateUrlView extends Component<{}> {
     })
   }
 
-  render () {
+  subRender () {
     return (
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Card style={{justifyContent: 'center', alignItems: 'center', padding: 20, margin: 20, width: '90%'}}>
