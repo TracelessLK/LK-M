@@ -6,7 +6,7 @@
     "start": "npm run start:ios",
     "lint": "eslint --ext .js .",
     "packager": "export BLUEBIRD_W_FORGOTTEN_RETUR=false && node node_modules/react-native/local-cli/cli.js start",
-    "start:android": "react-native run-android",
+    "start:android": "node bin/startAndroid",
     "start:ios": "node bin/startIOS",
     "test": "npm run lint && jest",
     "showDevMenu": "adb shell input keyevent 82",

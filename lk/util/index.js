@@ -240,7 +240,7 @@ class Util {
     return Util.dropTable([
       'contact', 'device', 'group_record_state',
       'magicCode', 'mfapply', 'org', 'groupMember',
-      'record', 'chat', 'flowCursor'
+      'record', 'chat', 'flowCursor', 'db_version'
     ]).then(() => {
       console.log('restart')
       RNRestart.Restart()
