@@ -56,7 +56,6 @@
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B10AD10AFD56411EAAA35D61 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F4C2D654188743B48E7C7C19 /* Octicons.ttf */; };
 		CF1ABA8062B94815B4E6C203 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 592D96BDFCA14ED784B9F59F /* libRNSVG.a */; };
-		E7537B34C5004356A2A6D892 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 04F8853137F4445C9D03C1CF /* Feather.ttf */; };
 		FBADCEF6BAA04180A9522B7D /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C6B1707F2CD4456B0B0523F /* MaterialCommunityIcons.ttf */; };
 		FD41AF3D21EC75B300B053C3 /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FD41AF3521EC74FA00B053C3 /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FD54EB5221E6F12D004104A7 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD7BDC9221917FED007E18C6 /* libRCTCameraRoll.a */; };
@@ -1881,7 +1880,6 @@
 				10B618E145CF4452A4CB08C2 /* SimpleLineIcons.ttf in Resources */,
 				9D98B717FF1C44CCBC7AFD29 /* Zocial.ttf in Resources */,
 				46A5CB2791C046D2B557B909 /* Feather.ttf in Resources */,
-				E7537B34C5004356A2A6D892 /* Feather.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
