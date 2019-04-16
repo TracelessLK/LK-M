@@ -281,6 +281,7 @@ export default class ChatView extends Component<{}> {
 
     componentWillUnmount =() => {
       chatManager.un('msgChanged', this.msgChange)
+      chatManager.un('recentChanged', this.update)
       // todo: could be null
       const ary = ['keyboardDidShow', 'keyboardDidHide']
       ary.forEach((ele) => {
@@ -295,6 +296,7 @@ export default class ChatView extends Component<{}> {
         chatManager.asyReadMsgs(this.otherSideId, num)
       }
       chatManager.on('msgChanged', this.msgChange)
+      chatManager.on('recentChanged', this.update)
       Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
       Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
