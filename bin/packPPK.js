@@ -67,7 +67,9 @@ async function generatePpk(platform, shouldUpload) {
   console.log(wrap(platform, `executing: ${cmd}`))
   // fixme: 解决异步的问题
   timeStamp({ packType: 'ppk', platform })
-  childProcess.execSync(cmd)
+  childProcess.execSync(cmd, {
+    stdio: [process.stderr, process.stdin, process.stdout]
+  })
   console.log(wrap(platform, 'ppk export end'))
   const option = {
     host: config.ip,
