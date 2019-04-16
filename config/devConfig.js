@@ -9,7 +9,8 @@ const devConfig = {
   appName: 'LK',
   ip: txServerIp,
   sshInfo: {
-    username: 'root'
+    username: 'root',
+    password: ''
   },
   serverRoot: '/opt/testing/LK-S'
 }

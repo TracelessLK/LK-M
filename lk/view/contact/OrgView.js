@@ -5,6 +5,7 @@ import {
   Text,
   View
 } from 'react-native'
+import ScreenWrapper from "../common/ScreenWrapper";
 const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
@@ -19,7 +20,7 @@ const style = require('../style')
 const noUserImg = require('../image/noUser.png')
 const {CenterLayout} = require('@ys/react-native-collection')
 
-export default class OrgView extends Component<{}> {
+export default class OrgView extends ScreenWrapper {
     static navigationOptions =({ navigation }) => {
       const {org} = navigation.state.params
       return {
@@ -152,7 +153,7 @@ export default class OrgView extends Component<{}> {
       })
     }
 
-    render () {
+    subRender () {
       return <LoadingView loading={this.state.loading} content={this.state.content}></LoadingView>
     }
 }

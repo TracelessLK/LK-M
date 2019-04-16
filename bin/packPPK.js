@@ -69,20 +69,22 @@ async function generatePpk(platform, shouldUpload) {
   timeStamp({ packType: 'ppk', platform })
   childProcess.execSync(cmd)
   console.log(wrap(platform, 'ppk export end'))
-  const option = {
-    host: config.ip,
-    username: config.sshInfo.username,
-    password: config.sshInfo.password
-  }
-  const ssh = new NodeSSH()
 
-  await ssh.connect(option)
-  const remotePath = path.resolve(serverRoot, `static/public/ppk/${platform}/${fileName}`)
-  // console.log(remotePath)
+
   if (shouldUpload) {
+    const option = {
+      host: config.ip,
+      username: config.sshInfo.username,
+      password: config.sshInfo.password
+    }
+    const ssh = new NodeSSH()
+
+    await ssh.connect(option)
+    const remotePath = path.resolve(serverRoot, `static/public/ppk/${platform}/${fileName}`)
     await upload({ local: outputPath, remote: remotePath })
+
+    ssh.dispose()
   }
-  ssh.dispose()
 }
 
 // add platform info
