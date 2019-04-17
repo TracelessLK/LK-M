@@ -58,7 +58,7 @@ async function start () {
   console.log(chalk.green(cmd))
   execSync(cmd)
 
-  console.log('app started successfully')
+  console.log('cmd executed successfully')
 }
 
 function getCmd (udidParam) {
