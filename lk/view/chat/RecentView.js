@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   AppState,
-  BackHandler
+  BackHandler, ActivityIndicator
 } from 'react-native'
 import NetIndicator from '../common/NetIndicator'
 import ScreenWrapper from '../common/ScreenWrapper'
@@ -100,6 +100,7 @@ export default class RecentView extends ScreenWrapper {
           }
         }
       })
+      this.addActivityIndicator()
     }
   onBackPress = () => {
     BackHandler.exitApp()
@@ -155,8 +156,9 @@ export default class RecentView extends ScreenWrapper {
     }
 
     _handleAppStateChange = (appState) => {
-      // console.log({appState})
+      console.log({appState})
       if (appState === 'active') {
+        this.addActivityIndicator()
         // this.asyGetAllDetainedMsg({ minTime: 500 })
         removeNotify()
       }
@@ -350,6 +352,28 @@ export default class RecentView extends ScreenWrapper {
         })
       }
     }
+
+  addActivityIndicator = async () => {
+    const { navigation } = this.props
+    const num = await chatManager.asyGetAllMsgNotReadNum(this.user.id)
+    let headerTitle = `消息${num ? `(${num})` : ''}`
+    navigation.setParams({
+      headerTitle: (
+          <View style={{display: 'flex',flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={{color: 'white', fontSize: 20, fontWeight: '500', textAlign: 'left', marginHorizontal: 16}}>{headerTitle}</Text>
+            <ActivityIndicator size='small' color='#F5F5F5'></ActivityIndicator>
+          </View>
+      )
+    })
+    // const psAry = [this.channel.asyReset(), new Promise((resovle) => {
+    //   setTimeout(() => {
+    //     resovle()
+    //   }, 1000 * 2)
+    // })]
+    // await Promise.all(psAry)
+    await this.channel.asyReset()
+    this.resetHeaderTitle()
+  }
 
   asyGetAllDetainedMsg = (option = {}) => {
     const { minTime = 0, refreshControl, showWarning = false } = option
