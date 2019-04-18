@@ -9,12 +9,11 @@ import {isFirstTime, markSuccess} from 'react-native-update'
 
 
 import LKEntry from './lk/LKEntry'
+import ErrorBoundary from './ErrorBoundary'
+
 const {engine} = require('@lk/LK-C')
 
-const packageJson = require('./package.json')
 
-const Application = engine.getApplication()
-const lkApp = Application.getCurrentApp()
 if (isFirstTime) {
   markSuccess()
 }
@@ -22,11 +21,13 @@ if (isFirstTime) {
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader', 'Class RCTC'])
 
 export default class Entry extends Component<{}> {
-  render () {
+  render() {
     return (
       <Root>
         <View style={styles.container}>
-          <LKEntry></LKEntry>
+          <ErrorBoundary>
+            <LKEntry />
+          </ErrorBoundary>
         </View>
       </Root>
 
