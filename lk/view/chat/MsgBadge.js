@@ -48,7 +48,7 @@ export default class MsgBadge extends Component<{}> {
 
     return (
       this.state.badge
-        ? <Badge danger style={{position: 'absolute', top: -12, right: -17, transform: [{scaleX: scale}, {scaleY: scale}]}}>
+        ? <Badge danger style={{position: 'absolute', top: -12, right: -17, marginTop: 5, textAlign: 'center', alignItems: 'center', justifyContent: 'center', transform: [{scaleX: scale}, {scaleY: scale}]}}>
           <Text style={{color: '#fff'}}>{this.state.badge}</Text>
         </Badge>
         : null

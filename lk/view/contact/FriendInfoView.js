@@ -10,13 +10,14 @@ import {
 import {
   Card
 } from 'native-base'
+import ScreenWrapper from "../common/ScreenWrapper";
 const {getAvatarSource} = require('../../util')
 const {engine} = require('@lk/LK-C')
 
 const ChatManager = engine.get('ChatManager')
 const ContactManager = engine.get('ContactManager')
 
-export default class FriendInfoView extends Component<{}> {
+export default class FriendInfoView extends ScreenWrapper {
     static navigationOptions =({ navigation }) => {
       const {friend} = navigation.state.params
       return {
@@ -45,7 +46,7 @@ export default class FriendInfoView extends Component<{}> {
         allDevice: str || '无记录'
       })
     }
-    render () {
+    subRender () {
       let friend = this.friend
       return (
         <ScrollView contentContainerStyle={{ flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff', paddingTop: 20}}>
