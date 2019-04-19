@@ -156,7 +156,6 @@ export default class RecentView extends ScreenWrapper {
     }
 
     _handleAppStateChange = (appState) => {
-      console.log({appState})
       if (appState === 'active') {
         this.addActivityIndicator()
         // this.asyGetAllDetainedMsg({ minTime: 500 })
