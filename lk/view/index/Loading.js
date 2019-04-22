@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import {
   StyleSheet,
   View, ActivityIndicator,
-  AsyncStorage
+  AsyncStorage,Image
 } from 'react-native'
 import DataSource from '../../store/RNSqlite'
 
@@ -12,8 +12,7 @@ const {PushUtil} = require('@external/common')
 const {getAPNDeviceId} = PushUtil
 const {engine} = require('@lk/LK-C')
 const UserManager = engine.get('UserManager')
-
-
+const logo = require('../image/1024x1024.png')
 
 let Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()
@@ -82,8 +81,8 @@ export default class Loading extends Component<{}> {
     render () {
       return (
         <View style={styles.container}>
-          {/* <Image resizeMode='contain' style={{width:200}} source={require('../../image/1024x1024.png')}/> */}
-          <ActivityIndicator size='large'/>
+           <Image resizeMode='contain' style={{width:200}} source={logo}/>
+          {/*<ActivityIndicator size='large'/>*/}
         </View>
       )
     }
