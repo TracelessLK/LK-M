@@ -12,7 +12,7 @@ const {PushUtil} = require('@external/common')
 const {getAPNDeviceId} = PushUtil
 const {engine} = require('@lk/LK-C')
 const UserManager = engine.get('UserManager')
-const logo = require('../image/1024x1024.png')
+const logo = require('../image/logo.png')
 
 let Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()
