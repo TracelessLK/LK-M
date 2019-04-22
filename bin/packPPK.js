@@ -4,7 +4,6 @@ const chalk = require('chalk')
 
 const { timeCount } = FuncUtil
 const childProcess = require('child_process')
-const NodeSSH = require('node-ssh')
 const path = require('path')
 const fse = require('fs-extra')
 
@@ -23,16 +22,10 @@ async function start() {
     name: 'platform',
     message: 'What platform to pack?',
     choices: ['all', 'ios', 'android']
-  },
-  {
-    type: 'confirm',
-    name: 'shouldUpload',
-    message: 'Do you upload the ppk file to your server?',
-    default: false
   }
   ]
   const answer = await inquirer.prompt(question)
-  const { platform, shouldUpload} = answer
+  const { platform} = answer
 
   timeCount(async () => {
     let platformAry = []
@@ -43,7 +36,7 @@ async function start() {
     }
     // fixme:  'Timed out while waiting for handshake' when run parallel
     for (const ele of platformAry) {
-      await generatePpk(ele, shouldUpload)
+      await generatePpk(ele)
     }
   }, {
     callback() {
@@ -56,7 +49,7 @@ async function start() {
 /*
 *  platform, ios 或android
  */
-async function generatePpk(platform, shouldUpload) {
+async function generatePpk(platform) {
   console.log(wrap(platform, 'ppk export started'))
   const exportFolder = path.resolve(exportPPKFolderPath, platform)
   fse.ensureDirSync(exportFolder)
@@ -70,21 +63,7 @@ async function generatePpk(platform, shouldUpload) {
   childProcess.execSync(cmd)
   console.log(wrap(platform, 'ppk export end'))
 
-
-  if (shouldUpload) {
-    const option = {
-      host: config.ip,
-      username: config.sshInfo.username,
-      password: config.sshInfo.password
-    }
-    const ssh = new NodeSSH()
-
-    await ssh.connect(option)
-    const remotePath = path.resolve(serverRoot, `static/public/ppk/${platform}/${fileName}`)
-    await upload({ local: outputPath, remote: remotePath })
-
-    ssh.dispose()
-  }
+  await upload({ localPath: outputPath, platform, isPpk: true })
 }
 
 // add platform info
