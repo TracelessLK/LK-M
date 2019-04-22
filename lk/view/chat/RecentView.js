@@ -318,10 +318,10 @@ export default class RecentView extends ScreenWrapper {
             <TouchableOpacity
               onPress={() => { this.props.navigation.navigate('ContactTab') }}
               style={{
-                marginTop: 30, width: '90%', height: 50, borderColor: 'gray', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
+                marginTop: 30, width: '90%', height: 50, borderColor: 'silver', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
               }}
             >
-              <Text style={{ fontSize: 18, textAlign: 'center', color: 'gray' }}>开始和好友聊天吧!</Text>
+              <Text style={{ fontSize: 15, textAlign: 'center', color: 'silver' }}>开始和好友聊天吧!</Text>
             </TouchableOpacity>
           </View>
         )

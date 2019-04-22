@@ -45,6 +45,9 @@ export default class SelectUserView extends Component<{}> {
         content: `IP地址: ${serverIP} 端口: ${serverPort}`,
         onPress: () => {
           navigation.navigate('PasswordLoginView', { user: ele })
+        },
+        deletePress: () => {
+          this.deleteRow(id)
         }
       }
       accumulator.push(obj)
@@ -53,6 +56,12 @@ export default class SelectUserView extends Component<{}> {
     this.setState({
       contentAry: <MessageList data={data} />
     })
+  }
+
+  async deleteRow(userId){
+    console.log({userId})
+    await UserManager.asyRemoveLKUser(userId)
+    this._bootstrapAsync()
   }
 
   render() {
