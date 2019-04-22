@@ -1,19 +1,25 @@
 const path = require('path')
+
 const rootPath = path.resolve(__dirname, '../')
 const fs = require('fs')
 const fse = require('fs-extra')
+
 const buildFolderPath = path.resolve(rootPath, 'build')
 fse.ensureDirSync(buildFolderPath)
 const archivePath = path.resolve(buildFolderPath, 'tmp')
 const {argv} = require('yargs')
+
 let {scheme, archive = true, bundle = false} = argv
 // console.log(argv, archive)
 const schemeAry = []
-const devConfig = require('../config/devConfig')
-const {appId, serverRoot} = devConfig
 const {CliUtil} = require('@ys/collection')
+
 const {execSync} = CliUtil
 const {FuncUtil} = require('@ys/vanilla')
+const devConfig = require('../config/devConfig')
+
+const {appId} = devConfig
+
 const {timeCount} = FuncUtil
 const {upload, timeStamp} = require('./util')
 
@@ -50,12 +56,13 @@ timeCount(() => {
   fs.renameSync(path.resolve(exportPath, `${devConfig.appId}.ipa`), destination)
 
   return upload({
-    local: destination,
-    remote: path.resolve(serverRoot, `static/public/ios/${fileName}`)
+    localPath: destination,
+    platform: 'ios',
+    isPpk: false
   })
 })
 
-function fixFramework () {
+function fixFramework() {
   // QBImagePicker bug avoiding
   const frameworkPath = path.resolve(rootPath, `build/tmp.xcarchive/Products/Applications/${appId}.app/Frameworks`)
   fse.removeSync(frameworkPath)
