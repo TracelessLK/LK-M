@@ -188,91 +188,77 @@ export default class LKEntry extends Component<{}> {
     const {length} = userAry
     if (!length) {
       const passwordRawStr = 'admin'
-      Alert.alert(
-        '升级需知',
-        `升级后的登录初始密码默认为${passwordRawStr}`,
-        [
-          {
-            text: '确认',
-            onPress: async () => {
-              const db = await new Promise(resolve => {
-                const database = SQLite.openDatabase({name: 'traceless.db', location: 'default'}, () => {
-                  this.setState({
-                    stage: 1
-                  })
-                  resolve(database)
-                }, function (err) {
-                  console.log(err)
-                  this.setState({
-                    stage: 2
-                  })
-                })
-              })
 
-              this.setState({info: '正在生成新的密钥...'})
+      const db = await new Promise(resolve => {
+        const database = SQLite.openDatabase({name: 'traceless.db', location: 'default'}, () => {
+          this.setState({
+            stage: 1
+          })
+          resolve(database)
+        }, function (err) {
+          console.log(err)
+          this.setState({
+            stage: 2
+          })
+        })
+      })
 
-              db.transaction((tx) => {
-                tx.executeSql('select * from traceless', [], async (tx, result) => {
-                  const bits = 1024
-                  const exponent = '10001'
+      this.setState({info: '正在生成新的密钥...'})
 
-                  const rsa = new RSAKey()
-                  rsa.generate(bits, exponent)
-                  const publicKey = rsa.getPublicString() // return json encoded string
-                  const privateKey = rsa.getPrivateString() // return js
+      db.transaction((tx) => {
+        tx.executeSql('select * from traceless', [], async (tx, result) => {
+          const bits = 1024
+          const exponent = '10001'
 
-                  this.setState({info: '已生成新的密钥...'})
-                  const password = md5(passwordRawStr).toString()
-                  const obj = JSON.parse(result.rows.item(0).data)[0]
+          const rsa = new RSAKey()
+          rsa.generate(bits, exponent)
+          const publicKey = rsa.getPublicString() // return json encoded string
+          const privateKey = rsa.getPrivateString() // return js
 
-                  const response = await fetch('https://raw.githubusercontent.com/tracelessman/LK-S/dev/public/newServerInfo.json', {
-                    method: 'GET'
-                  })
-                  const serverInfo = await response.json()
-                  this.setState({info: '获取新的服务器信息...'})
+          this.setState({info: '已生成新的密钥...'})
+          const password = md5(passwordRawStr).toString()
+          const obj = JSON.parse(result.rows.item(0).data)[0]
 
-                  const user = {
-                    id: obj.id,
-                    name: obj.name,
-                    publicKey,
-                    privateKey,
-                    deviceId: uuid(),
-                    serverIP: serverInfo.host,
-                    serverPort: serverInfo.port,
-                    password
-                  }
+          this.setState({info: '激活账户信息...'})
 
-                  const description = JSON.stringify({
-                    brand: deviceInfo.getBrand(),
-                    device: deviceInfo.getDeviceId()
-                  })
-                  const venderDid = await getAPNDeviceId()
-
-                  const option = {
-                    user,
-                    venderDid,
-                    description
-                  }
-                  await lkApplication.updateRegister({
-                    user,
-                    venderDid,
-                    description
-                  })
-                  this.setState({info: '升级激活成功,即将重启!'})
-                  setTimeout(() => {
-                    // RNRestart.Restart()
-                  }, 1000 * 1.5)
-                }, (err) => {
-                  console.log(err)
-                  this.setState({
-                    stage: 2
-                  })
-                })
-              })
-            }
+          const user = {
+            id: obj.id,
+            name: obj.name,
+            publicKey,
+            privateKey,
+            deviceId: uuid(),
+            serverIP: '62.234.46.12',
+            serverPort: '3001',
+            password
           }
-        ]
-      )
+
+          const description = JSON.stringify({
+            brand: deviceInfo.getBrand(),
+            device: deviceInfo.getDeviceId()
+          })
+          const venderDid = await getAPNDeviceId()
+
+          const option = {
+            user,
+            venderDid,
+            description
+          }
+          await lkApplication.updateRegister({
+            user,
+            venderDid,
+            description
+          })
+          this.setState({info: '升级激活成功,即将重启!'})
+          setTimeout(() => {
+            RNRestart.Restart()
+          }, 1000 * 1.5)
+        }, (err) => {
+          console.log(err)
+          this.setState({
+            stage: 2
+          })
+        })
+      })
     } else {
       this.setState({
         stage: 2
