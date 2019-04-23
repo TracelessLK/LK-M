@@ -2,7 +2,8 @@ import {
   Platform,
   PushNotificationIOS,
   Alert,
-  AsyncStorage
+  AsyncStorage,
+  ActivityIndicator
 } from 'react-native'
 // import {Toast} from 'native-base'
 const {engine} = require('@lk/LK-C')
@@ -33,22 +34,24 @@ class PushUtil {
 
         }
       })
+    }
+  }
 
-      if (Platform.OS === 'ios') {
-        // 必须要调用requestPermissions,否则无法接受到register事件获取deviceId
+  static init() {
+    if (Platform.OS === 'ios') {
+      // 必须要调用requestPermissions,否则无法接受到register事件获取deviceId
 
-        PushNotificationIOS.requestPermissions().then(() => {
-          PushNotificationIOS.addEventListener('register', (deviceId) => {
-            // console.log({deviceId})
+      PushNotificationIOS.requestPermissions().then(() => {
+        PushNotificationIOS.addEventListener('register', (deviceId) => {
+          // console.log({deviceId})
 
-            AsyncStorage.setItem('deviceIdAPN', deviceId)
-          })
-          PushNotificationIOS.addEventListener('registrationError', (reason) => {
-            console.log({registrationError: reason})
-            throw new Error(reason)
-          })
+          AsyncStorage.setItem('deviceIdAPN', deviceId)
         })
-      }
+        PushNotificationIOS.addEventListener('registrationError', (reason) => {
+          console.log({registrationError: reason})
+          throw new Error(reason)
+        })
+      })
     }
   }
 
@@ -65,12 +68,14 @@ class PushUtil {
     })]
     return Promise.race(psAry)
   }
-  static removeNotify () {
+  static removeNotify() {
     if (Platform.OS === 'ios') {
       PushNotificationIOS.removeAllDeliveredNotifications()
       PushNotificationIOS.setApplicationIconBadgeNumber(0)
     }
   }
 }
+
+PushUtil.init()
 
 module.exports = PushUtil

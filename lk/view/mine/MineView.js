@@ -206,7 +206,7 @@ export default class MineView extends ScreenWrapper {
   // todo: should have setting
   isDevMode() {
     const ary = ['dds', 'rbg', 'goofy', 'test', 'zcy', 'iphonework1', 'iphonework2']
-    return ary.includes(this.user.name) || __DEV__
+    return ary.includes(this.user.name) || __DEV__ || this.user.name.startsWith('test')
   }
 
     subRender () {

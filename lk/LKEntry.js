@@ -5,13 +5,29 @@ import {
   Platform,
   YellowBox,
   Linking,
-  Alert
+  Alert,
+  Text,
+  View,
+  Image,
+  ActivityIndicator
 } from 'react-native'
 import Promise from 'bluebird'
 import RNShake from 'react-native-shake'
 import {ActionSheet} from 'native-base'
+import SQLite from 'react-native-sqlite-storage'
+import RSAKey from 'react-native-rsa'
+import deviceInfo from 'react-native-device-info'
+import RNRestart from 'react-native-restart'
 
 import EntryView from './view/index/EntryView'
+import DataSource from './store/RNSqlite'
+
+const {engine} = require('@lk/LK-C')
+const md5 = require('crypto-js/md5')
+const uuid = require('uuid')
+const {PushUtil} = require('@external/common')
+
+const {getAPNDeviceId} = PushUtil
 
 Promise.config({
   warnings: false
@@ -31,7 +47,6 @@ const ErrorUtilRN = require('ErrorUtils')
 const util = require('./util')
 
 const { writeToLog } = util
-const { engine } = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()
@@ -53,7 +68,9 @@ lkApplication.on('netStateChanged', (result) => {
 
 async function checkUpdate(param) {
   if (container.NetInfoUtil.online) {
-    const { serverIP, id, name, updateAnyWay = false } = param
+    const {
+      serverIP, id, name, updateAnyWay = false
+    } = param
     const response = await fetch(appInfoUrl)
     const appInfo = await response.json()
     const { updateUrl, httpProtocol, port } = appInfo
@@ -85,7 +102,7 @@ async function checkUpdate(param) {
       checkUpdateErrorCb: (error) => {
         console.log(error)
       },
-      'updateAnyWay': updateAnyWay
+      updateAnyWay
     }
     updateUtil.checkUpdate(optionCheck)
   }
@@ -131,7 +148,6 @@ setGlobalErrorHandler(option)
 global.Promise = Promise
 
 const errorStock = new ErrorStock(resetTime)
-// console.log(global)
 
 global.onunhandledrejection = (error) => {
   console.log({ error })
@@ -143,12 +159,16 @@ global.onunhandledrejection = (error) => {
     errorStock.processError({ error })
   }
 }
-// console.log(global)
 
 export default class LKEntry extends Component<{}> {
   shakeCount = 0
 
-  componentDidMount() {
+  state = {
+    stage: 0, // 0: 等待, 1: 升级, 2:正常进入主界面,
+    info: '正在升级中, 请稍候...'
+  }
+
+  async componentDidMount() {
     Linking.getInitialURL().then((url) => {
       if (url) {
         console.log(`Initial URL: ${url}`)
@@ -157,6 +177,107 @@ export default class LKEntry extends Component<{}> {
     Linking.addEventListener('url', (event) => {
       // const {url} = event
     })
+
+    // 检测是否是traceless 升级到LK
+
+    // 先检测是否已注册新的账号
+    await lkApplication.start(DataSource, Application.PLATFORM_RN)
+
+    const UserManager = engine.get('UserManager')
+    const userAry = await UserManager.asyGetAll()
+    const {length} = userAry
+    if (!length) {
+      const passwordRawStr = 'admin'
+      Alert.alert(
+        '升级需知',
+        `升级后的登录初始密码默认为${passwordRawStr}`,
+        [
+          {
+            text: '确认',
+            onPress: async () => {
+              const db = await new Promise(resolve => {
+                const database = SQLite.openDatabase({name: 'traceless.db', location: 'default'}, () => {
+                  this.setState({
+                    stage: 1
+                  })
+                  resolve(database)
+                }, function (err) {
+                  console.log(err)
+                  this.setState({
+                    stage: 2
+                  })
+                })
+              })
+
+              this.setState({info: '正在生成新的密钥...'})
+
+              db.transaction((tx) => {
+                tx.executeSql('select * from traceless', [], async (tx, result) => {
+                  const bits = 1024
+                  const exponent = '10001'
+
+                  const rsa = new RSAKey()
+                  rsa.generate(bits, exponent)
+                  const publicKey = rsa.getPublicString() // return json encoded string
+                  const privateKey = rsa.getPrivateString() // return js
+
+                  this.setState({info: '已生成新的密钥...'})
+                  const password = md5(passwordRawStr).toString()
+                  const obj = JSON.parse(result.rows.item(0).data)[0]
+
+                  const response = await fetch('https://raw.githubusercontent.com/tracelessman/LK-S/dev/public/newServerInfo.json', {
+                    method: 'GET'
+                  })
+                  const serverInfo = await response.json()
+                  this.setState({info: '获取新的服务器信息...'})
+
+                  const user = {
+                    id: obj.id,
+                    name: obj.name,
+                    publicKey,
+                    privateKey,
+                    deviceId: uuid(),
+                    serverIP: serverInfo.host,
+                    serverPort: serverInfo.port,
+                    password
+                  }
+
+                  const description = JSON.stringify({
+                    brand: deviceInfo.getBrand(),
+                    device: deviceInfo.getDeviceId()
+                  })
+                  const venderDid = await getAPNDeviceId()
+
+                  const option = {
+                    user,
+                    venderDid,
+                    description
+                  }
+                  await lkApplication.updateRegister({
+                    user,
+                    venderDid,
+                    description
+                  })
+                  this.setState({info: '升级激活成功,即将重启!'})
+                  setTimeout(() => {
+                    // RNRestart.Restart()
+                  }, 1000 * 1.5)
+                }, (err) => {
+                  console.log(err)
+                  this.setState({
+                    stage: 2
+                  })
+                })
+              })
+            }
+          }
+        ]
+      )
+    } else {
+      this.setState({
+        stage: 2
+      })
+    }
   }
 
   componentWillMount() {
@@ -200,9 +321,27 @@ export default class LKEntry extends Component<{}> {
   render() {
     const schemeName = 'lkapp'
     const prefix = Platform.OS === 'android' ? `${schemeName}://${schemeName}/` : `${schemeName}://`
+    let content
+    if (this.state.stage === 0) {
+      content = null
+    } else if (this.state.stage === 1) {
+      content = (
+        <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+          {/* <View> */}
+          {/*  <Image source={require('./view/image/1024x1024.png')} resizeMode="contain" style={{width: '50%'}} /> */}
+          {/* </View> */}
+          <ActivityIndicator size="large" />
+          <View style={{marginVertical: 10}}>
+            <Text>
+              {this.state.info}
+            </Text>
+          </View>
+        </View>
+      )
+    } else if (this.state.stage = 2) {
+      content = <EntryView uriPrefix={prefix} />
+    }
 
-    return (
-      <EntryView uriPrefix={prefix} />
-    )
+    return content
   }
 }

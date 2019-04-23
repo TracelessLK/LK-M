@@ -11,9 +11,6 @@ import {isFirstTime, markSuccess} from 'react-native-update'
 import LKEntry from './lk/LKEntry'
 import ErrorBoundary from './ErrorBoundary'
 
-const {engine} = require('@lk/LK-C')
-
-
 if (isFirstTime) {
   markSuccess()
 }

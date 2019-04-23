@@ -34,7 +34,6 @@ export default class Loading extends Component<{}> {
     _bootstrapAsync = async () => {
     // 准备数据库
       const start = Date.now()
-      await lkApplication.start(DataSource, Application.PLATFORM_RN)
       let routerName
       const currentUser = lkApplication.getCurrentUser()
       const venderDid = await getAPNDeviceId()
