@@ -12,7 +12,8 @@ const devConfig = {
     username: 'root',
     password: ''
   },
-  serverRoot: '/opt/testing/LK-S'
+  serverRoot: '/opt/testing/LK-S',
+  serverHostAry: ['192.144.200.234', '62.234.46.12']
 }
 
 const unversionedPath = path.resolve(__dirname, 'unversioned.js')
