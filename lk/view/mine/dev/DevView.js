@@ -170,6 +170,29 @@ export default class BasicInfoView extends ScreenWrapper {
           onPress: () => {
             navigation.navigate('DbView')
           }
+        },
+        {
+          title: '重置当前账号',
+          icon: 'refresh',
+          onPress: () => {
+            Alert.alert(
+              '提示',
+              '重置后会删除当前账号的所有数据,请确认是否继续本操作?',
+              [
+                { text: '取消', onPress: () => {}, style: 'cancel' },
+                {
+                  text: '确认',
+                  onPress: () => {
+                    (async () => {
+                      await lkApp.asyUnRegister()
+                      navigation.navigate('AuthStack')
+                    })()
+                  }
+                }
+              ],
+              { cancelable: false }
+            )
+          }
         }
       ]
 
