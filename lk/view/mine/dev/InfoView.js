@@ -43,6 +43,8 @@ export default class InfoView extends ScreenWrapper{
 
   subRender () {
     const ary = [
+      `serverIP: ${this.user.serverIP}`,
+      `serverPort: ${this.user.serverPort}`,
       `uid:  ${this.user.id}`,
       `clientId:  ${this.user.deviceId}`,
       `bundleId:  ${DeviceInfo.getBundleId()}`,

@@ -7,6 +7,9 @@ import {
 } from 'react-native'
 // import {Toast} from 'native-base'
 const {engine} = require('@lk/LK-C')
+const RNFS = require('react-native-fs')
+
+const { logPath } = require('../../lk/config')
 
 const Application = engine.getApplication()
 const lkapp = Application.getCurrentApp()
@@ -37,6 +40,22 @@ class PushUtil {
     }
   }
 
+  static appendToLog(option) {
+    const { content, type } = option
+    // console.log({option})
+    const appendPath = logPath[type]
+    if (__DEV__) {
+      console.log({
+        content, type
+      })
+    }
+    const now = new Date()
+    const str = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}: \n ${content} \n\n\n \n`
+    RNFS.writeFile(appendPath, str, 'utf8').catch((err) => {
+      console.log(err)
+    })
+  }
+
   static init() {
     if (Platform.OS === 'ios') {
       // 必须要调用requestPermissions,否则无法接受到register事件获取deviceId
@@ -44,6 +63,10 @@ class PushUtil {
       })
       PushNotificationIOS.addEventListener('register', (deviceId) => {
         console.log({deviceId})
+        PushUtil.appendToLog({
+          type: 'debug',
+          content: deviceId
+        })
 
         AsyncStorage.setItem('deviceIdAPN', deviceId)
       })

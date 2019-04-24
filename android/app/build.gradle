@@ -106,7 +106,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.lk_m"
+        applicationId "traceless"
         minSdkVersion 23
         targetSdkVersion 22
         versionCode 1
