@@ -101,7 +101,7 @@ export default class BasicInfoView extends ScreenWrapper {
               checkUpdateErrorCb: (error) => {
                 console.log(error)
                 Toast.show({
-                  text: '检查更新出错了',
+                  text: `检查更新出错了, ${JSON.stringify(error)}`,
                   position: 'top',
                   type: 'error',
                   duration: 3000
