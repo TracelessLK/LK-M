@@ -40,17 +40,16 @@ class PushUtil {
   static init() {
     if (Platform.OS === 'ios') {
       // 必须要调用requestPermissions,否则无法接受到register事件获取deviceId
-
       PushNotificationIOS.requestPermissions().then(() => {
-        PushNotificationIOS.addEventListener('register', (deviceId) => {
-          // console.log({deviceId})
+      })
+      PushNotificationIOS.addEventListener('register', (deviceId) => {
+        console.log({deviceId})
 
-          AsyncStorage.setItem('deviceIdAPN', deviceId)
-        })
-        PushNotificationIOS.addEventListener('registrationError', (reason) => {
-          console.log({registrationError: reason})
-          throw new Error(reason)
-        })
+        AsyncStorage.setItem('deviceIdAPN', deviceId)
+      })
+      PushNotificationIOS.addEventListener('registrationError', (reason) => {
+        console.log({registrationError: reason})
+        throw new Error(reason)
       })
     }
   }
