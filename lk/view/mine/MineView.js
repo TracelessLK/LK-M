@@ -156,7 +156,7 @@ export default class MineView extends ScreenWrapper {
           }
           ws.onerror = (event) => {
             Toast.show({
-              text: `网络连接错误 ${event ? JSON.stringify(event) : ''}`,
+              text: `网络连接错误 ${event ? event.toString() : ''}`,
               position: 'top'
             })
           }
