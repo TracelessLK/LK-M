@@ -1,5 +1,5 @@
 import React, { Component} from 'react'
-import {Button, ScrollView, TouchableOpacity, View} from 'react-native'
+import {Button, ScrollView, TouchableOpacity, View, Platform} from 'react-native'
 const common = require('@external/common')
 const {List} = common
 const {FuncUtil} = require('@ys/vanilla')
@@ -24,7 +24,7 @@ export default class AddGroupMemberView extends Component<{}> {
     const {hasOneToAdd} = params
     const headerRight = hasOneToAdd ? (
       <TouchableOpacity style={{marginRight: 20}}>
-        <Button title="确定"
+        <Button title="确定" color={Platform.OS === 'ios' ? '#fff' : false}
           onPress={debounceFunc(() => {
             params.navigateAddGroupPress()
           })}
