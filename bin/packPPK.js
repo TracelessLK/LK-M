@@ -22,10 +22,16 @@ async function start() {
     name: 'platform',
     message: 'What platform to pack?',
     choices: ['all', 'ios', 'android']
+  },
+  {
+    type: 'confirm',
+    name: 'shouldBundle',
+    message: 'Do you want to bundle app?',
+    default: true
   }
   ]
   const answer = await inquirer.prompt(question)
-  const { platform} = answer
+  const { platform, shouldBundle} = answer
 
   timeCount(async () => {
     let platformAry = []
@@ -36,7 +42,7 @@ async function start() {
     }
     // fixme:  'Timed out while waiting for handshake' when run parallel
     for (const ele of platformAry) {
-      await generatePpk(ele)
+      await generatePpk(ele, shouldBundle)
     }
   }, {
     callback() {
@@ -49,19 +55,23 @@ async function start() {
 /*
 *  platform, ios 或android
  */
-async function generatePpk(platform) {
-  console.log(wrap(platform, 'ppk export started'))
+async function generatePpk(platform, shouldBundle) {
   const exportFolder = path.resolve(exportPPKFolderPath, platform)
   fse.ensureDirSync(exportFolder)
   const outputPath = path.resolve(exportFolder, fileName)
-  console.log(wrap(platform, `outputPath: ${outputPath}`))
-  const cmd = `npx pushy bundle --platform ${platform} --output ${outputPath}`
+  if (shouldBundle) {
+    console.log(wrap(platform, 'ppk export started'))
 
-  console.log(wrap(platform, `executing: ${cmd}`))
-  // fixme: 解决异步的问题
-  timeStamp({ packType: 'ppk', platform })
-  childProcess.execSync(cmd)
-  console.log(wrap(platform, 'ppk export end'))
+    console.log(wrap(platform, `outputPath: ${outputPath}`))
+    const cmd = `npx pushy bundle --platform ${platform} --output ${outputPath}`
+
+    console.log(wrap(platform, `executing: ${cmd}`))
+    // fixme: 解决异步的问题
+    timeStamp({ packType: 'ppk', platform })
+    childProcess.execSync(cmd)
+    console.log(wrap(platform, 'ppk export end'))
+  }
+
 
   await upload({ localPath: outputPath, platform, isPpk: true })
 }

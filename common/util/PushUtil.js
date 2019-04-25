@@ -58,6 +58,23 @@ class PushUtil {
 
   static init() {
     if (Platform.OS === 'ios') {
+      PushNotificationIOS.addEventListener('registrationError', (reason) => {
+        PushUtil.appendToLog({
+          type: 'debug',
+          content: `registrationError: ${reason}`
+        })
+        console.log({registrationError: reason})
+        throw new Error(reason)
+      })
+      PushNotificationIOS.addEventListener('register', (deviceId) => {
+        console.log({deviceId})
+        PushUtil.appendToLog({
+          type: 'debug',
+          content: `in register: ${deviceId}`
+        })
+
+        AsyncStorage.setItem('deviceIdAPN', deviceId)
+      })
       // 必须要调用requestPermissions,否则无法接受到register事件获取deviceId
       PushNotificationIOS.requestPermissions().then(() => {
         PushNotificationIOS.addEventListener('register', (deviceId) => {
@@ -79,10 +96,7 @@ class PushUtil {
 
         AsyncStorage.setItem('deviceIdAPN', deviceId)
       })
-      PushNotificationIOS.addEventListener('registrationError', (reason) => {
-        console.log({registrationError: reason})
-        throw new Error(reason)
-      })
+
     }
   }
 
