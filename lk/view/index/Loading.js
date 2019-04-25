@@ -47,7 +47,7 @@ export default class Loading extends Component<{}> {
         if (length === 0) {
           routerName = 'ScanRegisterView'
         } else if (length === 1) {
-          lkApplication.setCurrentUser(userAry[0], venderDid)
+          lkApplication.setCurrentUser(userAry[0], venderDid, true)
           routerName = 'MainStack'
         } else if (length > 1) {
           // fixme: AsyncStorage 始终无法getItem
@@ -62,7 +62,7 @@ export default class Loading extends Component<{}> {
           console.log(`AsyncStorage Get User: ${(Date.now() - start) / 1000} s`)
 
           if (user) {
-            lkApplication.setCurrentUser(JSON.parse(user), venderDid)
+            lkApplication.setCurrentUser(JSON.parse(user), venderDid, true)
 
             routerName = 'MainStack'
           } else {

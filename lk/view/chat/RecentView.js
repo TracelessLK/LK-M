@@ -100,7 +100,6 @@ export default class RecentView extends ScreenWrapper {
           }
         }
       })
-      this.addActivityIndicator()
     }
   onBackPress = () => {
     BackHandler.exitApp()
@@ -143,6 +142,8 @@ export default class RecentView extends ScreenWrapper {
 
     componentDidMount=() => {
       const { navigation } = this.props
+      lkApp.login()
+
 
       for (const event of this.eventAry) {
         chatManager.on(event, this.update)

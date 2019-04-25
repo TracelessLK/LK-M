@@ -31,7 +31,7 @@ export default class InfoView extends ScreenWrapper{
 
     }
     try {
-      // appJSON = require('../../../app.json')
+      appJSON = require('../../../app.json')
     } catch (err) {
 
     }
