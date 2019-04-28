@@ -27,7 +27,7 @@ export default class FriendInfoView extends ScreenWrapper {
     constructor (props) {
       super(props)
       this.state = {}
-      this.friend = this.props.navigation.state.params.friend
+      this.friend = this.props.navigation.getParam('friend')
     }
 
     sendMessage=() => {
