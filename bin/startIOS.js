@@ -13,7 +13,7 @@ const {udid} = config
 const {timeCount} = FuncUtil
 const {getAllTarget} = require('./util')
 
-timeCount(start)
+start()
 
 async function start() {
   let deviceUdid
@@ -69,8 +69,9 @@ async function start() {
   const cmd = getCmd(deviceUdid, answer.target)
 
   console.log(chalk.green(cmd))
-  execSync(cmd)
-
+  timeCount(() => {
+    execSync(cmd)
+  })
   console.log('cmd executed successfully')
 }
 
