@@ -676,6 +676,13 @@
 			remoteGlobalIDString = 62CA59B71E3C173B002D7188;
 			remoteInfo = Lottie_iOS;
 		};
+		FDCEB07E2276D33800345F10 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FDCEAF622276B14000345F10;
+			remoteInfo = LK_dev;
+		};
 		FDDCF119214F548600DD718D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D86AED5FC5BA46F8881FA6BF /* RNSVG.xcodeproj */;
@@ -1606,6 +1613,7 @@
 			);
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
+				FDCEB07F2276D33800345F10 /* PBXTargetDependency */,
 			);
 			name = LK_MTests;
 			productName = LK_MTests;
@@ -1704,7 +1712,7 @@
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
 						DevelopmentTeam = 355R83R4YL;
-						TestTargetID = 13B07F861A680F5B00A75B9A;
+						TestTargetID = FDCEAF622276B14000345F10;
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 355R83R4YL;
@@ -2596,6 +2604,11 @@
 			name = Lottie_iOS;
 			targetProxy = FDCEB0382276C03400345F10 /* PBXContainerItemProxy */;
 		};
+		FDCEB07F2276D33800345F10 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FDCEAF622276B14000345F10 /* LK_dev */;
+			targetProxy = FDCEB07E2276D33800345F10 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -2663,7 +2676,7 @@
 					"-lc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LK_M.app/LK_M";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LK_dev.app/LK_dev";
 			};
 			name = Debug;
 		};
@@ -2716,7 +2729,7 @@
 					"-lc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LK_M.app/LK_M";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LK_dev.app/LK_dev";
 			};
 			name = Release;
 		};

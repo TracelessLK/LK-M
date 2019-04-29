@@ -2,10 +2,12 @@ const NodeSSH = require('node-ssh')
 const path = require('path')
 const inquirer = require('inquirer')
 const chalk = require('chalk')
+const childProcess = require('child_process')
+const {DateUtil} = require('@ys/vanilla')
 
 const rootDir = path.resolve(__dirname, '..')
 const appJSONPath = path.resolve(rootDir, 'lk/app.json')
-const {DateUtil} = require('@ys/vanilla')
+const iosFolder = path.resolve(rootDir, 'ios')
 
 const {getTimeDisplay} = DateUtil
 const fs = require('fs')
@@ -98,6 +100,20 @@ class util {
       ...option
     }
     fs.writeFileSync(appJSONPath, JSON.stringify(obj))
+  }
+
+  static getAllTarget() {
+    let result = []
+    const output = childProcess.execSync(`xcodebuild -list`, {
+      cwd: iosFolder
+    }).toString()
+    const regex = /Targets:((?:.|\n)*)Build Configurations:/
+    const matchedAry = output.match(regex)
+    if (matchedAry) {
+      const captured = matchedAry[1]
+      result = captured.split('\n').map(ele => ele.trim()).filter(ele => ele)
+    }
+    return result
   }
 }
 
