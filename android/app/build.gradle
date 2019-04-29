@@ -106,7 +106,7 @@ android {
 
 
     defaultConfig {
-        applicationId "traceless"
+        applicationId "com.traceless"
         minSdkVersion 23
         targetSdkVersion 22
         versionCode 1
