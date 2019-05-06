@@ -1,9 +1,9 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {
   Text,
   View
 } from 'react-native'
-import PropTypes from 'prop-types'
+//import PropTypes from 'prop-types'
 import ScreenWrapper from '../../../common/ScreenWrapper'
 
 export default class View4 extends ScreenWrapper {

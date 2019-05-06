@@ -1,8 +1,8 @@
 const RNFS = require('react-native-fs')
 
 const config = {
-    devLogPath:RNFS.DocumentDirectoryPath + '/devLog.txt',
-    errorLogPath:RNFS.DocumentDirectoryPath + '/errorLog.txt',
+  devLogPath: RNFS.DocumentDirectoryPath + '/devLog.txt',
+  errorLogPath: RNFS.DocumentDirectoryPath + '/errorLog.txt'
 }
 
 

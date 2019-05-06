@@ -1,4 +1,4 @@
-import React, { Component} from 'react'
+import React from 'react'
 import {
   View, ScrollView
 } from 'react-native'
@@ -11,7 +11,7 @@ const RNFS = require('react-native-fs')
 export default class LogView extends ScreenWrapper {
   static navigationOptions =({navigation}) => {
     return {
-      headerTitle: (navigation.state.params.type || '')
+      headerTitle: navigation.state.params.type || ''
     }
   }
 
@@ -39,7 +39,7 @@ export default class LogView extends ScreenWrapper {
       })
     }
 
-  subRender () {
+    subRender () {
       return (
         <ScrollView style={{}}
           contentContainerStyle={{marginVertical: 20, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>

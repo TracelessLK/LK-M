@@ -8,6 +8,7 @@ import {
 } from 'react-native'
 import commonUtil from '../util/commonUtil'
 import PropTypes from 'prop-types'
+
 const {getAvatarSource} = commonUtil
 const _ = require('lodash')
 
@@ -18,17 +19,17 @@ export default class GroupAvatar extends Component<{}> {
     if (picAry.length > 4) {
       picAry = picAry.slice(0, 4)
     }
-    let avatarAry = []
+    const avatarAry = []
     for (let i = 0; i < picAry.length; i++) {
-      let pic = picAry[i]
+      const pic = picAry[i]
       if (i === 0 && picAry.length === 3) {
         avatarAry.push(<Image key={i} source={getAvatarSource(pic, defaultPic)} style={{width: 22, height: 22, margin: 0.5, marginHorizontal: 10, borderRadius: 1}} resizeMode="contain"></Image>)
       } else {
         avatarAry.push(<Image key={i} source={getAvatarSource(pic, defaultPic)} style={{width: 22, height: 22, margin: 0.5, borderRadius: 1}} resizeMode="contain"></Image>)
       }
     }
-    let defaultAvatarStyle ={}
-    if(Platform.OS === 'android'){
+    let defaultAvatarStyle = {}
+    if (Platform.OS === 'android') {
       defaultAvatarStyle = {
         display: 'flex',
         justifyContent: 'center',
@@ -44,7 +45,7 @@ export default class GroupAvatar extends Component<{}> {
         flexWrap: 'wrap',
         padding: 1
       }
-    }else{
+    } else {
       defaultAvatarStyle = {
         display: 'flex',
         justifyContent: 'center',

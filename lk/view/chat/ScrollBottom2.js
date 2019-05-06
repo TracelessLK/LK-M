@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import {
   Dimensions,
-  Text,
   View,
   Image
 } from 'react-native'
-import PropTypes from 'prop-types'
-import LottieView from 'lottie-react-native'
+//import PropTypes from 'prop-types'
+//import LottieView from 'lottie-react-native'
 import { Header } from 'react-navigation'
 
 export default class ScrollBottom extends Component<{}> {
@@ -36,8 +35,8 @@ export default class ScrollBottom extends Component<{}> {
         alignItems: 'center'
       }}
       >
-        <Image source={require('../image/grayLogo.png')} style={{height:contentHeight}}
-               style={{height: contentHeight/3}} resizeMode='contain'/>
+        <Image source={require('../image/grayLogo.png')}
+          style={{height: contentHeight / 3}} resizeMode='contain'/>
       </View>
 
     )

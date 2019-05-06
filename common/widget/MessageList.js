@@ -10,6 +10,7 @@ import PropTypes from 'prop-types'
 import { Badge, Button, Icon as NBIcon, Text, SwipeRow
 } from 'native-base'
 import GroupAvatar from './GroupAvatar'
+
 const dateTimeUtil = require('../util/dateTimeUtil')
 const debugLog = require('debug')('debug')
 const defaultAvatar = require('../image/defaultAvatar.png')
@@ -24,12 +25,12 @@ export default class MessageList extends Component<{}> {
   render () {
     let widths
     let fontSizes
-    if(Platform.OS === 'android') {
-      widths='72%'
-      fontSizes=12
-    }else{
-      widths='80%'
-      fontSizes=15
+    if (Platform.OS === 'android') {
+      widths = '72%'
+      fontSizes = 12
+    } else {
+      widths = '80%'
+      fontSizes = 15
     }
     const contentAry = []
     const avatarLength = 50
@@ -39,7 +40,7 @@ export default class MessageList extends Component<{}> {
       const {onPress, image, name, content: msgContent, time, newMsgNum, id, deletePress} = ele
       // console.log({id})
       const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
-      let content = (
+      const content = (
         <TouchableOpacity onPress={onPress}
           style={{width: '100%',
             flexDirection: 'row',
@@ -76,7 +77,7 @@ export default class MessageList extends Component<{}> {
         </TouchableOpacity>
       )
 
-      let rowEle = (
+      const rowEle = (
         <SwipeRow
           rightOpenValue={-75}
 
@@ -88,7 +89,7 @@ export default class MessageList extends Component<{}> {
               <NBIcon active name="trash" />
             </Button>
           }
-          key = {id}
+          key={id}
         />
       )
       contentAry.push(rowEle)

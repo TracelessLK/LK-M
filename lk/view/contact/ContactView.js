@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import {
   Text,
   View,
@@ -6,14 +6,18 @@ import {
   BackHandler
 } from 'react-native'
 import ScreenWrapper from '../common/ScreenWrapper'
+
 const common = require('@external/common')
+
 const {SearchBar, commonUtil, List} = common
 const {debounceFunc} = commonUtil
 const {engine} = require('@lk/LK-C')
+
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const ContactManager = engine.get('ContactManager')
-const UserManager = engine.get('UserManager')
+//const UserManager = engine.get('UserManager')
+
 const OrgManager = engine.get('OrgManager')
 const {getAvatarSource} = require('../../util')
 const style = require('../style')
@@ -40,7 +44,7 @@ export default class ContactView extends ScreenWrapper {
       // for(let event of this.eventAry){
       //     ContactManager.on(event,this.update);
       // }
-        ContactManager.on('contactChanged', this.update)
+      ContactManager.on('contactChanged', this.update)
       this.asyncRender()
     }
 
@@ -48,15 +52,15 @@ export default class ContactView extends ScreenWrapper {
       // for(let event of this.eventAry){
       //     ContactManager.un(event,this.update);
       // }
-        ContactManager.un('contactChanged', this.update)
+      ContactManager.un('contactChanged', this.update)
     }
 
     onBackPress = () => {
-        BackHandler.exitApp()
+      BackHandler.exitApp()
     }
 
     update = () => {
-        this.asyncRender()
+      this.asyncRender()
     }
 
     go2FriendInfoView=debounceFunc((f) => {
@@ -69,10 +73,10 @@ export default class ContactView extends ScreenWrapper {
 
     async asyncRender (filterText) {
       const user = lkApp.getCurrentUser()
-      let orgAry = await OrgManager.asyGetChildren(null, user.id)
+      const orgAry = await OrgManager.asyGetChildren(null, user.id)
       // console.log({orgAry})
       const sortFunc = (ele1, ele2) => {
-        const result = (ele2.title < ele1.title)
+        const result = ele2.title < ele1.title
 
         return result
       }
@@ -88,7 +92,7 @@ export default class ContactView extends ScreenWrapper {
         }
       }
       let ary = []
-      for (let ele of orgAry) {
+      for (const ele of orgAry) {
         const obj = {}
         obj.onPress = () => {
           this.go2OrgView(ele)
@@ -103,7 +107,7 @@ export default class ContactView extends ScreenWrapper {
       ary = []
       const memberAry = await ContactManager.asyGetAllMembers(user.id)
 
-      for (let ele of memberAry) {
+      for (const ele of memberAry) {
         const obj = {}
 
         obj.image = getAvatarSource(ele.pic)

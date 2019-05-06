@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {
   Text,
   View
@@ -23,7 +23,7 @@ export default class TestView extends ScreenWrapper {
 
   }
 
-    subRender () {
+  subRender () {
     return (
       <View>
         <Button info onPress={async () => {

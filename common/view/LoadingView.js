@@ -5,6 +5,7 @@ import {
 } from 'react-native'
 import ActivityIndicator from '../widget/ActivityIndicator'
 import PropTypes from 'prop-types'
+
 const style = require('./style')
 
 export default class LoadingView extends Component<{}> {

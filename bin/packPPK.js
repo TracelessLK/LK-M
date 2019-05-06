@@ -9,7 +9,7 @@ const fse = require('fs-extra')
 
 const config = require('../config/devConfig')
 
-const { exportPPKFolderPath, serverRoot, appName } = config
+const { exportPPKFolderPath, appName } = config
 const fileName = `${appName}.ppk`
 
 const { upload, timeStamp } = require('./util')
@@ -31,7 +31,7 @@ async function start() {
   }
   ]
   const answer = await inquirer.prompt(question)
-  const { platform, shouldBundle} = answer
+  const {platform, shouldBundle} = answer
 
   timeCount(async () => {
     let platformAry = []

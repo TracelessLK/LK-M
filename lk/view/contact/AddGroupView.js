@@ -5,9 +5,12 @@ import {
   TextInput,
   TouchableOpacity, View, Platform
 } from 'react-native'
+
 const common = require('@external/common')
+
 const {List} = common
 const {FuncUtil} = require('@ys/vanilla')
+
 const {debounceFunc} = FuncUtil
 const {engine} = require('@lk/LK-C')
 
@@ -15,6 +18,7 @@ const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const {getAvatarSource} = require('../../util')
 const _ = require('lodash')
+
 const chatManager = engine.get('ChatManager')
 const ContactManager = engine.get('ContactManager')
 const {runNetFunc} = require('../../util')
@@ -24,13 +28,13 @@ export default class AddGroupView extends Component<{}> {
     return (
       {
         headerRight:
-          <TouchableOpacity style={{marginRight: 20}}>
-            <Button title="确定" color = {Platform.OS === 'ios' ? '#fff' : null}
-              onPress={debounceFunc(() => {
-                navigation.state.params.navigateAddGroupPress()
-              })}
-              style={{marginRight: 20, color: '#fff'}}/>
-          </TouchableOpacity>
+  <TouchableOpacity style={{marginRight: 20}}>
+    <Button title="确定" color={Platform.OS === 'ios' ? '#fff' : null}
+      onPress={debounceFunc(() => {
+        navigation.state.params.navigateAddGroupPress()
+      })}
+      style={{marginRight: 20, color: '#fff'}}/>
+  </TouchableOpacity>
       }
     )
   }
@@ -71,7 +75,7 @@ export default class AddGroupView extends Component<{}> {
   async asyncRender (filterText) {
     const user = lkApp.getCurrentUser()
     const sortFunc = (ele1, ele2) => {
-      const result = (ele2.title < ele1.title)
+      const result = ele2.title < ele1.title
 
       return result
     }
@@ -86,10 +90,10 @@ export default class AddGroupView extends Component<{}> {
         ary.push(content)
       }
     }
-    let ary = []
+    const ary = []
 
     const memberAry = await ContactManager.asyGetAllMembers(user.id)
-    for (let ele of memberAry) {
+    for (const ele of memberAry) {
       if (ele.id !== user.id) {
         const obj = {}
         obj.image = getAvatarSource(ele.pic)
@@ -110,7 +114,7 @@ export default class AddGroupView extends Component<{}> {
     const friendAry = await ContactManager.asyGetAllFriends(user.id)
     // console.log({memberAry, friendAry})
 
-    for (let ele of friendAry) {
+    for (const ele of friendAry) {
       const obj = {}
       obj.onPress = null
       obj.title = ele.name
@@ -145,6 +149,7 @@ export default class AddGroupView extends Component<{}> {
 
     this.asyncRender()
   }
+
   render () {
     // fixme: autofocus
     // java.lang.IndexOutOfBoundsException: charAt: -1 < 0
@@ -155,7 +160,7 @@ export default class AddGroupView extends Component<{}> {
         <View>
           <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', width: '96%', height: 40, marginTop: 10, marginLeft: 10}}>
             <Text style={{color: '#a0a0a0'}}>群名称：</Text>
-            <TextInput  style={{flex: 1}} underlineColorAndroid='transparent' defaultValue={''} onChangeText={this.nameTextChange} />
+            <TextInput style={{flex: 1}} underlineColorAndroid='transparent' defaultValue="" onChangeText={this.nameTextChange} />
           </View>
           <View style={{width: '100%', height: 0, borderTopWidth: 1, borderColor: '#f0f0f0'}}>
           </View>

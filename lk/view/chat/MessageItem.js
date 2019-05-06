@@ -113,6 +113,7 @@ export default class MessageItem extends Component<{}> {
 
   doTouchMsgState= ({ state, msgId }) => {
     const { otherSide, isGroupChat, navigation } = this.props
+    console.log(Object.keys(otherSide.memberInfoObj).length)
     if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
       const channel = lkApp.getLKWSChannel()
       channel.retrySend(otherSide.id, msgId)

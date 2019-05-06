@@ -1,12 +1,14 @@
-import { Toast } from 'native-base'
-import { Text, TouchableOpacity, View } from 'react-native'
+import {Toast } from 'native-base'
+import {
+  Image, Text, View
+} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import React from 'react'
 import RNRestart from 'react-native-restart'
-import Ionicons from 'react-native-vector-icons/Ionicons'
 import LottieView from 'lottie-react-native'
 
 const { engine } = require('@lk/LK-C')
+
 
 const DBProxy = engine.get('DBProxy')
 const Application = engine.getApplication()
@@ -14,6 +16,7 @@ const lkApp = Application.getCurrentApp()
 const chatManager = engine.get('ChatManager')
 
 const { commonUtil } = require('@external/common')
+const chatRight = require('../view/image/ajax-loader.gif')
 
 const { getAvatarSource } = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
@@ -132,11 +135,13 @@ class Util {
     } if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
       return 'md-refresh'
     } if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
-      return 'md-checkmark-circle-outline'
+      // return 'md-checkmark-circle-outline'
+      return '未读'
     } if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
       return 'ios-checkmark-circle-outline'
     } if (state === chatManager.MESSAGE_STATE_TARGET_READ) {
-      return 'ios-mail-open-outline'
+      // return 'ios-mail-open-outline'
+      return '已读'
     } if (state === 5) {
       return 'ios-bonfire-outline'
     }
@@ -144,8 +149,13 @@ class Util {
   }
 
   static getIconByState(state) {
-    let result = <Ionicons name={Util.getIconNameByState(state)} size={20} style={{ marginRight: 5, lineHeight: 40, color: state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black' }} />
-
+    // let result = <Ionicons name={Util.getIconNameByState(state)} size={20} style={{ marginRight: 5, lineHeight: 40, color: state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black' }} />
+    let result = ''
+    if (state === 0) {
+      result = <Image source={chatRight} style={{width: 20, height: 20, marginTop: 11, marginRight: 3}} resizeMode="contain" />
+    } else {
+      result = <Text style={{marginTop: 11, marginRight: 3}}>{Util.getIconNameByState(state)}</Text>
+    }
     // if (state === chatManager.MESSAGE_STATE_SENDING) {
     if (false) {
       const option = {
@@ -172,7 +182,7 @@ class Util {
       result = Promise.all(tableName.map(ele => Util.dropTable(ele)))
     } else {
       const sql = `drop table if exists ${tableName}`
-      result = Util.query(sql).then(()=>{
+      result = Util.query(sql).then(() => {
         console.log({sql})
       })
     }
@@ -196,7 +206,7 @@ class Util {
   // todo: should be putinto net channell
   static runNetFunc(func, { errorCb, showWarning = true } = {}) {
     // console.log({container})
-    const hasLogin = lkApp.getLogin()
+    //const hasLogin = lkApp.getLogin()
     // console.log({hasLogin})
     const { connectionOK, NetInfoUtil } = container
 

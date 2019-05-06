@@ -1,8 +1,11 @@
 import React, { Component} from 'react'
 import {Button, ScrollView, TouchableOpacity, View, Platform} from 'react-native'
+
 const common = require('@external/common')
+
 const {List} = common
 const {FuncUtil} = require('@ys/vanilla')
+
 const {debounceFunc} = FuncUtil
 const {engine} = require('@lk/LK-C')
 
@@ -11,6 +14,7 @@ const lkApp = Application.getCurrentApp()
 
 const {getAvatarSource} = require('../../util')
 const _ = require('lodash')
+
 const chatManager = engine.get('ChatManager')
 const ContactManager = engine.get('ContactManager')
 const {runNetFunc} = require('../../util')
@@ -56,7 +60,7 @@ export default class AddGroupMemberView extends Component<{}> {
         alert('请选择需要新增群成员')
       } else {
         // console.log({selectedAry: this.selectedAry})
-        await chatManager.newGroupMembers(this.group.id,this.group.name, this.selectedAry)
+        await chatManager.newGroupMembers(this.group.id, this.group.name, this.selectedAry)
         this.props.navigation.goBack()
       }
     })
@@ -68,7 +72,7 @@ export default class AddGroupMemberView extends Component<{}> {
     // console.log({memberIdAry})
     const user = lkApp.getCurrentUser()
     const sortFunc = (ele1, ele2) => {
-      const result = (ele2.title < ele1.title)
+      const result = ele2.title < ele1.title
 
       return result
     }
@@ -83,13 +87,13 @@ export default class AddGroupMemberView extends Component<{}> {
         ary.push(content)
       }
     }
-    let ary = []
+    const ary = []
 
     let memberAry = await ContactManager.asyGetAllMembers(user.id)
     memberAry = memberAry.filter(ele => {
       return !memberIdAry.includes(ele.id)
     })
-    for (let ele of memberAry) {
+    for (const ele of memberAry) {
       if (ele.id !== user.id) {
         const obj = {}
         obj.image = getAvatarSource(ele.pic)
@@ -113,7 +117,7 @@ export default class AddGroupMemberView extends Component<{}> {
     })
     // console.log({memberAry, friendAry})
 
-    for (let ele of friendAry) {
+    for (const ele of friendAry) {
       const obj = {}
       obj.onPress = null
       obj.title = ele.name
@@ -158,6 +162,7 @@ export default class AddGroupMemberView extends Component<{}> {
 
     this.asyncRender()
   }
+
   render () {
     return (
       <ScrollView>

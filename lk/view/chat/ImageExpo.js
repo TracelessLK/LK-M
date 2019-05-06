@@ -17,7 +17,7 @@ export default class ImageExpo extends Component<{}> {
 
   render () {
     return (
-      <Modal visible={this.state.visible} transparent={false} animationType={'fade'}
+      <Modal visible={this.state.visible} transparent={false} animationType="fade"
       >
         <ImageViewer imageUrls={this.props.imageUrls}
           onClick={() => { this.setState({visible: false}) }}

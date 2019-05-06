@@ -9,9 +9,10 @@ import {
 import {Input, Item, Button, Label, Toast, Form} from 'native-base'
 import RSAKey from 'react-native-rsa'
 import deviceInfo from 'react-native-device-info'
+
 const {engine} = require('@lk/LK-C')
 
-let Application = engine.getApplication()
+const Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()
 
 const uuid = require('uuid')
@@ -37,9 +38,11 @@ export default class RegisterView extends Component<{}> {
     onChangeText = (t) => {
       this.name = t ? t.trim() : ''
     }
+
     onChangeText2 = (t) => {
       this.checkCode = t ? t.trim() : ''
     }
+
     onChangeText3 = (t) => {
       this.password = t
     }
@@ -56,7 +59,7 @@ export default class RegisterView extends Component<{}> {
       const {obj, qrcode} = this.props.navigation.state.params
       const bits = 1024
       const exponent = '10001'
-      let rsa = new RSAKey()
+      const rsa = new RSAKey()
       rsa.generate(bits, exponent)
       const publicKey = rsa.getPublicString() // return json encoded string
       const privateKey = rsa.getPrivateString() // return js
@@ -99,19 +102,20 @@ export default class RegisterView extends Component<{}> {
             {this.state.hasCheckCode ? (
               <Item floatingLabel style={{marginBottom: 10}}>
                 <Label>请输入验证码</Label>
-                <Input ref='input' onChangeText={this.onChangeText2}></Input>
+                <Input ref='input' onChangeText={this.onChangeText2}/>
               </Item>
 
             ) : null}
             <Item floatingLabel >
               <Label>请为您的账户设置密码</Label>
-              <Input ref='input' onChangeText={this.onChangeText3} secureTextEntry></Input>
+              <Input ref='input' onChangeText={this.onChangeText3} secureTextEntry/>
             </Item>
             <Item floatingLabel >
               <Label>请再次输入密码确认</Label>
               <Input ref='input' onChangeText={t => {
                 this.passwordAgain = t
-              }} secureTextEntry></Input>
+              }} secureTextEntry>
+              </Input>
             </Item>
           </Form>
           <View style={{alignItems: 'center', justifyContent: 'center'}}>

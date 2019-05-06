@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 
 import {
   Alert, Dimensions, View
@@ -6,16 +6,19 @@ import {
 import {Card} from 'react-native-elements'
 import {Button, Icon, Text, Toast, Spinner} from 'native-base'
 import ScreenWrapper from '../common/ScreenWrapper'
+
 const versionLocal = require('../../../package.json').version
 const config = require('../../config')
 const {FuncUtil} = require('@ys/vanilla')
+
 const {debounceFunc} = FuncUtil
 const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const container = require('../../state')
-export default class VersionView extends ScreenWrapper{
+
+export default class VersionView extends ScreenWrapper {
     static navigationOptions = () => {
       return {
         headerTitle: '版本信息'
@@ -28,7 +31,7 @@ export default class VersionView extends ScreenWrapper{
       this.user = lkApp.getCurrentUser()
     }
 
-  subRender () {
+    subRender () {
       const {width} = Dimensions.get('window')
       const style = {
         itemStyle: {

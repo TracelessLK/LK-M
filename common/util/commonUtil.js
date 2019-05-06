@@ -27,9 +27,8 @@ const commonUtil = {
         if (filePath.includes('/Application/')) {
           result = filePath.split('/Application/')[1].split('/')[0]
         }
-      } catch(error) {
+      } catch (error) {
         console.log({error})
-
       }
     }
     return result

@@ -3,7 +3,9 @@ import {
   TextInput
 } from 'react-native'
 import PropTypes from 'prop-types'
+
 const {FuncUtil} = require('@ys/vanilla')
+
 const {debounceFunc} = FuncUtil
 const MAX_INPUT_HEIGHT = 300
 const uuid = require('uuid')
@@ -18,6 +20,7 @@ export default class TextInputWrapper extends Component<{}> {
       defaultValue: ''
     }
   }
+
   reload (defaultValue = '') {
     this.setState({key: uuid(), autoFocus: true, defaultValue})
   }

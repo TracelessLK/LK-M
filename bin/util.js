@@ -1,7 +1,7 @@
 const NodeSSH = require('node-ssh')
 const path = require('path')
 const inquirer = require('inquirer')
-const chalk = require('chalk')
+//const chalk = require('chalk')
 const childProcess = require('child_process')
 const {DateUtil} = require('@ys/vanilla')
 

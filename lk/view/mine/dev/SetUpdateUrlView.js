@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {
   Text,
   View,
@@ -11,18 +11,19 @@ import {
 import ScreenWrapper from '../../common/ScreenWrapper'
 
 export default class SetUpdateUrlView extends ScreenWrapper {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {}
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     const updateUrlBase = await AsyncStorage.getItem('updateUrlBase')
     // console.log({updateUrlBase})
     this.setState({
       updateUrlBase
     })
   }
+
   save = async () => {
     // console.log(this.t)
     await AsyncStorage.setItem('updateUrlBase', this.t)
@@ -32,7 +33,7 @@ export default class SetUpdateUrlView extends ScreenWrapper {
     })
   }
 
-  subRender () {
+  subRender() {
     return (
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Card style={{justifyContent: 'center', alignItems: 'center', padding: 20, margin: 20, width: '90%'}}>
@@ -59,7 +60,7 @@ export default class SetUpdateUrlView extends ScreenWrapper {
               }} autoFocus onChangeText={t => {
                 this.t = t.trim()
               }} onSubmitEditing={this.save}
-              ></TextInput>
+              />
               <Button block info style={{width: 60, height: 40}} onPress={this.save}>
                 <Text style={{color: 'white'}}>确认</Text>
               </Button>

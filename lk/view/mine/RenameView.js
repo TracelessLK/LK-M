@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {
   View,
   ScrollView,
@@ -13,8 +13,10 @@ const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const style = require('../style')
 const {HeaderRightButton} = require('@ys/react-native-collection')
+
 const userManager = engine.get('UserManager')
 const {FuncUtil} = require('@ys/vanilla')
+
 const {debounceFunc} = FuncUtil
 
 export default class RenameView extends ScreenWrapper {
@@ -51,11 +53,11 @@ export default class RenameView extends ScreenWrapper {
             text: '昵称不能为空',
             position: 'top'
           })
-        }else if (this.refs.input._lastNativeText.indexOf(" ") >=0) {
-            Toast.show({
-                text: '昵称不能为空格',
-                position: 'top'
-            })
+        } else if (this.refs.input._lastNativeText.indexOf(" ") >= 0) {
+          Toast.show({
+            text: '昵称不能为空格',
+            position: 'top'
+          })
         } else {
           await userManager.setUserName(this.refs.input._lastNativeText)
           this.props.navigation.goBack()
@@ -63,7 +65,7 @@ export default class RenameView extends ScreenWrapper {
       }) })
     }
 
-    onChangeText = (t) => {
+    onChangeText = () => {
       // if(t === Store.getCurrentName()){
       //     this.setState({
       //         disabled:true
@@ -78,7 +80,7 @@ export default class RenameView extends ScreenWrapper {
 
     subRender () {
       return (
-        <ScrollView >
+        <ScrollView>
           <View style={{backgroundColor: 'white', marginVertical: 20, width: '100%', padding: 12}}>
             <TextInput onChangeText={this.onChangeText} ref="input" style={{fontSize: 18}} autoFocus defaultValue={this.user.name}/>
           </View>

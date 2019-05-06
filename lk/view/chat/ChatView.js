@@ -364,13 +364,13 @@ export default class ChatView extends Component<{}> {
 
       ImagePicker.showImagePicker(options, (response) => {
         if (response.didCancel) {
+
         } else if (response.error) {
         } else if (response.customButton) {
         } else {
           const imageUri = response.uri
-
-          const maxWidth = 1000
-          const maxHeight = 1000
+          const maxWidth = response.width
+          const maxHeight = response.height
           ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null).then((res) => {
             RNFetchBlob.fs.readFile(res.path, 'base64').then((data) => {
               this.sendImage({ data, width: maxWidth, height: maxHeight })

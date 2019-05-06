@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {
   Text,
   View,
@@ -12,6 +12,7 @@ const {engine} = require('@lk/LK-C')
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const common = require('@external/common')
+
 const { commonUtil } = common
 const {debounceFunc} = commonUtil
 const userManager = engine.get('UserManager')
@@ -23,13 +24,14 @@ export default class BasicInfoView extends ScreenWrapper {
       }
     }
 
-    constructor (props) {
+    constructor(props) {
       super(props)
       this.state = {}
       this.user = lkApp.getCurrentUser()
       console.log(this.user)
     }
-    componentDidMount () {
+
+    componentDidMount() {
       userManager.on('nameChanged', this.update)
     }
 
@@ -38,11 +40,11 @@ export default class BasicInfoView extends ScreenWrapper {
       this.setState({update: true})
     }
 
-    componentWillUnmount () {
+    componentWillUnmount() {
       userManager.un('nameChanged', this.update)
     }
 
-    subRender () {
+    subRender() {
       const style = {
         listItem: {
           display: 'flex',
@@ -110,7 +112,7 @@ export default class BasicInfoView extends ScreenWrapper {
       ]
 
       return (
-        <ScrollView >
+        <ScrollView>
           <View style={style.listStyle}>
             {
               list2.map((item, i) =>
@@ -120,8 +122,7 @@ export default class BasicInfoView extends ScreenWrapper {
                   component={item.label}
                   rightIcon={item.rightIconColor ? {style: {color: item.rightIconColor}} : {}}
                   onPress={item.onPress}
-                />
-              )
+                />)
             }
           </View>
         </ScrollView>

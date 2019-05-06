@@ -1,7 +1,9 @@
 const path = require('path')
 const fs = require('fs')
+
 const rootPath = path.resolve(__dirname, '../')
 const collection = require('@ys/collection')
+
 const {CliUtil} = collection
 const {execSync} = CliUtil
 const nodeModule = path.resolve(rootPath, 'node_modules')

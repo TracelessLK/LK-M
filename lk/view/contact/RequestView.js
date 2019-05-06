@@ -5,9 +5,12 @@ import {
   Text,
   View
 } from 'react-native'
+
 const {engine} = require('@lk/LK-C')
+
 const ChatManager = engine.get('ChatManager')
 const {getAvatarSource} = require('../../util')
+
 const MFApplyManager = engine.get('MFApplyManager')
 const ContactManager = engine.get('ContactManager')
 const style = require('../style')
@@ -21,6 +24,7 @@ export default class RequestView extends Component<{}> {
       content: null
     }
   }
+
   update = async () => {
     const list = await MFApplyManager.asyGetAll()
     // console.log({list})
@@ -35,16 +39,15 @@ export default class RequestView extends Component<{}> {
       for (let i = 0; i < list.length; i++) {
         const req = list[i]
         const {pic} = req
-        let imageSource = getAvatarSource(pic)
-        let btn = <Button color="#2d8cf0" style={{width: 120, color: '#ffffff'}} onPress={() => { this.accept(req) }} title=" 同意 "/>
-        result[i] =
-          <View key={i} style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', width: '96%', height: 60, marginTop: 5, paddingBottom: 5, borderColor: '#d0d0d0', borderBottomWidth: 0.5}}>
-            <Image source={imageSource} style={{flex: 3, margin: 5, width: 50, height: 50}} resizeMode="contain"></Image>
-            <View style={{flex: 15, margin: 5, height: 32, justifyContent: 'center'}}>
-              <Text style={{fontWeight: 'bold', color: '#282828'}}>{req.name}</Text>
-            </View>
-            {req.state === -1 ? btn : <Text>已添加</Text>}
+        const imageSource = getAvatarSource(pic)
+        const btn = <Button color="#2d8cf0" style={{width: 120, color: '#ffffff'}} onPress={() => { this.accept(req) }} title=" 同意 "/>
+        result[i] = <View key={i} style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', width: '96%', height: 60, marginTop: 5, paddingBottom: 5, borderColor: '#d0d0d0', borderBottomWidth: 0.5}}>
+          <Image source={imageSource} style={{flex: 3, margin: 5, width: 50, height: 50}} resizeMode="contain"></Image>
+          <View style={{flex: 15, margin: 5, height: 32, justifyContent: 'center'}}>
+            <Text style={{fontWeight: 'bold', color: '#282828'}}>{req.name}</Text>
           </View>
+          {req.state === -1 ? btn : <Text>已添加</Text>}
+        </View>
       }
     } else {
       result = noContent

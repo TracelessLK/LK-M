@@ -1,13 +1,13 @@
 
-import React, { Component } from 'react'
+import React from 'react'
 import {
-  PushNotificationIOS,
   Alert
 } from 'react-native'
 import { Toast } from 'native-base'
 
 import NavigateList from '../../common/NavigateList'
 import ScreenWrapper from '../../common/ScreenWrapper'
+
 
 const { engine } = require('@lk/LK-C')
 const { commonUtil} = require('@external/common')
@@ -21,6 +21,7 @@ const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const container = require('../../../state')
 const versionLocal = require('../../../../package.json').version
+//const db = require('../../../../lk/store/RNSqlite')
 
 const { logPath } = config
 
@@ -38,6 +39,14 @@ export default class BasicInfoView extends ScreenWrapper {
     subRender() {
       const { navigation } = this.props
       const ary = [
+        {
+          title: 'SQL调试',
+          onPress: () => {
+            // db.selectChat()
+            const stat = fs.statSync(path.join(__dirname, 'content'))
+            alert(stat.isDirectory())
+          }
+        },
         {
           title: '软件信息',
           onPress: () => {

@@ -5,11 +5,14 @@ import {
   TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native'
 import {Toast} from 'native-base'
 import Icon from 'react-native-vector-icons/FontAwesome'
+
 const {engine} = require('@lk/LK-C')
+
 const UserManager = engine.get('UserManager')
 const versionLocal = require('../../../package').version
 const lkStyle = require('../style')
 const {CryptoUtil} = require('@ys/vanilla')
+
 const {decryptAES} = CryptoUtil
 const logo = require('../image/1024x1024.png')
 
@@ -19,6 +22,7 @@ export default class ScanRegisterView extends React.Component {
         header: null
       }
     }
+
     constructor (props) {
       super(props)
 
@@ -57,16 +61,16 @@ export default class ScanRegisterView extends React.Component {
       const decryptedText = decryptAES(data)
       const obj = JSON.parse(decryptedText)
       // console.log({obj})
-      const userAry = await UserManager.asyGetAll()
-      const {action, ip, port} = obj
+      //const userAry = await UserManager.asyGetAll()
+      const {action} = obj
       if (action === 'registerForAdmin') {
         this.props.navigation.navigate('CheckCodeView', {
           obj
         })
       } else if (action === 'register') {
-        const user = userAry.find(ele => {
-          return ele.serverPort === port && ele.serverIP === ip
-        })
+        // const user = userAry.find(ele => {
+        //   return ele.serverPort === port && ele.serverIP === ip
+        // })
         // if (user) {
         //   const {name} = user
         //   Toast.show({
@@ -93,13 +97,13 @@ export default class ScanRegisterView extends React.Component {
 
     render () {
       const {navigation} = this.props
-      const logoView = <Image source={logo} style={{width: 150, height: 150, marginBottom: 50, marginTop: 100}} resizeMode="cover"></Image>
-      let content = (
+      const logoView = <Image source={logo} style={{width: 150, height: 150, marginBottom: 50, marginTop: 100}} resizeMode="cover"/>
+      const content = (
         <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
           <View style={{display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', flex: 1, backgroundColor: '#ffffff'}}>
             {logoView}
             <View style={{height: 40, backgroundColor: '#f0f0f0', width: '100%', flexDirection: 'row', alignItems: 'center'}}>
-              <View style={{width: 4, height: 18, backgroundColor: lkStyle.color.logoColor, marginLeft: 10}}></View>
+              <View style={{width: 4, height: 18, backgroundColor: lkStyle.color.logoColor, marginLeft: 10}}/>
               <Text style={{color: '#a0a0a0', paddingLeft: 5, fontSize: 14}}>注册</Text>
             </View>
             <View style={{backgroundColor: '#ffffff', width: '100%'}}>
@@ -111,7 +115,7 @@ export default class ScanRegisterView extends React.Component {
                 borderColor: lkStyle.color.secondColor,
                 justifyContent: 'flex-start',
                 alignItems: 'center'}}
-              onPress={this.showScanView}>
+                onPress={this.showScanView}>
                 <Icon name="qrcode" size={30} color={lkStyle.color.logoColor} style={{margin: 10}}/>
                 <Text style={{}}>扫码注册</Text>
               </TouchableOpacity>
@@ -126,9 +130,9 @@ export default class ScanRegisterView extends React.Component {
                   borderColor: lkStyle.color.secondColor,
                   justifyContent: 'flex-start',
                   alignItems: 'center'}}
-                onPress={() => {
-                  navigation.navigate('SelectUserView')
-                }}>
+                  onPress={() => {
+                    navigation.navigate('SelectUserView')
+                  }}>
                   <Icon name="address-book-o" size={30} color={lkStyle.color.logoColor} style={{margin: 10}}/>
                   <Text style={{}}>选择账户登录</Text>
 

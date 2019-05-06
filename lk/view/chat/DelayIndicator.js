@@ -1,8 +1,7 @@
 
 import React, { Component } from 'react'
 import {
-  View,
-  ActivityIndicator
+  View
 } from 'react-native'
 import PropTypes from 'prop-types'
 import LottieView from 'lottie-react-native'
@@ -22,7 +21,7 @@ export default class My extends Component<{}> {
       if (this.hasMounted) {
         this.setState({
           content: (
-            <LottieView  style={{width: 200}} autoPlay loop source={require('../../../resource/animations/loading')}/>
+            <LottieView style={{width: 200}} autoPlay loop source={require('../../../resource/animations/loading')}/>
 
           )})
       }
