@@ -1,7 +1,7 @@
 
 // @flow
 
-import React, { Component } from 'react'
+import React from 'react'
 import {
   ScrollView,
   View,
@@ -19,7 +19,7 @@ const { commonUtil, MessageList, PushUtil } = require('@external/common')
 
 const { removeNotify } = PushUtil
 const { debounceFunc } = commonUtil
-const { getAvatarSource, addExternalFriend } = require('../../util')
+const { getAvatarSource } = require('../../util')
 const { engine } = require('@lk/LK-C')
 
 const Application = engine.getApplication()
@@ -27,7 +27,7 @@ const lkApp = Application.getCurrentApp()
 const chatManager = require('../../manager/LKChatManager')
 
 const ContactManager = engine.get('ContactManager')
-const _ = require('lodash')
+//const _ = require('lodash')
 const addPng = require('../image/add.png')
 const { NetInfoUtil } = require('@ys/react-native-collection')
 const container = require('../../state')
@@ -101,9 +101,11 @@ export default class RecentView extends ScreenWrapper {
         }
       })
     }
+
   onBackPress = () => {
     BackHandler.exitApp()
   }
+
   optionToChoose = () => {
     this.props.navigation.navigate('AddGroupView')
     // const {navigation} = this.props
@@ -356,13 +358,13 @@ export default class RecentView extends ScreenWrapper {
   addActivityIndicator = async () => {
     const { navigation } = this.props
     const num = await chatManager.asyGetAllMsgNotReadNum(this.user.id)
-    let headerTitle = `消息${num ? `(${num})` : ''}`
+    const headerTitle = `消息${num ? `(${num})` : ''}`
     navigation.setParams({
       headerTitle: (
-          <View style={{display: 'flex',flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={{color: 'white', fontSize: 20, fontWeight: '500', textAlign: 'left', marginHorizontal: 16}}>{headerTitle}</Text>
-            <ActivityIndicator size='small' color='#F5F5F5'></ActivityIndicator>
-          </View>
+        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={{color: 'white', fontSize: 20, fontWeight: '500', textAlign: 'left', marginHorizontal: 16}}>{headerTitle}</Text>
+          <ActivityIndicator size='small' color='#F5F5F5'></ActivityIndicator>
+        </View>
       )
     })
     // const psAry = [this.channel.asyReset(), new Promise((resovle) => {

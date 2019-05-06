@@ -36,7 +36,7 @@ export default class List extends Component<{}> {
   render () {
     const contentAry = []
     const {data, showSwitch} = this.props
-    for (let ele of data) {
+    for (const ele of data) {
       const {onPress, image, title, key, extra, rightContent} = ele
       // console.log({key})
       const content = (

@@ -6,6 +6,7 @@ import {
   Button
 } from 'react-native'
 import {Card, CardItem, Body} from 'native-base'
+
 const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
@@ -17,6 +18,7 @@ export default class ConnectionFailView extends Component<{}> {
       headerTitle: '网络连接不可用'
     }
   }
+
   constructor (props) {
     super(props)
     this.state = {}
@@ -59,14 +61,13 @@ export default class ConnectionFailView extends Component<{}> {
         <View style={{marginVertical: 20}}>
           <Text style={style1}>你的设备未启用网络连接或无线局域网络</Text>
         </View>
-        <Button title='检查LK网络设置' onPress={()=>{
-          Linking.canOpenURL('app-settings:').then(supported => {
-
+        <Button title='检查LK网络设置' onPress={() => {
+          Linking.canOpenURL('app-settings:').then(() => {
             console.log(`Settings url works`)
             Linking.openURL('app-settings:')
           }).catch(error => {
             console.log(`An error has occured: ${error}`)
-          })}
+          }) }
         }>
 
         </Button>

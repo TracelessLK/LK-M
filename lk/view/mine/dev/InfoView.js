@@ -1,4 +1,4 @@
-import React, { Component} from 'react'
+import React from 'react'
 import {
   Text, View, ScrollView,
   AsyncStorage
@@ -9,15 +9,18 @@ import {isFirstTime} from 'react-native-update'
 import ScreenWrapper from '../../common/ScreenWrapper'
 
 const LKC = require('@lk/LK-C')
+
 const {engine} = LKC
 
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const packageJSON = require('../../../../package')
+
 const {version} = packageJSON
 
-export default class InfoView extends ScreenWrapper{
-  constructor (props) {
+
+export default class InfoView extends ScreenWrapper {
+  constructor(props) {
     super(props)
     this.user = lkApp.getCurrentUser()
     this.state = {
@@ -25,7 +28,7 @@ export default class InfoView extends ScreenWrapper{
     }
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     const deviceIdAPN = await AsyncStorage.getItem('deviceIdAPN')
     let appJSON = {
 
@@ -33,7 +36,8 @@ export default class InfoView extends ScreenWrapper{
     try {
       appJSON = require('../../../app.json')
     } catch (err) {
-
+      // fs.writeFileSync('../../../app.json', JSON.stringify({}), 'utf8')
+      // appJSON = fs.readFileSync('../../../app.json', 'utf-8')
     }
     const {packType = '', packTime = ''} = appJSON
     this.setState({
@@ -41,7 +45,7 @@ export default class InfoView extends ScreenWrapper{
     })
   }
 
-  subRender () {
+  subRender() {
     const ary = [
       `serverIP: ${this.user.serverIP}`,
       `serverPort: ${this.user.serverPort}`,
@@ -69,18 +73,24 @@ export default class InfoView extends ScreenWrapper{
 
     ]
 
-    const aryView = ary.map((ele, index) => {
-      return (
-        <View style={{marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'}} key={index}>
-          <Text selectable style={{}} >
-            {ele}
-          </Text>
-        </View>
-      )
-    })
+    const aryView = ary.map((ele, index) => (
+      <View
+        style={{
+          marginHorizontal: 5, marginTop: 20, justifyContent: 'flex-start', alignItems: 'flex-start'
+        }}
+        key={index}
+      >
+        <Text selectable style={{}}>
+          {ele}
+        </Text>
+      </View>
+    ))
     return (
       <ScrollView>
-        <View style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', marginVertical: 40}}>
+        <View style={{
+          display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', marginVertical: 40
+        }}
+        >
           <Card title="" style={{}}>
             {aryView}
           </Card>

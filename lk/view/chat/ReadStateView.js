@@ -1,15 +1,19 @@
 import React, {Component} from 'react'
 import {
-  ScrollView,
+  ScrollView, Text,
   View
 } from 'react-native'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+//import Ionicons from 'react-native-vector-icons/Ionicons'
+
 const {engine} = require('@lk/LK-C')
+
 const chatManager = engine.get('ChatManager')
 const {getAvatarSource, getIconNameByState} = require('../../util')
+
 const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const common = require('@external/common')
+
 const {List} = common
 
 export default class ReadStateView extends Component<{}> {
@@ -31,7 +35,7 @@ export default class ReadStateView extends Component<{}> {
     console.log({readAry: this.readAry})
     this.msgId = msgId
     const dataAry = []
-    for (let key in memberInfoObj) {
+    for (const key in memberInfoObj) {
       const value = memberInfoObj[key]
       const {id, name, pic} = value
       if (id !== this.user.id) {
@@ -41,7 +45,7 @@ export default class ReadStateView extends Component<{}> {
           image: getAvatarSource(pic),
           key: id,
           title: name,
-          rightContent: <View><Ionicons name={getIconNameByState(state)} size={20} style={{marginRight: 5, lineHeight: 40}}/></View>
+          rightContent: <View><Text>{getIconNameByState(state)}</Text></View>
         }
         dataAry.push(obj)
       }
@@ -53,7 +57,8 @@ export default class ReadStateView extends Component<{}> {
       })
     }
   }
-// todo: 消息状态事件更新
+  // todo: 消息状态事件更新
+
   componentWillUnmount () {
 
   }

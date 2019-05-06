@@ -41,7 +41,7 @@ export default class AudioPlay extends Component<{}> {
             }
 
             if (currentPosition === duration) {
-              this.audioRecorderPlayer.stopPlayer().catch((err) => {
+              this.audioRecorderPlayer.stopPlayer().catch(() => {
               })
               this.audioRecorderPlayer.removePlayBackListener()
               this.lastTime = 0

@@ -5,6 +5,7 @@ import {
   View
 } from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
+
 const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
@@ -13,14 +14,14 @@ const {getAvatarSource} = require('../../util')
 const defaultAvatar = require('../image/defaultAvatar.png')
 
 export default class QrcodeView extends Component<{}> {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {}
     this.user = lkApp.getCurrentUser()
     // console.log(this.user)
   }
 
-  render () {
+  render() {
     return (
       <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 40}}>
         <View style={{margin: 20}}>

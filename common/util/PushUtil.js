@@ -1,9 +1,7 @@
 import {
   Platform,
   PushNotificationIOS,
-  Alert,
-  AsyncStorage,
-  ActivityIndicator
+  AsyncStorage
 } from 'react-native'
 // import {Toast} from 'native-base'
 const {engine} = require('@lk/LK-C')
@@ -13,6 +11,7 @@ const { logPath } = require('../../lk/config')
 
 const Application = engine.getApplication()
 const lkapp = Application.getCurrentApp()
+console.log(lkapp)
 
 class PushUtil {
   constructor ({onNotfication, onInitialNotification}) {
@@ -96,14 +95,14 @@ class PushUtil {
 
         AsyncStorage.setItem('deviceIdAPN', deviceId)
       })
-
     }
   }
 
-  static setJpush (option) {
+  static setJpush () {
     if (Platform.OS === 'android') {
     }
   }
+
   static getAPNDeviceId () {
     // fixme: AsyncStorage 始终无法getItem
     const psAry = [AsyncStorage.getItem('deviceIdAPN'), new Promise((res) => {
@@ -113,6 +112,7 @@ class PushUtil {
     })]
     return Promise.race(psAry)
   }
+
   static removeNotify() {
     if (Platform.OS === 'ios') {
       PushNotificationIOS.removeAllDeliveredNotifications()

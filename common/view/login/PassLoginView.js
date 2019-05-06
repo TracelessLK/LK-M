@@ -1,42 +1,36 @@
 
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
-    AsyncStorage,
-    NativeModules,
-    Platform,
-    StyleSheet, Text,
-    View,
-} from 'react-native';
+  Text,
+  View
+} from 'react-native'
 
 export default class PassLoginView extends Component<{}> {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
 
-    constructor(props){
-        super(props);
-        this.state={};
+    componentDidMount=() => {
+
     }
 
-    componentDidMount=()=>{
-
-    }
-
-    componentWillUnmount=()=>{
+    componentWillUnmount=() => {
     }
 
 
-    componentWillUnmount =()=> {
+    componentWillUnmount =() => {
 
     }
 
     render() {
-        return (
-            <View>
-                <Text>
+      return (
+        <View>
+          <Text>
                     PassLoginView
-                </Text>
-            </View>
-        );
+          </Text>
+        </View>
+      )
     }
-
 }
-

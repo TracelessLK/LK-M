@@ -1,11 +1,12 @@
 
-import React, { Component } from 'react'
+import React from 'react'
 import {
   ScrollView,
   Text,
   View
 } from 'react-native'
-import ScreenWrapper from "../common/ScreenWrapper";
+import ScreenWrapper from "../common/ScreenWrapper"
+
 const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
@@ -13,6 +14,7 @@ const lkApp = Application.getCurrentApp()
 const ContactManager = engine.get('ContactManager')
 const OrgManager = engine.get('OrgManager')
 const common = require('@external/common')
+
 const {SearchBar, commonUtil, List, LoadingView} = common
 const {debounceFunc} = commonUtil
 const {getAvatarSource} = require('../../util')
@@ -27,6 +29,7 @@ export default class OrgView extends ScreenWrapper {
         headerTitle: org.name
       }
     }
+
     constructor (props) {
       super(props)
       this.state = {
@@ -49,6 +52,7 @@ export default class OrgView extends ScreenWrapper {
     componentWillUnmount () {
 
     }
+
     onChangeText = (t) => {
       t = t.trim()
       this.asyncRender(t)
@@ -64,9 +68,9 @@ export default class OrgView extends ScreenWrapper {
 
     async asyncRender (filterText) {
       const user = lkApp.getCurrentUser()
-      let orgAry = await OrgManager.asyGetChildren(this.org.id, user.id)
+      const orgAry = await OrgManager.asyGetChildren(this.org.id, user.id)
       const sortFunc = (ele1, ele2) => {
-        const result = (ele2.title < ele1.title)
+        const result = ele2.title < ele1.title
 
         return result
       }
@@ -82,7 +86,7 @@ export default class OrgView extends ScreenWrapper {
         }
       }
       let ary = []
-      for (let ele of orgAry) {
+      for (const ele of orgAry) {
         const obj = {}
         obj.onPress = () => {
           this.go2OrgView(ele)
@@ -97,7 +101,7 @@ export default class OrgView extends ScreenWrapper {
       ary = []
       const memberAry = await ContactManager.asyGetMembersByOrg(user.id, this.org.id)
 
-      for (let ele of memberAry) {
+      for (const ele of memberAry) {
         const obj = {}
         obj.image = getAvatarSource(ele.pic)
         obj.key = ele.id

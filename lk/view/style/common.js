@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native'
 
 import {ICON_IMAGE_SIDE} from '../../../constant'
+
 const style = {
   topRightIcon: {
     marginRight: 20

@@ -5,6 +5,7 @@ import {
   View
 } from 'react-native'
 import { Input, Item, Button, Label, Toast } from 'native-base'
+
 const {debounceFunc} = require('../../../common/util/commonUtil')
 
 export default class CheckCodeView extends Component<{}> {
@@ -20,6 +21,7 @@ export default class CheckCodeView extends Component<{}> {
     onChangeText = (t) => {
       this.text = t ? t.trim() : ''
     }
+
     render () {
       return (
         <View style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flex: 1, marginTop: 6}}>

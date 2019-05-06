@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {
   Text,
   View,
-  StatusBar, Image,Button
+  StatusBar, Image, Button
 } from 'react-native'
-import { AndroidBackHandler } from 'react-navigation-backhandler'
-import ScreenWrapper from "../common/ScreenWrapper";
+import { } from 'react-navigation-backhandler'
+import ScreenWrapper from "../common/ScreenWrapper"
 
 const style = require('../style')
 const backImg = require('../image/back-icon.png')
@@ -30,7 +30,7 @@ export default class NotifyView extends ScreenWrapper {
         color: 'white'
       },
       headerBackImage: (
-        <Image style={{width: 30, height: 30}} source={backImg}></Image>
+        <Image style={{width: 30, height: 30}} source={backImg}/>
       )
     }
   }
@@ -49,7 +49,7 @@ export default class NotifyView extends ScreenWrapper {
         <Button title='click' onPress={() => {
           //fixme: can't go back
           this.props.navigation.goBack()
-        }}></Button>
+        }}/>
       </View>
     )
   }

@@ -4,6 +4,7 @@ import {
   View
 } from 'react-native'
 import {Icon} from 'native-base'
+
 const {engine} = require('@lk/LK-C')
 
 const Application = engine.getApplication()
@@ -19,6 +20,7 @@ export default class NetIndicator extends Component<{}> {
       connectionOK: true
     }
   }
+
   componentWillUnmount =() => {
     this.channel.un('connectionFail', this.connectionFail)
     this.channel.un('connectionOpen', this.connectionOpen)

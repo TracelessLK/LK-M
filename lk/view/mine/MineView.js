@@ -1,5 +1,5 @@
 
-import React, { Component } from 'react'
+import React from 'react'
 import {
   Alert,
   ScrollView, Text,
@@ -65,10 +65,10 @@ export default class MineView extends ScreenWrapper {
     }
 
     onBackPress = () => {
-        BackHandler.exitApp()
+      BackHandler.exitApp()
     }
 
-    update = (ele) => {
+    update = () => {
       // console.log({event: ele})
       this.user = lkApp.getCurrentUser()
       const { name, pic } = this.user
@@ -209,7 +209,7 @@ export default class MineView extends ScreenWrapper {
     return ary.includes(this.user.name) || __DEV__ || this.user.name.startsWith('test')
   }
 
-    subRender () {
+  subRender () {
     const { navigation } = this.props
     const list2 = [
       {

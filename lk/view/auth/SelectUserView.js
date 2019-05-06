@@ -6,9 +6,9 @@ import {
 
 const { engine } = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+//const Application = engine.getApplication()
 const UserManager = engine.get('UserManager')
-const lkApplication = Application.getCurrentApp()
+//const lkApplication = Application.getCurrentApp()
 const common = require('@external/common')
 
 const { MessageList } = common
@@ -32,7 +32,7 @@ export default class SelectUserView extends Component<{}> {
 
   _bootstrapAsync = async () => {
     const { navigation } = this.props
-    const currentUser = lkApplication.getCurrentUser()
+    //const currentUser = lkApplication.getCurrentUser()
     const userAry = await UserManager.asyGetAll()
     const data = userAry.reduce((accumulator, ele) => {
       const {
@@ -58,7 +58,7 @@ export default class SelectUserView extends Component<{}> {
     })
   }
 
-  async deleteRow(userId){
+  async deleteRow(userId) {
     console.log({userId})
     await UserManager.asyRemoveLKUser(userId)
     this._bootstrapAsync()

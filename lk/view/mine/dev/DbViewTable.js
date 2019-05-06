@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { AndroidBackHandler } from 'react-navigation-backhandler'
 import {
   StyleSheet, View, Text

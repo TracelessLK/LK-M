@@ -6,8 +6,10 @@ import {
   ScrollView
 } from 'react-native'
 import { ListItem } from 'react-native-elements'
+
 const common = require('@external/common')
-const {SearchBar, commonUtil, List, LoadingView} = common
+
+const { commonUtil, List, LoadingView} = common
 const {debounceFunc} = commonUtil
 const {engine} = require('@lk/LK-C')
 
@@ -33,6 +35,7 @@ export default class ExternalView extends Component<{}> {
         headerRight: <HeaderRightButton {...prop}/>
       }
     }
+
     constructor (props) {
       super(props)
       this.state = {
@@ -41,17 +44,20 @@ export default class ExternalView extends Component<{}> {
       }
       this.mounted = false
     }
+
     update = () => {
       if (this.mounted) {
         console.log('update externalView')
         this.asyncRender()
       }
     }
+
     componentDidMount () {
       this.mounted = true
       this.asyncRender()
       ContactManager.on('contactChanged', this.update)
     }
+
     componentWillUnmount () {
       this.mounted = false
       ContactManager.un('contactChanged', this.update)
@@ -64,7 +70,7 @@ export default class ExternalView extends Component<{}> {
     async asyncRender (filterText) {
       const user = lkApp.getCurrentUser()
       const sortFunc = (ele1, ele2) => {
-        const result = (ele2.title < ele1.title)
+        const result = ele2.title < ele1.title
 
         return result
       }
@@ -79,11 +85,11 @@ export default class ExternalView extends Component<{}> {
           ary.push(content)
         }
       }
-      let ary = []
+      const ary = []
 
       const friendAry = await ContactManager.asyGetAllFriends(user.id)
       console.log({friendAry})
-      for (let ele of friendAry) {
+      for (const ele of friendAry) {
         const obj = {}
         obj.onPress = () => {
           this.go2FriendInfoView(ele)
@@ -155,8 +161,7 @@ export default class ExternalView extends Component<{}> {
                   leftIcon={{name: item.icon, style: {}}}
                   subtitle={item.subtitle}
                   onPress={item.onPress}
-                />
-              )
+                />)
             }
           </View>
           <LoadingView loading={this.state.loading} content={this.state.content}></LoadingView>

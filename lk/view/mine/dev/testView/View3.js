@@ -1,10 +1,8 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {
-  Text,
-  View
 } from 'react-native'
 import PropTypes from 'prop-types'
-import LottieView from 'lottie-react-native';
+import LottieView from 'lottie-react-native'
 import ScreenWrapper from '../../../common/ScreenWrapper'
 
 export default class View3 extends ScreenWrapper {

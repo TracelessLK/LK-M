@@ -8,7 +8,6 @@ import {
   Alert,
   Text,
   View,
-  Image,
   ActivityIndicator
 } from 'react-native'
 import Promise from 'bluebird'
@@ -175,7 +174,7 @@ export default class LKEntry extends Component<{}> {
         console.log(`Initial URL: ${url}`)
       }
     }).catch(err => console.error('An error occurred', err))
-    Linking.addEventListener('url', (event) => {
+    Linking.addEventListener('url', () => {
       // const {url} = event
     })
 
@@ -229,7 +228,7 @@ export default class LKEntry extends Component<{}> {
     })
 
     db.transaction((tx) => {
-      tx.executeSql('select * from traceless', [], async (tx, result) => {
+      tx.executeSql('select * from traceless', [], async (result) => {
         const bits = 1024
         const exponent = '10001'
 
@@ -261,11 +260,11 @@ export default class LKEntry extends Component<{}> {
         })
         const venderDid = await getAPNDeviceId()
 
-        const option = {
-          user,
-          venderDid,
-          description
-        }
+        // const option = {
+        //   user,
+        //   venderDid,
+        //   description
+        // }
         await lkApplication.updateRegister({
           user,
           venderDid,

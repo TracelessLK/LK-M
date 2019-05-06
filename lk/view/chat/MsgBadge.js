@@ -3,10 +3,11 @@ import {
   Text
 } from 'react-native'
 import {Badge} from 'native-base'
+
 const {engine} = require('@lk/LK-C')
 const chatManager = require('../../manager/LKChatManager')
 
-let Application = engine.getApplication()
+const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 
 export default class MsgBadge extends Component<{}> {
@@ -19,7 +20,7 @@ export default class MsgBadge extends Component<{}> {
   }
 
   async componentDidMount () {
-    let num = await chatManager.asyGetAllMsgNotReadNum(this.user.id)
+    const num = await chatManager.asyGetAllMsgNotReadNum(this.user.id)
     this.updateBadge(num)
     chatManager.on('msgBadgeChanged', this.updateBadge)
   }
@@ -39,6 +40,7 @@ export default class MsgBadge extends Component<{}> {
       })
     }
   }
+
   componentWillUnmount () {
     chatManager.un('msgBadgeChanged', this.updateBadge)
   }

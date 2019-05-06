@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react'
 import {
 
@@ -12,10 +11,11 @@ import {
   Button,
   Toast
 } from 'native-base'
+
 const md5 = require('crypto-js/md5')
 const {engine} = require('@lk/LK-C')
 
-let Application = engine.getApplication()
+const Application = engine.getApplication()
 const lkApplication = Application.getCurrentApp()
 const style = require('../style')
 
@@ -25,6 +25,7 @@ export default class PasswordLoginView extends Component<{}> {
       headerTitle: '登录'
     }
   }
+
   constructor (props) {
     super(props)
     const {user} = this.props.navigation.state.params
@@ -81,7 +82,8 @@ export default class PasswordLoginView extends Component<{}> {
               }} autoFocus secureTextEntry onChangeText={t => {
                 this.t = t
               }} onSubmitEditing={this.login}
-              ></TextInput>
+              >
+              </TextInput>
               <Button block style={{width: 60, height: 40, backgroundColor: style.color.mainColor}} onPress={this.login}>
                 <Text style={{color: 'white'}}>确认</Text>
               </Button>

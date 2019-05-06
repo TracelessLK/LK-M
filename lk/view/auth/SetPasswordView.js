@@ -5,6 +5,7 @@ import {
   View
 } from 'react-native'
 import {Input, Item, Button, Label, Toast} from 'native-base'
+
 const {debounceFunc} = require('../../../common/util/commonUtil')
 
 export default class CheckCodeView extends Component<{}> {
@@ -16,13 +17,14 @@ export default class CheckCodeView extends Component<{}> {
     onChangeText = (t) => {
       this.text = t ? t.trim() : ''
     }
+
     render () {
       return (
         <View style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1}}>
           <View style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', marginVertical: 15, width: '95%'}}>
             <Item floatingLabel >
               <Label>请设置登录密码</Label>
-              <Input ref='input' onChangeText={this.onChangeText}></Input>
+              <Input ref='input' onChangeText={this.onChangeText}/>
             </Item>
           </View>
           <View>
