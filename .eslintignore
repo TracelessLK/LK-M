@@ -5,5 +5,4 @@ logic
 core
 submodule
 lz-string.js
-
-
+local

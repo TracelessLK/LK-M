@@ -67,7 +67,7 @@ export default class RecentView extends ScreenWrapper {
         contentAry: null,
         refreshing: false
       }
-      this.eventAry = ['msgChanged', 'recentChanged', 'msgReceived', 'msgRead']
+      this.eventAry = ['msgChanged', 'recentChanged', 'msgReceived', 'msgRead', 'msgBadgeChanged']
       // todo: store all not undefined value
       this.channel = lkApp.getLKWSChannel()
       this.user = lkApp.getCurrentUser()
