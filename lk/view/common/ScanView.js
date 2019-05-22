@@ -2,7 +2,7 @@ import React from 'react'
 import {
   StyleSheet, Vibration, View, TouchableOpacity, Text
 } from 'react-native'
-import Camera from 'react-native-camera'
+import Camera, { RNCamera } from 'react-native-camera'
 import _ from 'lodash'
 import ScreenWrapper from './ScreenWrapper'
 
@@ -15,7 +15,7 @@ export default class ScanView extends ScreenWrapper {
     subRender() {
       return (
         <View style={styles.container}>
-          <Camera
+          <RNCamera
             onBarCodeRead={_.once((e) => {
               const {onRead, vibrate = true, goBack = true} = this.props.navigation.state.params
               if (vibrate) {
@@ -82,7 +82,7 @@ export default class ScanView extends ScreenWrapper {
             ><Text style={{color: 'white', textAlign: 'center', fontSize: 18}}>取  消</Text>
             </TouchableOpacity>
 
-          </Camera>
+          </RNCamera>
         </View>
       )
     }
