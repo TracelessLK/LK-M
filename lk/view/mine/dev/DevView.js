@@ -43,8 +43,7 @@ export default class BasicInfoView extends ScreenWrapper {
           title: 'SQL调试',
           onPress: () => {
             // db.selectChat()
-            const stat = fs.statSync(path.join(__dirname, 'content'))
-            alert(stat.isDirectory())
+
           }
         },
         {
