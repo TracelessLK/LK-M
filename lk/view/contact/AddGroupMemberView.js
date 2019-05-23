@@ -94,20 +94,22 @@ export default class AddGroupMemberView extends Component<{}> {
       return !memberIdAry.includes(ele.id)
     })
     for (const ele of memberAry) {
-      if (ele.id !== user.id) {
-        const obj = {}
-        obj.image = getAvatarSource(ele.pic)
-        obj.key = ele.id
-        obj.onPress = null
-        obj.title = ele.name
-        obj.extra = {
-          id: ele.id,
-          name: ele.name,
-          pic: ele.pic,
-          serverIP: user.serverIP,
-          serverPort: user.serverPort
+      if (ele) {
+        if (ele.id !== user.id) {
+          const obj = {}
+          obj.image = getAvatarSource(ele.pic)
+          obj.key = ele.id
+          obj.onPress = null
+          obj.title = ele.name
+          obj.extra = {
+            id: ele.id,
+            name: ele.name,
+            pic: ele.pic,
+            serverIP: user.serverIP,
+            serverPort: user.serverPort
+          }
+          _f(ele, obj, ary)
         }
-        _f(ele, obj, ary)
       }
     }
 
