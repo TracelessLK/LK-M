@@ -200,7 +200,7 @@ export default class RecentView extends ScreenWrapper {
       this.resetHeaderTitle()
     }
 
-    async getMsg(option: GetMsgOption) {
+    async getMsg(option: GetMsgOption,lastMsg) {
       const {
         userId, chatId, newMsgNum, isGroup, chatName, createTime
       } = option
@@ -208,7 +208,7 @@ export default class RecentView extends ScreenWrapper {
         isGroup
       }
       // const msgAry = await chatManager.asyGetMsgs(userId, chatId)
-      const lastMsg = await chatManager.asyGetLastMsg(userId, chatId)
+      // const lastMsg = await chatManager.asyGetLastMsg(userId, chatId)
       let obj = {
         deletePress: () => {
           this.deleteRow(chatId)
@@ -285,7 +285,10 @@ export default class RecentView extends ScreenWrapper {
 
     async updateRecent() {
       const user = lkApp.getCurrentUser()
-      const allChat = await chatManager.asyGetAll(user.id)
+      // const allChat = await chatManager.asyGetAll(user.id)
+      const allChat = await chatManager.asyGetAllNew(user.id)
+      const allLastMsg = await chatManager.asyGetAllLastMsg(user.id)
+      console.log("allChat:",{allChat})
       const msgAryPromise = []
       let contentAry
       // console.log({allChat})
@@ -293,20 +296,28 @@ export default class RecentView extends ScreenWrapper {
       if (length) {
         for (const chat of allChat) {
           const {
-            isGroup, name, createTime, id: chatId
+            isGroup, name, createTime, id: chatId, notReadNum
           } = chat
           // todo: move to sql
-          const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
+          // const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
           // console.log({newMsgNum, chatId})
           const option = {
             userId: user.id,
             chatId,
-            newMsgNum,
+            newMsgNum: notReadNum,
             isGroup,
             chatName: name,
             createTime
           }
-          const msgPromise = this.getMsg(option)
+          let lastMsg = {}
+          for(const record of allLastMsg){
+            const { chatId: lastMsgID} = record
+            if(chatId == lastMsgID){
+              lastMsg = record
+            }
+          }
+          console.log("lastMsg:",lastMsg)
+          const msgPromise = this.getMsg(option,lastMsg)
           msgAryPromise.push(msgPromise)
         }
         let recentAry = await Promise.all(msgAryPromise)
