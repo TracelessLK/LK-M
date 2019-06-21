@@ -150,7 +150,6 @@ global.Promise = Promise
 const errorStock = new ErrorStock(resetTime)
 
 global.onunhandledrejection = (error) => {
-  console.log({ error })
   if (error instanceof Error) {
     writeToLog({
       type: 'now',
