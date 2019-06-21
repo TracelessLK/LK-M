@@ -4,14 +4,9 @@ import {
   AsyncStorage
 } from 'react-native'
 // import {Toast} from 'native-base'
-const {engine} = require('@lk/LK-C')
 const RNFS = require('react-native-fs')
 
 const { logPath } = require('../../lk/config')
-
-const Application = engine.getApplication()
-const lkapp = Application.getCurrentApp()
-console.log(lkapp)
 
 class PushUtil {
   constructor ({onNotfication, onInitialNotification}) {
@@ -58,15 +53,10 @@ class PushUtil {
   static init() {
     if (Platform.OS === 'ios') {
       PushNotificationIOS.addEventListener('registrationError', (reason) => {
-        PushUtil.appendToLog({
-          type: 'debug',
-          content: `registrationError: ${reason}`
-        })
         console.log({registrationError: reason})
         throw new Error(reason)
       })
       PushNotificationIOS.addEventListener('register', (deviceId) => {
-        console.log({deviceId})
         PushUtil.appendToLog({
           type: 'debug',
           content: `in register: ${deviceId}`
@@ -77,7 +67,6 @@ class PushUtil {
       // 必须要调用requestPermissions,否则无法接受到register事件获取deviceId
       PushNotificationIOS.requestPermissions().then(() => {
         PushNotificationIOS.addEventListener('register', (deviceId) => {
-          console.log({deviceId})
           PushUtil.appendToLog({
             type: 'debug',
             content: `in register: ${deviceId}`
@@ -87,7 +76,6 @@ class PushUtil {
         })
       })
       PushNotificationIOS.addEventListener('register', (deviceId) => {
-        console.log({deviceId})
         PushUtil.appendToLog({
           type: 'debug',
           content: `after register: ${deviceId}`

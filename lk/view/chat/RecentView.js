@@ -200,7 +200,7 @@ export default class RecentView extends ScreenWrapper {
       this.resetHeaderTitle()
     }
 
-    async getMsg(option: GetMsgOption,lastMsg) {
+    async getMsg(option: GetMsgOption, lastMsg) {
       const {
         userId, chatId, newMsgNum, isGroup, chatName, createTime
       } = option
@@ -288,7 +288,7 @@ export default class RecentView extends ScreenWrapper {
       // const allChat = await chatManager.asyGetAll(user.id)
       const allChat = await chatManager.asyGetAllNew(user.id)
       const allLastMsg = await chatManager.asyGetAllLastMsg(user.id)
-      console.log("allChat:",{allChat})
+
       const msgAryPromise = []
       let contentAry
       // console.log({allChat})
@@ -310,14 +310,13 @@ export default class RecentView extends ScreenWrapper {
             createTime
           }
           let lastMsg = {}
-          for(const record of allLastMsg){
+          for (const record of allLastMsg) {
             const { chatId: lastMsgID} = record
-            if(chatId == lastMsgID){
+            if (chatId === lastMsgID) {
               lastMsg = record
             }
           }
-          console.log("lastMsg:",lastMsg)
-          const msgPromise = this.getMsg(option,lastMsg)
+          const msgPromise = this.getMsg(option, lastMsg)
           msgAryPromise.push(msgPromise)
         }
         let recentAry = await Promise.all(msgAryPromise)

@@ -34,7 +34,7 @@ export default class InfoView extends ScreenWrapper {
 
     }
     try {
-      appJSON = require('../../../app.json')
+      // appJSON = require('../../../app.json')
     } catch (err) {
       // fs.writeFileSync('../../../app.json', JSON.stringify({}), 'utf8')
       // appJSON = fs.readFileSync('../../../app.json', 'utf-8')
