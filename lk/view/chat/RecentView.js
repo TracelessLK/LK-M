@@ -200,7 +200,7 @@ export default class RecentView extends ScreenWrapper {
       this.resetHeaderTitle()
     }
 
-    async getMsg(option: GetMsgOption, lastMsg) {
+    async getMsg(option: GetMsgOption) {
       const {
         userId, chatId, newMsgNum, isGroup, chatName, createTime
       } = option
@@ -208,7 +208,7 @@ export default class RecentView extends ScreenWrapper {
         isGroup
       }
       // const msgAry = await chatManager.asyGetMsgs(userId, chatId)
-      // const lastMsg = await chatManager.asyGetLastMsg(userId, chatId)
+      const lastMsg = await chatManager.asyGetLastMsg(userId, chatId)
       let obj = {
         deletePress: () => {
           this.deleteRow(chatId)
@@ -219,7 +219,7 @@ export default class RecentView extends ScreenWrapper {
         obj.id = chatId
         obj.name = chatName
         obj.newMsgNum = newMsgNum
-        if (lastMsg.sendTime) {
+        if (lastMsg) {
           obj.content = this.getMsgContent(lastMsg.content, lastMsg.type)
           obj.time = new Date(lastMsg.sendTime)
         } else {
@@ -238,7 +238,7 @@ export default class RecentView extends ScreenWrapper {
           }
           this.chat(param)
         }
-      } else if (lastMsg.sendTime) {
+      } else if (lastMsg) {
         const msg = lastMsg
         const { sendTime, content, type } = msg
         const person = await ContactManager.asyGet(userId, chatId)
@@ -285,10 +285,7 @@ export default class RecentView extends ScreenWrapper {
 
     async updateRecent() {
       const user = lkApp.getCurrentUser()
-      // const allChat = await chatManager.asyGetAll(user.id)
-      const allChat = await chatManager.asyGetAllNew(user.id)
-      const allLastMsg = await chatManager.asyGetAllLastMsg(user.id)
-
+      const allChat = await chatManager.asyGetAll(user.id)
       const msgAryPromise = []
       let contentAry
       // console.log({allChat})
@@ -296,27 +293,20 @@ export default class RecentView extends ScreenWrapper {
       if (length) {
         for (const chat of allChat) {
           const {
-            isGroup, name, createTime, id: chatId, notReadNum
+            isGroup, name, createTime, id: chatId
           } = chat
           // todo: move to sql
-          // const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
+          const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
           // console.log({newMsgNum, chatId})
           const option = {
             userId: user.id,
             chatId,
-            newMsgNum: notReadNum,
+            newMsgNum,
             isGroup,
             chatName: name,
             createTime
           }
-          let lastMsg = {}
-          for (const record of allLastMsg) {
-            const { chatId: lastMsgID} = record
-            if (chatId === lastMsgID) {
-              lastMsg = record
-            }
-          }
-          const msgPromise = this.getMsg(option, lastMsg)
+          const msgPromise = this.getMsg(option)
           msgAryPromise.push(msgPromise)
         }
         let recentAry = await Promise.all(msgAryPromise)
