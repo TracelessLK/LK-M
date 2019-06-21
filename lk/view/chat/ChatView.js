@@ -342,14 +342,16 @@ export default class ChatView extends Component<{}> {
     }
 
     sendImage = ({ data, width, height }) => {
-      runNetFunc(() => {
-        lkApp.getLKWSChannel().sendImage(this.otherSideId, data, width, height, this.relativeMsgId, this.isGroupChat).catch((err) => {
-          Alert.alert(err.toString())
+      return new Promise(resolve => {
+        runNetFunc(() => {
+          const result = lkApp.getLKWSChannel().sendImage(this.otherSideId, data, width, height, this.relativeMsgId, this.isGroupChat)
+          resolve(result)
         })
       })
     }
 
-    showImagePicker=() => {
+    showImagePicker = () => {
+      const dimension = Dimensions.get('window')
       const options = {
         title: '选择图片',
         cancelButtonTitle: '取消',
@@ -359,25 +361,37 @@ export default class ChatView extends Component<{}> {
         storageOptions: {
           skipBackup: true,
           path: 'images'
-        }
+        },
+        maxWidth: dimension.width * 3,
+        maxHeight: dimension.height * 3
+        // quality: 0.5
       }
+      ImagePicker.showImagePicker(options, async response => {
+        const {didCancel, error, customButton, data, fileSize, width, height} = response
+        // const mSize = 1024 * 1024
+        // console.log({
+        //   fileSize: fileSize / mSize,
+        //   width,
+        //   height,
+        //   data: data.length / mSize
+        // })
+        if (didCancel) {
 
-      ImagePicker.showImagePicker(options, (response) => {
-        if (response.didCancel) {
-
-        } else if (response.error) {
-        } else if (response.customButton) {
+        } else if (error) {
+          console.error(error)
+        } else if (customButton) {
         } else {
           const imageUri = response.uri
           const maxWidth = response.width
           const maxHeight = response.height
-          ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null).then((res) => {
-            RNFetchBlob.fs.readFile(res.path, 'base64').then((data) => {
-              this.sendImage({ data, width: maxWidth, height: maxHeight })
-            })
-          }).catch((err) => {
-            console.log(err)
-          })
+          // console.log('start')
+          // const step2 = Date.now()
+
+          const res = await ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null)
+          const dataImg = await RNFetchBlob.fs.readFile(res.path, 'base64')
+          await this.sendImage({ data: dataImg, width: maxWidth, height: maxHeight })
+          // const step3 = Date.now()
+          // console.log(`sendImage: ${(step3 - step2) / 1000}`)
         }
       })
     }
