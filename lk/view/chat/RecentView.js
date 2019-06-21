@@ -219,7 +219,7 @@ export default class RecentView extends ScreenWrapper {
         obj.id = chatId
         obj.name = chatName
         obj.newMsgNum = newMsgNum
-        if (lastMsg) {
+        if (lastMsg.sendTime) {
           obj.content = this.getMsgContent(lastMsg.content, lastMsg.type)
           obj.time = new Date(lastMsg.sendTime)
         } else {
@@ -238,7 +238,7 @@ export default class RecentView extends ScreenWrapper {
           }
           this.chat(param)
         }
-      } else if (lastMsg) {
+      } else if (lastMsg.sendTime) {
         const msg = lastMsg
         const { sendTime, content, type } = msg
         const person = await ContactManager.asyGet(userId, chatId)
