@@ -71,8 +71,11 @@ async function checkUpdate(param) {
     const {
       serverIP, id, name, updateAnyWay = false
     } = param
-    const response = await fetch(appInfoUrl)
-    const appInfo = await response.json()
+    const appInfo = {
+      updateUrl: "/api/update/checkUpdate",
+      httpProtocol: "http",
+      port: "3000"
+    }
     const { updateUrl, httpProtocol, port } = appInfo
     let base = `${httpProtocol}://${serverIP}:${port}`
     const updateUrlBase = await AsyncStorage.getItem('updateUrlBase')

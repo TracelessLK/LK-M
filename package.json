@@ -17,7 +17,7 @@
     "pack:all": "npm run pack:ppk && npm run pack:android && npm run pack:ios",
     "jsBundle": " react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",
     "updateC": "git submodule update --remote submodule/LK-C",
-    "init": "git submodule init && git submodule update && npm i"
+    "init": "git submodule init && git submodule update --remote && npm i"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^1.0.2",
