@@ -14,6 +14,7 @@ import {
 } from 'react-native'
 import NetIndicator from '../common/NetIndicator'
 import ScreenWrapper from '../common/ScreenWrapper'
+import MessageListItem from "./MessageListItem";
 
 const { commonUtil, MessageList, PushUtil } = require('@external/common')
 
@@ -200,9 +201,9 @@ export default class RecentView extends ScreenWrapper {
       this.resetHeaderTitle()
     }
 
-    async getMsg(option: GetMsgOption, lastMsg) {
+    async getMsg(option: GetMsgOption) {
       const {
-        userId, chatId, newMsgNum, isGroup, chatName, createTime
+        userId, chatId, newMsgNum, isGroup, chatName, createTime, content, type, sendTime, sendName, pic, contactId
       } = option
       const result = {
         isGroup
@@ -214,14 +215,14 @@ export default class RecentView extends ScreenWrapper {
           this.deleteRow(chatId)
         }
       }
-
+      console.log("chatName:",chatName)
       if (isGroup) {
         obj.id = chatId
         obj.name = chatName
         obj.newMsgNum = newMsgNum
-        if (lastMsg.sendTime) {
-          obj.content = this.getMsgContent(lastMsg.content, lastMsg.type)
-          obj.time = new Date(lastMsg.sendTime)
+        if (sendTime) {
+          obj.content = this.getMsgContent(content, type)
+          obj.time = new Date(sendTime)
         } else {
           obj.content = '一起群聊吧'
           obj.time = new Date(createTime)
@@ -238,23 +239,23 @@ export default class RecentView extends ScreenWrapper {
           }
           this.chat(param)
         }
-      } else if (lastMsg.sendTime) {
-        const msg = lastMsg
-        const { sendTime, content, type } = msg
-        const person = await ContactManager.asyGet(userId, chatId)
-        const { name, pic } = person
+      } else if (sendTime) {
+        // const msg = lastMsg
+        // const { sendTime, content, type } = msg
+        // const person = await ContactManager.asyGet(userId, chatId)
+        // const { name, pic } = person
         obj.time = new Date(sendTime)
         obj.content = this.getMsgContent(content, type)
         obj.sendTime = sendTime
         obj.newMsgNum = newMsgNum
-        obj.name = name
-        obj.person = person
+        obj.name = sendName
+        // obj.person = person
         obj.id = chatId
         obj.image = getAvatarSource(pic)
 
         obj.onPress = () => {
           this.chat({
-            otherSideId: person.id,
+            otherSideId: contactId,
             isGroup: false
           })
         }
@@ -287,8 +288,8 @@ export default class RecentView extends ScreenWrapper {
       const user = lkApp.getCurrentUser()
       // const allChat = await chatManager.asyGetAll(user.id)
       const allChat = await chatManager.asyGetAllNew(user.id)
-      const allLastMsg = await chatManager.asyGetAllLastMsg(user.id)
-
+      // const allLastMsg = await chatManager.asyGetAllLastMsg(user.id)
+      console.log("allChat:", {allChat})
       const msgAryPromise = []
       let contentAry
       // console.log({allChat})
@@ -296,7 +297,7 @@ export default class RecentView extends ScreenWrapper {
       if (length) {
         for (const chat of allChat) {
           const {
-            isGroup, name, createTime, id: chatId, notReadNum
+            isGroup, name, createTime, chatId, notReadNum, content, type, sendTime, sendName, pic, contactId
           } = chat
           // todo: move to sql
           // const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
@@ -307,23 +308,39 @@ export default class RecentView extends ScreenWrapper {
             newMsgNum: notReadNum,
             isGroup,
             chatName: name,
-            createTime
+            createTime,
+            content,
+            type,
+            sendTime,
+            sendName,
+            pic,
+            contactId
           }
-          let lastMsg = {}
-          for (const record of allLastMsg) {
-            const { chatId: lastMsgID} = record
-            if (chatId === lastMsgID) {
-              lastMsg = record
-            }
-          }
-          const msgPromise = this.getMsg(option, lastMsg)
+          // let lastMsg = {}
+          // for (const record of allLastMsg) {
+          //   const { chatId: lastMsgID} = record
+          //   if (chatId === lastMsgID) {
+          //     lastMsg = record
+          //   }
+          // }
+          console.log("option getMsg:", option)
+          const msgPromise = this.getMsg(option)
           msgAryPromise.push(msgPromise)
         }
         let recentAry = await Promise.all(msgAryPromise)
         recentAry = recentAry.filter(ele => ele.item || ele.isGroup)
-
+        console.log("recentAry:", {recentAry})
         const data = recentAry.map(ele => ele.item)
-        contentAry = <MessageList data={data} />
+        const contentArray = []
+        for (const react in data) {
+          const item = data[react]
+          console.log("recent item:", {item})
+          const messageItem = <MessageListItem item={item} />
+          contentArray.push(messageItem)
+        }
+        contentAry = contentArray
+        // contentAry = <MessageList data={data} />
+        console.log("contentAry:", {contentAry})
       } else {
         contentAry = (
           <View style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
@@ -346,6 +363,7 @@ export default class RecentView extends ScreenWrapper {
     }
 
     chat = debounceFunc((option) => {
+      console.log("option:",{option})
       this.props.navigation.navigate('ChatView', option)
     })
 
