@@ -6,8 +6,8 @@ import {
 
 const { engine } = require('@lk/LK-C')
 
-//const Application = engine.getApplication()
-const UserManager = engine.get('UserManager')
+//const Application = engine.Application
+const UserManager = engine.UserManager
 //const lkApplication = Application.getCurrentApp()
 const common = require('@external/common')
 

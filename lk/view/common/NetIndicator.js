@@ -7,7 +7,7 @@ import {Icon} from 'native-base'
 
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 
 const {NetInfoUtil} = require('@ys/react-native-collection')

@@ -23,7 +23,7 @@ const { debounceFunc } = commonUtil
 const { getAvatarSource } = require('../../util')
 const { engine } = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const chatManager = require('../../manager/LKChatManager')
 

@@ -12,7 +12,7 @@ import deviceInfo from 'react-native-device-info'
 
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApplication = Application.getCurrentApp()
 
 const uuid = require('uuid')

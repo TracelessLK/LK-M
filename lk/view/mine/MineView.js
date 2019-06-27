@@ -26,10 +26,10 @@ const versionLocal = require('../../../package.json').version
 const config = require('../../config')
 const { engine } = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
-const chatManager = engine.get('ChatManager')
-const userManager = engine.get('UserManager')
+const chatManager = engine.ChatManager
+const userManager = engine.UserManager
 
 export default class MineView extends ScreenWrapper {
     static navigationOptions =() => ({

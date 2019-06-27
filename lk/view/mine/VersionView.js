@@ -14,7 +14,7 @@ const {FuncUtil} = require('@ys/vanilla')
 const {debounceFunc} = FuncUtil
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const container = require('../../state')
 

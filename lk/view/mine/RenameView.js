@@ -9,12 +9,12 @@ import ScreenWrapper from '../common/ScreenWrapper'
 
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const style = require('../style')
 const {HeaderRightButton} = require('@ys/react-native-collection')
 
-const userManager = engine.get('UserManager')
+const userManager = engine.UserManager
 const {FuncUtil} = require('@ys/vanilla')
 
 const {debounceFunc} = FuncUtil

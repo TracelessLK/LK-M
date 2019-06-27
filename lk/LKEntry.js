@@ -47,8 +47,8 @@ const util = require('./util')
 
 const { writeToLog } = util
 
-const Application = engine.getApplication()
-const ChatManager = engine.get('ChatManager')
+const Application = engine.Application
+const ChatManager = engine.ChatManager
 const lkApplication = Application.getCurrentApp()
 
 lkApplication.on('currentUserChanged', (user) => {
@@ -184,7 +184,7 @@ export default class LKEntry extends Component<{}> {
     // 先检测是否已注册新的账号
     await lkApplication.start(DataSource, Application.PLATFORM_RN)
 
-    const UserManager = engine.get('UserManager')
+    const UserManager = engine.UserManager
     const userAry = await UserManager.asyGetAll()
     const {length} = userAry
     if (!length) {

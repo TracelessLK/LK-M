@@ -9,14 +9,14 @@ const {FuncUtil} = require('@ys/vanilla')
 const {debounceFunc} = FuncUtil
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 
 const {getAvatarSource} = require('../../util')
 const _ = require('lodash')
 
-const chatManager = engine.get('ChatManager')
-const ContactManager = engine.get('ContactManager')
+const chatManager = engine.ChatManager
+const ContactManager = engine.ContactManager
 const {runNetFunc} = require('../../util')
 const {CenterLayout} = require('@ys/react-native-collection')
 const style = require('../style')

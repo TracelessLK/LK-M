@@ -13,9 +13,9 @@ const { commonUtil, List, LoadingView} = common
 const {debounceFunc} = commonUtil
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
-const ContactManager = engine.get('ContactManager')
+const ContactManager = engine.ContactManager
 const style = require('../style')
 const {getAvatarSource, addExternalFriend} = require('../../util')
 const {HeaderRightButton, CenterLayout} = require('@ys/react-native-collection')

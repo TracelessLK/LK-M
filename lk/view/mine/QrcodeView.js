@@ -8,7 +8,7 @@ import QRCode from 'react-native-qrcode-svg'
 
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const {getAvatarSource} = require('../../util')
 const defaultAvatar = require('../image/defaultAvatar.png')

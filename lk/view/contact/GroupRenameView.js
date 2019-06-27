@@ -11,7 +11,7 @@ const {engine} = require('@lk/LK-C')
 const style = require('../style')
 const {HeaderRightButton} = require('@ys/react-native-collection')
 
-const chatManager = engine.get('ChatManager')
+const chatManager = engine.ChatManager
 const {FuncUtil} = require('@ys/vanilla')
 
 const {debounceFunc} = FuncUtil

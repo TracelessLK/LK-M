@@ -15,7 +15,7 @@ import {
 const md5 = require('crypto-js/md5')
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApplication = Application.getCurrentApp()
 const style = require('../style')
 

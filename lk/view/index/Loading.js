@@ -12,10 +12,10 @@ const {PushUtil} = require('@external/common')
 const {getAPNDeviceId} = PushUtil
 const {engine} = require('@lk/LK-C')
 
-const UserManager = engine.get('UserManager')
+const UserManager = engine.UserManager
 const logo = require('../image/logo.png')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApplication = Application.getCurrentApp()
 
 const styles = StyleSheet.create({

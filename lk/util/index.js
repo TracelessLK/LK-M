@@ -10,10 +10,10 @@ import LottieView from 'lottie-react-native'
 const { engine } = require('@lk/LK-C')
 
 
-const DBProxy = engine.get('DBProxy')
-const Application = engine.getApplication()
+const DBProxy = engine.DBProxy
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
-const chatManager = engine.get('ChatManager')
+const chatManager = engine.ChatManager
 
 const { commonUtil } = require('@external/common')
 const chatRight = require('../view/image/ajax-loader.gif')

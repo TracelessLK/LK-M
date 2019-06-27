@@ -13,8 +13,8 @@ import ScreenWrapper from "../common/ScreenWrapper"
 const {getAvatarSource} = require('../../util')
 const {engine} = require('@lk/LK-C')
 
-const ChatManager = engine.get('ChatManager')
-const ContactManager = engine.get('ContactManager')
+const ChatManager = engine.ChatManager
+const ContactManager = engine.ContactManager
 
 export default class FriendInfoView extends ScreenWrapper {
     static navigationOptions =({ navigation }) => {

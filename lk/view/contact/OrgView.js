@@ -9,10 +9,10 @@ import ScreenWrapper from "../common/ScreenWrapper"
 
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
-const ContactManager = engine.get('ContactManager')
-const OrgManager = engine.get('OrgManager')
+const ContactManager = engine.ContactManager
+const OrgManager = engine.OrgManager
 const common = require('@external/common')
 
 const {SearchBar, commonUtil, List, LoadingView} = common

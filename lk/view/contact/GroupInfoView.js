@@ -13,12 +13,12 @@ import {ListItem} from "react-native-elements"
 const {getAvatarSource} = require('../../util')
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const common = require('@external/common')
 
 const {List} = common
-const chatManager = engine.get('ChatManager')
+const chatManager = engine.ChatManager
 const {runNetFunc} = require('../../util')
 const addPng = require('../image/add.png')
 

@@ -9,7 +9,7 @@ import {Card, CardItem, Body} from 'native-base'
 
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 
 export default class ConnectionFailView extends Component<{}> {

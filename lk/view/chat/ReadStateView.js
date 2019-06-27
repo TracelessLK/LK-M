@@ -7,10 +7,10 @@ import {
 
 const {engine} = require('@lk/LK-C')
 
-const chatManager = engine.get('ChatManager')
+const chatManager = engine.ChatManager
 const {getAvatarSource, getIconNameByState} = require('../../util')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const common = require('@external/common')
 

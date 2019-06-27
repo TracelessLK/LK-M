@@ -9,13 +9,13 @@ import ScreenWrapper from '../common/ScreenWrapper'
 
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const common = require('@external/common')
 
 const { commonUtil } = common
 const {debounceFunc} = commonUtil
-const userManager = engine.get('UserManager')
+const userManager = engine.UserManager
 
 export default class BasicInfoView extends ScreenWrapper {
     static navigationOptions = () => {

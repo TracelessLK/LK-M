@@ -8,11 +8,11 @@ import {
 
 const {engine} = require('@lk/LK-C')
 
-const ChatManager = engine.get('ChatManager')
+const ChatManager = engine.ChatManager
 const {getAvatarSource} = require('../../util')
 
-const MFApplyManager = engine.get('MFApplyManager')
-const ContactManager = engine.get('ContactManager')
+const MFApplyManager = engine.MFApplyManager
+const ContactManager = engine.ContactManager
 const style = require('../style')
 const noUserImg = require('../image/noUser.png')
 const {CenterLayout} = require('@ys/react-native-collection')

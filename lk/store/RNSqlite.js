@@ -3,7 +3,7 @@ const SQLite = require('react-native-sqlite-storage')
 const RNFetchBlob = require('react-native-fetch-blob').default
 const dirs = RNFetchBlob.fs.dirs;
 
-let dbName = engine.getApplication().getCurrentApp().getName()||"default";
+let dbName = engine.Application.getCurrentApp().getName()||"default";
 
 const db = SQLite.openDatabase({name: dbName+'.db', location: 'default'}, function () {
 }, function (err) {
@@ -74,7 +74,7 @@ async function deleteFolder(p) {
 }
 
 db.removeAllAttachment = function () {
-    let userId = engine.getApplication().getCurrentApp().getCurrentUser().id;
+    let userId = engine.Application.getCurrentApp().getCurrentUser().id;
     deleteFolder(dirs.DocumentDir+"/"+userId);
 }
 

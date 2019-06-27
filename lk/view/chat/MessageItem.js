@@ -20,9 +20,9 @@ const { getAvatarSource, getIconByState } = require('../../util')
 const { getFolderId } = require('../../../common/util/commonUtil')
 // const fireGif = require('../image/fire.gif')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
-const chatManager = engine.get('ChatManager')
+const chatManager = engine.ChatManager
 const { msgBoxStyle } = style
 let folderId
 if (Platform.OS === 'ios') {

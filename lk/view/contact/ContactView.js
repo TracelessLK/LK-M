@@ -13,12 +13,12 @@ const {SearchBar, commonUtil, List} = common
 const {debounceFunc} = commonUtil
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
-const ContactManager = engine.get('ContactManager')
-//const UserManager = engine.get('UserManager')
+const ContactManager = engine.ContactManager
+//const UserManager = engine.UserManager
 
-const OrgManager = engine.get('OrgManager')
+const OrgManager = engine.OrgManager
 const {getAvatarSource} = require('../../util')
 const style = require('../style')
 

@@ -40,10 +40,10 @@ const uuid = require('uuid')
 const { debounceFunc, getFolderId } = require('../../../common/util/commonUtil')
 const Constant = require('../state/Constant')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
-const chatManager = engine.get('ChatManager')
-const ContactManager = engine.get('ContactManager')
+const chatManager = engine.ChatManager
+const ContactManager = engine.ContactManager
 const personImg = require('../image/person.png')
 const groupImg = require('../image/group.png')
 const { runNetFunc } = require('../../util')

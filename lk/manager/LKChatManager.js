@@ -1,7 +1,7 @@
 const {engine} = require('@lk/LK-C')
 
-const ChatManager = engine.get('ChatManager')
-const Application = engine.getApplication()
+const ChatManager = engine.ChatManager
+const Application = engine.Application
 
 const instance = ChatManager
 

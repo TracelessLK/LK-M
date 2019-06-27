@@ -12,7 +12,7 @@ const LKC = require('@lk/LK-C')
 
 const {engine} = LKC
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const packageJSON = require('../../../../package')
 

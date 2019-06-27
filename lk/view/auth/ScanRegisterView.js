@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 const {engine} = require('@lk/LK-C')
 
-const UserManager = engine.get('UserManager')
+const UserManager = engine.UserManager
 const versionLocal = require('../../../package').version
 const lkStyle = require('../style')
 const {CryptoUtil} = require('@ys/vanilla')

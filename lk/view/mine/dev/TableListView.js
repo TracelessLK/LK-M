@@ -5,7 +5,7 @@ import NavigateList from '../../common/NavigateList'
 
 const { engine } = require('@lk/LK-C')
 
-const ChatManager = engine.get('ChatManager')
+const ChatManager = engine.ChatManager
 
 
 export default class TableListView extends ScreenWrapper {

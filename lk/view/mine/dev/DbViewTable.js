@@ -8,7 +8,7 @@ import ScreenWrapper from '../../common/ScreenWrapper'
 
 const { engine } = require('@lk/LK-C')
 
-const ChatManager = engine.get('ChatManager')
+const ChatManager = engine.ChatManager
 
 
 export default class DbViewTable extends ScreenWrapper {

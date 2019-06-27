@@ -7,7 +7,7 @@ import {Badge} from 'native-base'
 const {engine} = require('@lk/LK-C')
 const chatManager = require('../../manager/LKChatManager')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 
 export default class MsgBadge extends Component<{}> {

@@ -17,7 +17,7 @@ const { debounceFunc } = commonUtil
 const config = require('../../../config')
 const { dropExtraTable } = require('../../../util')
 
-const Application = engine.getApplication()
+const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const container = require('../../../state')
 const versionLocal = require('../../../../package.json').version
