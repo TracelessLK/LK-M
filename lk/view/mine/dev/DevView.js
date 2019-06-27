@@ -144,7 +144,7 @@ export default class BasicInfoView extends ScreenWrapper {
           pressOnce: true
         },
         {
-          title: 'test_debounce',
+          title: 'test_debounce1',
           onPress: debounceFunc(() => {
             console.log('haha')
             // Alert.alert('haha')
