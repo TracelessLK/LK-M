@@ -14,9 +14,9 @@ import {
 } from 'react-native'
 import NetIndicator from '../common/NetIndicator'
 import ScreenWrapper from '../common/ScreenWrapper'
-import MessageListItem from "./MessageListItem";
+import MessageListItem from "./MessageListItem"
 
-const { commonUtil, MessageList, PushUtil } = require('@external/common')
+const { commonUtil, PushUtil } = require('@external/common')
 
 const { removeNotify } = PushUtil
 const { debounceFunc } = commonUtil
@@ -27,8 +27,6 @@ const Application = engine.getApplication()
 const lkApp = Application.getCurrentApp()
 const chatManager = require('../../manager/LKChatManager')
 
-const ContactManager = engine.get('ContactManager')
-//const _ = require('lodash')
 const addPng = require('../image/add.png')
 const { NetInfoUtil } = require('@ys/react-native-collection')
 const container = require('../../state')
@@ -215,7 +213,7 @@ export default class RecentView extends ScreenWrapper {
           this.deleteRow(chatId)
         }
       }
-      console.log("chatName:",chatName)
+      console.log("chatName:", chatName)
       if (isGroup) {
         obj.id = chatId
         obj.name = chatName
@@ -286,22 +284,16 @@ export default class RecentView extends ScreenWrapper {
 
     async updateRecent() {
       const user = lkApp.getCurrentUser()
-      // const allChat = await chatManager.asyGetAll(user.id)
       const allChat = await chatManager.asyGetAllNew(user.id)
-      // const allLastMsg = await chatManager.asyGetAllLastMsg(user.id)
       console.log("allChat:", {allChat})
       const msgAryPromise = []
       let contentAry
-      // console.log({allChat})
       const { length } = allChat
       if (length) {
         for (const chat of allChat) {
           const {
             isGroup, name, createTime, chatId, notReadNum, content, type, sendTime, sendName, pic, contactId
           } = chat
-          // todo: move to sql
-          // const newMsgNum = await chatManager.asyGetNewMsgNum(chatId)
-          // console.log({newMsgNum, chatId})
           const option = {
             userId: user.id,
             chatId,
@@ -335,7 +327,7 @@ export default class RecentView extends ScreenWrapper {
         for (const react in data) {
           const item = data[react]
           console.log("recent item:", {item})
-          const messageItem = <MessageListItem item={item} />
+          const messageItem = <MessageListItem item={item} key={item.id} />
           contentArray.push(messageItem)
         }
         contentAry = contentArray
@@ -363,7 +355,7 @@ export default class RecentView extends ScreenWrapper {
     }
 
     chat = debounceFunc((option) => {
-      console.log("option:",{option})
+      console.log("option:", {option})
       this.props.navigation.navigate('ChatView', option)
     })
 
