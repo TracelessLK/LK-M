@@ -213,7 +213,7 @@ export default class RecentView extends ScreenWrapper {
           this.deleteRow(chatId)
         }
       }
-      console.log("chatName:", chatName)
+      // console.log("chatName:", chatName)
       if (isGroup) {
         obj.id = chatId
         obj.name = chatName
@@ -315,24 +315,24 @@ export default class RecentView extends ScreenWrapper {
           //     lastMsg = record
           //   }
           // }
-          console.log("option getMsg:", option)
+          // console.log("option getMsg:", option)
           const msgPromise = this.getMsg(option)
           msgAryPromise.push(msgPromise)
         }
         let recentAry = await Promise.all(msgAryPromise)
         recentAry = recentAry.filter(ele => ele.item || ele.isGroup)
-        console.log("recentAry:", {recentAry})
+        // console.log("recentAry:", {recentAry})
         const data = recentAry.map(ele => ele.item)
         const contentArray = []
         for (const react in data) {
           const item = data[react]
-          console.log("recent item:", {item})
+          // console.log("recent item:", {item})
           const messageItem = <MessageListItem item={item} key={item.id} />
           contentArray.push(messageItem)
         }
         contentAry = contentArray
         // contentAry = <MessageList data={data} />
-        console.log("contentAry:", {contentAry})
+        // console.log("contentAry:", {contentAry})
       } else {
         contentAry = (
           <View style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
