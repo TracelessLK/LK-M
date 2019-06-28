@@ -31,7 +31,6 @@ export default class MessageListItem extends Component<{}> {
       widths = '80%'
       fontSizes = 15
     }
-    const contentAry = []
     let contents
     const avatarLength = 50
     const {item} = this.props

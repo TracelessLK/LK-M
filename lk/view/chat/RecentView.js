@@ -91,10 +91,10 @@ export default class RecentView extends ScreenWrapper {
             const { _data: data } = res
             const { senderId, chatId, isGroup } = data
             if (isGroup) {
-              this.chat({
-                otherSideId: isGroup ? chatId : senderId,
-                isGroup
-              })
+              // this.chat({
+              //   otherSideId: isGroup ? chatId : senderId,
+              //   isGroup
+              // })
             }
           }
         }
@@ -201,13 +201,12 @@ export default class RecentView extends ScreenWrapper {
 
     async getMsg(option: GetMsgOption) {
       const {
-        userId, chatId, newMsgNum, isGroup, chatName, createTime, content, type, sendTime, sendName, pic, contactId
+        chatId, newMsgNum, isGroup, chatName, activeTime, content, type, sendTime, sendName, pic, contactId
       } = option
       const result = {
         isGroup
       }
-      // const msgAry = await chatManager.asyGetMsgs(userId, chatId)
-      // const lastMsg = await chatManager.asyGetLastMsg(userId, chatId)
+
       let obj = {
         deletePress: () => {
           this.deleteRow(chatId)
@@ -218,12 +217,12 @@ export default class RecentView extends ScreenWrapper {
         obj.id = chatId
         obj.name = chatName
         obj.newMsgNum = newMsgNum
+        obj.time = new Date(activeTime)
+
         if (sendTime) {
           obj.content = this.getMsgContent(content, type)
-          obj.time = new Date(sendTime)
         } else {
           obj.content = '一起群聊吧'
-          obj.time = new Date(createTime)
         }
 
         const memberAry = await chatManager.asyGetGroupMembers(chatId)
@@ -282,80 +281,125 @@ export default class RecentView extends ScreenWrapper {
       return content
     }
 
-    async updateRecent() {
-      const user = lkApp.getCurrentUser()
-      const allChat = await chatManager.asyGetAllNew(user.id)
-      console.log("allChat:", {allChat})
-      const msgAryPromise = []
-      let contentAry
-      const { length } = allChat
-      if (length) {
-        for (const chat of allChat) {
-          const {
-            isGroup, name, createTime, chatId, notReadNum, content, type, sendTime, sendName, pic, contactId
-          } = chat
-          const option = {
-            userId: user.id,
-            chatId,
-            newMsgNum: notReadNum,
-            isGroup,
-            chatName: name,
-            createTime,
-            content,
-            type,
-            sendTime,
-            sendName,
-            pic,
-            contactId
-          }
-          // let lastMsg = {}
-          // for (const record of allLastMsg) {
-          //   const { chatId: lastMsgID} = record
-          //   if (chatId === lastMsgID) {
-          //     lastMsg = record
-          //   }
-          // }
-          // console.log("option getMsg:", option)
-          const msgPromise = this.getMsg(option)
-          msgAryPromise.push(msgPromise)
-        }
-        let recentAry = await Promise.all(msgAryPromise)
-        recentAry = recentAry.filter(ele => ele.item || ele.isGroup)
-        // console.log("recentAry:", {recentAry})
-        const data = recentAry.map(ele => ele.item)
-        const contentArray = []
-        for (const react in data) {
-          const item = data[react]
-          // console.log("recent item:", {item})
-          const messageItem = <MessageListItem item={item} key={item.id} />
-          contentArray.push(messageItem)
-        }
-        contentAry = contentArray
-        // contentAry = <MessageList data={data} />
-        // console.log("contentAry:", {contentAry})
-      } else {
-        contentAry = (
-          <View style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
-            <TouchableOpacity
-              onPress={() => { this.props.navigation.navigate('ContactTab') }}
-              style={{
-                marginTop: 30, width: '90%', height: 50, borderColor: 'silver', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
-              }}
-            >
-              <Text style={{ fontSize: 15, textAlign: 'center', color: 'silver' }}>开始和好友聊天吧!</Text>
-            </TouchableOpacity>
-          </View>
-        )
-      }
+  getDefaultContent = () => {
+    return (
+      <View style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
+        <TouchableOpacity
+          onPress={() => { this.props.navigation.navigate('ContactTab') }}
+          style={{
+            marginTop: 30, width: '90%', height: 50, borderColor: 'silver', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
+          }}
+          >
+          <Text style={{ fontSize: 15, textAlign: 'center', color: 'silver' }}>开始和好友聊天吧!</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
 
-      this.setState({
-        contentAry
-      })
-      this.resetHeaderTitle()
-    }
+     updateRecent = async () => {
+       const user = lkApp.getCurrentUser()
+       const chatAry = await chatManager.asyGetAllNew(user.id)
+       console.log({chatAry})
+       let contentAry
+
+       if (chatAry.length) {
+         contentAry = chatAry.map(ele => {
+           const {isGroup, avatar, id, chatName, msgContent, msgSendTime, newMsgNum} = ele
+
+           const result = {
+
+             onPress: () => {
+               this.chat({
+                 isGroup,
+                 otherSideId: id
+               })
+             },
+             image: avatar,
+             name: chatName,
+             content: msgContent,
+             time: new Date(msgSendTime),
+             newMsgNum,
+             id,
+             // deletePress
+           }
+           return result
+         })
+       } else {
+         contentAry = this.getDefaultContent()
+       }
+
+       // this.setState({
+       //   contentAry
+       // })
+       // this.resetHeaderTitle()
+     }
+
+
+     async updateRecent2() {
+       const user = lkApp.getCurrentUser()
+       const allChat = await chatManager.asyGetAllNew(user.id)
+       console.log("allChat:", {allChat})
+       const msgAryPromise = []
+       let contentAry
+       const { length } = allChat
+       if (length) {
+         for (const chat of allChat) {
+           const {
+             isGroup, name, createTime, chatId, notReadNum, content, type, sendTime, sendName, pic, contactId, activeTime
+           } = chat
+           const option = {
+             userId: user.id,
+             chatId,
+             newMsgNum: notReadNum,
+             isGroup,
+             activeTime,
+             chatName: name,
+             createTime,
+             content,
+             type,
+             sendTime,
+             sendName,
+             pic,
+             contactId
+           }
+
+           const msgPromise = this.getMsg(option)
+           msgAryPromise.push(msgPromise)
+         }
+         let recentAry = await Promise.all(msgAryPromise)
+         recentAry = recentAry.filter(ele => ele.item || ele.isGroup)
+         // console.log("recentAry:", {recentAry})
+         const data = recentAry.map(ele => ele.item)
+         const contentArray = []
+         for (const react in data) {
+           const item = data[react]
+           // console.log("recent item:", {item})
+           const messageItem = <MessageListItem item={item} key={item.id} />
+           contentArray.push(messageItem)
+         }
+         contentAry = contentArray
+       } else {
+         contentAry = (
+           <View style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
+             <TouchableOpacity
+               onPress={() => { this.props.navigation.navigate('ContactTab') }}
+               style={{
+                 marginTop: 30, width: '90%', height: 50, borderColor: 'silver', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
+               }}
+            >
+               <Text style={{ fontSize: 15, textAlign: 'center', color: 'silver' }}>开始和好友聊天吧!</Text>
+             </TouchableOpacity>
+           </View>
+         )
+       }
+
+       this.setState({
+         contentAry
+       })
+       this.resetHeaderTitle()
+     }
 
     chat = debounceFunc((option) => {
-      console.log("option:", {option})
       this.props.navigation.navigate('ChatView', option)
     })
 
