@@ -42,8 +42,7 @@ export default class BasicInfoView extends ScreenWrapper {
         {
           title: 'SQL调试',
           onPress: () => {
-            // db.selectChat()
-
+            navigation.navigate('DbExecuteView')
           }
         },
         {

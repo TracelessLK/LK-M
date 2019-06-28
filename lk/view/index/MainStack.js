@@ -27,6 +27,8 @@ import TestView from '../mine/dev/TestView'
 import TableListView from '../mine/dev/TableListView'
 import DbView from '../mine/dev/DbView'
 import DbViewTable from '../mine/dev/DbViewTable'
+import DbExecuteView from '../mine/dev/DbExecuteView'
+import DbExecuteDataView from '../mine/dev/DbExecuteDataView'
 import TestView3 from '../mine/dev/testView/View3'
 import TestView1 from '../mine/dev/testView/View1'
 import BasicInfoView from '../mine/BasicInfoView'
@@ -148,7 +150,9 @@ const MainStack = createStackNavigator({
   TestView1,
   DbView,
   DbViewTable,
-  TableListView
+  TableListView,
+  DbExecuteDataView,
+  DbExecuteView
 }, stackNavigatorConfig)
 
 export default MainStack
