@@ -367,7 +367,7 @@ export default class ChatView extends Component<{}> {
         // quality: 0.5
       }
       ImagePicker.showImagePicker(options, async response => {
-        const {didCancel, error, customButton, data, fileSize, width, height} = response
+        const {didCancel, error, customButton} = response
         // const mSize = 1024 * 1024
         // console.log({
         //   fileSize: fileSize / mSize,

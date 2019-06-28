@@ -15,5 +15,11 @@ module.exports = {
   preset: 'react-native',
   transformIgnorePatterns: [
     'node_modules/(?!react-native|native-base-shoutem-theme|@shoutem/animation|@shoutem/ui|tcomb-form-native|native-base|react-navigation|@ys)'
+  ],
+  testMatch: [ // 匹配的测试文件
+    '<rootDir>/__tests__/*.test.{js,jsx,mjs}',
+    '<rootDir>/__tests__/**/*.test.{js,jsx,mjs}',
+    '<rootDir>/__tests__/**/**/?(*.)(spec|test).{js,jsx,mjs}',
+    '<rootDir>/__tests__/**/**/**/?(*.)(spec|test).{js,jsx,mjs}'
   ]
 }
