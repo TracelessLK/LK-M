@@ -41,7 +41,7 @@ const packageJson = require('../package.json')
 const { version: versionLocal } = packageJson
 const { UpdateUtil } = require('@ys/react-native-collection')
 
-const { appInfoUrl } = config
+// const { appInfoUrl } = config
 const ErrorUtilRN = require('ErrorUtils')
 const util = require('./util')
 
