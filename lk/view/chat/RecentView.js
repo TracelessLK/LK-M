@@ -118,7 +118,7 @@ export default class RecentView extends ScreenWrapper {
     // )
   }
 
-    update=({event}) => {
+    update=() => {
       this.updateRecent()
     }
 
