@@ -13,6 +13,7 @@ import GroupAvatar from '../../../common/widget/GroupAvatar'
 
 const dateTimeUtil = require('../../../common/util/dateTimeUtil')
 const defaultAvatar = require('../image/defaultAvatar.png')
+const { getAvatarSource } = require('../../util')
 
 export default class MessageListItem extends Component<{}> {
   constructor (props) {
@@ -34,7 +35,7 @@ export default class MessageListItem extends Component<{}> {
     let contents
     const avatarLength = 50
     const {item} = this.props
-    const {onPress, image, name, content: msgContent, time, newMsgNum, id, deletePress} = item
+    const {onPress, imageAry, name, content: msgContent, time, newMsgNum, id, deletePress} = item
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
     const content = (
       <TouchableOpacity onPress={onPress}
@@ -43,7 +44,7 @@ export default class MessageListItem extends Component<{}> {
           justifyContent: 'flex-start',
           height: 55,
           alignItems: 'center'}}>
-        {Array.isArray(image) ? <GroupAvatar defaultPic={defaultAvatar} avatarStyle={avatarStyle} picAry={image}></GroupAvatar> : <Image resizeMode="cover" style={avatarStyle} source={image} />}
+        {imageAry.length > 1 ? <GroupAvatar defaultPic={defaultAvatar} avatarStyle={avatarStyle} picAry={imageAry}></GroupAvatar> : <Image resizeMode="cover" style={avatarStyle} source={getAvatarSource(imageAry[0])} />}
         <View style={{flexDirection: 'row', width: widths, justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10}}>
           <View style={{flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start', height: '100%'}}>
             <View >

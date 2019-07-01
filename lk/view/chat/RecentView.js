@@ -20,7 +20,6 @@ const { commonUtil, PushUtil } = require('@external/common')
 
 const { removeNotify } = PushUtil
 const { debounceFunc } = commonUtil
-const { getAvatarSource } = require('../../util')
 const { engine } = require('@lk/LK-C')
 
 const Application = engine.Application
@@ -36,15 +35,6 @@ const { runNetFunc } = require('../../util')
 const { StringUtil } = require('@ys/vanilla')
 
 const { stripNewline } = StringUtil
-
-type GetMsgOption = {
-  userId: string,
-  chatId: string,
-  newMsgNum: number,
-  isGroup: boolean,
-  chatName: string,
-  createTime: string
-}
 
 export default class RecentView extends ScreenWrapper {
     static navigationOptions =({ navigation }) => {
@@ -199,88 +189,6 @@ export default class RecentView extends ScreenWrapper {
       this.resetHeaderTitle()
     }
 
-    async getMsg(option: GetMsgOption) {
-      const {
-        chatId, newMsgNum, isGroup, chatName, activeTime, content, type, sendTime, sendName, pic, contactId
-      } = option
-      const result = {
-        isGroup
-      }
-
-      let obj = {
-        deletePress: () => {
-          this.deleteRow(chatId)
-        }
-      }
-      // console.log("chatName:", chatName)
-      if (isGroup) {
-        obj.id = chatId
-        obj.name = chatName
-        obj.newMsgNum = newMsgNum
-        obj.time = new Date(activeTime)
-
-        if (sendTime) {
-          obj.content = this.getMsgContent(content, type)
-        } else {
-          obj.content = '一起群聊吧'
-        }
-
-        const memberAry = await chatManager.asyGetGroupMembers(chatId)
-
-        const picAry = memberAry.map(ele => ele.pic)
-        obj.image = picAry
-        obj.onPress = () => {
-          const param = {
-            isGroup: true,
-            otherSideId: chatId
-          }
-          this.chat(param)
-        }
-      } else if (sendTime) {
-        // const msg = lastMsg
-        // const { sendTime, content, type } = msg
-        // const person = await ContactManager.asyGet(userId, chatId)
-        // const { name, pic } = person
-        obj.time = new Date(sendTime)
-        obj.content = this.getMsgContent(content, type)
-        obj.sendTime = sendTime
-        obj.newMsgNum = newMsgNum
-        obj.name = sendName
-        // obj.person = person
-        obj.id = chatId
-        obj.image = getAvatarSource(pic)
-
-        obj.onPress = () => {
-          this.chat({
-            otherSideId: contactId,
-            isGroup: false
-          })
-        }
-      } else {
-        obj = null
-      }
-      result.item = obj
-      return result
-    }
-
-    getMsgContent(content, type) {
-      const maxDisplay = 15
-      if (type === chatManager.MESSAGE_TYPE_TEXT) {
-        const { length } = content
-        content = content.replace(/&nbsp;/g, ' ')
-        if (length > maxDisplay) {
-          content = `${stripNewline(content.substring(0, maxDisplay))}......`
-        }
-      } else if (type === chatManager.MESSAGE_TYPE_IMAGE) {
-        content = '[图片]'
-      } else if (type === chatManager.MESSAGE_TYPE_FILE) {
-        content = '[文件]'
-      } else if (type === chatManager.MESSAGE_TYPE_AUDIO) {
-        content = '[语音]'
-      }
-      return content
-    }
-
   getDefaultContent = () => {
     return (
       <View style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
@@ -300,97 +208,42 @@ export default class RecentView extends ScreenWrapper {
        const user = lkApp.getCurrentUser()
        const chatAry = await chatManager.asyGetAllNew(user.id)
        console.log({chatAry})
+       const maxDisplay = 15
+
        let contentAry
 
        if (chatAry.length) {
          contentAry = chatAry.map(ele => {
-           const {isGroup, avatar, id, chatName, msgContent, msgSendTime, newMsgNum} = ele
+           const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum} = ele
+           const { length } = msgContent
+           let content = msgContent.replace(/&nbsp;/g, ' ')
+           if (length > maxDisplay) {
+             content = `${stripNewline(content.substring(0, maxDisplay))}......`
+           }
 
-           const result = {
-
+           const item = {
              onPress: () => {
                this.chat({
                  isGroup,
                  otherSideId: id
                })
              },
-             image: avatar,
+             imageAry: avatar ? avatar.split('@sep@') : [],
              name: chatName,
-             content: msgContent,
-             time: new Date(msgSendTime),
+             content,
+             time: new Date(activeTime),
              newMsgNum,
              id,
-             // deletePress
+             deletePress: async () => {
+               await chatManager.asyDeleteChat(this.user.id, id)
+               this.update()
+             }
            }
+           const result = <MessageListItem item={item} key={item.id} />
            return result
          })
        } else {
          contentAry = this.getDefaultContent()
-       }
-
-       // this.setState({
-       //   contentAry
-       // })
-       // this.resetHeaderTitle()
-     }
-
-
-     async updateRecent2() {
-       const user = lkApp.getCurrentUser()
-       const allChat = await chatManager.asyGetAllNew(user.id)
-       console.log("allChat:", {allChat})
-       const msgAryPromise = []
-       let contentAry
-       const { length } = allChat
-       if (length) {
-         for (const chat of allChat) {
-           const {
-             isGroup, name, createTime, chatId, notReadNum, content, type, sendTime, sendName, pic, contactId, activeTime
-           } = chat
-           const option = {
-             userId: user.id,
-             chatId,
-             newMsgNum: notReadNum,
-             isGroup,
-             activeTime,
-             chatName: name,
-             createTime,
-             content,
-             type,
-             sendTime,
-             sendName,
-             pic,
-             contactId
-           }
-
-           const msgPromise = this.getMsg(option)
-           msgAryPromise.push(msgPromise)
-         }
-         let recentAry = await Promise.all(msgAryPromise)
-         recentAry = recentAry.filter(ele => ele.item || ele.isGroup)
-         // console.log("recentAry:", {recentAry})
-         const data = recentAry.map(ele => ele.item)
-         const contentArray = []
-         for (const react in data) {
-           const item = data[react]
-           // console.log("recent item:", {item})
-           const messageItem = <MessageListItem item={item} key={item.id} />
-           contentArray.push(messageItem)
-         }
-         contentAry = contentArray
-       } else {
-         contentAry = (
-           <View style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
-             <TouchableOpacity
-               onPress={() => { this.props.navigation.navigate('ContactTab') }}
-               style={{
-                 marginTop: 30, width: '90%', height: 50, borderColor: 'silver', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
-               }}
-            >
-               <Text style={{ fontSize: 15, textAlign: 'center', color: 'silver' }}>开始和好友聊天吧!</Text>
-             </TouchableOpacity>
-           </View>
-         )
        }
 
        this.setState({
@@ -402,11 +255,6 @@ export default class RecentView extends ScreenWrapper {
     chat = debounceFunc((option) => {
       this.props.navigation.navigate('ChatView', option)
     })
-
-    async deleteRow(chatId) {
-      await chatManager.asyDeleteChat(this.user.id, chatId)
-      this.update()
-    }
 
     resetHeaderTitle = async () => {
       if (container.connectionOK) {

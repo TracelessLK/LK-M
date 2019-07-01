@@ -75,7 +75,7 @@ export default class ChatView extends Component<{}> {
       this.minHeight = 35
       const { navigation } = this.props
       const { isGroup, otherSideId } = navigation.state.params
-      this.isGroupChat = isGroup
+      this.isGroupChat = Boolean(isGroup)
       this.originalContentHeight = Dimensions.get('window').height - Header.HEIGHT
       this.state = {
         biggerImageVisible: false,
