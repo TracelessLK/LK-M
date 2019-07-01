@@ -25,8 +25,8 @@ export default class MsgBadge extends Component<{}> {
     chatManager.on('msgBadgeChanged', this.updateBadge)
   }
 
-  updateBadge = (num) => {
-    // console.log({updateNum:num})
+  updateBadge = ({param}) => {
+    const {num} = param
     if (num) {
       if (num < 10) {
         num = ` ${num} `
