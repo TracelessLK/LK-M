@@ -32,9 +32,6 @@ const container = require('../../state')
 
 container.NetInfoUtil = NetInfoUtil
 const { runNetFunc } = require('../../util')
-const { StringUtil } = require('@ys/vanilla')
-
-const { stripNewline } = StringUtil
 
 export default class RecentView extends ScreenWrapper {
     static navigationOptions =({ navigation }) => {
@@ -126,15 +123,21 @@ export default class RecentView extends ScreenWrapper {
       for (const event of this.eventAry) {
         chatManager.un(event, this.update)
       }
-      this.channel.un('connectionFail', this.connectionFail)
-      this.channel.un('connectionOpen', this.connectionOpen)
+      lkApp.un('netStateChanged', this.netStateChangedListener)
       AppState.removeEventListener('change', this._handleAppStateChange)
+    }
+
+    netStateChangedListener = ({param}) => {
+      if (param.isConnected) {
+        this.connectionOpen()
+      } else {
+        this.connectionFail()
+      }
     }
 
     componentDidMount=() => {
       const { navigation } = this.props
       lkApp.login()
-
 
       for (const event of this.eventAry) {
         chatManager.on(event, this.update)
@@ -142,8 +145,8 @@ export default class RecentView extends ScreenWrapper {
       this.updateRecent()
       navigation.setParams({ optionToChoose: this.optionToChoose })
 
-      this.channel.on('connectionFail', this.connectionFail)
-      this.channel.on('connectionOpen', this.connectionOpen)
+      lkApp.on('netStateChanged', this.netStateChangedListener)
+
       AppState.addEventListener('change', this._handleAppStateChange)
     }
 
@@ -206,20 +209,14 @@ export default class RecentView extends ScreenWrapper {
 
      updateRecent = async () => {
        const user = lkApp.getCurrentUser()
-       const chatAry = await chatManager.asyGetAllNew(user.id)
-       console.log({chatAry})
-       const maxDisplay = 15
+       const chatAry = await chatManager.getAllChat(user.id)
+       // console.log({chatAry})
 
        let contentAry
 
        if (chatAry.length) {
          contentAry = chatAry.map(ele => {
            const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum} = ele
-           const { length } = msgContent
-           let content = msgContent.replace(/&nbsp;/g, ' ')
-           if (length > maxDisplay) {
-             content = `${stripNewline(content.substring(0, maxDisplay))}......`
-           }
 
            const item = {
              onPress: () => {
@@ -230,7 +227,7 @@ export default class RecentView extends ScreenWrapper {
              },
              imageAry: avatar ? avatar.split('@sep@') : [],
              name: chatName,
-             content,
+             content: msgContent,
              time: new Date(activeTime),
              newMsgNum,
              id,
