@@ -40,13 +40,7 @@ export default class OrgView extends ScreenWrapper {
     }
 
     componentDidMount () {
-      // for(let event of this.eventAry){
-      //     // Store.on(event,this.update);
-      // }
       this.asyncRender()
-    }
-
-    componentDidUpdate () {
     }
 
     componentWillUnmount () {

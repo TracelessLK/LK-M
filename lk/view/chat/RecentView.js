@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 import NetIndicator from '../common/NetIndicator'
 import ScreenWrapper from '../common/ScreenWrapper'
-import MessageListItem from "./MessageListItem"
+import ChatItem from "./ChatItem"
 
 const { commonUtil, PushUtil } = require('@external/common')
 
@@ -24,7 +24,7 @@ const { engine } = require('@lk/LK-C')
 
 const Application = engine.Application
 const lkApp = Application.getCurrentApp()
-const chatManager = require('../../manager/LKChatManager')
+const chatManager = engine.ChatManager
 
 const addPng = require('../image/add.png')
 const { NetInfoUtil } = require('@ys/react-native-collection')
@@ -53,7 +53,7 @@ export default class RecentView extends ScreenWrapper {
         contentAry: null,
         refreshing: false
       }
-      this.eventAry = ['msgChanged', 'recentChanged', 'msgReceived', 'msgRead', 'msgBadgeChanged']
+      this.eventAry = ['msgChanged', 'recentChanged']
       // todo: store all not undefined value
       this.channel = lkApp.getLKWSChannel()
       this.user = lkApp.getCurrentUser()
@@ -236,7 +236,7 @@ export default class RecentView extends ScreenWrapper {
                this.update()
              }
            }
-           const result = <MessageListItem item={item} key={item.id} />
+           const result = <ChatItem item={item} key={item.id} />
            return result
          })
        } else {

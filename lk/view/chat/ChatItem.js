@@ -11,15 +11,36 @@ import { Badge, Button, Icon as NBIcon, Text, SwipeRow
 } from 'native-base'
 import GroupAvatar from '../../../common/widget/GroupAvatar'
 
+const { engine } = require('@lk/LK-C')
+const {ChatManager} = engine
+
+
 const dateTimeUtil = require('../../../common/util/dateTimeUtil')
 const defaultAvatar = require('../image/defaultAvatar.png')
 const { getAvatarSource } = require('../../util')
 
-export default class MessageListItem extends Component<{}> {
+export default class ChatItem extends Component<{}> {
   constructor (props) {
     super(props)
     this.state = {
     }
+  }
+
+  componentDidMount() {
+    ChatManager.on('chatChange', this.update)
+  }
+
+  update = ({param}) => {
+    const {chatId, chatNotReadNum} = param
+    if (chatId === this.props.item.id) {
+      this.setState({
+        chatNotReadNum
+      })
+    }
+  }
+
+  componentWillUnmount() {
+    ChatManager.un('chatChange', this.update)
   }
 
   render () {
@@ -36,6 +57,7 @@ export default class MessageListItem extends Component<{}> {
     const avatarLength = 50
     const {item} = this.props
     const {onPress, imageAry, name, content: msgContent, time, newMsgNum, id, deletePress} = item
+    const chatNotReadNum = this.state.chatNotReadNum === undefined ? this.state.chatNotReadNum : newMsgNum
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
     const content = (
       <TouchableOpacity onPress={onPress}
@@ -63,9 +85,9 @@ export default class MessageListItem extends Component<{}> {
               {time ? dateTimeUtil.getDisplayTime(time) : null}
             </Text>
             <View>
-              {newMsgNum
+              {chatNotReadNum
                 ? <Badge style={{transform: [{scaleX: 0.8}, {scaleY: 0.8}]}}>
-                  <Text style={{}}>{newMsgNum}</Text>
+                  <Text style={{}}>{chatNotReadNum}</Text>
                 </Badge>
                 : null}
             </View>
@@ -92,11 +114,11 @@ export default class MessageListItem extends Component<{}> {
   }
 }
 
-MessageListItem.defaultProps = {
+ChatItem.defaultProps = {
 
 }
 
-MessageListItem.propTypes = {
+ChatItem.propTypes = {
   /*
        * [{
        *  onPress:(ele)=>{},

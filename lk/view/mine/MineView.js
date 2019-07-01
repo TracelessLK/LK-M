@@ -47,7 +47,7 @@ export default class MineView extends ScreenWrapper {
         avatarSource,
         name: this.user.name
       }
-      this.eventAry = ['nameChanged', 'picChanged']
+      this.eventAry = ['selfInfoChanged']
     }
 
     componentDidMount() {

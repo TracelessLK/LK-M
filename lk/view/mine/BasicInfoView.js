@@ -32,7 +32,7 @@ export default class BasicInfoView extends ScreenWrapper {
     }
 
     componentDidMount() {
-      userManager.on('nameChanged', this.update)
+      userManager.on('selfInfoChanged', this.update)
     }
 
     update = () => {
@@ -41,7 +41,7 @@ export default class BasicInfoView extends ScreenWrapper {
     }
 
     componentWillUnmount() {
-      userManager.un('nameChanged', this.update)
+      userManager.un('selfInfoChanged', this.update)
     }
 
     subRender() {

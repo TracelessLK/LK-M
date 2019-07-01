@@ -41,17 +41,11 @@ export default class ContactView extends ScreenWrapper {
     }
 
     componentDidMount () {
-      // for(let event of this.eventAry){
-      //     ContactManager.on(event,this.update);
-      // }
       ContactManager.on('contactChanged', this.update)
       this.asyncRender()
     }
 
     componentWillUnmount =() => {
-      // for(let event of this.eventAry){
-      //     ContactManager.un(event,this.update);
-      // }
       ContactManager.un('contactChanged', this.update)
     }
 
@@ -74,7 +68,6 @@ export default class ContactView extends ScreenWrapper {
     async asyncRender (filterText) {
       const user = lkApp.getCurrentUser()
       const orgAry = await OrgManager.asyGetChildren(null, user.id)
-      // console.log({orgAry})
       const sortFunc = (ele1, ele2) => {
         const result = ele2.title < ele1.title
 
