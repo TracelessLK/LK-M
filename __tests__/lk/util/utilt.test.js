@@ -1,3 +1,5 @@
+import '../../testutils/jest'
+
 //mock整个模块
 jest.mock('../../../lk/util/NetUtil.js')
 
