@@ -22,11 +22,10 @@ export default class MsgBadge extends Component<{}> {
   async componentDidMount () {
     const num = await chatManager.asyGetAllMsgNotReadNum(this.user.id)
     this.updateBadge(num)
-    chatManager.on('msgBadgeChanged', this.updateBadge)
+    chatManager.on('msgBadgeChanged', this.updateBadgeListener)
   }
 
-  updateBadge = ({param}) => {
-    const {num} = param
+  updateBadge = (num) => {
     if (num) {
       if (num < 10) {
         num = ` ${num} `
@@ -39,6 +38,11 @@ export default class MsgBadge extends Component<{}> {
         badge: null
       })
     }
+  }
+
+  updateBadgeListener = ({param}) => {
+    const {num} = param
+    this.updateBadge(num)
   }
 
   componentWillUnmount () {
