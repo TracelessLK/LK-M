@@ -62,8 +62,8 @@ lkApplication.on('currentUserChanged', (user) => {
   }
 })
 
-lkApplication.on('netStateChanged', (result) => {
-  container.connectionOK = result
+lkApplication.on('netStateChanged', ({param}) => {
+  container.connectionOK = param.isConnected
 })
 
 async function checkUpdate(param) {

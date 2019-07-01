@@ -17,31 +17,37 @@ export default class NetIndicator extends Component<{}> {
     super(props)
     this.channel = lkApp.getLKWSChannel()
     this.state = {
-      connectionOK: true
+      isConnectedToServer: true
     }
   }
 
   componentWillUnmount =() => {
-    this.channel.un('connectionFail', this.connectionFail)
-    this.channel.un('connectionOpen', this.connectionOpen)
+    lkApp.un('netStateChanged', this.netStateChangedListener)
   }
 
   componentDidMount=() => {
-    this.channel.on('connectionFail', this.connectionFail)
-    this.channel.on('connectionOpen', this.connectionOpen)
+    lkApp.on('netStateChanged', this.netStateChangedListener)
+  }
+
+  netStateChangedListener = ({param}) => {
+    if (param.isConnected) {
+      this.connectionOpen()
+    } else {
+      this.connectionFail()
+    }
   }
 
   connectionFail = () => {
     const msg = this.getConnectionMsg()
     if (NetInfoUtil.online) {
       this.setState({
-        connectionOK: false,
+        isConnectedToServer: false,
         msg,
         type: 'connectionFail'
       })
     } else {
       this.setState({
-        connectionOK: false,
+        isConnectedToServer: false,
         msg,
         type: 'networkFail'
       })
@@ -61,14 +67,14 @@ export default class NetIndicator extends Component<{}> {
   connectionOpen = () => {
     // this.channel.asyGetAllDetainedMsg()
     this.setState({
-      connectionOK: true
+      isConnectedToServer: true
     })
   }
 
   render () {
     return (
       <View style={{width: '100%'}}>
-        {this.state.connectionOK ? null
+        {this.state.isConnectedToServer ? null
           : <View style={{height: 40, backgroundColor: '#ffe3e0', width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}
             onPress={() => {
               // this.props.navigation.navigate('ConnectionFailView', {type: this.state.type})
