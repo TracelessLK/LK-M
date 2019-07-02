@@ -32,7 +32,6 @@ import MessageItem from './MessageItem'
 import DelayIndicator from './DelayIndicator'
 import ScrollBottom from './ScrollBottom2'
 import AudioPlay from './AudioPlay'
-import PropTypes from "prop-types";
 
 const { engine } = require('@lk/LK-C')
 const _ = require('lodash')
@@ -168,9 +167,9 @@ export default class ChatView extends Component<{}> {
 
        for (let i = 0; i < msgLength; i++) {
          const msg = msgAry[i]
-         const { sendTime, id, senderName, isSelf, pic, state, content, type} = msg
-         if (!msgSet.has(id)) {
-           msgSet.add(id)
+         const { sendTime, msgId, senderName, isSelf, pic, state, content, type} = msg
+         if (!msgSet.has(msgId)) {
+           msgSet.add(msgId)
            const now = new Date()
            if ((lastShowingTime && sendTime - lastShowingTime > 10 * 60 * 1000)
              || !lastShowingTime) {
@@ -193,19 +192,19 @@ export default class ChatView extends Component<{}> {
              type,
              state,
              chatId: this.otherSideId,
-             msgId: id,
+             msgId,
              senderName,
              isSelf,
              pic,
              isGroupChat: this.isGroupChat,
              onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE
                ? () => {
-                 this.showBiggerImage(id)
+                 this.showBiggerImage(msgId)
                } : null,
              navigation
            }
 
-           recordAry.push(<MessageItem key={id} {...option} />)
+           recordAry.push(<MessageItem key={msgId} {...option} />)
          }
        }
        this.setState({
