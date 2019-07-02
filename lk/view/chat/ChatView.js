@@ -74,8 +74,9 @@ export default class ChatView extends Component<{}> {
       super(props)
       this.minHeight = 35
       const { navigation } = this.props
-      const { isGroup, otherSideId, chatName} = navigation.state.params
+      const { isGroup, otherSideId, chatName, imageAry} = navigation.state.params
       this.chatName = chatName
+      this.imageAry = imageAry
       this.isGroupChat = Boolean(isGroup)
       this.originalContentHeight = Dimensions.get('window').height - Header.HEIGHT
       this.state = {
@@ -298,9 +299,10 @@ export default class ChatView extends Component<{}> {
           chatName: this.chatName
         })
       } else {
-        navigation.navigate('FriendInfoView',  {
+        navigation.navigate('FriendInfoView', {
           chatId: this.otherSideId,
-          chatName: this.chatName
+          chatName: this.chatName,
+          imageAry: this.imageAry
         })
       }
     }
@@ -352,17 +354,9 @@ export default class ChatView extends Component<{}> {
         },
         maxWidth: dimension.width * 3,
         maxHeight: dimension.height * 3
-        // quality: 0.5
       }
       ImagePicker.showImagePicker(options, async response => {
         const {didCancel, error, customButton} = response
-        // const mSize = 1024 * 1024
-        // console.log({
-        //   fileSize: fileSize / mSize,
-        //   width,
-        //   height,
-        //   data: data.length / mSize
-        // })
         if (didCancel) {
 
         } else if (error) {
@@ -372,14 +366,10 @@ export default class ChatView extends Component<{}> {
           const imageUri = response.uri
           const maxWidth = response.width
           const maxHeight = response.height
-          // console.log('start')
-          // const step2 = Date.now()
 
           const res = await ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, 'JPEG', 70, 0, null)
           const dataImg = await RNFetchBlob.fs.readFile(res.path, 'base64')
           await this.sendImage({ data: dataImg, width: maxWidth, height: maxHeight })
-          // const step3 = Date.now()
-          // console.log(`sendImage: ${(step3 - step2) / 1000}`)
         }
       })
     }

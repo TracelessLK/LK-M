@@ -80,12 +80,14 @@ export default class GroupInfoView extends Component<{}> {
     }
 
     const {navigation} = this.props
-    const state = this.state
     const list = [
       {
         title: '群聊名称',
         onPress: () => {
-          navigation.navigate('GroupRenameView', state.groups)
+          navigation.navigate('GroupRenameView', {
+            id: this.chatId,
+            name: this.chatName
+          })
         }
 
       }
