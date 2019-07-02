@@ -124,10 +124,14 @@ export default class RecentView extends ScreenWrapper {
         chatManager.un(event, this.update)
       }
       lkApp.un('netStateChanged', this.netStateChangedListener)
-      chatManager.un('msgBadgeChanged', this.resetHeaderTitle)
+      chatManager.un('msgBadgeChanged', this.msgBadgeChangedListener )
 
       AppState.removeEventListener('change', this._handleAppStateChange)
     }
+
+  msgBadgeChangedListener = ({param: {num}}) => {
+    this.resetHeaderTitle(num)
+  }
 
     netStateChangedListener = (option) => {
       const {param} = option
@@ -146,7 +150,7 @@ export default class RecentView extends ScreenWrapper {
         chatManager.on(event, this.update)
       }
 
-      chatManager.on('msgBadgeChanged', this.resetHeaderTitle)
+      chatManager.on('msgBadgeChanged', this.msgBadgeChangedListener)
       this.updateRecent()
       navigation.setParams({ optionToChoose: this.optionToChoose })
 
@@ -258,9 +262,11 @@ export default class RecentView extends ScreenWrapper {
       this.props.navigation.navigate('ChatView', option)
     })
 
-    resetHeaderTitle = async ({param}) => {
+    resetHeaderTitle = async (num) => {
       if (container.connectionOK) {
-        const {num} = param
+        if (!num) {
+          num = await chatManager.asyGetAllMsgNotReadNum(this.user.id)
+        }
         const { navigation } = this.props
         navigation.setParams({
           headerTitle: `消息${num ? `(${num})` : ''}`

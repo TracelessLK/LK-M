@@ -3,7 +3,6 @@ import {
   ScrollView, Text,
   View
 } from 'react-native'
-//import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const {engine} = require('@lk/LK-C')
 
@@ -28,26 +27,20 @@ export default class ReadStateView extends Component<{}> {
   }
 
   asyncRender = async () => {
-    const {msgId, chatId, group} = this.props.navigation.state.params
-    const {memberInfoObj} = group
-    const readState = await chatManager.asyGetGroupMsgReadReport(chatId, msgId)
-    this.readAry = readState.map(ele => ele.id)
-    this.msgId = msgId
+    const {msgId} = this.props.navigation.state.params
+    const readStateAry = await chatManager.getAllReadState({msgId})
     const dataAry = []
-    for (const key in memberInfoObj) {
-      const value = memberInfoObj[key]
-      const {id, name, pic} = value
-      if (id !== this.user.id) {
-        const state = this.readAry.includes(id) ? chatManager.MESSAGE_STATE_TARGET_READ : chatManager.MESSAGE_STATE_SERVER_RECEIVE
+    for (const key in readStateAry) {
+      const value = readStateAry[key]
+      const {contactId, name, state, pic} = value
 
-        const obj = {
-          image: getAvatarSource(pic),
-          key: id,
-          title: name,
-          rightContent: <View><Text>{getIconNameByState(state)}</Text></View>
-        }
-        dataAry.push(obj)
+      const obj = {
+        image: getAvatarSource(pic),
+        key: contactId,
+        title: name,
+        rightContent: <View><Text>{getIconNameByState(state)}</Text></View>
       }
+      dataAry.push(obj)
       const content = <View style={{marginVertical: 20}}>
         <List data={dataAry}></List>
       </View>
