@@ -14,6 +14,7 @@ const {getAvatarSource} = require('../../util')
 const {engine} = require('@lk/LK-C')
 
 const common = require('@external/common')
+const uuid = require('uuid')
 
 const {List} = common
 const chatManager = engine.ChatManager
@@ -70,7 +71,8 @@ export default class GroupInfoView extends Component<{}> {
       const {contactId, name, pic} = value
       const obj = {
         image: getAvatarSource(pic),
-        key: contactId,
+        // key: contactId,
+        key: uuid(),
         title: name
       }
       obj.title = name

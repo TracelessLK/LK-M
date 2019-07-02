@@ -14,6 +14,7 @@ const lkApp = Application.getCurrentApp()
 
 const {getAvatarSource} = require('../../util')
 const _ = require('lodash')
+const uuid = require('uuid')
 
 const chatManager = engine.ChatManager
 const {runNetFunc} = require('../../util')
@@ -75,7 +76,8 @@ export default class AddGroupMemberView extends Component<{}> {
     for (const ele of memberAry) {
       const obj = {}
       obj.image = getAvatarSource(ele.pic)
-      obj.key = ele.id
+      // obj.key = ele.id
+      obj.key = uuid()
       obj.onPress = null
       obj.title = ele.name
       dataAry.push(obj)

@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import {
   ScrollView,
-  Text
+  Text,
+  View
 } from 'react-native'
 
 export default class ErrorBoundary extends Component {
@@ -18,10 +19,12 @@ export default class ErrorBoundary extends Component {
       return this.props.children
     }
     return (
-      <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>
-          {this.state.error.toString()}
-        </Text>
+      <ScrollView >
+        <View style={{marginVertical: 20}}>
+          <Text>
+            {this.state.error.toString()}
+          </Text>
+        </View>
       </ScrollView>
     )
   }
