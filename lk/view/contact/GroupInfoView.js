@@ -37,17 +37,19 @@ export default class GroupInfoView extends Component<{}> {
     const { chatName, chatId } = this.props.navigation.state.params
     this.chatName = chatName
     this.chatId = chatId
+    this.state = {}
+
     this.asyncRender()
-    this.state = {
-      dataAry: []
-    }
   }
 
   componentDidMount () {
     this.asyncRender()
     const {navigation} = this.props
     navigation.setParams({addMember: () => {
-      navigation.navigate('AddGroupMemberView', {group: this.state.groups})
+      navigation.navigate('AddGroupMemberView', {
+        chatId: this.chatId,
+        chatName: this.chatName
+      })
     }})
     chatManager.on('groupMemberChange', this.groupMemberChange)
   }
@@ -88,11 +90,11 @@ export default class GroupInfoView extends Component<{}> {
     ]
     const style = {
       listStyle: {
-        backgroundColor: 'white', marginTop: 20
+        backgroundColor: 'white', marginVertical: 10
       }
     }
     const content = (
-      <View style={{marginVertical: 20}}>
+      <View style={{marginBottom: 20}}>
         <View style={style.listStyle}>
           {
               list.map((item, i) => (

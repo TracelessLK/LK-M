@@ -16,7 +16,6 @@ const {getAvatarSource} = require('../../util')
 const _ = require('lodash')
 
 const chatManager = engine.ChatManager
-const ContactManager = engine.ContactManager
 const {runNetFunc} = require('../../util')
 const {CenterLayout} = require('@ys/react-native-collection')
 const style = require('../style')
@@ -48,8 +47,9 @@ export default class AddGroupMemberView extends Component<{}> {
     this.state = {
       contentAry: []
     }
-    this.group = this.props.navigation.state.params.group
-    // console.log({group: this.group})
+    const {chatId, chatName} = this.props.navigation.state.params
+    this.chatId = chatId
+    this.chatName = chatName
     this.selectedAry = []
     this.user = lkApp.getCurrentUser()
   }
@@ -59,84 +59,29 @@ export default class AddGroupMemberView extends Component<{}> {
       if (this.selectedAry.length === 0) {
         alert('请选择需要新增群成员')
       } else {
-        // console.log({selectedAry: this.selectedAry})
-        await chatManager.newGroupMembers(this.group.id, this.group.name, this.selectedAry)
+        await chatManager.newGroupMembers(this.chatId, this.chatName, this.selectedAry)
         this.props.navigation.goBack()
       }
     })
   }
 
-  async asyncRender (filterText) {
+  async asyncRender () {
     const {navigation} = this.props
-    const memberIdAry = Object.keys(this.group.memberInfoObj)
-    // console.log({memberIdAry})
-    const user = lkApp.getCurrentUser()
-    const sortFunc = (ele1, ele2) => {
-      const result = ele2.title < ele1.title
-
-      return result
-    }
-    let dataAry = []
-
-    const _f = (item, content, ary) => {
-      if (filterText) {
-        if (item.name.includes(filterText)) {
-          ary.push(content)
-        }
-      } else {
-        ary.push(content)
-      }
-    }
-    const ary = []
-
-    let memberAry = await ContactManager.asyGetAllMembers(user.id)
-    memberAry = memberAry.filter(ele => {
-      return !memberIdAry.includes(ele.id)
+    const memberAry = await chatManager.getNonGroupMember({
+      chatId: this.chatId
     })
+    const dataAry = []
+
     for (const ele of memberAry) {
-      if (ele) {
-        if (ele.id !== user.id) {
-          const obj = {}
-          obj.image = getAvatarSource(ele.pic)
-          obj.key = ele.id
-          obj.onPress = null
-          obj.title = ele.name
-          obj.extra = {
-            id: ele.id,
-            name: ele.name,
-            pic: ele.pic,
-            serverIP: user.serverIP,
-            serverPort: user.serverPort
-          }
-          _f(ele, obj, ary)
-        }
-      }
-    }
-
-    let friendAry = await ContactManager.asyGetAllFriends(user.id)
-    friendAry = friendAry.filter(ele => {
-      return !memberIdAry.includes(ele.id)
-    })
-    // console.log({memberAry, friendAry})
-
-    for (const ele of friendAry) {
       const obj = {}
-      obj.onPress = null
-      obj.title = ele.name
       obj.image = getAvatarSource(ele.pic)
       obj.key = ele.id
-      obj.extra = {
-        id: ele.id,
-        name: ele.name,
-        pic: ele.pic,
-        serverIP: ele.serverIP,
-        serverPort: ele.serverPort
-      }
-      _f(ele, obj, ary)
+      obj.onPress = null
+      obj.title = ele.name
+      dataAry.push(obj)
     }
 
-    ary.sort(sortFunc)
-    dataAry = dataAry.concat(ary)
+
     let contentAry = <List data={dataAry} showSwitch onSelectedChange={this.onSelectedChange}></List>
 
     if (!dataAry.length) {
