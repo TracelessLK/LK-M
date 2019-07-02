@@ -12,6 +12,7 @@ import { Badge, Button, Icon as NBIcon, Text, SwipeRow
 import GroupAvatar from '../../../common/widget/GroupAvatar'
 
 const { engine } = require('@lk/LK-C')
+
 const {ChatManager} = engine
 
 

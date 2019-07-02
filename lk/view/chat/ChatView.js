@@ -32,6 +32,7 @@ import MessageItem from './MessageItem'
 import DelayIndicator from './DelayIndicator'
 import ScrollBottom from './ScrollBottom2'
 import AudioPlay from './AudioPlay'
+import PropTypes from "prop-types";
 
 const { engine } = require('@lk/LK-C')
 const _ = require('lodash')
@@ -74,8 +75,9 @@ export default class ChatView extends Component<{}> {
       super(props)
       this.minHeight = 35
       const { navigation } = this.props
-      const { isGroup, otherSideId } = navigation.state.params
+      const { isGroup, otherSideId, chatName} = navigation.state.params
       this.isGroupChat = Boolean(isGroup)
+      this.chatName = chatName
       this.originalContentHeight = Dimensions.get('window').height - Header.HEIGHT
       this.state = {
         biggerImageVisible: false,
@@ -116,52 +118,35 @@ export default class ChatView extends Component<{}> {
 
      refreshRecord = async (limit) => {
        const user = lkApp.getCurrentUser()
-       let memberInfoObj
-       let headerTitle
+       const headerTitle = this.chatName
+
        if (this.isGroupChat) {
-         const chat = await chatManager.asyGetChat(lkApp.getCurrentUser().id, this.otherSideId)
-         headerTitle = chat.name
-         const memberAry = await chatManager.asyGetGroupMembers(this.otherSideId)
-         memberInfoObj = memberAry.reduce((accumulator, ele) => {
-           accumulator[ele.id] = ele
-           return accumulator
-         }, {})
          this.otherSide = {
-           memberInfoObj,
            id: this.otherSideId,
            name: headerTitle
          }
        } else {
          const otherSide = await ContactManager.asyGet(user.id, this.otherSideId)
          this.otherSide = otherSide
-         headerTitle = otherSide.name
        }
        const { navigation } = this.props
        navigation.setParams({
          headerTitle
        })
 
-       const msgAry = await chatManager.asyGetMsgs(user.id, this.otherSideId, limit)
-       const msgOtherSideAry = msgAry.filter(msg => msg.senderUid !== user.id)
-       const { length: msgOtherSideAryLength } = msgOtherSideAry
+       const msgAry = await chatManager.getAllMsg({
+         userId: user.id,
+         chatId: this.otherSideId,
+         limit
+       })
 
-       if (msgOtherSideAryLength) {
-         this.relativeMsgId = _.last(msgOtherSideAry).id
-       } else {
-         this.relativeMsgId = null
-       }
        const imageUrls = []
        const imageIndexer = {}
-       const senderCache = {}
        let index = 0
-       for (let i = 0; i < msgAry.length; i++) {
-         const record = msgAry[i]
-         const { senderUid } = record
-         if (!senderCache[senderUid]) {
-           senderCache[senderUid] = await ContactManager.asyGet(user.id, senderUid)
-         }
-         if (record.type === chatManager.MESSAGE_TYPE_IMAGE) {
-           const img = JSON.parse(record.content)
+       for (let record of msgAry) {
+         const {type, content, msgId} = record
+         if (type === chatManager.MESSAGE_TYPE_IMAGE) {
+           const img = JSON.parse(content)
 
            img.data = this.getImageData(img)
 
@@ -170,7 +155,7 @@ export default class ChatView extends Component<{}> {
              props: {
              }
            })
-           imageIndexer[record.id] = index
+           imageIndexer[msgId] = index
            index++
          }
        }
@@ -183,7 +168,7 @@ export default class ChatView extends Component<{}> {
 
        for (let i = 0; i < msgLength; i++) {
          const msg = msgAry[i]
-         const { sendTime, id } = msg
+         const { sendTime, id, senderName, isSelf, pic, state, content, type} = msg
          if (!msgSet.has(id)) {
            msgSet.add(id)
            const now = new Date()
@@ -202,22 +187,24 @@ export default class ChatView extends Component<{}> {
              timeStr += `${date.getHours()}:${date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()}`
              recordAry.push(<Text style={{ marginVertical: 10, color: '#a0a0a0', fontSize: 11 }} key={lastShowingTime || uuid()}>{timeStr}</Text>)
            }
+
            const option = {
-             msg,
+             content,
+             type,
+             state,
+             chatId: this.otherSideId,
+             msgId: id,
+             senderName,
+             isSelf,
+             pic,
              isGroupChat: this.isGroupChat,
-             memberInfoObj,
              onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE
                ? () => {
                  this.showBiggerImage(id)
                } : null,
-             opacity: 0 + (msgLength - i - 2) * (1 / this.extra.maxCount),
-             // opacity: 0,
-             navigation,
-             otherSide: this.otherSide
+             navigation
            }
-           if (msg.senderUid !== user.id) {
-             option.sender = senderCache[msg.senderUid]
-           }
+
            recordAry.push(<MessageItem key={id} {...option} />)
          }
        }
@@ -324,9 +311,9 @@ export default class ChatView extends Component<{}> {
           const channel = lkApp.getLKWSChannel()
           try {
             if (this.isGroupChat) {
-              channel.sendGroupText(this.otherSideId, this.text, this.relativeMsgId)
+              channel.sendGroupText(this.otherSideId, this.text, null)
             } else {
-              channel.sendText(this.otherSideId, this.text, this.relativeMsgId)
+              channel.sendText(this.otherSideId, this.text, null)
             }
             this.text = ''
           } catch (err) {
@@ -343,7 +330,7 @@ export default class ChatView extends Component<{}> {
     sendImage = ({ data, width, height }) => {
       return new Promise(resolve => {
         runNetFunc(() => {
-          const result = lkApp.getLKWSChannel().sendImage(this.otherSideId, data, width, height, this.relativeMsgId, this.isGroupChat)
+          const result = lkApp.getLKWSChannel().sendImage(this.otherSideId, data, width, height, null, this.isGroupChat)
           resolve(result)
         })
       })
@@ -784,7 +771,7 @@ export default class ChatView extends Component<{}> {
             if (this.audioFilePath) {
               RNFetchBlob.fs.readFile(this.audioFilePath, 'base64').then((data) => {
                 const ext = _.last(this.audioFilePath.split('.'))
-                lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.recordTimeRaw, this.relativeMsgId,
+                lkApp.getLKWSChannel().sendAudio(this.otherSideId, data, ext, this.recordTimeRaw, null,
                   this.isGroupChat)
                   .catch((err) => {
                     Alert.alert(err.toString())

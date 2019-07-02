@@ -37,7 +37,7 @@ export default class MessageList extends Component<{}> {
     const {data} = this.props
     for (const ele of data) {
       debugLog(ele)
-      console.log("ele:",{ele})
+      console.log("ele:", {ele})
       const {onPress, image, name, content: msgContent, time, newMsgNum, id, deletePress} = ele
       console.log("onPress", {onPress})
       // console.log({id})

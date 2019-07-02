@@ -117,15 +117,13 @@ export default class MessageItem extends Component<{}> {
     } else if (isGroupChat && (state === chatManager.MESSAGE_STATE_TARGET_READ
       || state === chatManager.MESSAGE_STATE_SERVER_RECEIVE)) {
       navigation.navigate('ReadStateView', {
-        msgId,
-        chatId,
-        group: otherSide
+        msgId
       })
     }
   }
 
   render() {
-    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, type, content: msgContent, state, onPress, chatId} = this.props
+    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, state} = this.props
 
     const picSource = getAvatarSource(pic)
     let content = null
@@ -225,11 +223,18 @@ MessageItem.defaultProps = {
   }
 }
 
+
 MessageItem.propTypes = {
-  msg: PropTypes.object,
+  msgId: PropTypes.string,
+  senderName: PropTypes.string,
   isGroupChat: PropTypes.bool,
+  isSelf: PropTypes.bool,
+  pic: PropTypes.any,
+  type: PropTypes.number,
+  content: PropTypes.string,
+  chatId: PropTypes.string,
   onPress: PropTypes.func,
-  otherSide: PropTypes.object,
   opacity: PropTypes.number,
+  state: PropTypes.number,
   navigation: PropTypes.object
 }

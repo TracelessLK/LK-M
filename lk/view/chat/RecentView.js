@@ -25,7 +25,6 @@ const { engine } = require('@lk/LK-C')
 const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const chatManager = engine.ChatManager
-
 const addPng = require('../image/add.png')
 const { NetInfoUtil } = require('@ys/react-native-collection')
 const container = require('../../state')
@@ -124,7 +123,7 @@ export default class RecentView extends ScreenWrapper {
         chatManager.un(event, this.update)
       }
       lkApp.un('netStateChanged', this.netStateChangedListener)
-      chatManager.un('msgBadgeChanged', this.msgBadgeChangedListener )
+      chatManager.un('msgBadgeChanged', this.msgBadgeChangedListener)
 
       AppState.removeEventListener('change', this._handleAppStateChange)
     }
@@ -231,7 +230,8 @@ export default class RecentView extends ScreenWrapper {
              onPress: () => {
                this.chat({
                  isGroup,
-                 otherSideId: id
+                 otherSideId: id,
+                 chatName
                })
              },
              imageAry: avatar ? avatar.split('@sep@') : [],
