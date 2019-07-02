@@ -20,15 +20,25 @@ export default class ReadStateView extends Component<{}> {
     super(props)
     this.state = {}
     this.user = lkApp.getCurrentUser()
+    this.msgId = this.props.navigation.state.params
   }
 
   componentDidMount () {
     this.asyncRender()
+    chatManager.on('selfMsgRead', this.selfMsgReadListener)
+  }
+
+  selfMsgReadListener = ({param}) => {
+    const {msgId} = param
+    if (msgId === this.msgId) {
+      this.asyncRender()
+    }
   }
 
   asyncRender = async () => {
-    const {msgId} = this.props.navigation.state.params
-    const readStateAry = await chatManager.getAllReadState({msgId})
+    const readStateAry = await chatManager.getAllReadState({
+      msgId: this.msgId
+    })
     const dataAry = []
     for (const key in readStateAry) {
       const value = readStateAry[key]
@@ -49,10 +59,9 @@ export default class ReadStateView extends Component<{}> {
       })
     }
   }
-  // todo: 消息状态事件更新
 
   componentWillUnmount () {
-
+    chatManager.un('selfMsgRead', this.selfMsgReadListener)
   }
 
   render () {

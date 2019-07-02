@@ -43,7 +43,6 @@ const Constant = require('../state/Constant')
 const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const chatManager = engine.ChatManager
-const ContactManager = engine.ContactManager
 const personImg = require('../image/person.png')
 const groupImg = require('../image/group.png')
 const { runNetFunc } = require('../../util')
@@ -154,7 +153,7 @@ export default class ChatView extends Component<{}> {
 
        for (let i = 0; i < msgLength; i++) {
          const msg = msgAry[i]
-         let { sendTime, msgId, senderName, isSelf, pic, state, content, type} = msg
+         let { sendTime, msgId, senderName, isSelf, pic, state, content, type, readState} = msg
          isSelf = Boolean(isSelf)
          if (!msgSet.has(msgId)) {
            msgSet.add(msgId)
@@ -181,6 +180,7 @@ export default class ChatView extends Component<{}> {
              state,
              chatId: this.otherSideId,
              msgId,
+             readState,
              senderName,
              isSelf,
              pic,

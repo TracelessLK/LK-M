@@ -28,12 +28,28 @@ if (Platform.OS === 'ios') {
   folderId = getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
 }
 export default class MessageItem extends Component<{}> {
-  componentDidMount() {
+  constructor() {
+    super()
+    this.state = {
 
+    }
+  }
+
+  componentDidMount() {
+    chatManager.on('selfMsgRead', this.selfMsgReadListener)
+  }
+
+  selfMsgReadListener = ({param}) => {
+    const {msgId, readState} = param
+    if (msgId === this.props.msgId) {
+      this.setState({
+        readState
+      })
+    }
   }
 
   componentWillUnmount() {
-
+    chatManager.un('selfMsgRead', this.selfMsgReadListener)
   }
 
   getImageData = (img) => {
@@ -123,7 +139,7 @@ export default class MessageItem extends Component<{}> {
   }
 
   render() {
-    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, state} = this.props
+    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, state, readState} = this.props
 
     const picSource = getAvatarSource(pic)
     let content = null
