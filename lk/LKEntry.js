@@ -51,11 +51,12 @@ const Application = engine.Application
 const ChatManager = engine.ChatManager
 const lkApplication = Application.getCurrentApp()
 
-lkApplication.on('currentUserChanged', (user) => {
-  if (user) {
-    checkUpdate(user)
-    container.state.user = user
-    AsyncStorage.setItem('user', JSON.stringify(user))
+lkApplication.on('currentUserChanged', (option) => {
+  const {param} = option
+  if (param) {
+    checkUpdate(param)
+    container.state.user = param
+    AsyncStorage.setItem('user', JSON.stringify(param))
   } else {
     AsyncStorage.removeItem('user')
     container.state = {}
@@ -82,10 +83,7 @@ async function checkUpdate(param) {
     if (updateUrlBase) {
       base = updateUrlBase
     }
-
-    // console.log({appInfo})
     const checkUpdateUrl = `${base}${updateUrl}`
-    // console.log({checkUpdateUrl})
     const manualDownloadUrl = `${base}/pkg/${Platform.OS}/${appName}.${Platform.OS === 'android' ? 'apk' : 'ipa'}`
 
     const option = {
@@ -121,7 +119,6 @@ YellowBox.ignoreWarnings([
   'a promise was created in'
 ])
 console.disableYellowBox = true
-// console.log(process.env)
 
 const { ErrorUtil, ErrorStock } = require('@ys/react-native-collection')
 

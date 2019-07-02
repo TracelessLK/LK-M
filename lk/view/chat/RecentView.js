@@ -129,7 +129,8 @@ export default class RecentView extends ScreenWrapper {
       AppState.removeEventListener('change', this._handleAppStateChange)
     }
 
-    netStateChangedListener = ({param}) => {
+    netStateChangedListener = (option) => {
+      const {param} = option
       if (param.isConnected) {
         this.connectionOpen()
       } else {
