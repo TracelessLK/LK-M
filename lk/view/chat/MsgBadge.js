@@ -5,7 +5,8 @@ import {
 import {Badge} from 'native-base'
 
 const {engine} = require('@lk/LK-C')
-const chatManager = require('../../manager/LKChatManager')
+
+const chatManager = engine.ChatManager
 
 const Application = engine.Application
 const lkApp = Application.getCurrentApp()

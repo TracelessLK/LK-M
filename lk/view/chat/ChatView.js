@@ -122,7 +122,6 @@ export default class ChatView extends Component<{}> {
          const chat = await chatManager.asyGetChat(lkApp.getCurrentUser().id, this.otherSideId)
          headerTitle = chat.name
          const memberAry = await chatManager.asyGetGroupMembers(this.otherSideId)
-         // console.log({memberAry})
          memberInfoObj = memberAry.reduce((accumulator, ele) => {
            accumulator[ele.id] = ele
            return accumulator

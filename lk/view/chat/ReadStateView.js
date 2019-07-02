@@ -32,7 +32,6 @@ export default class ReadStateView extends Component<{}> {
     const {memberInfoObj} = group
     const readState = await chatManager.asyGetGroupMsgReadReport(chatId, msgId)
     this.readAry = readState.map(ele => ele.id)
-    console.log({readAry: this.readAry})
     this.msgId = msgId
     const dataAry = []
     for (const key in memberInfoObj) {

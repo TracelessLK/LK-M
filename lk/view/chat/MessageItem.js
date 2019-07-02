@@ -18,7 +18,6 @@ const chatLeft = require('../image/chat-y-l.png')
 const chatRight = require('../image/chat-w-r.png')
 const { getAvatarSource, getIconByState } = require('../../util')
 const { getFolderId } = require('../../../common/util/commonUtil')
-// const fireGif = require('../image/fire.gif')
 
 const Application = engine.Application
 const lkApp = Application.getCurrentApp()
@@ -52,23 +51,23 @@ export default class MessageItem extends Component<{}> {
     return result
   }
 
-  _getMessage=(rec) => {
+  _getMessage=() => {
+    const {type, content, state} = this.props
     const { onPress } = this.props
-    const { type } = rec
     let result
     if (type === chatManager.MESSAGE_TYPE_TEXT) {
       const text = (
         <MessageText
           currentMessage={
-          { text: rec.content.replace(/&nbsp;/g, ' ') }
+          { text: content}
         }
-          textStyle={{ fontSize: 16, lineHeight: 19, color: rec.state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black' }}
+          textStyle={{ fontSize: 16, lineHeight: 19, color: state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black' }}
         />
       )
 
       result = text
-    } else if (rec.type === chatManager.MESSAGE_TYPE_IMAGE) {
-      const img = JSON.parse(rec.content)
+    } else if (type === chatManager.MESSAGE_TYPE_IMAGE) {
+      const img = JSON.parse(content)
 
       img.data = this.getImageData(img)
       const { height, width } = img
@@ -88,8 +87,8 @@ export default class MessageItem extends Component<{}> {
         imgUri = `file://${img.data}`
       }
       result = <TouchableOpacity onPress={onPress}><Image source={{ uri: imgUri }} style={{ width: imgW, height: imgH }} resizeMode="contain" /></TouchableOpacity>
-    } else if (rec.type === chatManager.MESSAGE_TYPE_FILE) {
-      const file = JSON.parse(rec.content)
+    } else if (type === chatManager.MESSAGE_TYPE_FILE) {
+      const file = JSON.parse(content)
       result = (
         <TouchableOpacity>
           <Ionicons name="ios-document-outline" size={40} style={{ marginRight: 5, lineHeight: 40 }} />
@@ -99,8 +98,7 @@ export default class MessageItem extends Component<{}> {
           </Text>
         </TouchableOpacity>
       )
-    } else if (rec.type === chatManager.MESSAGE_TYPE_AUDIO) {
-      const { content } = rec
+    } else if (type === chatManager.MESSAGE_TYPE_AUDIO) {
       let { url } = JSON.parse(content)
       url = this.getCurrentUrl(url)
       const option = {
@@ -112,28 +110,24 @@ export default class MessageItem extends Component<{}> {
   }
 
   doTouchMsgState= ({ state, msgId }) => {
-    const { otherSide, isGroupChat, navigation } = this.props
-    console.log(Object.keys(otherSide.memberInfoObj).length)
+    const { chatId, isGroupChat, navigation } = this.props
     if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
       const channel = lkApp.getLKWSChannel()
-      channel.retrySend(otherSide.id, msgId)
+      channel.retrySend(chatId, msgId)
     } else if (isGroupChat && (state === chatManager.MESSAGE_STATE_TARGET_READ
       || state === chatManager.MESSAGE_STATE_SERVER_RECEIVE)) {
       navigation.navigate('ReadStateView', {
         msgId,
-        chatId: otherSide.id,
+        chatId,
         group: otherSide
       })
     }
   }
 
   render() {
-    const {
-      msg, memberInfoObj, isGroupChat, sender, opacity
-    } = this.props
-    const user = lkApp.getCurrentUser()
-    const picSource = getAvatarSource(user.pic)
-    const { id, senderUid, state } = msg
+    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, type, content: msgContent, state, onPress, chatId} = this.props
+
+    const picSource = getAvatarSource(pic)
     let content = null
 
     const overLay = (
@@ -145,31 +139,28 @@ export default class MessageItem extends Component<{}> {
       />
     )
 
-    if (senderUid !== user.id) {
+    if (!isSelf) {
       // message received
       // fixme: 存在群成员不是好友的情况
-      const otherPicSource = getAvatarSource(sender.pic)
       content = (
         <View style={[style.recordEleStyle, {
-          // backgroundColor: 'red'
         }]}
         >
           {overLay}
-
           <Image
-            source={otherPicSource}
+            source={picSource}
             style={{
               width: 40, height: 40, marginLeft: 5, marginRight: 8
             }}
             resizeMode="contain"
           />
           <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
-            {isGroupChat && memberInfoObj[msg.senderUid]
+            {isGroupChat
               ? (
                 <View style={{ marginBottom: 8, marginLeft: 5 }}>
                   <Text style={{ color: '#808080', fontSize: 13 }}>
                     {' '}
-                    {memberInfoObj[msg.senderUid].name}
+                    {senderName}
                   </Text>
                 </View>
               )
@@ -180,13 +171,11 @@ export default class MessageItem extends Component<{}> {
                 backgroundColor: '#f9e160'
               }]}
               >
-                {this._getMessage(msg)}
+                {this._getMessage()}
               </View>
             </View>
           </View>
           <View style={{ marginVertical: isGroupChat ? 25 : 5, marginLeft: 0 }}>
-            {/*<Text>🔥</Text>*/}
-            {/* <Image source={fireGif} style={{ width: 40, height: 40 }} resizeMode="contain" /> */}
           </View>
           <View style={{ marginVertical: 30, marginHorizontal: 5 }}>
             {/* <Text style={{color: 'red'}}>10s</Text> */}
@@ -204,7 +193,7 @@ export default class MessageItem extends Component<{}> {
           {overLay}
           <TouchableOpacity onPress={() => {
             const option = {
-              msgId: id,
+              msgId,
               state
             }
             this.doTouchMsgState(option)
@@ -213,7 +202,7 @@ export default class MessageItem extends Component<{}> {
             {icon}
           </TouchableOpacity>
           <View style={{ ...msgBoxStyle, backgroundColor: '#ffffff' }}>
-            {this._getMessage(msg)}
+            {this._getMessage()}
           </View>
           <Image source={chatRight} style={{ width: 11, height: 18, marginTop: 11 }} resizeMode="contain" />
           <Image
@@ -239,10 +228,8 @@ MessageItem.defaultProps = {
 MessageItem.propTypes = {
   msg: PropTypes.object,
   isGroupChat: PropTypes.bool,
-  memberInfoObj: PropTypes.object,
   onPress: PropTypes.func,
   otherSide: PropTypes.object,
-  sender: PropTypes.object,
   opacity: PropTypes.number,
   navigation: PropTypes.object
 }
