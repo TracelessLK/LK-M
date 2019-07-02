@@ -202,8 +202,7 @@ export default class ChatView extends Component<{}> {
          isInited: true,
          imageUrls
        })
-       const allMsg = await chatManager.asyGetMsgs(user.id, this.otherSideId)
-       this.msgCount = allMsg.length
+       this.msgCount = await chatManager.getTotalCount({chatId: this.otherSideId})
      }
 
     _keyboardDidShow=(e) => {
