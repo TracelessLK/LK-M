@@ -34,6 +34,7 @@ module.exports = {
     }
   },
   "rules": {
+    'arrow-parens': 0,
     'func-names':0,//要求或禁止使用命名的 function 表达式
     'no-constant-condition':0,//禁止在条件中使用常量表达式
     'guard-for-in':0,//要求 for-in 循环中有一个 if 语句

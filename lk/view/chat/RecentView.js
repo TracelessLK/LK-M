@@ -52,7 +52,7 @@ export default class RecentView extends ScreenWrapper {
         contentAry: null,
         refreshing: false
       }
-      this.eventAry = [ 'recentChanged']
+      this.eventAry = ['recentChange']
       // todo: store all not undefined value
       this.channel = lkApp.getLKWSChannel()
       this.user = lkApp.getCurrentUser()
@@ -74,14 +74,14 @@ export default class RecentView extends ScreenWrapper {
         onInitialNotification: (res) => {
           if (res) {
             checkNotify(res)
-            const { _data: data } = res
-            const { senderId, chatId, isGroup } = data
-            if (isGroup) {
-              // this.chat({
-              //   otherSideId: isGroup ? chatId : senderId,
-              //   isGroup
-              // })
-            }
+            // const { _data: data } = res
+            // const { senderId, chatId, isGroup } = data
+            // if (isGroup) {
+            //   // this.chat({
+            //   //   otherSideId: isGroup ? chatId : senderId,
+            //   //   isGroup
+            //   // })
+            // }
           }
         }
       })

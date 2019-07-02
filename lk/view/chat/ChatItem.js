@@ -28,20 +28,21 @@ export default class ChatItem extends Component<{}> {
   }
 
   componentDidMount() {
-    ChatManager.on('chatChange', this.update)
+    ChatManager.on('chatChange', this.chatChangeListener)
   }
 
-  update = ({param}) => {
-    const {chatId, chatNotReadNum} = param
+  chatChangeListener = ({param}) => {
+    const {chatId, chatNotReadNum, name} = param
     if (chatId === this.props.item.id) {
       this.setState({
-        chatNotReadNum
+        chatNotReadNum,
+        name
       })
     }
   }
 
   componentWillUnmount() {
-    ChatManager.un('chatChange', this.update)
+    ChatManager.un('chatChange', this.chatChangeListener)
   }
 
   render () {
@@ -72,7 +73,7 @@ export default class ChatItem extends Component<{}> {
           <View style={{flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start', height: '100%'}}>
             <View >
               <Text style={{fontSize: 18, fontWeight: '500'}}>
-                {name}
+                {this.state.name || name}
               </Text>
             </View>
             <View>
