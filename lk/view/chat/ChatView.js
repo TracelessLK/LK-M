@@ -51,7 +51,7 @@ const { runNetFunc } = require('../../util')
 export default class ChatView extends Component<{}> {
     static navigationOptions = ({ navigation }) => {
       const { otherSideId, isGroup } = navigation.state.params
-      let headerTitle = navigation.getParam('headerTitle')
+      let headerTitle = navigation.getParam('chatName')
       headerTitle = headerTitle || ''
       let result
       if (otherSideId) {
@@ -75,8 +75,8 @@ export default class ChatView extends Component<{}> {
       this.minHeight = 35
       const { navigation } = this.props
       const { isGroup, otherSideId, chatName} = navigation.state.params
-      this.isGroupChat = Boolean(isGroup)
       this.chatName = chatName
+      this.isGroupChat = Boolean(isGroup)
       this.originalContentHeight = Dimensions.get('window').height - Header.HEIGHT
       this.state = {
         biggerImageVisible: false,
@@ -117,21 +117,7 @@ export default class ChatView extends Component<{}> {
 
      refreshRecord = async (limit) => {
        const user = lkApp.getCurrentUser()
-       const headerTitle = this.chatName
-
-       if (this.isGroupChat) {
-         this.otherSide = {
-           id: this.otherSideId,
-           name: headerTitle
-         }
-       } else {
-         const otherSide = await ContactManager.asyGet(user.id, this.otherSideId)
-         this.otherSide = otherSide
-       }
        const { navigation } = this.props
-       navigation.setParams({
-         headerTitle
-       })
 
        const msgAry = await chatManager.getAllMsg({
          userId: user.id,
@@ -167,7 +153,8 @@ export default class ChatView extends Component<{}> {
 
        for (let i = 0; i < msgLength; i++) {
          const msg = msgAry[i]
-         const { sendTime, msgId, senderName, isSelf, pic, state, content, type} = msg
+         let { sendTime, msgId, senderName, isSelf, pic, state, content, type} = msg
+         isSelf = Boolean(isSelf)
          if (!msgSet.has(msgId)) {
            msgSet.add(msgId)
            const now = new Date()
@@ -201,7 +188,8 @@ export default class ChatView extends Component<{}> {
                ? () => {
                  this.showBiggerImage(msgId)
                } : null,
-             navigation
+             navigation,
+             opacity: 0
            }
 
            recordAry.push(<MessageItem key={msgId} {...option} />)
@@ -262,6 +250,8 @@ export default class ChatView extends Component<{}> {
 
     componentWillUnmount =() => {
       chatManager.un('msgListChange', this.msgChange)
+      chatManager.un('groupNameChange', this.groupNameChangeListener)
+
       // todo: could be null
       const ary = ['keyboardDidShow', 'keyboardDidHide']
       ary.forEach((ele) => {
@@ -269,13 +259,26 @@ export default class ChatView extends Component<{}> {
       })
     }
 
+    setChatName = (chatName) => {
+      this.props.navigation.setParams({
+        headerTitle: chatName
+      })
+    }
+
+      groupNameChangeListener = ({param}) => {
+        const {chatId, name} = param
+        if (chatId === this.otherSideId) {
+          this.setChatName(name)
+        }
+      }
+
     componentDidMount= async () => {
       const { navigation } = this.props
-      const num = await chatManager.asyGetNewMsgNum(this.otherSideId)
-      if (num) {
-        chatManager.asyReadMsgs(this.otherSideId, num)
-      }
+      this.setChatName(navigation.state.params.chatName)
+
+      chatManager.asyReadMsgs(this.otherSideId)
       chatManager.on('msgListChange', this.msgChange)
+      chatManager.on('groupNameChange', this.groupNameChangeListener)
       Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
       Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
@@ -290,9 +293,15 @@ export default class ChatView extends Component<{}> {
     _navigateToInfo = () => {
       const { navigation } = this.props
       if (this.isGroupChat) {
-        navigation.navigate('GroupInfoView', { group: this.otherSide })
+        navigation.navigate('GroupInfoView', {
+          chatId: this.otherSideId,
+          chatName: this.chatName
+        })
       } else {
-        navigation.navigate('FriendInfoView', { friend: this.otherSide })
+        navigation.navigate('FriendInfoView',  {
+          chatId: this.otherSideId,
+          chatName: this.chatName
+        })
       }
     }
 

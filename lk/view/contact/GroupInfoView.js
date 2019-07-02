@@ -13,8 +13,6 @@ import {ListItem} from "react-native-elements"
 const {getAvatarSource} = require('../../util')
 const {engine} = require('@lk/LK-C')
 
-const Application = engine.Application
-const lkApp = Application.getCurrentApp()
 const common = require('@external/common')
 
 const {List} = common
@@ -36,16 +34,17 @@ export default class GroupInfoView extends Component<{}> {
 
   constructor (props) {
     super(props)
+    const { chatName, chatId } = this.props.navigation.state.params
+    this.chatName = chatName
+    this.chatId = chatId
+    this.asyncRender()
     this.state = {
-      groups: []
+      dataAry: []
     }
-    this.group = this.props.navigation.state.params.group
-    // console.log({group: this.group})
-    this.user = lkApp.getCurrentUser()
-    this.asyncRender(this.group.id)
   }
 
   componentDidMount () {
+    this.asyncRender()
     const {navigation} = this.props
     navigation.setParams({addMember: () => {
       navigation.navigate('AddGroupMemberView', {group: this.state.groups})
@@ -58,25 +57,76 @@ export default class GroupInfoView extends Component<{}> {
       this.setState({
         update: true
       })
+      this.asyncRender(chatId)
     }
-    this.asyncRender(chatId)
   }
 
-  async asyncRender (filterText) {
-    const chat = await chatManager.asyGetChat(this.user.id, filterText)
-    const headerTitle = chat.name
-    const memberAry = await chatManager.asyGetGroupMembers(filterText)
-    const memberInfoObj = memberAry.reduce((accumulator, ele) => {
-      accumulator[ele.id] = ele
-      return accumulator
-    }, {})
-    const o = {
-      memberInfoObj,
-      id: filterText,
-      name: headerTitle
+  async asyncRender () {
+    const memberAry = await chatManager.getAllGroupMember({chatId: this.chatId})
+    const dataAry = []
+    for (let value of memberAry) {
+      const {contactId, name, pic} = value
+      const obj = {
+        image: getAvatarSource(pic),
+        key: contactId,
+        title: name
+      }
+      obj.title = name
+      dataAry.push(obj)
     }
+
+    const {navigation} = this.props
+    const state = this.state
+    const list = [
+      {
+        title: '群聊名称',
+        onPress: () => {
+          navigation.navigate('GroupRenameView', state.groups)
+        }
+
+      }
+    ]
+    const style = {
+      listStyle: {
+        backgroundColor: 'white', marginTop: 20
+      }
+    }
+    const content = (
+      <View style={{marginVertical: 20}}>
+        <View style={style.listStyle}>
+          {
+              list.map((item, i) => (
+                <ListItem
+                  key={i}
+                  title={item.title}
+                  component={item.label}
+                  rightIcon={item.rightIconColor ? { style: { color: item.rightIconColor } } : {}}
+                  onPress={item.onPress}
+                  />
+              ))
+            }
+        </View>
+        <List data={dataAry}></List>
+        <TouchableOpacity style={{backgroundColor: 'white',
+          marginVertical: 60,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 12}} onPress={() => {
+            runNetFunc(async () => {
+              this.setState({
+                isWating: true
+              })
+              await chatManager.leaveGroup(this.group.id)
+              this.props.navigation.navigate('RecentView')
+            })
+          }}>
+          <Text style={{fontSize: 17, color: '#e53d59'}} >退出群聊</Text>
+        </TouchableOpacity>
+      </View>
+    )
     this.setState({
-      groups: o
+      content
     })
   }
 
@@ -85,73 +135,10 @@ export default class GroupInfoView extends Component<{}> {
   }
 
   render () {
-    const {navigation} = this.props
-    const state = this.state
-    const {memberInfoObj} = state.groups
-    const list = [
-      {
-        title: '群聊名称',
-        onPress: () => {
-          navigation.navigate('GroupRenameView', state.groups)
-        }
-      }
-    ]
-    const style = {
-      listStyle: {
-        backgroundColor: 'white', marginTop: 20
-      }
-    }
-    const dataAry = []
-    for (const key in memberInfoObj) {
-      const value = memberInfoObj[key]
-      const {id, name, pic} = value
-      const obj = {
-        image: getAvatarSource(pic),
-        key: id,
-        title: name
-      }
-      if (id === this.user.id) {
-        obj.title = name + ' (我) '
-      } else {
-        obj.title = name
-      }
-      dataAry.push(obj)
-    }
     return (
       <ScrollView>
         {this.state.isWating ? <ActivityIndicator size='large' style={{position: 'absolute', top: '50%'}}/> : null}
-        <View style={{marginVertical: 20}}>
-          <List data={dataAry}></List>
-          <View style={style.listStyle}>
-            {
-                list.map((item, i) => (
-                  <ListItem
-                    key={i}
-                    title={item.title}
-                    component={item.label}
-                    rightIcon={item.rightIconColor ? { style: { color: item.rightIconColor } } : {}}
-                    onPress={item.onPress}
-                    />
-                ))
-              }
-          </View>
-          <TouchableOpacity style={{backgroundColor: 'white',
-            marginVertical: 60,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 12}} onPress={() => {
-              runNetFunc(async () => {
-                this.setState({
-                  isWating: true
-                })
-                await chatManager.leaveGroup(this.group.id)
-                this.props.navigation.navigate('RecentView')
-              })
-            }}>
-            <Text style={{fontSize: 17, color: '#e53d59'}} >退出群聊</Text>
-          </TouchableOpacity>
-        </View>
+        {this.state.content}
       </ScrollView>
 
     )
