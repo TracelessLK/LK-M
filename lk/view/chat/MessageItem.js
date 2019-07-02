@@ -40,10 +40,10 @@ export default class MessageItem extends Component<{}> {
   }
 
   selfMsgReadListener = ({param}) => {
-    const {msgId, readState} = param
+    const {msgId, state} = param
     if (msgId === this.props.msgId) {
       this.setState({
-        readState
+        state
       })
     }
   }
@@ -139,7 +139,7 @@ export default class MessageItem extends Component<{}> {
   }
 
   render() {
-    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, state, readState} = this.props
+    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, state} = this.props
 
     const picSource = getAvatarSource(pic)
     let content = null
@@ -198,7 +198,7 @@ export default class MessageItem extends Component<{}> {
       )
     } else {
       // message sent
-      const icon = getIconByState(state)
+      const icon = getIconByState(this.state.state || state)
       content = (
         <View style={{
           flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10

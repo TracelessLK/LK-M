@@ -124,7 +124,6 @@ export default class ChatView extends Component<{}> {
          chatId: this.otherSideId,
          limit
        })
-
        const imageUrls = []
        const imageIndexer = {}
        let index = 0
