@@ -52,11 +52,11 @@ const ChatManager = engine.ChatManager
 const lkApplication = Application.getCurrentApp()
 
 lkApplication.on('currentUserChanged', (option) => {
-  const {param} = option
-  if (param) {
-    checkUpdate(param)
-    container.state.user = param
-    AsyncStorage.setItem('user', JSON.stringify(param))
+  const {param: {user}} = option
+  if (user) {
+    checkUpdate(user)
+    container.state.user = user
+    AsyncStorage.setItem('user', JSON.stringify(user))
   } else {
     AsyncStorage.removeItem('user')
     container.state = {}
@@ -67,11 +67,11 @@ lkApplication.on('netStateChanged', ({param}) => {
   container.connectionOK = param.isConnected
 })
 
-async function checkUpdate(param) {
+async function checkUpdate(user) {
   if (container.NetInfoUtil.online) {
     const {
       serverIP, id, name, updateAnyWay = false
-    } = param
+    } = user
     const appInfo = {
       updateUrl: "/api/update/checkUpdate",
       httpProtocol: "http",

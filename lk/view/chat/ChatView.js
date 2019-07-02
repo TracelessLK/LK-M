@@ -260,13 +260,8 @@ export default class ChatView extends Component<{}> {
       this.refreshRecord(this.limit)
     }
 
-    update = () => {
-      this.refreshRecord(this.limit)
-    }
-
     componentWillUnmount =() => {
-      chatManager.un('msgChanged', this.msgChange)
-      chatManager.un('recentChanged', this.update)
+      chatManager.un('msgListChange', this.msgChange)
       // todo: could be null
       const ary = ['keyboardDidShow', 'keyboardDidHide']
       ary.forEach((ele) => {
@@ -280,8 +275,7 @@ export default class ChatView extends Component<{}> {
       if (num) {
         chatManager.asyReadMsgs(this.otherSideId, num)
       }
-      chatManager.on('msgChanged', this.msgChange)
-      chatManager.on('recentChanged', this.update)
+      chatManager.on('msgListChange', this.msgChange)
       Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
       Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
 
