@@ -264,8 +264,6 @@ export default class RecentView extends ScreenWrapper {
        this.resetHeaderTitle()
      }
 
-
-
     resetHeaderTitle = async (num) => {
       if (container.connectionOK) {
         if (!num) {

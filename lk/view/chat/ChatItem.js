@@ -39,6 +39,7 @@ export default class ChatItem extends Component<{}> {
       const signleChat = await ChatManager.getSingeChat({
         chatId
       })
+      const {chatName, activeTime, MessageCeiling, focus, senderName, state, newMsgNum, avatar, msgContent} = signleChat
       this.setState({
         chatNotReadNum,
         name
@@ -123,7 +124,7 @@ export default class ChatItem extends Component<{}> {
         }
         right={
           <Button danger onPress={() => {
-            ChatManager.asyDeleteChat({chatIdy: id})
+            ChatManager.asyDeleteChat({chatId: id})
           }
           }>
             <NBIcon active name="trash" />
