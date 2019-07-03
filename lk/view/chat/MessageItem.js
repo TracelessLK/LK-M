@@ -198,7 +198,11 @@ export default class MessageItem extends Component<{}> {
       )
     } else {
       // message sent
-      const icon = getIconByState(this.state.state || state, this.memberCount - readNum - 1)
+      const icon = getIconByState({
+        state: this.state.state || state,
+        notReadNum: this.memberCount - readNum - 1,
+        isGroupChat
+      })
       content = (
         <View style={{
           flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10

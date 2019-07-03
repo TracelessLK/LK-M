@@ -9,7 +9,6 @@ import LottieView from 'lottie-react-native'
 
 const { engine } = require('@lk/LK-C')
 
-
 const DBProxy = engine.DBProxy
 const Application = engine.Application
 const lkApp = Application.getCurrentApp()
@@ -117,44 +116,45 @@ class Util {
   }
 
   static query(sql) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const db = new DBProxy()
       db.transaction(() => {
         db.getAll(sql, [], (results) => {
           resolve(results)
         }, (err) => {
+          reject(err)
           console.log(err)
         })
       })
     })
   }
 
-  static getIconNameByState=function (state, notReadNum) {
+  static getIconNameByState=function ({state, notReadNum, isGroupChat}) {
     if (state === chatManager.MESSAGE_STATE_SENDING) {
       return 'md-arrow-round-up'
     } if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
       return 'md-refresh'
     } if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
       // return 'md-checkmark-circle-outline'
-      return '全部未读'
+      return `${isGroupChat ? '全部' : ''}未读`
     } if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
       return 'ios-checkmark-circle-outline'
     } if (state === chatManager.MESSAGE_STATE_TARGET_READ) {
       // return 'ios-mail-open-outline'
-      return notReadNum ? `${notReadNum}人未读` : '全部已读'
+      return isGroupChat ? notReadNum ? `${notReadNum}人未读` : '全部已读' : '已读'
     } if (state === 5) {
       return 'ios-bonfire-outline'
     }
     return 'ios-help'
   }
 
-  static getIconByState(state, notReadNum) {
+  static getIconByState({state, notReadNum, isGroupChat}) {
     // let result = <Ionicons name={Util.getIconNameByState(state)} size={20} style={{ marginRight: 5, lineHeight: 40, color: state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black' }} />
     let result = ''
     if (state === 0) {
       result = <Image source={chatRight} style={{width: 20, height: 20, marginTop: 11, marginRight: 3}} resizeMode="contain" />
     } else {
-      result = <Text style={{marginTop: 11, marginRight: 3, color: "rgb(155,155,155)"}}>{Util.getIconNameByState(state, notReadNum)}</Text>
+      result = <Text style={{marginTop: 11, marginRight: 3, color: "rgb(155,155,155)"}}>{Util.getIconNameByState({state, notReadNum, isGroupChat})}</Text>
     }
     // if (state === chatManager.MESSAGE_STATE_SENDING) {
     if (false) {

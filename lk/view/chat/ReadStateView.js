@@ -20,7 +20,8 @@ export default class ReadStateView extends Component<{}> {
     super(props)
     this.state = {}
     this.user = lkApp.getCurrentUser()
-    this.msgId = this.props.navigation.state.params
+    const {msgId} = this.props.navigation.state.params
+    this.msgId = msgId
   }
 
   componentDidMount () {

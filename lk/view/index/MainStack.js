@@ -20,6 +20,7 @@ import AddGroupView from '../contact/AddGroupView'
 import GroupRenameView from '../contact/GroupRenameView'
 import MineView from '../mine/MineView'
 import DevView from '../mine/dev/DevView'
+import DevView2 from '../mine/dev/DevView2'
 import LogView from '../mine/dev/LogView'
 import SetUpdateUrlView from '../mine/dev/SetUpdateUrlView'
 import InfoView from '../mine/dev/InfoView'
@@ -28,6 +29,7 @@ import TableListView from '../mine/dev/TableListView'
 import DbView from '../mine/dev/DbView'
 import DbViewTable from '../mine/dev/DbViewTable'
 import DbExecuteView from '../mine/dev/DbExecuteView'
+import DbDevView from '../mine/dev/DbDevView'
 import DbExecuteDataView from '../mine/dev/DbExecuteDataView'
 import TestView3 from '../mine/dev/testView/View3'
 import TestView1 from '../mine/dev/testView/View1'
@@ -152,7 +154,9 @@ const MainStack = createStackNavigator({
   DbViewTable,
   TableListView,
   DbExecuteDataView,
-  DbExecuteView
+  DbExecuteView,
+  DevView2,
+  DbDevView
 }, stackNavigatorConfig)
 
 export default MainStack
