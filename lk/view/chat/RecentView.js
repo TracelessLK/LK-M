@@ -313,6 +313,9 @@ export default class RecentView extends ScreenWrapper {
   }
 
   subRender () {
+    if (__DEV__) {
+      console.log('render RecentView')
+    }
     return (
       <View style={{
         flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'

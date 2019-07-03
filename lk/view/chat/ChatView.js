@@ -239,16 +239,21 @@ export default class ChatView extends Component<{}> {
       this.setState({ heightAnim: 0, msgViewHeight: this.originalContentHeight })
     }
 
-    msgChangeListener= async () => {
-      // console.log('msgChangeListener')
-      // todo should have scroll and message pop up animation
-      const num = await chatManager.asyGetNewMsgNum(this.otherSideId)
-      if (num) {
-        chatManager.asyReadMsgs(this.otherSideId, num)
+    msgChangeListener= async (option) => {
+      const {param} = option
+      console.log({param})
+      const {chatId} = param
+      if (chatId === this.otherSideId) {
+        // todo should have scroll and message pop up animation
+        const num = await chatManager.asyGetNewMsgNum(this.otherSideId)
+        if (num) {
+          chatManager.asyReadMsgs(this.otherSideId, num)
+        }
+        this.limit++
+        this.refreshRecord(this.limit)
       }
-      this.limit++
-      this.refreshRecord(this.limit)
     }
+
 
     componentWillUnmount =() => {
       chatManager.un('msgListChange', this.msgChangeListener)
@@ -509,6 +514,9 @@ export default class ChatView extends Component<{}> {
   })
 
   render() {
+    if (__DEV__) {
+      console.log('render ChatView')
+    }
     const {
       msgViewHeight, isRecording, recordTime, refreshing, recordEls, showVoiceRecorder
     } = this.state
