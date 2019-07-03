@@ -114,13 +114,14 @@ export default class RecentView extends ScreenWrapper {
     // )
   }
 
-    update=() => {
-      this.updateRecent()
-    }
+  updateListener=({event, param}) => {
+      // console.log({event, param})
+    this.updateRecent()
+  }
 
     componentWillUnmount =() => {
       for (const event of this.eventAry) {
-        chatManager.un(event, this.update)
+        chatManager.un(event, this.updateListener)
       }
       lkApp.un('netStateChanged', this.netStateChangedListener)
       chatManager.un('msgBadgeChanged', this.msgBadgeChangedListener)
@@ -146,7 +147,7 @@ export default class RecentView extends ScreenWrapper {
       lkApp.login()
 
       for (const event of this.eventAry) {
-        chatManager.on(event, this.update)
+        chatManager.on(event, this.updateListener)
       }
 
       chatManager.on('msgBadgeChanged', this.msgBadgeChangedListener)
@@ -259,7 +260,7 @@ export default class RecentView extends ScreenWrapper {
              memberCount,
              deletePress: async () => {
                await chatManager.asyDeleteChat(this.user.id, id)
-               this.update()
+               this.updateRecent()
              }
            }
            const result = <ChatItem item={item} key={item.id} />

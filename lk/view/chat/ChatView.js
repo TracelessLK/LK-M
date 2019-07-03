@@ -239,7 +239,8 @@ export default class ChatView extends Component<{}> {
       this.setState({ heightAnim: 0, msgViewHeight: this.originalContentHeight })
     }
 
-    msgChange= async () => {
+    msgChangeListener= async () => {
+      // console.log('msgChangeListener')
       // todo should have scroll and message pop up animation
       const num = await chatManager.asyGetNewMsgNum(this.otherSideId)
       if (num) {
@@ -250,7 +251,7 @@ export default class ChatView extends Component<{}> {
     }
 
     componentWillUnmount =() => {
-      chatManager.un('msgListChange', this.msgChange)
+      chatManager.un('msgListChange', this.msgChangeListener)
       chatManager.un('groupNameChange', this.groupNameChangeListener)
 
       // todo: could be null
@@ -278,7 +279,7 @@ export default class ChatView extends Component<{}> {
       this.setChatName(navigation.state.params.chatName)
 
       chatManager.asyReadMsgs(this.otherSideId)
-      chatManager.on('msgListChange', this.msgChange)
+      chatManager.on('msgListChange', this.msgChangeListener)
       chatManager.on('groupNameChange', this.groupNameChangeListener)
       Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
       Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)
