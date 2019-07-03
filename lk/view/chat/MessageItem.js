@@ -36,10 +36,10 @@ export default class MessageItem extends Component<{}> {
   }
 
   componentDidMount() {
-    chatManager.on('selfMsgRead', this.selfMsgReadListener)
+    chatManager.on('msgStateChange', this.msgStateChangeListener)
   }
 
-  selfMsgReadListener = ({param}) => {
+  msgStateChangeListener = ({param}) => {
     const {msgId, state} = param
     if (msgId === this.props.msgId) {
       this.setState({
@@ -49,7 +49,7 @@ export default class MessageItem extends Component<{}> {
   }
 
   componentWillUnmount() {
-    chatManager.un('selfMsgRead', this.selfMsgReadListener)
+    chatManager.un('selfMsgRead', this.msgStateChangeListener)
   }
 
   getImageData = (img) => {
@@ -139,7 +139,8 @@ export default class MessageItem extends Component<{}> {
   }
 
   render() {
-    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, state, readNum} = this.props
+    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, readNum} = this.props
+    const state = this.state.state === undefined ? this.props.state : this.state.state
 
     const picSource = getAvatarSource(pic)
     let content = null
@@ -199,7 +200,7 @@ export default class MessageItem extends Component<{}> {
     } else {
       // message sent
       const icon = getIconByState({
-        state: this.state.state || state,
+        state,
         notReadNum: this.memberCount - readNum - 1,
         showDetail: isGroupChat
       })

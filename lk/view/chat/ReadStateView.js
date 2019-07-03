@@ -38,13 +38,13 @@ export default class ReadStateView extends Component<{}> {
 
   asyncRender = async () => {
     const readStateAry = await chatManager.getAllReadState({
-      userId: this.user.id,
       msgId: this.msgId
     })
     const dataAry = []
     for (const key in readStateAry) {
       const value = readStateAry[key]
-      const {contactId, name, state, pic} = value
+      const {contactId, name, pic} = value
+      const state = value.state === null ? chatManager.MESSAGE_STATE_SERVER_RECEIVE : value.state
 
       const obj = {
         image: getAvatarSource(pic),

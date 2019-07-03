@@ -117,6 +117,9 @@ export default class ChatView extends Component<{}> {
     }
 
      refreshRecord = async (limit) => {
+       if (__DEV__) {
+         console.log('update ChatView')
+       }
        const user = lkApp.getCurrentUser()
        const { navigation } = this.props
 
@@ -241,7 +244,6 @@ export default class ChatView extends Component<{}> {
 
     msgChangeListener= async (option) => {
       const {param} = option
-      console.log({param})
       const {chatId} = param
       if (chatId === this.otherSideId) {
         // todo should have scroll and message pop up animation
@@ -514,9 +516,6 @@ export default class ChatView extends Component<{}> {
   })
 
   render() {
-    if (__DEV__) {
-      console.log('render ChatView')
-    }
     const {
       msgViewHeight, isRecording, recordTime, refreshing, recordEls, showVoiceRecorder
     } = this.state

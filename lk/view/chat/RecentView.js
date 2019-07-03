@@ -114,7 +114,9 @@ export default class RecentView extends ScreenWrapper {
   }
 
   updateListener=({event, param}) => {
-    // console.log({event, param})
+    if (__DEV__) {
+      console.log({event, param})
+    }
     this.updateRecent()
   }
 
@@ -216,6 +218,9 @@ export default class RecentView extends ScreenWrapper {
   }
 
      updateRecent = async () => {
+       if (__DEV__) {
+         console.log('update RecentView')
+       }
        const user = lkApp.getCurrentUser()
        const chatAry = await chatManager.getAllChat(user.id)
        let contentAry
@@ -313,9 +318,6 @@ export default class RecentView extends ScreenWrapper {
   }
 
   subRender () {
-    if (__DEV__) {
-      console.log('render RecentView')
-    }
     return (
       <View style={{
         flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff'
