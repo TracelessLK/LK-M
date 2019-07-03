@@ -218,13 +218,12 @@ export default class RecentView extends ScreenWrapper {
      updateRecent = async () => {
        const user = lkApp.getCurrentUser()
        const chatAry = await chatManager.getAllChat(user.id)
-       // console.log({chatAry})
 
        let contentAry
 
        if (chatAry.length) {
          contentAry = chatAry.map(ele => {
-           const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum} = ele
+           const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum, memberCount} = ele
            const imageAry = avatar ? avatar.split('@sep@') : []
            const item = {
              onPress: () => {
@@ -232,7 +231,8 @@ export default class RecentView extends ScreenWrapper {
                  isGroup,
                  otherSideId: id,
                  chatName,
-                 imageAry
+                 imageAry,
+                 memberCount
                })
              },
              imageAry,
@@ -241,6 +241,7 @@ export default class RecentView extends ScreenWrapper {
              time: new Date(activeTime),
              newMsgNum,
              id,
+             memberCount,
              deletePress: async () => {
                await chatManager.asyDeleteChat(this.user.id, id)
                this.update()

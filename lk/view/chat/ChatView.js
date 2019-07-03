@@ -49,8 +49,8 @@ const { runNetFunc } = require('../../util')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions = ({ navigation }) => {
-      const { otherSideId, isGroup } = navigation.state.params
-      let headerTitle = navigation.getParam('chatName')
+      const { otherSideId, isGroup, chatName, memberCount } = navigation.state.params
+      let headerTitle = isGroup ? `${chatName} (${memberCount})` : chatName
       headerTitle = headerTitle || ''
       let result
       if (otherSideId) {
@@ -73,9 +73,10 @@ export default class ChatView extends Component<{}> {
       super(props)
       this.minHeight = 35
       const { navigation } = this.props
-      const { isGroup, otherSideId, chatName, imageAry} = navigation.state.params
+      const { isGroup, otherSideId, chatName, imageAry, memberCount} = navigation.state.params
       this.chatName = chatName
       this.imageAry = imageAry
+      this.memberCount = memberCount
       this.isGroupChat = Boolean(isGroup)
       this.originalContentHeight = Dimensions.get('window').height - Header.HEIGHT
       this.state = {
@@ -152,7 +153,7 @@ export default class ChatView extends Component<{}> {
 
        for (let i = 0; i < msgLength; i++) {
          const msg = msgAry[i]
-         let { sendTime, msgId, senderName, isSelf, pic, state, content, type, readState} = msg
+         let { sendTime, msgId, senderName, isSelf, pic, state, content, type, readState, readNum} = msg
          isSelf = Boolean(isSelf)
          if (!msgSet.has(msgId)) {
            msgSet.add(msgId)
@@ -174,6 +175,7 @@ export default class ChatView extends Component<{}> {
            }
 
            const option = {
+             readNum,
              content,
              type,
              state,

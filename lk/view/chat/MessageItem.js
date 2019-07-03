@@ -139,7 +139,7 @@ export default class MessageItem extends Component<{}> {
   }
 
   render() {
-    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, state} = this.props
+    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, state, readNum} = this.props
 
     const picSource = getAvatarSource(pic)
     let content = null
@@ -198,7 +198,7 @@ export default class MessageItem extends Component<{}> {
       )
     } else {
       // message sent
-      const icon = getIconByState(this.state.state || state)
+      const icon = getIconByState(this.state.state || state, this.memberCount - readNum - 1)
       content = (
         <View style={{
           flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10
@@ -211,7 +211,8 @@ export default class MessageItem extends Component<{}> {
               state
             }
             this.doTouchMsgState(option)
-          }}
+          }
+          }
           >
             {icon}
           </TouchableOpacity>
@@ -252,5 +253,6 @@ MessageItem.propTypes = {
   onPress: PropTypes.func,
   opacity: PropTypes.number,
   state: PropTypes.number,
+  readNum: PropTypes.number,
   navigation: PropTypes.object
 }
