@@ -58,10 +58,10 @@ export default class ChatItem extends Component<{}> {
     let contents
     const avatarLength = 50
     const {item} = this.props
-    const {onPress, imageAry, name, content: msgContent, time, newMsgNum, id, deletePress} = item
+    const {onPress, imageAry, name, content, time, newMsgNum, id, deletePress} = item
     const chatNotReadNum = this.state.chatNotReadNum === undefined ? newMsgNum : this.state.chatNotReadNum
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
-    const content = (
+    const viewContent = (
       <TouchableOpacity onPress={onPress}
         style={{width: '100%',
           flexDirection: 'row',
@@ -78,7 +78,7 @@ export default class ChatItem extends Component<{}> {
             </View>
             <View>
               <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginTop: 3}}>
-                {msgContent}
+                {content}
               </Text>
             </View>
           </View>
@@ -102,7 +102,7 @@ export default class ChatItem extends Component<{}> {
       <SwipeRow
         rightOpenValue={-75}
         body={
-          content
+          viewContent
         }
         right={
           <Button danger onPress={deletePress}>
