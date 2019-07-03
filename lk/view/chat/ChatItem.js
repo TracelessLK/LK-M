@@ -35,7 +35,6 @@ export default class ChatItem extends Component<{}> {
   }
 
   chatChangeListener = async ({param}) => {
-    console.log({param})
     const {chatId} = param
     if (chatId === this.props.id) {
       const signleChat = await ChatManager.getSingeChat({
@@ -44,8 +43,9 @@ export default class ChatItem extends Component<{}> {
       const {chatName, activeTime,
         // MessageCeiling, focus, state,
         newMsgNum, avatar, msgContent} = signleChat
+      console.log({signleChat})
       this.setState({
-        chatNotReadNum: newMsgNum,
+        newMsgNum,
         chatName,
         activeTime,
         avatar,
@@ -63,6 +63,7 @@ export default class ChatItem extends Component<{}> {
   })
 
   render () {
+    console.log('rerender in chatItem')
     let widths
     let fontSizes
     if (Platform.OS === 'android') {
@@ -92,7 +93,7 @@ export default class ChatItem extends Component<{}> {
         imageAry.push(avatar)
       }
     }
-    const chatNotReadNum = this.state.chatNotReadNum === undefined ? newMsgNum : this.state.chatNotReadNum
+    const chatNotReadNum = this.state.newMsgNum === undefined ? newMsgNum : this.state.newMsgNum
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
     const viewContent = (
       <TouchableOpacity onPress={() => {
