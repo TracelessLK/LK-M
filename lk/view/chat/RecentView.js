@@ -114,7 +114,7 @@ export default class RecentView extends ScreenWrapper {
   }
 
   updateListener=({event, param}) => {
-      // console.log({event, param})
+    // console.log({event, param})
     this.updateRecent()
   }
 
@@ -223,35 +223,20 @@ export default class RecentView extends ScreenWrapper {
        if (chatAry.length) {
          contentAry = chatAry.map(ele => {
            const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum, memberCount} = ele
-           const imgMapObj = {}
-           const imageAry = []
-           if (avatar) {
-             if (isGroup) {
-               for (let eleStr of avatar.split('@sep@')) {
-                 const ary = eleStr.split('@id@')
-                 const pic = ary[0]
-                 imgMapObj[ary[1]] = pic
-                 imageAry.push(pic)
-               }
-             } else {
-               imgMapObj[id] = avatar
-               imgMapObj[this.user.id] = this.user.pic
-               imageAry.push(avatar)
-             }
-           }
 
-           const item = {
+           const option = {
+             avatar,
              isGroup,
-             imageAry,
-             name: chatName,
-             content: msgContent,
-             time: new Date(activeTime),
+             chatName,
+             msgContent,
+             activeTime,
              newMsgNum,
              id,
              memberCount,
-             imgMapObj
+             navigation: this.props.navigation,
+             key: id
            }
-           const result = <ChatItem item={item} key={item.id} navigation={this.props.navigation}/>
+           const result = <ChatItem {...option}/>
            return result
          })
        } else {

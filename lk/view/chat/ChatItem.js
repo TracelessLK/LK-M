@@ -15,7 +15,7 @@ const { engine } = require('@lk/LK-C')
 const { commonUtil } = require('@external/common')
 
 const { debounceFunc } = commonUtil
-const {ChatManager} = engine
+const {ChatManager, Application} = engine
 
 
 const dateTimeUtil = require('../../../common/util/dateTimeUtil')
@@ -27,6 +27,7 @@ export default class ChatItem extends Component<{}> {
     super(props)
     this.state = {
     }
+    this.user = Application.getCurrentApp().getCurrentUser()
   }
 
   componentDidMount() {
@@ -34,15 +35,21 @@ export default class ChatItem extends Component<{}> {
   }
 
   chatChangeListener = async ({param}) => {
-    const {chatId, chatNotReadNum, name} = param
-    if (chatId === this.props.item.id) {
+    console.log({param})
+    const {chatId} = param
+    if (chatId === this.props.id) {
       const signleChat = await ChatManager.getSingeChat({
         chatId
       })
-      const {chatName, activeTime, MessageCeiling, focus, senderName, state, newMsgNum, avatar, msgContent} = signleChat
+      const {chatName, activeTime,
+        // MessageCeiling, focus, state,
+        newMsgNum, avatar, msgContent} = signleChat
       this.setState({
-        chatNotReadNum,
-        name
+        chatNotReadNum: newMsgNum,
+        chatName,
+        activeTime,
+        avatar,
+        msgContent
       })
     }
   }
@@ -67,8 +74,24 @@ export default class ChatItem extends Component<{}> {
     }
     let contents
     const avatarLength = 50
-    const {item} = this.props
-    const {imageAry, name, content, time, newMsgNum, id, memberCount, imgMapObj, isGroup} = item
+    const { msgContent, activeTime, newMsgNum, id, memberCount, isGroup, chatName} = this.props
+    const avatar = this.state.avatar === undefined ? this.state.avatar : this.props.avatar
+    const imgMapObj = {}
+    const imageAry = []
+    if (avatar) {
+      if (isGroup) {
+        for (let eleStr of avatar.split('@sep@')) {
+          const ary = eleStr.split('@id@')
+          const pic = ary[0]
+          imgMapObj[ary[1]] = pic
+          imageAry.push(pic)
+        }
+      } else {
+        imgMapObj[id] = avatar
+        imgMapObj[this.user.id] = this.user.pic
+        imageAry.push(avatar)
+      }
+    }
     const chatNotReadNum = this.state.chatNotReadNum === undefined ? newMsgNum : this.state.chatNotReadNum
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
     const viewContent = (
@@ -91,18 +114,18 @@ export default class ChatItem extends Component<{}> {
           <View style={{flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start', height: '100%'}}>
             <View >
               <Text style={{fontSize: 18, fontWeight: '500'}}>
-                {this.state.name || name}
+                {this.state.chatName || chatName}
               </Text>
             </View>
             <View>
               <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginTop: 3}}>
-                {content}
+                {msgContent}
               </Text>
             </View>
           </View>
           <View style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', height: '100%'}}>
             <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
-              {time ? dateTimeUtil.getDisplayTime(time) : null}
+              {dateTimeUtil.getDisplayTime(new Date(this.state.activeTime || activeTime))}
             </Text>
             <View>
               {chatNotReadNum
