@@ -59,7 +59,7 @@ export default class ChatItem extends Component<{}> {
     const avatarLength = 50
     const {item} = this.props
     const {onPress, imageAry, name, content: msgContent, time, newMsgNum, id, deletePress} = item
-    const chatNotReadNum = this.state.chatNotReadNum === undefined ? this.state.chatNotReadNum : newMsgNum
+    const chatNotReadNum = this.state.chatNotReadNum === undefined ? newMsgNum : this.state.chatNotReadNum
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
     const content = (
       <TouchableOpacity onPress={onPress}
