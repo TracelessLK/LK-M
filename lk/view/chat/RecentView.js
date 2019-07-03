@@ -236,6 +236,7 @@ export default class RecentView extends ScreenWrapper {
              } else {
                imgMapObj[id] = avatar
                imgMapObj[this.user.id] = this.user.pic
+               imageAry.push(avatar)
              }
            }
 
