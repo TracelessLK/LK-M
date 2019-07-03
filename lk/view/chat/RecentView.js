@@ -246,7 +246,6 @@ export default class RecentView extends ScreenWrapper {
                  isGroup,
                  otherSideId: id,
                  chatName,
-                 imageAry,
                  memberCount,
                  imgMapObj
                })

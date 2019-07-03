@@ -73,10 +73,9 @@ export default class ChatView extends Component<{}> {
       super(props)
       this.minHeight = 35
       const { navigation } = this.props
-      const { isGroup, otherSideId, chatName, imageAry, memberCount, imgMapObj} = navigation.state.params
+      const { isGroup, otherSideId, chatName, memberCount, imgMapObj} = navigation.state.params
       this.chatName = chatName
       this.imgMapObj = imgMapObj
-      this.imageAry = imageAry
       this.memberCount = memberCount
       this.isGroupChat = Boolean(isGroup)
       this.originalContentHeight = Dimensions.get('window').height - Header.HEIGHT
@@ -303,7 +302,7 @@ export default class ChatView extends Component<{}> {
         navigation.navigate('FriendInfoView', {
           chatId: this.otherSideId,
           chatName: this.chatName,
-          imageAry: this.imageAry
+          imgMapObj: this.imgMapObj
         })
       }
     }
