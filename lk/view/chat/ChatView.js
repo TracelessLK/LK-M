@@ -73,8 +73,9 @@ export default class ChatView extends Component<{}> {
       super(props)
       this.minHeight = 35
       const { navigation } = this.props
-      const { isGroup, otherSideId, chatName, imageAry, memberCount} = navigation.state.params
+      const { isGroup, otherSideId, chatName, imageAry, memberCount, imgMapObj} = navigation.state.params
       this.chatName = chatName
+      this.imgMapObj = imgMapObj
       this.imageAry = imageAry
       this.memberCount = memberCount
       this.isGroupChat = Boolean(isGroup)
@@ -153,7 +154,7 @@ export default class ChatView extends Component<{}> {
 
        for (let i = 0; i < msgLength; i++) {
          const msg = msgAry[i]
-         let { sendTime, msgId, senderName, isSelf, pic, state, content, type, readState, readNum} = msg
+         let { sendTime, msgId, senderName, isSelf, state, content, type, readState, readNum, senderUid} = msg
          isSelf = Boolean(isSelf)
          if (!msgSet.has(msgId)) {
            msgSet.add(msgId)
@@ -184,7 +185,7 @@ export default class ChatView extends Component<{}> {
              readState,
              senderName,
              isSelf,
-             pic,
+             pic: this.imgMapObj[senderUid],
              isGroupChat: this.isGroupChat,
              onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE
                ? () => {

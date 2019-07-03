@@ -223,7 +223,22 @@ export default class RecentView extends ScreenWrapper {
        if (chatAry.length) {
          contentAry = chatAry.map(ele => {
            const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum, memberCount} = ele
-           const imageAry = avatar ? avatar.split('@sep@') : []
+           const imgMapObj = {}
+           const imageAry = []
+           if (avatar) {
+             if (isGroup) {
+               for (let eleStr of avatar.split('@sep@')) {
+                 const ary = eleStr.split('@id@')
+                 const pic = ary[0]
+                 imgMapObj[ary[1]] = pic
+                 imageAry.push(pic)
+               }
+             } else {
+               imgMapObj[id] = avatar
+               imgMapObj[this.user.id] = this.user.pic
+             }
+           }
+
            const item = {
              onPress: () => {
                this.chat({
@@ -231,7 +246,8 @@ export default class RecentView extends ScreenWrapper {
                  otherSideId: id,
                  chatName,
                  imageAry,
-                 memberCount
+                 memberCount,
+                 imgMapObj
                })
              },
              imageAry,
