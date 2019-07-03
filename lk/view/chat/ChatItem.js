@@ -12,7 +12,9 @@ import { Badge, Button, Icon as NBIcon, Text, SwipeRow
 import GroupAvatar from '../../../common/widget/GroupAvatar'
 
 const { engine } = require('@lk/LK-C')
+const { commonUtil } = require('@external/common')
 
+const { debounceFunc } = commonUtil
 const {ChatManager} = engine
 
 
@@ -31,9 +33,12 @@ export default class ChatItem extends Component<{}> {
     ChatManager.on('chatChange', this.chatChangeListener)
   }
 
-  chatChangeListener = ({param}) => {
+  chatChangeListener = async ({param}) => {
     const {chatId, chatNotReadNum, name} = param
     if (chatId === this.props.item.id) {
+      const signleChat = await ChatManager.getSingeChat({
+        chatId
+      })
       this.setState({
         chatNotReadNum,
         name
@@ -44,6 +49,10 @@ export default class ChatItem extends Component<{}> {
   componentWillUnmount() {
     ChatManager.un('chatChange', this.chatChangeListener)
   }
+
+  chat = debounceFunc((option) => {
+    this.props.navigation.navigate('ChatView', option)
+  })
 
   render () {
     let widths
@@ -58,11 +67,19 @@ export default class ChatItem extends Component<{}> {
     let contents
     const avatarLength = 50
     const {item} = this.props
-    const {onPress, imageAry, name, content, time, newMsgNum, id, deletePress} = item
+    const {imageAry, name, content, time, newMsgNum, id, memberCount, imgMapObj, isGroup} = item
     const chatNotReadNum = this.state.chatNotReadNum === undefined ? newMsgNum : this.state.chatNotReadNum
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
     const viewContent = (
-      <TouchableOpacity onPress={onPress}
+      <TouchableOpacity onPress={() => {
+        this.chat({
+          isGroup,
+          otherSideId: id,
+          chatName: name,
+          memberCount,
+          imgMapObj
+        })
+      }}
         style={{width: '100%',
           flexDirection: 'row',
           justifyContent: 'flex-start',
@@ -105,7 +122,10 @@ export default class ChatItem extends Component<{}> {
           viewContent
         }
         right={
-          <Button danger onPress={deletePress}>
+          <Button danger onPress={() => {
+            ChatManager.asyDeleteChat({chatIdy: id})
+          }
+          }>
             <NBIcon active name="trash" />
           </Button>
                 }

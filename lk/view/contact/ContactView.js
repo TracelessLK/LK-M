@@ -16,7 +16,6 @@ const {engine} = require('@lk/LK-C')
 const Application = engine.Application
 const lkApp = Application.getCurrentApp()
 const ContactManager = engine.ContactManager
-//const UserManager = engine.UserManager
 
 const OrgManager = engine.OrgManager
 const {getAvatarSource} = require('../../util')
@@ -58,7 +57,7 @@ export default class ContactView extends ScreenWrapper {
     }
 
     go2FriendInfoView=debounceFunc((f) => {
-      this.props.navigation.navigate('FriendInfoView', {friend: f})
+      this.props.navigation.navigate('FriendInfoView', {contactId: f.id})
     })
 
     go2OrgView = debounceFunc((org) => {

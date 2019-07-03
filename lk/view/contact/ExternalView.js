@@ -64,7 +64,7 @@ export default class ExternalView extends Component<{}> {
     }
 
     go2FriendInfoView=debounceFunc((f) => {
-      this.props.navigation.navigate('FriendInfoView', {friend: f})
+      this.props.navigation.navigate('FriendInfoView', {contactId: f.id})
     })
 
     async asyncRender (filterText) {

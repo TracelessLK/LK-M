@@ -16,10 +16,9 @@ import NetIndicator from '../common/NetIndicator'
 import ScreenWrapper from '../common/ScreenWrapper'
 import ChatItem from "./ChatItem"
 
-const { commonUtil, PushUtil } = require('@external/common')
+const { PushUtil } = require('@external/common')
 
 const { removeNotify } = PushUtil
-const { debounceFunc } = commonUtil
 const { engine } = require('@lk/LK-C')
 
 const Application = engine.Application
@@ -242,15 +241,7 @@ export default class RecentView extends ScreenWrapper {
            }
 
            const item = {
-             onPress: () => {
-               this.chat({
-                 isGroup,
-                 otherSideId: id,
-                 chatName,
-                 memberCount,
-                 imgMapObj
-               })
-             },
+             isGroup,
              imageAry,
              name: chatName,
              content: msgContent,
@@ -258,12 +249,9 @@ export default class RecentView extends ScreenWrapper {
              newMsgNum,
              id,
              memberCount,
-             deletePress: async () => {
-               await chatManager.asyDeleteChat(this.user.id, id)
-               this.updateRecent()
-             }
+             imgMapObj
            }
-           const result = <ChatItem item={item} key={item.id} />
+           const result = <ChatItem item={item} key={item.id} navigation={this.props.navigation}/>
            return result
          })
        } else {
@@ -276,9 +264,7 @@ export default class RecentView extends ScreenWrapper {
        this.resetHeaderTitle()
      }
 
-    chat = debounceFunc((option) => {
-      this.props.navigation.navigate('ChatView', option)
-    })
+
 
     resetHeaderTitle = async (num) => {
       if (container.connectionOK) {

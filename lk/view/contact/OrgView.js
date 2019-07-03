@@ -53,7 +53,7 @@ export default class OrgView extends ScreenWrapper {
     }
 
     go2FriendInfoView=debounceFunc((f) => {
-      this.props.navigation.navigate('FriendInfoView', {friend: f})
+      this.props.navigation.navigate('FriendInfoView', {contactId: f.id})
     })
 
     go2OrgView = debounceFunc((org) => {

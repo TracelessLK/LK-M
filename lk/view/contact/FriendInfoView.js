@@ -27,10 +27,12 @@ export default class FriendInfoView extends ScreenWrapper {
     constructor (props) {
       super(props)
       this.state = {}
-      const {chatId, chatName, imgMapObj} = this.props.navigation.state.params
-      this.chatId = chatId
-      this.chatName = chatName
-      this.pic = imgMapObj[this.chatId]
+      const {contactId} = this.props.navigation.state.params
+      const singleContact = ContactManager.getSingleContact({contactId})
+      const {name, pic} = singleContact
+      this.chatId = contactId
+      this.chatName = name
+      this.pic = pic
     }
 
     sendMessage=() => {

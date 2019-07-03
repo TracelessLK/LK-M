@@ -301,9 +301,7 @@ export default class ChatView extends Component<{}> {
         })
       } else {
         navigation.navigate('FriendInfoView', {
-          chatId: this.otherSideId,
-          chatName: this.chatName,
-          imgMapObj: this.imgMapObj
+          contactId: this.otherSideId
         })
       }
     }
