@@ -40,10 +40,10 @@ export default class ChatItem extends Component<{}> {
       const signleChat = await ChatManager.getSingeChat({
         chatId
       })
+
       const {chatName, activeTime,
         // MessageCeiling, focus, state,
         newMsgNum, avatar, msgContent} = signleChat
-      console.log({signleChat})
       this.setState({
         newMsgNum,
         chatName,
@@ -63,7 +63,6 @@ export default class ChatItem extends Component<{}> {
   })
 
   render () {
-    console.log('rerender in chatItem')
     let widths
     let fontSizes
     if (Platform.OS === 'android') {
@@ -75,8 +74,15 @@ export default class ChatItem extends Component<{}> {
     }
     let contents
     const avatarLength = 50
-    const { msgContent, activeTime, newMsgNum, id, memberCount, isGroup, chatName} = this.props
-    const avatar = this.state.avatar === undefined ? this.state.avatar : this.props.avatar
+    const { id } = this.props
+    const msgContent = this.state.msgContent || this.props.msgContent
+    const activeTime = this.state.activeTime || this.props.activeTime
+    const avatar = this.state.avatar === undefined ? this.props.avatar : this.state.avatar
+    const newMsgNum = this.state.newMsgNum === undefined ? this.props.newMsgNum : this.state.newMsgNum
+    const isGroup = this.state.isGroup === undefined ? this.props.isGroup : this.state.isGroup
+    const memberCount = this.state.memberCount || this.props.memberCount
+    const chatName = this.state.chatName || this.props.chatName
+
     const imgMapObj = {}
     const imageAry = []
     if (avatar) {
@@ -93,14 +99,13 @@ export default class ChatItem extends Component<{}> {
         imageAry.push(avatar)
       }
     }
-    const chatNotReadNum = this.state.newMsgNum === undefined ? newMsgNum : this.state.newMsgNum
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
     const viewContent = (
       <TouchableOpacity onPress={() => {
         this.chat({
           isGroup,
           otherSideId: id,
-          chatName: name,
+          chatName,
           memberCount,
           imgMapObj
         })
@@ -115,7 +120,7 @@ export default class ChatItem extends Component<{}> {
           <View style={{flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start', height: '100%'}}>
             <View >
               <Text style={{fontSize: 18, fontWeight: '500'}}>
-                {this.state.chatName || chatName}
+                {chatName}
               </Text>
             </View>
             <View>
@@ -126,12 +131,12 @@ export default class ChatItem extends Component<{}> {
           </View>
           <View style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', height: '100%'}}>
             <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
-              {dateTimeUtil.getDisplayTime(new Date(this.state.activeTime || activeTime))}
+              {dateTimeUtil.getDisplayTime(new Date(activeTime))}
             </Text>
             <View>
-              {chatNotReadNum
+              {newMsgNum
                 ? <Badge style={{transform: [{scaleX: 0.8}, {scaleY: 0.8}]}}>
-                  <Text style={{}}>{chatNotReadNum}</Text>
+                  <Text style={{}}>{newMsgNum}</Text>
                 </Badge>
                 : null}
             </View>
@@ -166,18 +171,11 @@ ChatItem.defaultProps = {
 }
 
 ChatItem.propTypes = {
-  /*
-       * [{
-       *  onPress:(ele)=>{},
-       *  image:require('../image/folder.png',
-       *  title:''
-       *
-       * }]
-       *
-       *
-       *
-       */
-
-  data: PropTypes.array
-
+  msgContent: PropTypes.string,
+  activeTime: PropTypes.number,
+  newMsgNum: PropTypes.number,
+  id: PropTypes.string,
+  memberCount: PropTypes.number,
+  isGroup: PropTypes.bool,
+  chatName: PropTypes.string
 }

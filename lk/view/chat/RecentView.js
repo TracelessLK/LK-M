@@ -226,7 +226,7 @@ export default class RecentView extends ScreenWrapper {
 
            const option = {
              avatar,
-             isGroup,
+             isGroup: Boolean(isGroup),
              chatName,
              msgContent,
              activeTime,
