@@ -3,10 +3,15 @@
 import 'react-native'
 import App from '../Entry'
 import React from 'react'
-
 // Note: test renderer must be required after react-native.
 import renderer from 'react-test-renderer'
 
+jest.mock('react-native-update', () => {
+  return {
+    isFirstTime: jest.fn(),
+    markSuccess: jest.fn()
+  }
+})
 jest.mock('react-native-camera', () => 'Camera')
 jest.mock('react-native-fs', () => {
   return {
@@ -56,7 +61,17 @@ jest.mock('react-native-fs', () => {
 jest.mock('react-native-fetch-blob', () => {
   return {
     DocumentDir: () => {},
-    polyfill: () => {}
+    polyfill: () => {},
+    CacheDir: () => {},
+    PictureDir: () => {},
+    MusicDir: () => {},
+    MovieDir: () => {},
+    DownloadDir: () => {},
+    DCIMDir: () => {},
+    SDCardDir: () => {},
+    SDCardApplicationDir: () => {},
+    MainBundleDir: () => {},
+    LibraryDir: () => {}
   }
 })
 jest.mock('react-native-sqlite-storage', () => {

@@ -1,6 +1,5 @@
 import React from 'react'
 import 'react-native'
-// import { shallow } from 'enzyme'
 import renderer from 'react-test-renderer'
 import PasswordLoginView from '../../../../lk/view/auth/PasswordLoginView'
 
@@ -55,28 +54,13 @@ import PasswordLoginView from '../../../../lk/view/auth/PasswordLoginView'
 
 describe('PasswordLogin', () => {
   function login(props) {
-    renderer.create(<PasswordLoginView {...props}/>)
-    const tree = renderer.getRenderOutput()
-    expect(tree.login()).toMatchSnapshot()
+    const tree = renderer.create(<PasswordLoginView {...props}/>).toJSON()
+    expect(tree).toMatchSnapshot()
   }
 
-  it('should display without errors and without values', () => {
-    let user = {
-      name: 'test_01',
-      password: 'hfs'
-    }
-    let params = {
-      user,
-      t: 'hfs'
-    }
-    let state = {
-      params
-    }
-    let navigation = {
-      state
-    }
+  it('params login', () => {
     let props = {
-      navigation
+      navigation: {state: {params: {user: {name: 'test_01', password: 'hfs'}, t: 'hfs'}}}
     }
     login(props)
   })
