@@ -38,6 +38,7 @@ export default class ReadStateView extends Component<{}> {
 
   asyncRender = async () => {
     const readStateAry = await chatManager.getAllReadState({
+      userId: this.user.id,
       msgId: this.msgId
     })
     const dataAry = []
@@ -49,7 +50,10 @@ export default class ReadStateView extends Component<{}> {
         image: getAvatarSource(pic),
         key: contactId,
         title: name,
-        rightContent: <View><Text>{getIconNameByState(state)}</Text></View>
+        rightContent: <View><Text>{getIconNameByState({
+          state,
+          showDetail: false
+        })}</Text></View>
       }
       dataAry.push(obj)
       const content = <View style={{marginVertical: 20}}>

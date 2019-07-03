@@ -201,7 +201,7 @@ export default class MessageItem extends Component<{}> {
       const icon = getIconByState({
         state: this.state.state || state,
         notReadNum: this.memberCount - readNum - 1,
-        isGroupChat
+        showDetail: isGroupChat
       })
       content = (
         <View style={{
@@ -209,7 +209,7 @@ export default class MessageItem extends Component<{}> {
         }}
         >
           {overLay}
-          <TouchableOpacity onPress={() => {
+          {isGroupChat ? <TouchableOpacity onPress={() => {
             const option = {
               msgId,
               state
@@ -219,7 +219,8 @@ export default class MessageItem extends Component<{}> {
           }
           >
             {icon}
-          </TouchableOpacity>
+          </TouchableOpacity> : icon}
+
           <View style={{ ...msgBoxStyle, backgroundColor: '#ffffff' }}>
             {this._getMessage()}
           </View>

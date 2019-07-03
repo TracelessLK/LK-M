@@ -129,32 +129,32 @@ class Util {
     })
   }
 
-  static getIconNameByState=function ({state, notReadNum, isGroupChat}) {
+  static getIconNameByState=function ({state, notReadNum, showDetail}) {
     if (state === chatManager.MESSAGE_STATE_SENDING) {
       return 'md-arrow-round-up'
     } if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
       return 'md-refresh'
     } if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
       // return 'md-checkmark-circle-outline'
-      return `${isGroupChat ? '全部' : ''}未读`
+      return `${showDetail ? '全部' : ''}未读`
     } if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
       return 'ios-checkmark-circle-outline'
     } if (state === chatManager.MESSAGE_STATE_TARGET_READ) {
       // return 'ios-mail-open-outline'
-      return isGroupChat ? notReadNum ? `${notReadNum}人未读` : '全部已读' : '已读'
+      return showDetail ? notReadNum ? `${notReadNum}人未读` : '全部已读' : '已读'
     } if (state === 5) {
       return 'ios-bonfire-outline'
     }
     return 'ios-help'
   }
 
-  static getIconByState({state, notReadNum, isGroupChat}) {
+  static getIconByState({state, notReadNum, showDetail}) {
     // let result = <Ionicons name={Util.getIconNameByState(state)} size={20} style={{ marginRight: 5, lineHeight: 40, color: state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black' }} />
     let result = ''
     if (state === 0) {
       result = <Image source={chatRight} style={{width: 20, height: 20, marginTop: 11, marginRight: 3}} resizeMode="contain" />
     } else {
-      result = <Text style={{marginTop: 11, marginRight: 3, color: "rgb(155,155,155)"}}>{Util.getIconNameByState({state, notReadNum, isGroupChat})}</Text>
+      result = <Text style={{marginTop: 11, marginRight: 3, color: "rgb(155,155,155)"}}>{Util.getIconNameByState({state, notReadNum, showDetail})}</Text>
     }
     // if (state === chatManager.MESSAGE_STATE_SENDING) {
     if (false) {
