@@ -158,6 +158,7 @@ export default class RecentView extends ScreenWrapper {
       lkApp.on('netStateChanged', this.netStateChangedListener)
 
       AppState.addEventListener('change', this._handleAppStateChange)
+      chatManager.ensureNotReadChat()
     }
 
     _handleAppStateChange = (appState) => {
