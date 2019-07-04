@@ -8,17 +8,6 @@ let dbName = engine.Application.getCurrentApp().getName()||"default";
 const db = SQLite.openDatabase({name: dbName+'.db', location: 'default'}, function () {
 }, function (err) {
 });
-db.selectChat = function (){
-    let sql = `update chat set topTime=? where id=? and ownerUserId=?`
-    db.transaction((tx) => {
-            tx.executeSql(sql, [Date.now(),'874ec3a0-bb74-4fba-b7b7-6c986209ece8','2a5659fe-11c7-4ed6-b859-52bb7f9dc402'], (tx,results) => {
-                    console.log(`success`)
-                }, (err) => {
-                    console.log('selectDataFromTable  executeSql error=',err)
-                })
-        })
-}
-
 
 db.saveFile = function (filePath,fileName,data,param) {
     return new Promise((resolve,reject)=>{
