@@ -202,6 +202,7 @@ export default class MessageItem extends Component<{}> {
       const icon = getIconByState({
         state,
         notReadNum: this.memberCount - readNum - 1,
+        readNum,
         showDetail: isGroupChat
       })
       content = (

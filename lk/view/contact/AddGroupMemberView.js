@@ -76,8 +76,7 @@ export default class AddGroupMemberView extends Component<{}> {
     for (const ele of memberAry) {
       const obj = {}
       obj.image = getAvatarSource(ele.pic)
-      // obj.key = ele.id
-      obj.key = uuid()
+      obj.key = ele.id
       obj.onPress = null
       obj.title = ele.name
       dataAry.push(obj)

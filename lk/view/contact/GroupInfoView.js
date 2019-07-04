@@ -72,8 +72,7 @@ export default class GroupInfoView extends Component<{}> {
       const {contactId, name, pic} = value
       const obj = {
         image: getAvatarSource(pic),
-        // key: contactId,
-        key: uuid(),
+        key: contactId,
         title: name
       }
       obj.title = name
