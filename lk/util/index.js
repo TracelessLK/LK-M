@@ -15,7 +15,7 @@ const lkApp = Application.getCurrentApp()
 const chatManager = engine.ChatManager
 
 const { commonUtil } = require('@external/common')
-const chatRight = require('../view/image/ajax-loader.gif')
+const msgSending = require('../view/image/ajax-loader.gif')
 
 const { getAvatarSource } = commonUtil
 const defaultAvatar = require('../view/image/defaultAvatar.png')
@@ -152,7 +152,7 @@ class Util {
     // let result = <Ionicons name={Util.getIconNameByState(state)} size={20} style={{ marginRight: 5, lineHeight: 40, color: state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black' }} />
     let result = ''
     if (state === 0) {
-      result = <Image source={chatRight} style={{width: 20, height: 20, marginTop: 11, marginRight: 3}} resizeMode="contain" />
+      result = <Image source={msgSending} style={{width: 20, height: 20, marginTop: 11, marginRight: 3}} resizeMode="contain" />
     } else {
       result = <Text style={{marginTop: 11, marginRight: 3, color: "rgb(155,155,155)"}}>{Util.getIconNameByState({state, notReadNum, showDetail})}</Text>
     }

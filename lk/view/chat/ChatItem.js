@@ -37,13 +37,13 @@ export default class ChatItem extends Component<{}> {
   chatChangeListener = async ({param}) => {
     const {chatId} = param
     if (chatId === this.props.id) {
-      const signleChat = await ChatManager.getSingeChat({
+      const singleChat = await ChatManager.getSingeChat({
         chatId
       })
 
       const {chatName, activeTime,
         // MessageCeiling, focus, state,
-        newMsgNum, avatar, msgContent} = signleChat
+        newMsgNum, avatar, msgContent} = singleChat
       this.setState({
         newMsgNum,
         chatName,
