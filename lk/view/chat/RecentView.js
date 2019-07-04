@@ -115,7 +115,7 @@ export default class RecentView extends ScreenWrapper {
 
   updateListener=({event, param}) => {
     if (__DEV__) {
-      console.log({event, param})
+      // console.log({event, param})
     }
     this.updateRecent()
   }
