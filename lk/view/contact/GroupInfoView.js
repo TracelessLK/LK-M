@@ -55,7 +55,8 @@ export default class GroupInfoView extends Component<{}> {
     chatManager.on('groupMemberChange', this.groupMemberChange)
   }
 
-  groupMemberChange = async (chatId) => {
+  groupMemberChange = async ({param}) => {
+    const {chatId} = param
     if (chatId === this.group.id) {
       this.setState({
         update: true

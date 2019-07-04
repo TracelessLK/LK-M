@@ -26,10 +26,10 @@ export default class ReadStateView extends Component<{}> {
 
   componentDidMount () {
     this.asyncRender()
-    chatManager.on('selfMsgRead', this.selfMsgReadListener)
+    chatManager.on('msgStateChange', this.msgStateChangeListener)
   }
 
-  selfMsgReadListener = ({param}) => {
+  msgStateChangeListener = ({param}) => {
     const {msgId} = param
     if (msgId === this.msgId) {
       this.asyncRender()
@@ -66,7 +66,7 @@ export default class ReadStateView extends Component<{}> {
   }
 
   componentWillUnmount () {
-    chatManager.un('selfMsgRead', this.selfMsgReadListener)
+    chatManager.un('msgStateChange', this.msgStateChangeListener)
   }
 
   render () {

@@ -69,7 +69,7 @@ export default class MineView extends ScreenWrapper {
     }
 
     update = () => {
-      // console.log({event: ele})
+      // todo: not update user info
       this.user = lkApp.getCurrentUser()
       const { name, pic } = this.user
       this.setState({ name, avatarSource: getAvatarSource(pic) })

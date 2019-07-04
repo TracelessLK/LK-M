@@ -23,7 +23,7 @@ export default class MsgBadge extends Component<{}> {
   async componentDidMount () {
     const num = await chatManager.asyGetAllMsgNotReadNum(this.user.id)
     this.updateBadge(num)
-    chatManager.on('msgBadgeChanged', this.updateBadgeListener)
+    chatManager.on('msgBadgeChange', this.updateBadgeListener)
   }
 
   updateBadge = (num) => {
@@ -47,7 +47,7 @@ export default class MsgBadge extends Component<{}> {
   }
 
   componentWillUnmount () {
-    chatManager.un('msgBadgeChanged', this.updateBadge)
+    chatManager.un('msgBadgeChange', this.updateBadge)
   }
 
   render () {

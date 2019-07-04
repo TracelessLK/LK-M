@@ -125,7 +125,7 @@ export default class RecentView extends ScreenWrapper {
         chatManager.un(event, this.updateListener)
       }
       lkApp.un('netStateChanged', this.netStateChangedListener)
-      chatManager.un('msgBadgeChanged', this.msgBadgeChangedListener)
+      chatManager.un('msgBadgeChange', this.msgBadgeChangedListener)
 
       AppState.removeEventListener('change', this._handleAppStateChange)
     }
@@ -151,7 +151,7 @@ export default class RecentView extends ScreenWrapper {
         chatManager.on(event, this.updateListener)
       }
 
-      chatManager.on('msgBadgeChanged', this.msgBadgeChangedListener)
+      chatManager.on('msgBadgeChange', this.msgBadgeChangedListener)
       this.updateRecent()
       navigation.setParams({ optionToChoose: this.optionToChoose })
 

@@ -49,7 +49,7 @@ export default class MessageItem extends Component<{}> {
   }
 
   componentWillUnmount() {
-    chatManager.un('selfMsgRead', this.msgStateChangeListener)
+    chatManager.un('msgStateChange', this.msgStateChangeListener)
   }
 
   getImageData = (img) => {
