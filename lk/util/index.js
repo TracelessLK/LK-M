@@ -161,7 +161,8 @@ class Util {
     return result
   }
 
-  static getIconByState({state, notReadNum, showDetail, readNum}) {
+  static getIconByState(option) {
+    const {state, notReadNum, showDetail, readNum} = option
     // let result = <Ionicons name={Util.getIconNameByState(state)} size={20} style={{ marginRight: 5, lineHeight: 40, color: state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE ? 'red' : 'black' }} />
     let result = ''
     if (state === 0) {
@@ -171,7 +172,7 @@ class Util {
     }
     // if (state === chatManager.MESSAGE_STATE_SENDING) {
     if (false) {
-      const option = {
+      const optionParam = {
         autoplay: true,
         loop: true,
         source: require('../../resource/animations/loading.json'),
@@ -183,7 +184,7 @@ class Util {
         },
         autoSize: true
       }
-      result = <LottieView {...option} />
+      result = <LottieView {...optionParam} />
     }
     return result
   }

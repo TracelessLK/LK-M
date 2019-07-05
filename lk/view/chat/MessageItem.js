@@ -36,20 +36,23 @@ export default class MessageItem extends Component<{}> {
   }
 
   componentDidMount() {
-    chatManager.on('msgStateChange', this.msgStateChangeListener)
+    chatManager.on('msgItemChange', this.msgItemChangeListener)
   }
 
-  msgStateChangeListener = ({param}) => {
-    const {msgId, state} = param
+  msgItemChangeListener = async ({param}) => {
+    const {msgId} = param
     if (msgId === this.props.msgId) {
+      const singleMsg = await chatManager.getSingleMsg({msgId})
+      const {state, readNum} = singleMsg
       this.setState({
-        state
+        state,
+        readNum
       })
     }
   }
 
   componentWillUnmount() {
-    chatManager.un('msgStateChange', this.msgStateChangeListener)
+    chatManager.un('msgItemChange', this.msgItemChangeListener)
   }
 
   getImageData = (img) => {
@@ -139,9 +142,15 @@ export default class MessageItem extends Component<{}> {
   }
 
   render() {
-    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, readNum} = this.props
+    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, memberCount} = this.props
     const state = this.state.state === undefined ? this.props.state : this.state.state
-
+    const readNum = this.state.readNum === undefined ? this.props.readNum : this.state.readNum
+    const readState = getIconByState({
+      state,
+      notReadNum: memberCount - readNum - 1,
+      readNum,
+      showDetail: isGroupChat
+    })
     const picSource = getAvatarSource(pic)
     let content = null
 
@@ -199,12 +208,6 @@ export default class MessageItem extends Component<{}> {
       )
     } else {
       // message sent
-      const icon = getIconByState({
-        state,
-        notReadNum: this.memberCount - readNum - 1,
-        readNum,
-        showDetail: isGroupChat
-      })
       content = (
         <View style={{
           flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10
@@ -220,8 +223,8 @@ export default class MessageItem extends Component<{}> {
           }
           }
           >
-            {icon}
-          </TouchableOpacity> : icon}
+            {readState}
+          </TouchableOpacity> : readState}
 
           <View style={{ ...msgBoxStyle, backgroundColor: '#ffffff' }}>
             {this._getMessage()}
@@ -260,6 +263,7 @@ MessageItem.propTypes = {
   onPress: PropTypes.func,
   opacity: PropTypes.number,
   state: PropTypes.number,
-  readNum: PropTypes.number,
-  navigation: PropTypes.object
+  navigation: PropTypes.object,
+  memberCount: PropTypes.number,
+  readNum: PropTypes.number
 }

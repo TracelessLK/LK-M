@@ -117,6 +117,7 @@ export default class ChatView extends Component<{}> {
     }
 
      refreshRecord = async (limit) => {
+       const start = Date.now()
        if (__DEV__) {
          console.log('update ChatView')
        }
@@ -128,6 +129,7 @@ export default class ChatView extends Component<{}> {
          chatId: this.otherSideId,
          limit
        })
+       console.log(`time: ${(Date.now() - start) / 1000} s`)
        const imageUrls = []
        const imageIndexer = {}
        let index = 0
@@ -156,7 +158,7 @@ export default class ChatView extends Component<{}> {
 
        for (let i = 0; i < msgLength; i++) {
          const msg = msgAry[i]
-         let { sendTime, msgId, senderName, isSelf, state, content, type, readState, readNum, senderUid} = msg
+         let { sendTime, msgId, senderName, isSelf, state, content, type, readNum, senderUid} = msg
          isSelf = Boolean(isSelf)
          if (!msgSet.has(msgId)) {
            msgSet.add(msgId)
@@ -179,12 +181,12 @@ export default class ChatView extends Component<{}> {
 
            const option = {
              readNum,
+             memberCount: this.memberCount,
              content,
              type,
              state,
              chatId: this.otherSideId,
              msgId,
-             readState,
              senderName,
              isSelf,
              pic: this.imgMapObj[senderUid],
