@@ -145,7 +145,7 @@ class Util {
     } else if (state === chatManager.MESSAGE_STATE_SENDING) {
       result = 'md-arrow-round-up'
     } else if (state === chatManager.MESSAGE_STATE_SERVER_NOT_RECEIVE) {
-      result = '重发'
+      result = '未发送'
     } else if (state === chatManager.MESSAGE_STATE_SERVER_RECEIVE) {
       result = `未读`
     } else if (state === chatManager.MESSAGE_STATE_TARGET_RECEIVE) {
