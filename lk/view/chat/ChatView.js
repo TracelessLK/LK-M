@@ -73,8 +73,22 @@ export default class ChatView extends Component<{}> {
       super(props)
       this.minHeight = 35
       const { navigation } = this.props
-      const { isGroup, otherSideId, chatName, memberCount, imgMapObj} = navigation.state.params
+      const { isGroup, otherSideId, chatName, memberCount, avatar} = navigation.state.params
       this.chatName = chatName
+      this.user = lkApp.getCurrentUser()
+      const imgMapObj = {}
+      if (avatar) {
+        if (isGroup) {
+          for (let eleStr of avatar.split('@sep@')) {
+            const ary = eleStr.split('@id@')
+            const pic = ary[0]
+            imgMapObj[ary[1]] = pic
+          }
+        } else {
+          imgMapObj[otherSideId] = avatar
+          imgMapObj[this.user.id] = this.user.pic
+        }
+      }
       this.imgMapObj = imgMapObj
       this.memberCount = memberCount
       this.isGroupChat = Boolean(isGroup)

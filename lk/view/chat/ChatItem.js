@@ -83,19 +83,15 @@ export default class ChatItem extends Component<{}> {
     const memberCount = this.state.memberCount || this.props.memberCount
     const chatName = this.state.chatName || this.props.chatName
 
-    const imgMapObj = {}
     const imageAry = []
     if (avatar) {
       if (isGroup) {
         for (let eleStr of avatar.split('@sep@')) {
           const ary = eleStr.split('@id@')
           const pic = ary[0]
-          imgMapObj[ary[1]] = pic
           imageAry.push(pic)
         }
       } else {
-        imgMapObj[id] = avatar
-        imgMapObj[this.user.id] = this.user.pic
         imageAry.push(avatar)
       }
     }
@@ -107,7 +103,7 @@ export default class ChatItem extends Component<{}> {
           otherSideId: id,
           chatName,
           memberCount,
-          imgMapObj
+          avatar
         })
       }}
         style={{width: '100%',

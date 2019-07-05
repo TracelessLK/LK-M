@@ -40,7 +40,10 @@ export default class FriendInfoView extends ScreenWrapper {
       this.props.navigation.navigate('ChatTab')
       this.props.navigation.navigate('ChatView', {
         otherSideId: this.chatId,
-        isGroup: false
+        isGroup: false,
+        memberCount: 2,
+        avatar: this.pic,
+        chatName: this.chatName
       })
     }
 
