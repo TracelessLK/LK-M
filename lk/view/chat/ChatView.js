@@ -143,7 +143,10 @@ export default class ChatView extends Component<{}> {
          chatId: this.otherSideId,
          limit
        })
-       console.log(`time: ${(Date.now() - start) / 1000} s`)
+       const selectTime = (Date.now() - start) / 1000
+       if (selectTime > 5) {
+         console.log(`selectTime: ${selectTime} s`)
+       }
        const imageUrls = []
        const imageIndexer = {}
        let index = 0
