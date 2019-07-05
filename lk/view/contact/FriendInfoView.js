@@ -30,7 +30,7 @@ export default class FriendInfoView extends ScreenWrapper {
     }
 
     sendMessage=() => {
-      ChatManager.asyEnsureSingleChat(this.chatId)
+      ChatManager.asyEnsureSingleChat(this.state.chatId)
       this.props.navigation.navigate('ChatTab')
       this.props.navigation.navigate('ChatView', {
         otherSideId: this.state.chatId,
@@ -42,7 +42,7 @@ export default class FriendInfoView extends ScreenWrapper {
     }
 
     async componentDidMount () {
-      const deviceAry = await ContactManager.asyGetAllDevice(this.chatId)
+      const deviceAry = await ContactManager.asyGetAllDevice(this.state.chatId)
       const str = deviceAry.map(ele => ele.id).join('\n')
       this.setState({
         allDevice: str || '无记录'
