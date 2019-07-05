@@ -27,23 +27,17 @@ export default class FriendInfoView extends ScreenWrapper {
     constructor (props) {
       super(props)
       this.state = {}
-      const {contactId} = this.props.navigation.state.params
-      const singleContact = ContactManager.getSingleContact({contactId})
-      const {name, pic} = singleContact
-      this.chatId = contactId
-      this.chatName = name
-      this.pic = pic
     }
 
     sendMessage=() => {
       ChatManager.asyEnsureSingleChat(this.chatId)
       this.props.navigation.navigate('ChatTab')
       this.props.navigation.navigate('ChatView', {
-        otherSideId: this.chatId,
+        otherSideId: this.state.chatId,
         isGroup: false,
         memberCount: 2,
-        avatar: this.pic,
-        chatName: this.chatName
+        avatar: this.state.pic,
+        chatName: this.state.chatName
       })
     }
 
@@ -53,20 +47,28 @@ export default class FriendInfoView extends ScreenWrapper {
       this.setState({
         allDevice: str || '无记录'
       })
+      const {contactId} = this.props.navigation.state.params
+      const singleContact = await ContactManager.getSingleContact({contactId})
+      const {name, pic} = singleContact
+      this.setState({
+        chatId: contactId,
+        chatName: name,
+        pic
+      })
     }
 
     subRender () {
       return (
         <ScrollView contentContainerStyle={{flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff', paddingTop: 20}}>
-          <Image source={getAvatarSource(this.pic)}
+          <Image source={getAvatarSource(this.state.pic)}
             style={{margin: 10, width: 100, height: 100, borderRadius: 5}} resizeMode="contain"/>
 
           <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', width: '90%', height: 40, marginTop: 20}}>
-            <Text>标识：</Text><Text>{this.chatId}</Text>
+            <Text>标识：</Text><Text>{this.state.chatId}</Text>
           </View>
           <View style={{width: '90%', height: 0, borderTopWidth: 1, borderColor: '#d0d0d0'}}/>
           <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', width: '90%', height: 40, marginTop: 20}}>
-            <Text>昵称：</Text><Text>{this.chatName}</Text>
+            <Text>昵称：</Text><Text>{this.state.chatName}</Text>
           </View>
           <View style={{width: '90%', height: 0, borderTopWidth: 1, borderColor: '#d0d0d0'}}/>
           <TouchableOpacity onPress={this.sendMessage} style={{marginVertical: 30, width: '90%', height: 40, borderColor: 'gray', borderWidth: 1, borderRadius: 5, flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
