@@ -3,8 +3,29 @@ import renderer from 'react-test-renderer'
 import {Platform} from "react-native"
 import EntryView from '../../../../lk/view/index/EntryView'
 
-jest.mock('react-native-update')
+jest.mock('react-native-update', () => 'HotUpdate')
 jest.mock('react-native-camera', () => 'Camera')
+jest.mock('react-native-fetch-blob', () => {
+  return {
+    DocumentDir: () => {},
+    fetch: () => {},
+    base64: () => {},
+    android: () => {},
+    ios: () => {},
+    config: () => {},
+    session: () => {},
+    fs: {
+      dirs: {
+        MainBundleDir: () => {},
+        CacheDir: () => {},
+        DocumentDir: () => {}
+      }
+    },
+    wrap: () => {},
+    polyfill: () => {},
+    JSONStream: () => {}
+  }
+})
 jest.mock('react-native-fs', () => () => {
   return {
     appendFile: jest.fn(),
