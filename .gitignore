@@ -59,7 +59,7 @@ buck-out/
 
 #jest
 coverage
-
+__snapshots__
 
 *.log
 
@@ -69,3 +69,5 @@ lk/app.json
 
 # mac
 ._*
+
+
