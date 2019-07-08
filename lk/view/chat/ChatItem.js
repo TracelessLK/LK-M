@@ -112,20 +112,29 @@ export default class ChatItem extends Component<{}> {
           height: 55,
           alignItems: 'center'}}>
         {imageAry.length > 1 ? <GroupAvatar defaultPic={defaultAvatar} avatarStyle={avatarStyle} picAry={imageAry}></GroupAvatar> : <Image resizeMode="cover" style={avatarStyle} source={getAvatarSource(imageAry[0])} />}
-        <View style={{flexDirection: 'row', width: widths, justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10}}>
-          <View style={{flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start', height: '100%'}}>
+        <View style={{flexDirection: 'row', width: widths, justifyContent: 'space-between', alignItems: 'center', marginLeft: 8}}>
+          <View style={{flexDirection: 'column',
+            justifyContent: 'space-around',
+            alignItems: 'flex-start',
+            flexShrink: 1,
+            height: '100%'}}>
             <View >
               <Text style={{fontSize: 18, fontWeight: '500'}}>
                 {chatName}
               </Text>
             </View>
             <View>
-              <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginTop: 3}}>
+              <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginTop: 3}} numberOfLines={1}>
                 {msgContent}
               </Text>
             </View>
           </View>
-          <View style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', height: '100%'}}>
+          <View style={{display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            height: '100%',
+            minWidth: 60}}>
             <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
               {dateTimeUtil.getDisplayTime(new Date(activeTime))}
             </Text>
