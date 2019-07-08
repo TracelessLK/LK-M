@@ -135,9 +135,11 @@ export default class ChatItem extends Component<{}> {
             alignItems: 'center',
             height: '100%',
             minWidth: 60}}>
-            <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
-              {dateTimeUtil.getDisplayTime(new Date(activeTime))}
-            </Text>
+            <View>
+              <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
+                {dateTimeUtil.getDisplayTime(new Date(activeTime))}
+              </Text>
+            </View>
             <View>
               {newMsgNum
                 ? <Badge style={{transform: [{scaleX: 0.8}, {scaleY: 0.8}]}}>
