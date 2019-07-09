@@ -14,7 +14,6 @@ const {getAvatarSource} = require('../../util')
 const {engine} = require('@lk/LK-C')
 
 const common = require('@external/common')
-const uuid = require('uuid')
 
 const {List} = common
 const chatManager = engine.ChatManager

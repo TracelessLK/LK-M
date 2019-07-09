@@ -14,7 +14,6 @@ const lkApp = Application.getCurrentApp()
 
 const {getAvatarSource} = require('../../util')
 const _ = require('lodash')
-const uuid = require('uuid')
 
 const chatManager = engine.ChatManager
 const {runNetFunc} = require('../../util')
