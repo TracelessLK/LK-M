@@ -9,6 +9,7 @@
     "start:android": "node bin/startAndroid",
     "start:ios": "node bin/startIOS",
     "test": "npm run lint && jest",
+    "jest": "jest",
     "showDevMenu": "adb shell input keyevent 82",
     "postinstall": "node bin/postinstall",
     "pack:ios": "node bin/packIOS",
