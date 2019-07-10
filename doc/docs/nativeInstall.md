@@ -1,19 +1,26 @@
-### yarn add lottie-react-native
+---
+id: nativeInstall
+title: 原生安装
+sidebar_label: 原生安装
+---
+
+
+
+## ios
+
 1. link CameraRoll
 
 > 在ChatView.js使用了saveToCameraRoll方法
 
 2. link lottie-react-native
 
-#### ios
-
 ```
     react-native link lottie-ios
     react-native link lottie-react-native
 ```
- open the Xcode project configuration 'genera' tab, and add the Lottie.framework as Embedded Binaries
+ open the Xcode project configuration 'general' tab, and add the Lottie.framework as Embedded Binaries
 
-#### android
+## android
 ```
 react-native link lottie-react-native
 ```

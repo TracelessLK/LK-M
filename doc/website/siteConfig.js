@@ -15,17 +15,12 @@ const users = [
 const siteConfig = {
   title: 'LK Doc',
   tagline: 'chat at your own will',
-  url: 'https://your-docusaurus-test-site.com', // website URL
+  url: '', // website URL
   baseUrl: '/',
   projectName: 'LK',
   organizationName: 'TracelessLK',
-  // For top-level user or org sites, the organization is still the same.
-  // e.g., for the https://JoelMarcey.github.io site, it would be set like...
-  //   organizationName: 'JoelMarcey'
-
-  // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
-    {doc: 'doc1', label: 'Docs'},
+    {doc: 'nativeInstall', label: 'Docs'},
     {doc: 'doc4', label: 'API'},
     {page: 'help', label: 'Help'},
     {
