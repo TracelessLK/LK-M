@@ -103,13 +103,13 @@ describe('RecentView tests', () => {
       const node = new RecentView(props)
       expect(node.getConnectionMsg()).toBe('当前网络不可用,请检查您的网络设置')
     })
-    it('componentWillUnmount', () => {
-      const node = new RecentView(props)
-      node.setState({
-        contentAry: jest.fn(),
-        refreshing: jest.fn()
-      })
-      expect(node.componentWillUnmount()).toMatchSnapshot()
-    })
+    // it('componentWillUnmount', () => {
+    //   const node = new RecentView(props)
+    //   node.setState({
+    //     contentAry: jest.fn(),
+    //     refreshing: jest.fn()
+    //   })
+    //   expect(node.componentWillUnmount()).toMatchSnapshot()
+    // })
   })
 })
