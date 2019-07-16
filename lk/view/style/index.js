@@ -6,5 +6,6 @@ const style = {
   }
 }
 
+
 Object.freeze(style)
 module.exports = style
