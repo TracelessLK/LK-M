@@ -16,6 +16,8 @@ import NetIndicator from '../common/NetIndicator'
 import ScreenWrapper from '../common/ScreenWrapper'
 import ChatItem from "./ChatItem"
 
+const _ = require('lodash')
+
 const { PushUtil } = require('@external/common')
 
 const { removeNotify } = PushUtil
@@ -225,12 +227,14 @@ export default class RecentView extends ScreenWrapper {
        }
        const user = lkApp.getCurrentUser()
        const chatAry = await chatManager.getAllChat(user.id)
+       const arrSortResult = _.sortBy(chatAry, (item) => {
+         return -item.MessageCeiling
+       })
        let contentAry
 
-       if (chatAry.length) {
-         contentAry = chatAry.map(ele => {
-           const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum, memberCount} = ele
-
+       if (arrSortResult.length) {
+         contentAry = arrSortResult.map(ele => {
+           const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum, memberCount, MessageCeiling, focus} = ele
            const option = {
              avatar,
              isGroup: Boolean(isGroup),
@@ -240,6 +244,8 @@ export default class RecentView extends ScreenWrapper {
              newMsgNum,
              id,
              memberCount,
+             peakTime: MessageCeiling,
+             focus,
              navigation: this.props.navigation,
              key: id
            }

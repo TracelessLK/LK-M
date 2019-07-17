@@ -4,13 +4,14 @@ import {
   Platform,
   View,
   TouchableOpacity,
-  Image
+  Image, Vibration
 } from 'react-native'
 import PropTypes from 'prop-types'
-import { Badge, Button, Icon as NBIcon, Text, SwipeRow
+import { Badge, Button, Text, SwipeRow
 } from 'native-base'
 import GroupAvatar from '../../../common/widget/GroupAvatar'
 
+const sjx = require('../image/sjx.png')
 const { engine } = require('@lk/LK-C')
 const { commonUtil } = require('@external/common')
 
@@ -26,12 +27,24 @@ export default class ChatItem extends Component<{}> {
   constructor (props) {
     super(props)
     this.state = {
+      peakTime: this.props.peakTime,
+      focus: this.props.focus
     }
     this.user = Application.getCurrentApp().getCurrentUser()
   }
 
   componentDidMount() {
     ChatManager.on('chatChange', this.chatChangeListener)
+    ChatManager.on('otherMsgReceived', this.chatVibration)
+  }
+
+  chatVibration = ({param}) => {
+    const {chatId} = param
+    if (chatId === this.props.id) {
+      if (this.state.focus) {
+        Vibration.vibrate()
+      }
+    }
   }
 
   chatChangeListener = async ({param}) => {
@@ -56,11 +69,42 @@ export default class ChatItem extends Component<{}> {
 
   componentWillUnmount() {
     ChatManager.un('chatChange', this.chatChangeListener)
+    ChatManager.un('otherMsgReceived', this.chatVibration)
   }
 
   chat = debounceFunc((option) => {
     this.props.navigation.navigate('ChatView', option)
   })
+
+  topChat = async ({userId, chatId, peakTime}) => {
+    let Message = peakTime
+    if (Message !== null) {
+      await ChatManager.asyMessageCeiling(null, userId, chatId)
+      this.setState({
+        peakTime: null
+      })
+    } else {
+      await ChatManager.asyMessageCeiling(Date.now(), userId, chatId)
+      this.setState({
+        peakTime: Date.now()
+      })
+    }
+  }
+
+  focusChat = async ({userId, chatId, focus}) => {
+    let focuss = focus
+    if (focuss === 1) {
+      await ChatManager.asyMessageFocus(null, userId, chatId)
+      this.setState({
+        focus: null
+      })
+    } else {
+      await ChatManager.asyMessageFocus(1, userId, chatId)
+      this.setState({
+        focus: 1
+      })
+    }
+  }
 
   render () {
     let widths
@@ -82,6 +126,10 @@ export default class ChatItem extends Component<{}> {
     const isGroup = this.state.isGroup === undefined ? this.props.isGroup : this.state.isGroup
     const memberCount = this.state.memberCount || this.props.memberCount
     const chatName = this.state.chatName || this.props.chatName
+    const peakTime = this.state.peakTime
+    const focus = this.state.focus
+    console.log("newMsgNum", newMsgNum)
+    console.log("focus", focus)
 
     const imageAry = []
     if (avatar) {
@@ -96,6 +144,7 @@ export default class ChatItem extends Component<{}> {
       }
     }
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
+    const sjxStyle = {width: 10, height: 10, marginTop: '-10%', marginLeft: '0%'}
     const viewContent = (
       <TouchableOpacity onPress={() => {
         this.chat({
@@ -120,7 +169,7 @@ export default class ChatItem extends Component<{}> {
             height: '100%'}}>
             <View >
               <Text style={{fontSize: 18, fontWeight: '500'}}>
-                {chatName}
+                {focus === 1 ? '⭐' + chatName : chatName}
               </Text>
             </View>
             <View>
@@ -135,6 +184,9 @@ export default class ChatItem extends Component<{}> {
             alignItems: 'center',
             height: '100%',
             minWidth: 60}}>
+            <View>
+              {peakTime === null ? null : <Image style={sjxStyle} source={sjx} />}
+            </View>
             <View>
               <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginBottom: 3}}>
                 {dateTimeUtil.getDisplayTime(new Date(activeTime))}
@@ -152,20 +204,38 @@ export default class ChatItem extends Component<{}> {
       </TouchableOpacity>
     )
 
+    const viewRight = (
+      <TouchableOpacity style={{ display: 'flex', flex: 1, alignItems: "flex-start", justifyContent: "flex-start", flexDirection: "row", height: '100%'}}>
+        <Button style={{height: '90%', backgroundColor: 'gray', alignSelf: 'flex-start' }} onPress={() => {
+          this.topChat({userId: this.user.id, chatId: id, peakTime})
+        }
+          }>
+          <Text style={{fontSize: 15, fontWeight: '400', color: '#FFFFFF', marginTop: 3}}>{peakTime === null ? '置顶' : '取消置顶'}</Text>
+        </Button>
+        <Button style={{height: '90%'}} warning onPress={() => {
+          this.focusChat({userId: this.user.id, chatId: id, focus})
+        }
+        }>
+          <Text style={{fontSize: 15, fontWeight: '400', color: '#FFFFFF', marginTop: 3}}>{focus === 1 ? '取消提醒' : '提醒'}</Text>
+        </Button>
+        <Button style={{height: '90%'}} danger onPress={() => {
+          ChatManager.asyDeleteChat({chatId: id})
+        }
+          }>
+          <Text style={{fontSize: 15, fontWeight: '400', color: '#FFFFFF', marginTop: 3}}>{'删除'}</Text>
+        </Button>
+      </TouchableOpacity>
+    )
+
     contents = (
       <SwipeRow
-        rightOpenValue={-75}
+        rightOpenValue={-225}
         body={
           viewContent
         }
         right={
-          <Button danger onPress={() => {
-            ChatManager.asyDeleteChat({chatId: id})
-          }
-          }>
-            <NBIcon active name="trash" />
-          </Button>
-                }
+          viewRight
+        }
         key={id}
             />
     )
@@ -184,5 +254,7 @@ ChatItem.propTypes = {
   id: PropTypes.string,
   memberCount: PropTypes.number,
   isGroup: PropTypes.bool,
-  chatName: PropTypes.string
+  chatName: PropTypes.string,
+  peakTime: PropTypes.number,
+  focus: PropTypes.number
 }
