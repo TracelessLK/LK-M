@@ -145,7 +145,7 @@ export default class ChatItem extends Component<{}> {
       }
     }
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
-    const sjxStyle = {alignItems: 'flex-end', width: 10, height: 10, marginTop: '-24%', marginLeft: '0%'}
+    const sjxStyle = { width: 10, height: 10, marginTop: '-23%', marginRight: '-18%', transform: [{rotate: '180deg'}]}
     const viewContent = (
       <TouchableOpacity onPress={() => {
         this.chat({
@@ -192,7 +192,7 @@ export default class ChatItem extends Component<{}> {
             alignItems: 'center',
             height: '100%',
             minWidth: 60}}>
-            <View>
+            <View style={{alignSelf: 'flex-end'}}>
               {peakTime === null ? null : <Image style={sjxStyle} source={sjx} />}
             </View>
             <View>
