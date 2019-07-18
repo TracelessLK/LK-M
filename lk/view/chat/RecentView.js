@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   AppState,
-  BackHandler, ActivityIndicator
+  BackHandler, ActivityIndicator, Vibration
 } from 'react-native'
 import NetIndicator from '../common/NetIndicator'
 import ScreenWrapper from '../common/ScreenWrapper'
@@ -131,6 +131,7 @@ export default class RecentView extends ScreenWrapper {
       chatManager.un('msgBadgeChange', this.msgBadgeChangedListener)
 
       AppState.removeEventListener('change', this._handleAppStateChange)
+      chatManager.un('otherMsgReceived', this.chatVibration)
     }
 
   msgBadgeChangedListener = ({param: {num}}) => {
@@ -162,6 +163,23 @@ export default class RecentView extends ScreenWrapper {
 
       AppState.addEventListener('change', this._handleAppStateChange)
       chatManager.ensureNotReadChat()
+      chatManager.on('otherMsgReceived', this.chatVibration)
+    }
+
+    chatVibration = async ({param}) => {
+      const user = lkApp.getCurrentUser()
+      const chatAry = await chatManager.getAllChat(user.id)
+      if (chatAry.length) {
+        chatAry.forEach(ele => {
+          const {id, focus} = ele
+          const {chatId} = param
+          if (chatId === id) {
+            if (focus) {
+              Vibration.vibrate()
+            }
+          }
+        })
+      }
     }
 
     _handleAppStateChange = (appState) => {

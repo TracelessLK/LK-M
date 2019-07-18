@@ -4,7 +4,7 @@ import {
   Platform,
   View,
   TouchableOpacity,
-  Image, Vibration
+  Image
 } from 'react-native'
 import PropTypes from 'prop-types'
 import { Badge, Button, Text, SwipeRow
@@ -36,16 +36,6 @@ export default class ChatItem extends Component<{}> {
 
   componentDidMount() {
     ChatManager.on('chatChange', this.chatChangeListener)
-    ChatManager.on('otherMsgReceived', this.chatVibration)
-  }
-
-  chatVibration = ({param}) => {
-    const {chatId} = param
-    if (chatId === this.props.id) {
-      if (this.state.focus) {
-        Vibration.vibrate()
-      }
-    }
   }
 
   chatChangeListener = async ({param}) => {
@@ -71,7 +61,6 @@ export default class ChatItem extends Component<{}> {
 
   componentWillUnmount() {
     ChatManager.un('chatChange', this.chatChangeListener)
-    ChatManager.un('otherMsgReceived', this.chatVibration)
   }
 
   chat = debounceFunc((option) => {
