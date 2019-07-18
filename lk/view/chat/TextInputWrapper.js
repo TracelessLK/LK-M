@@ -26,7 +26,7 @@ export default class TextInputWrapper extends Component<{}> {
   }
 
   render () {
-    const {onChangeText, onSubmitEditing} = this.props
+    const {onChangeText, onSubmitEditing, defaultValue} = this.props
     return (
       <TextInput multiline ref="text"
         {...this.props.textInputProp}
@@ -43,7 +43,7 @@ export default class TextInputWrapper extends Component<{}> {
           marginBottom: 5,
           height: this.state.height}}
         blurOnSubmit={false} returnKeyType="send" enablesReturnKeyAutomatically
-        underlineColorAndroid='transparent' defaultValue={this.state.defaultValue} onSubmitEditing={debounceFunc(onSubmitEditing)}
+        underlineColorAndroid='transparent' defaultValue={defaultValue} onSubmitEditing={debounceFunc(onSubmitEditing)}
         onChangeText={onChangeText} onContentSizeChange={(event) => {
           let heightContent = event.nativeEvent.contentSize.height
           if (heightContent < this.minHeight) {

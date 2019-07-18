@@ -234,7 +234,7 @@ export default class RecentView extends ScreenWrapper {
 
        if (arrSortResult.length) {
          contentAry = arrSortResult.map(ele => {
-           const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum, memberCount, MessageCeiling, focus} = ele
+           const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum, memberCount, MessageCeiling, focus, reserve1} = ele
            const option = {
              avatar,
              isGroup: Boolean(isGroup),
@@ -246,6 +246,7 @@ export default class RecentView extends ScreenWrapper {
              memberCount,
              peakTime: MessageCeiling,
              focus,
+             reserve1,
              navigation: this.props.navigation,
              key: id
            }

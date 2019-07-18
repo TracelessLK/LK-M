@@ -28,7 +28,8 @@ export default class ChatItem extends Component<{}> {
     super(props)
     this.state = {
       peakTime: this.props.peakTime,
-      focus: this.props.focus
+      focus: this.props.focus,
+      reserve1: this.props.reserve1
     }
     this.user = Application.getCurrentApp().getCurrentUser()
   }
@@ -56,13 +57,14 @@ export default class ChatItem extends Component<{}> {
 
       const {chatName, activeTime,
         // MessageCeiling, focus, state,
-        newMsgNum, avatar, msgContent} = singleChat
+        newMsgNum, avatar, msgContent, reserve1} = singleChat
       this.setState({
         newMsgNum,
         chatName,
         activeTime,
         avatar,
-        msgContent
+        msgContent,
+        reserve1
       })
     }
   }
@@ -128,8 +130,7 @@ export default class ChatItem extends Component<{}> {
     const chatName = this.state.chatName || this.props.chatName
     const peakTime = this.state.peakTime
     const focus = this.state.focus
-    console.log("newMsgNum", newMsgNum)
-    console.log("focus", focus)
+    const reserve1 = this.state.reserve1
 
     const imageAry = []
     if (avatar) {
@@ -144,7 +145,7 @@ export default class ChatItem extends Component<{}> {
       }
     }
     const avatarStyle = {width: avatarLength, height: avatarLength, margin: 5, borderRadius: 5}
-    const sjxStyle = {width: 10, height: 10, marginTop: '-10%', marginLeft: '0%'}
+    const sjxStyle = {alignItems: 'flex-end', width: 10, height: 10, marginTop: '-24%', marginLeft: '0%'}
     const viewContent = (
       <TouchableOpacity onPress={() => {
         this.chat({
@@ -152,7 +153,8 @@ export default class ChatItem extends Component<{}> {
           otherSideId: id,
           chatName,
           memberCount,
-          avatar
+          avatar,
+          reserve1
         })
       }}
         style={{width: '100%',
@@ -174,7 +176,13 @@ export default class ChatItem extends Component<{}> {
             </View>
             <View>
               <Text style={{fontSize: fontSizes, fontWeight: '400', color: '#a0a0a0', marginTop: 3}} numberOfLines={1}>
-                {msgContent}
+                {reserve1 === null || reserve1 === ''
+                  ? msgContent
+                  : <Text>
+                    <Text style={{color: 'red'}}>[草稿] </Text>
+                    <Text style={{color: '#a0a0a0'}}>{reserve1}</Text>
+                  </Text>
+                }
               </Text>
             </View>
           </View>
@@ -256,5 +264,6 @@ ChatItem.propTypes = {
   isGroup: PropTypes.bool,
   chatName: PropTypes.string,
   peakTime: PropTypes.number,
-  focus: PropTypes.number
+  focus: PropTypes.number,
+  reserve1: PropTypes.string
 }
