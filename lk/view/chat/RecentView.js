@@ -10,11 +10,13 @@ import {
   TouchableOpacity,
   RefreshControl,
   AppState,
-  BackHandler, ActivityIndicator
+  BackHandler, ActivityIndicator, Vibration
 } from 'react-native'
 import NetIndicator from '../common/NetIndicator'
 import ScreenWrapper from '../common/ScreenWrapper'
 import ChatItem from "./ChatItem"
+
+const _ = require('lodash')
 
 const { PushUtil } = require('@external/common')
 
@@ -129,6 +131,7 @@ export default class RecentView extends ScreenWrapper {
       chatManager.un('msgBadgeChange', this.msgBadgeChangedListener)
 
       AppState.removeEventListener('change', this._handleAppStateChange)
+      chatManager.un('otherMsgReceived', this.chatVibration)
     }
 
   msgBadgeChangedListener = ({param: {num}}) => {
@@ -160,6 +163,23 @@ export default class RecentView extends ScreenWrapper {
 
       AppState.addEventListener('change', this._handleAppStateChange)
       chatManager.ensureNotReadChat()
+      chatManager.on('otherMsgReceived', this.chatVibration)
+    }
+
+    chatVibration = async ({param}) => {
+      const user = lkApp.getCurrentUser()
+      const chatAry = await chatManager.getAllChat(user.id)
+      if (chatAry.length) {
+        chatAry.forEach(ele => {
+          const {id, focus} = ele
+          const {chatId} = param
+          if (chatId === id) {
+            if (focus) {
+              Vibration.vibrate()
+            }
+          }
+        })
+      }
     }
 
     _handleAppStateChange = (appState) => {
@@ -225,12 +245,14 @@ export default class RecentView extends ScreenWrapper {
        }
        const user = lkApp.getCurrentUser()
        const chatAry = await chatManager.getAllChat(user.id)
+       const arrSortResult = _.sortBy(chatAry, (item) => {
+         return -item.MessageCeiling
+       })
        let contentAry
 
-       if (chatAry.length) {
-         contentAry = chatAry.map(ele => {
-           const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum, memberCount} = ele
-
+       if (arrSortResult.length) {
+         contentAry = arrSortResult.map(ele => {
+           const {isGroup, avatar, id, chatName, msgContent, activeTime, newMsgNum, memberCount, MessageCeiling, focus, reserve1} = ele
            const option = {
              avatar,
              isGroup: Boolean(isGroup),
@@ -240,6 +262,9 @@ export default class RecentView extends ScreenWrapper {
              newMsgNum,
              id,
              memberCount,
+             peakTime: MessageCeiling,
+             focus,
+             reserve1,
              navigation: this.props.navigation,
              key: id
            }

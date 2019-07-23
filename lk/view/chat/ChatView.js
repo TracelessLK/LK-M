@@ -73,7 +73,7 @@ export default class ChatView extends Component<{}> {
       super(props)
       this.minHeight = 35
       const { navigation } = this.props
-      const { isGroup, otherSideId, chatName, memberCount, avatar} = navigation.state.params
+      const { isGroup, otherSideId, chatName, memberCount, avatar, reserve1} = navigation.state.params
       this.chatName = chatName
       this.user = lkApp.getCurrentUser()
       const imgMapObj = {}
@@ -108,6 +108,7 @@ export default class ChatView extends Component<{}> {
         showMsg: false
       }
       this.otherSideId = otherSideId
+      this.reserve1 = reserve1
       this.text = ''
       this.folderId = null
       if (Platform.OS === 'ios') {
@@ -351,6 +352,7 @@ export default class ChatView extends Component<{}> {
             this.refs.text.reload(this.text)
           }
         })
+        chatManager.asymessageDraft(null, this.user.id, this.otherSideId)
       }
     }
 
@@ -532,6 +534,11 @@ export default class ChatView extends Component<{}> {
     )
   })
 
+  onChangeText = (t) => {
+    this.text = t ? t.trim() : ''
+    chatManager.asymessageDraft(this.text, this.user.id, this.otherSideId)
+  }
+
   render() {
     const {
       msgViewHeight, isRecording, recordTime, refreshing, recordEls, showVoiceRecorder
@@ -682,9 +689,10 @@ export default class ChatView extends Component<{}> {
               </TouchableOpacity>
             ) : (
               <TextInputWrapper
-                onChangeText={(v) => {
-                  this.text = v ? v.trim() : ''
-                }}
+                onChangeText={
+                  this.onChangeText
+                }
+                defaultValue={this.reserve1}
                 onSubmitEditing={this.send}
                 ref="text"
                 textInputProp={{
