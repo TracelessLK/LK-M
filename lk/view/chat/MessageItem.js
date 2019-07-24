@@ -14,6 +14,7 @@ import AudioPlay from './AudioPlay'
 
 const { engine } = require('@lk/LK-C')
 
+const dot = require('../image/dot.png')
 const chatLeft = require('../image/chat-y-l.png')
 const chatRight = require('../image/chat-w-r.png')
 const { getAvatarSource, getIconByState } = require('../../util')
@@ -43,10 +44,11 @@ export default class MessageItem extends Component<{}> {
     const {msgId} = param
     if (msgId === this.props.msgId) {
       const singleMsg = await chatManager.getSingleMsg({msgId})
-      const {state, readNum} = singleMsg
+      const {state, readNum, isDot} = singleMsg
       this.setState({
         state,
-        readNum
+        readNum,
+        isDot
       })
     }
   }
@@ -71,7 +73,7 @@ export default class MessageItem extends Component<{}> {
   }
 
   _getMessage=() => {
-    const {type, content, state} = this.props
+    const {type, content, state, recordTime, isSelf} = this.props
     const { onPress } = this.props
     let result
     if (type === chatManager.MESSAGE_TYPE_TEXT) {
@@ -118,14 +120,42 @@ export default class MessageItem extends Component<{}> {
         </TouchableOpacity>
       )
     } else if (type === chatManager.MESSAGE_TYPE_AUDIO) {
+      let recordTimeNew
+      let widthSize = 0
+      if (recordTime) {
+        recordTimeNew = parseInt(recordTime / 1000)
+        widthSize = recordTimeNew * 3 + 16
+      }
       let { url } = JSON.parse(content)
       url = this.getCurrentUrl(url)
       const option = {
-        url
+        url,
+        isSelf
       }
-      result = <AudioPlay {...option} />
+      if (!isSelf) {
+        result = (
+          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <AudioPlay {...option} _updateIsDot={(item) => {
+              this.upDateIsDot(item)
+            }}/>
+            <Text style={{width: widthSize, marginTop: -5, color: "rgb(155,155,155)"}}>{recordTimeNew === undefined || recordTimeNew === null ? null : recordTimeNew + '"'}</Text>
+          </TouchableOpacity>
+        )
+      } else {
+        result = (
+          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{textAlign: 'right', width: widthSize, color: "rgb(155,155,155)"}}>{recordTimeNew === undefined || recordTimeNew === null ? null : recordTimeNew + '"'}</Text>
+            <AudioPlay {...option} />
+          </TouchableOpacity>
+        )
+      }
     }
     return result
+  }
+
+  upDateIsDot = (isDot) => {
+    const { msgId } = this.props
+    chatManager.asyUpdateDot(isDot, msgId)
   }
 
   doTouchMsgState= ({ state, msgId }) => {
@@ -142,9 +172,10 @@ export default class MessageItem extends Component<{}> {
   }
 
   render() {
-    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, memberCount} = this.props
+    const {msgId, senderName, isGroupChat, pic, opacity, isSelf, memberCount, type} = this.props
     const state = this.state.state === undefined ? this.props.state : this.state.state
     const readNum = this.state.readNum === undefined ? this.props.readNum : this.state.readNum
+    const isDot = this.state.isDot === undefined ? this.props.isDot : this.state.isDot
     const readState = getIconByState({
       state,
       notReadNum: memberCount - readNum - 1,
@@ -197,6 +228,7 @@ export default class MessageItem extends Component<{}> {
               >
                 {this._getMessage()}
               </View>
+              {type === chatManager.MESSAGE_TYPE_AUDIO && !isDot ? <Image style={{ alignItems: 'center', justifyContent: 'center', marginTop: 11, width: 25, height: 25 }} source={dot}></Image> : null}
             </View>
           </View>
           <View style={{ marginVertical: isGroupChat ? 25 : 5, marginLeft: 0 }}>
@@ -223,7 +255,10 @@ export default class MessageItem extends Component<{}> {
           }
           }
           >
-            {readState}
+            <Text style={{justifyContent: 'center', marginTop: 15}}>
+              {readState}
+              {' '}
+            </Text>
           </TouchableOpacity> : readState}
 
           <View style={{ ...msgBoxStyle, backgroundColor: '#ffffff' }}>
@@ -265,5 +300,6 @@ MessageItem.propTypes = {
   state: PropTypes.number,
   navigation: PropTypes.object,
   memberCount: PropTypes.number,
-  readNum: PropTypes.number
+  readNum: PropTypes.number,
+  isDot: PropTypes.bool
 }

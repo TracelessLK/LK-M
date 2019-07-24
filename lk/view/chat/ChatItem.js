@@ -168,7 +168,7 @@ export default class ChatItem extends Component<{}> {
                 {reserve1 === null || reserve1 === ''
                   ? msgContent
                   : <Text>
-                    <Text style={{color: 'red'}}>[草稿] </Text>
+                    <Text style={{color: '#FF6347'}}>[草稿] </Text>
                     <Text style={{color: '#a0a0a0'}}>{reserve1}</Text>
                   </Text>
                 }
@@ -213,7 +213,7 @@ export default class ChatItem extends Component<{}> {
           this.focusChat({userId: this.user.id, chatId: id, focus})
         }
         }>
-          <Text style={{fontSize: 15, fontWeight: '400', color: '#FFFFFF', marginTop: 3}}>{focus === 1 ? '取消提醒' : '提醒'}</Text>
+          <Text style={{fontSize: 15, fontWeight: '400', color: '#FFFFFF', marginTop: 3}}>{focus === 1 ? '取消提醒' : '特别提醒'}</Text>
         </Button>
         <Button style={{height: '90%'}} danger onPress={() => {
           ChatManager.asyDeleteChat({chatId: id})
