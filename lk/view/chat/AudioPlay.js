@@ -33,7 +33,9 @@ export default class AudioPlay extends Component<{}> {
       <TouchableOpacity
         style={{ width: 42, alignItems: 'center', justifyContent: 'center' }}
         onPress={async () => {
-          this.props._updateIsDot(1)
+          if (!isSelf) {
+            this.props._upDateAudioPlayed()
+          }
           this.audioRecorderPlayer.removePlayBackListener()
 
           this.audioRecorderPlayer.addPlayBackListener((e) => {
