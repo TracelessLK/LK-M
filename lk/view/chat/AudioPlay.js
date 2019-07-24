@@ -23,12 +23,17 @@ export default class AudioPlay extends Component<{}> {
   }
 
   render() {
-    const { url } = this.props
+    const { url, isSelf } = this.props
     const logoSize = 40
+    let rotateDeg = '0deg'
+    if (isSelf) {
+      rotateDeg = '180deg'
+    }
     return (
       <TouchableOpacity
-        style={{ width: 60, alignItems: 'center', justifyContent: 'center' }}
+        style={{ width: 42, alignItems: 'center', justifyContent: 'center' }}
         onPress={async () => {
+          this.props._updateIsDot(1)
           this.audioRecorderPlayer.removePlayBackListener()
 
           this.audioRecorderPlayer.addPlayBackListener((e) => {
@@ -74,7 +79,7 @@ export default class AudioPlay extends Component<{}> {
           await this.audioRecorderPlayer.startPlayer(Platform.OS === 'ios' ? fileName : url)
         }}
       >
-        <View style={{ width: logoSize, alignItems: 'flex-start', justifyContent: 'center' }}>
+        <View style={{ width: logoSize, alignItems: 'flex-start', justifyContent: 'center', transform: [{rotate: rotateDeg}] }}>
           <Ionicons
             name={this.state.toggle ? 'ios-volume-up-outline' : 'ios-volume-down-outline'}
             size={logoSize}

@@ -176,7 +176,7 @@ export default class ChatView extends Component<{}> {
 
        for (let i = 0; i < msgLength; i++) {
          const msg = msgAry[i]
-         let { sendTime, msgId, senderName, isSelf, state, content, type, readNum, senderUid} = msg
+         let { sendTime, msgId, senderName, isSelf, state, content, type, readNum, senderUid, recordTime, isDot} = msg
          isSelf = Boolean(isSelf)
          if (!msgSet.has(msgId)) {
            msgSet.add(msgId)
@@ -207,6 +207,8 @@ export default class ChatView extends Component<{}> {
              msgId,
              senderName,
              isSelf,
+             recordTime,
+             isDot,
              pic: this.imgMapObj[senderUid],
              isGroupChat: this.isGroupChat,
              onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE
@@ -216,7 +218,6 @@ export default class ChatView extends Component<{}> {
              navigation,
              opacity: 0
            }
-
            recordAry.push(<MessageItem key={msgId} {...option} />)
          }
        }
@@ -500,7 +501,7 @@ export default class ChatView extends Component<{}> {
         const time = this.audioRecorderPlayer.mmssss(Math.floor(recordTimeRaw))
         this.recordTimeRaw = recordTimeRaw
         this.setState({
-          recordTime: time
+          recordTime: time.substring(0, time.length - 3)
         })
       })
     })
@@ -819,7 +820,7 @@ export default class ChatView extends Component<{}> {
                 >
                   <AudioPlay url={this.audioFilePath} />
                 </View>
-                <Text>{this.state.recordTime}</Text>
+                <Text style={{textAlign: 'center'}}>{this.state.recordTime}</Text>
               </View>
 
               <Text style={{ color: iconColor }}>点击试听</Text>
