@@ -176,7 +176,7 @@ export default class ChatView extends Component<{}> {
 
        for (let i = 0; i < msgLength; i++) {
          const msg = msgAry[i]
-         let { sendTime, msgId, senderName, isSelf, state, content, type, readNum, senderUid, recordTime, isDot} = msg
+         let { sendTime, msgId, senderName, isSelf, state, content, type, readNum, senderUid, playState, audioDuration} = msg
          isSelf = Boolean(isSelf)
          if (!msgSet.has(msgId)) {
            msgSet.add(msgId)
@@ -207,8 +207,8 @@ export default class ChatView extends Component<{}> {
              msgId,
              senderName,
              isSelf,
-             recordTime,
-             isDot,
+             playState,
+             audioDuration,
              pic: this.imgMapObj[senderUid],
              isGroupChat: this.isGroupChat,
              onPress: msg.type === chatManager.MESSAGE_TYPE_IMAGE

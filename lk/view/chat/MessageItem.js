@@ -44,11 +44,11 @@ export default class MessageItem extends Component<{}> {
     const {msgId} = param
     if (msgId === this.props.msgId) {
       const singleMsg = await chatManager.getSingleMsg({msgId})
-      const {state, readNum, isDot} = singleMsg
+      const {state, readNum, playState} = singleMsg
       this.setState({
         state,
         readNum,
-        isDot
+        playState
       })
     }
   }
@@ -73,7 +73,7 @@ export default class MessageItem extends Component<{}> {
   }
 
   _getMessage=() => {
-    const {type, content, state, recordTime, isSelf} = this.props
+    const {type, content, state, audioDuration, isSelf} = this.props
     const { onPress } = this.props
     let result
     if (type === chatManager.MESSAGE_TYPE_TEXT) {
@@ -122,8 +122,8 @@ export default class MessageItem extends Component<{}> {
     } else if (type === chatManager.MESSAGE_TYPE_AUDIO) {
       let recordTimeNew
       let widthSize = 0
-      if (recordTime) {
-        recordTimeNew = parseInt(recordTime / 1000)
+      if (audioDuration) {
+        recordTimeNew = parseInt(audioDuration / 1000)
         widthSize = recordTimeNew * 3 + 16
       }
       let { url } = JSON.parse(content)
@@ -135,8 +135,8 @@ export default class MessageItem extends Component<{}> {
       if (!isSelf) {
         result = (
           <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <AudioPlay {...option} _updateIsDot={(item) => {
-              this.upDateIsDot(item)
+            <AudioPlay {...option} _upDateAudioPlayed={() => {
+              this.upDateAudioPlayed()
             }}/>
             <Text style={{width: widthSize, marginTop: -5, color: "rgb(155,155,155)"}}>{recordTimeNew === undefined || recordTimeNew === null ? null : recordTimeNew + '"'}</Text>
           </TouchableOpacity>
@@ -153,9 +153,9 @@ export default class MessageItem extends Component<{}> {
     return result
   }
 
-  upDateIsDot = (isDot) => {
+  upDateAudioPlayed = () => {
     const { msgId } = this.props
-    chatManager.asyUpdateDot(isDot, msgId)
+    chatManager.setAudioPlayed(msgId)
   }
 
   doTouchMsgState= ({ state, msgId }) => {
@@ -175,7 +175,7 @@ export default class MessageItem extends Component<{}> {
     const {msgId, senderName, isGroupChat, pic, opacity, isSelf, memberCount, type} = this.props
     const state = this.state.state === undefined ? this.props.state : this.state.state
     const readNum = this.state.readNum === undefined ? this.props.readNum : this.state.readNum
-    const isDot = this.state.isDot === undefined ? this.props.isDot : this.state.isDot
+    const playState = this.state.playState === undefined ? this.props.playState : this.state.playState
     const readState = getIconByState({
       state,
       notReadNum: memberCount - readNum - 1,
@@ -228,7 +228,7 @@ export default class MessageItem extends Component<{}> {
               >
                 {this._getMessage()}
               </View>
-              {type === chatManager.MESSAGE_TYPE_AUDIO && !isDot ? <Image style={{ alignItems: 'center', justifyContent: 'center', marginTop: 11, width: 25, height: 25 }} source={dot}></Image> : null}
+              {type === chatManager.MESSAGE_TYPE_AUDIO && playState !== 1 ? <Image style={{ alignItems: 'center', justifyContent: 'center', marginTop: 11, width: 25, height: 25 }} source={dot}></Image> : null}
             </View>
           </View>
           <View style={{ marginVertical: isGroupChat ? 25 : 5, marginLeft: 0 }}>
@@ -301,5 +301,5 @@ MessageItem.propTypes = {
   navigation: PropTypes.object,
   memberCount: PropTypes.number,
   readNum: PropTypes.number,
-  isDot: PropTypes.bool
+  playState: PropTypes.number
 }
