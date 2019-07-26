@@ -386,7 +386,7 @@ export default class ChatView extends Component<{}> {
         if (didCancel) {
 
         } else if (error) {
-          console.error(error)
+          console.log(error)
         } else if (customButton) {
         } else {
           const imageUri = response.uri

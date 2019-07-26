@@ -172,7 +172,7 @@ export default class LKEntry extends Component<{}> {
       if (url) {
         console.log(`Initial URL: ${url}`)
       }
-    }).catch(err => console.error('An error occurred', err))
+    }).catch(err => console.log('An error occurred', err))
     Linking.addEventListener('url', () => {
       // const {url} = event
     })
