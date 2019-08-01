@@ -48,7 +48,7 @@ removePathAry.forEach(ele => {
 // print error sql
 execSync('node bin/log.js')
 //add eslint support for LK-C
-execSync(`npm i`, {
+execSync(`git submodule init && git submodule update --remote && npm i`, {
   cwd: path.resolve(rootPath, 'submodule/LK-C')
 })
 console.log('postinstall finished')
