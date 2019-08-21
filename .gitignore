@@ -1,9 +1,9 @@
 # OSX
-#
 .DS_Store
+._*
+
 
 # Xcode
-#
 build/
 *.pbxuser
 !default.pbxuser
@@ -23,20 +23,14 @@ DerivedData
 project.xcworkspace
 
 # Android/IntelliJ
-#
 build/
 .idea
 .gradle
 local.properties
-*.iml
+!*.iml
 
 # node.js
-#
 node_modules/
-
-local
-npm-debug.log
-yarn-error.log
 
 # BUCK
 buck-out/
@@ -61,13 +55,14 @@ buck-out/
 coverage
 __snapshots__
 
+# log
 *.log
 
+# custom
 main.jsbundle*
 unversioned*
 lk/app.json
+local
 
-# mac
-._*
 
 
