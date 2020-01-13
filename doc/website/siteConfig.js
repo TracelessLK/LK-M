@@ -21,13 +21,10 @@ const siteConfig = {
   organizationName: 'TracelessLK',
   headerLinks: [
     {doc: 'nativeInstall', label: 'Docs'},
-    {doc: 'doc4', label: 'API'},
-    {page: 'help', label: 'Help'},
     {
       href: 'https://github.com/TracelessLK/LK-M',
       label: 'GitHub'
     },
-    {blog: true, label: 'Blog'}
   ],
 
   // If you have users set above, you add it here:

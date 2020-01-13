@@ -1,9 +1,12 @@
 {
   "docs": {
     "环境配置": ["nativeInstall", "iosConfig"],
-    "功能": ["devMode"]
-  },
-  "docs-other": {
-    "First Category": ["doc4", "doc5"]
+    "功能": ["devMode"],
+    "协议": ["ping"],
+    "远程调试": ["remote_debug"],
+    "mysql配置": ["mysqlConfig"],
+    "客户端事件机制": ["eventSystem"],
+    "静态文件夹": ["staticFolder"],
+    "测试流程": ["testProcess"]
   }
 }
