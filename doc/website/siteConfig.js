@@ -20,7 +20,7 @@ const siteConfig = {
   projectName: 'LK',
   organizationName: 'TracelessLK',
   headerLinks: [
-    {doc: 'nativeInstall', label: 'Docs'},
+    {doc: 'msgStructure', label: 'Docs'},
     {
       href: 'https://github.com/TracelessLK/LK-M',
       label: 'GitHub'
