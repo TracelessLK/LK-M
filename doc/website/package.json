@@ -6,7 +6,8 @@
     "publish-gh-pages": "docusaurus-publish",
     "write-translations": "docusaurus-write-translations",
     "version": "docusaurus-version",
-    "rename-version": "docusaurus-rename-version"
+    "rename-version": "docusaurus-rename-version",
+    "deploy": "pm2 start node_modules/.bin/docusaurus-start  --name=doc -- --port=4000"
   },
   "devDependencies": {
     "docusaurus": "^1.11.1"
