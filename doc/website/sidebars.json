@@ -7,7 +7,14 @@
       "login",
       "getAllDetainedMsg",
       "register",
-      "unRegister"
+      "unRegister",
+      "sendMsg",
+      "readReport",
+      "addGroupChat",
+      "addGroupMembers",
+      "setGroupName",
+      "setUserName",
+      "setUserPic"
     ],
     "环境配置": ["nativeInstall", "iosConfig"],
     "功能": ["devMode"],
