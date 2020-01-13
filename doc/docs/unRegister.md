@@ -9,8 +9,7 @@ sidebar_label: ping
  {
             body: {
                 content: {
-                   memberMCode,
-                   orgMCode
+                  
                 },
             },
             header: {
@@ -28,6 +27,4 @@ sidebar_label: ping
 
 ## 说明
 1. 由客户端发起
-2. ping主要作用是比较memberMCode和orgMCode, 如果发现不同则同步更新
-3. ping周期为60s, 循环往复
-4. timeout: 30s
+2. 重置设备, 客户端清空所有数据, 服务端清空设备信息

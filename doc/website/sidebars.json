@@ -1,8 +1,16 @@
 {
   "docs": {
+    "通信协议": [
+      "msgStructure",
+      "ping",
+      "fetchMembers",
+      "login",
+      "getAllDetainedMsg",
+      "register",
+      "unRegister"
+    ],
     "环境配置": ["nativeInstall", "iosConfig"],
     "功能": ["devMode"],
-    "协议": ["ping"],
     "远程调试": ["remote_debug"],
     "mysql配置": ["mysqlConfig"],
     "客户端事件机制": ["eventSystem"],
