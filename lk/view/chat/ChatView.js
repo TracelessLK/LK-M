@@ -134,7 +134,7 @@ export default class ChatView extends Component<{}> {
      refreshRecord = async (limit) => {
        const start = Date.now()
        if (__DEV__) {
-         console.log('update ChatView')
+//         console.log('update ChatView')
        }
        const user = lkApp.getCurrentUser()
        const { navigation } = this.props
@@ -697,7 +697,8 @@ export default class ChatView extends Component<{}> {
                 onSubmitEditing={this.send}
                 ref="text"
                 textInputProp={{
-                  placeholder: this.state.burnValue ? `本消息会在${this.state.burnValue.label}阅后即焚` : ''
+//                  placeholder: this.state.burnValue ? `本消息会在${this.state.burnValue.label}阅后即焚` : ''
+                  placeholder: ''
                 }}
               />
             )}
