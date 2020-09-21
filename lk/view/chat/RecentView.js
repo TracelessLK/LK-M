@@ -238,7 +238,7 @@ export default class RecentView extends ScreenWrapper {
 
      updateRecent = async () => {
        if (__DEV__) {
-         console.log('update RecentView')
+//         console.log('update RecentView')
        }
        const user = lkApp.getCurrentUser()
        const chatAry = await chatManager.getAllChat(user.id)
