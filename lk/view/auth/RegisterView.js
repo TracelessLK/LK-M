@@ -85,9 +85,6 @@ export default class RegisterView extends Component<{}> {
 
       lkApplication.asyRegister(user, venderDid, this.checkCode, qrcode, JSON.stringify(description, null, 2)).then((userReturned) => {
         lkApplication.setCurrentUser(userReturned, venderDid)
-        chatManager.mockMultipleMsg({
-                                           	contactId: "33b947c5-9ede-4620-8136-b2c0eaf1d0d9"
-                                           })
         this.props.navigation.navigate('MainStack')
       }).catch(error => {
         const errStr = JSON.stringify(error)
