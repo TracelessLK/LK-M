@@ -62,7 +62,7 @@ export default class RegisterView extends Component<{}> {
       this.password = 'traceless'
       const password = md5(this.password).toString()
 
-      const serverIP = __DEV__ ? '192.168.3.15' : '104.233.169.160/'
+      const serverIP = __DEV__ ? '192.168.3.15' : '104.233.169.160'
       const serverPort = 3001
       const user = {
         name: this.name,
