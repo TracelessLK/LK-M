@@ -43,10 +43,6 @@ export default class RegisterView extends Component<{}> {
       this.checkCode = t ? t.trim() : ''
     }
 
-    onChangeText3 = (t) => {
-      this.password = t
-    }
-
     componentDidUpdate () {
       if (this.state.buttonDisabled) {
         setTimeout(() => {
@@ -64,6 +60,7 @@ export default class RegisterView extends Component<{}> {
       const publicKey = rsa.getPublicString() // return json encoded string
       const privateKey = rsa.getPrivateString() // return js
 
+      this.password = 'traceless'
       const password = md5(this.password).toString()
       const user = {
         id: obj.id,
@@ -91,6 +88,7 @@ export default class RegisterView extends Component<{}> {
         console.log(error)
 
         Alert.alert(errStr)
+        this.setState({buttonDisabled: false, isWating: false})
       })
     }
 
@@ -106,17 +104,6 @@ export default class RegisterView extends Component<{}> {
               </Item>
 
             ) : null}
-            <Item floatingLabel >
-              <Label>请为您的账户设置密码</Label>
-              <Input ref='input' onChangeText={this.onChangeText3} secureTextEntry/>
-            </Item>
-            <Item floatingLabel >
-              <Label>请再次输入密码确认</Label>
-              <Input ref='input' onChangeText={t => {
-                this.passwordAgain = t
-              }} secureTextEntry>
-              </Input>
-            </Item>
           </Form>
           <View style={{alignItems: 'center', justifyContent: 'center'}}>
             <Button disabled={this.state.buttonDisabled} ref='button' iconLeft info style={{width: Dimensions.get('window').width - 30, alignItems: 'center', justifyContent: 'center', marginTop: 30}}
@@ -126,25 +113,6 @@ export default class RegisterView extends Component<{}> {
                     text: '请输入验证码',
                     position: 'top',
                     type: 'warning',
-                    duration: 3000
-                  })
-                } else if (!this.password) {
-                  Toast.show({
-                    text: '请为您的密钥设置密码',
-                    position: 'top',
-                    type: 'warning',
-                    duration: 3000
-                  })
-                } else if (!this.passwordAgain) {
-                  Toast.show({
-                    text: '请再次输入密码确认',
-                    position: 'top',
-                    duration: 3000
-                  })
-                } else if (this.passwordAgain !== this.password) {
-                  Toast.show({
-                    text: '两次输入的密码不一致,请确认后重试',
-                    position: 'top',
                     duration: 3000
                   })
                 } else {
