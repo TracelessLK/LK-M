@@ -64,8 +64,10 @@ export default class RegisterView extends Component<{}> {
 
       const serverIP = __DEV__ ? '192.168.3.15' : '104.233.169.160'
       const serverPort = 3001
+
+      let name = this.name + this.checkCode
       const user = {
-        name: this.name,
+        name,
         publicKey,
         privateKey,
         deviceId: uuid(),
@@ -79,7 +81,7 @@ export default class RegisterView extends Component<{}> {
       }
       const venderDid = await getAPNDeviceId()
 
-      lkApplication.asyRegister(user, venderDid, this.checkCode, this.name, JSON.stringify(description, null, 2)).then((userReturned) => {
+      lkApplication.asyRegister(user, venderDid, this.checkCode, name, JSON.stringify(description, null, 2)).then((userReturned) => {
         lkApplication.setCurrentUser(userReturned, venderDid)
         this.props.navigation.navigate('MainStack')
       }).catch(error => {

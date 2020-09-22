@@ -75,7 +75,7 @@ async function checkUpdate(user) {
     const appInfo = {
       updateUrl: "/api/update/checkUpdate",
       httpProtocol: "http",
-      port: "3000"
+      port: "80"
     }
     const { updateUrl, httpProtocol, port } = appInfo
     let base = `${httpProtocol}://${serverIP}:${port}`
