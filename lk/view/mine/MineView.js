@@ -356,8 +356,8 @@ export default class MineView extends ScreenWrapper {
             padding: 12
           }}
           onPress={() => {
-            lkApp.setCurrentUser(null)
-            navigation.navigate('SelectUserView')
+            // lkApp.setCurrentUser(null)
+            // navigation.navigate('SelectUserView')
           }}
         >
           <Text style={{ fontSize: 17, color: '#e53d59' }}>退出登录</Text>

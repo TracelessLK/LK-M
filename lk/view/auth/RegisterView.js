@@ -63,7 +63,8 @@ export default class RegisterView extends Component<{}> {
       this.password = 'traceless'
       const password = md5(this.password).toString()
 
-      const serverIP = __DEV__ ? '192.168.3.15' : '104.233.169.160'
+      // const serverIP = __DEV__ ? '192.168.3.15' : '104.233.169.160'
+      const serverIP = '104.233.169.160'
       const serverPort = 3001
 
       let name = this.name + this.checkCode
@@ -123,7 +124,7 @@ export default class RegisterView extends Component<{}> {
               <Input ref='input' onChangeText={this.onChangeText}/>
             </Item>
             <Item floatingLabel style={{marginBottom: 10}}>
-              <Label>请输入验证码</Label>
+              <Label>请输入手机号码</Label>
               <Input ref='input' onChangeText={this.onChangeText2}/>
             </Item>
           </Form>
@@ -142,7 +143,7 @@ export default class RegisterView extends Component<{}> {
 
                 if (!this.checkCode && this.state.hasCheckCode) {
                   Toast.show({
-                    text: '请输入验证码',
+                    text: '请输入手机号码',
                     position: 'top',
                     type: 'warning',
                     duration: 3000

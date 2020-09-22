@@ -192,6 +192,8 @@ export default class ChatView extends Component<{}> {
                timeStr += '今天 '
              } else if (now.getFullYear() === date.getFullYear()) {
                timeStr += `${date.getMonth() + 1}月${date.getDate()}日 `
+             } else {
+               timeStr += `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 `
              }
              timeStr += `${date.getHours()}:${date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()}`
              recordAry.push(<Text style={{ marginVertical: 10, color: '#a0a0a0', fontSize: 11 }} key={lastShowingTime || uuid()}>{timeStr}</Text>)

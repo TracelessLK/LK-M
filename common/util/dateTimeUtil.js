@@ -29,7 +29,7 @@ const util = {
         result = `${commonUtil.pad(month + 1)}-${commonUtil.pad(day)}`
       }
     } else {
-      result = `${year}-${commonUtil.pad(month + 1)}月-${commonUtil.pad(day)}日`
+      result = `${year}年-${commonUtil.pad(month + 1)}月-${commonUtil.pad(day)}日`
     }
     if (dayDiff === 1) {
       result = '昨天'

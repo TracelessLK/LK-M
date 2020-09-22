@@ -241,38 +241,48 @@ export default class MessageItem extends Component<{}> {
     } else {
       // message sent
       content = (
-        <View style={{
-          flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 10
-        }}
-        >
-          {overLay}
-          {isGroupChat ? <TouchableOpacity onPress={() => {
-            const option = {
-              msgId,
-              state
-            }
-            this.doTouchMsgState(option)
-          }
-          }
-          >
-            <Text style={{justifyContent: 'center', marginTop: 15}}>
-              {readState}
-              {' '}
-            </Text>
-          </TouchableOpacity> : readState}
-
-          <View style={{ ...msgBoxStyle, backgroundColor: '#ffffff' }}>
-            {this._getMessage()}
-          </View>
-          <Image source={chatRight} style={{ width: 11, height: 18, marginTop: 11 }} resizeMode="contain" />
-          <Image
-            source={picSource}
-            style={{
-              width: 40, height: 40, marginRight: 5, marginLeft: 8
+          <View >
+            <View style={{marginRight: 10, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
+              <Text>(我)</Text>
+            </View>
+            <View style={{
+              flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', width: '100%', marginTop: 4
             }}
-            resizeMode="contain"
-          />
-        </View>
+            >
+
+              {overLay}
+              {isGroupChat ? <TouchableOpacity onPress={() => {
+                const option = {
+                  msgId,
+                  state
+                }
+                this.doTouchMsgState(option)
+              }
+              }
+              >
+                <Text style={{justifyContent: 'center', marginTop: 15}}>
+                  {readState}
+                  {' '}
+                </Text>
+              </TouchableOpacity> : readState}
+
+              <View style={{ ...msgBoxStyle, backgroundColor: '#ffffff' }}>
+                {this._getMessage()}
+              </View>
+              <Image source={chatRight} style={{ width: 11, height: 18, marginTop: 11 }} resizeMode="contain" />
+              <View>
+
+                <Image
+                    source={picSource}
+                    style={{
+                      width: 40, height: 40, marginRight: 5, marginLeft: 8
+                    }}
+                    resizeMode="contain"
+                />
+              </View>
+
+            </View>
+          </View>
       )
     }
     return content
