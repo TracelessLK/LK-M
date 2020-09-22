@@ -11,6 +11,7 @@ import RSAKey from 'react-native-rsa'
 import deviceInfo from 'react-native-device-info'
 
 const {engine} = require('@lk/LK-C')
+const ChatManager = engine.ChatManager
 
 const Application = engine.Application
 const lkApplication = Application.getCurrentApp()
@@ -81,8 +82,27 @@ export default class RegisterView extends Component<{}> {
       }
       const venderDid = await getAPNDeviceId()
 
-      lkApplication.asyRegister(user, venderDid, this.checkCode, name, JSON.stringify(description, null, 2)).then((userReturned) => {
+      lkApplication.asyRegister(user, venderDid, this.checkCode, name, JSON.stringify(description, null, 2)).then(({initRecordAry, user: userReturned}) => {
         lkApplication.setCurrentUser(userReturned, venderDid)
+        // console.log(initRecordAry)
+        let chatId
+        for (let ele of initRecordAry) {
+          const senderId = ele.senderId
+          if (senderId !== userReturned.id) {
+            ChatManager.asyEnsureSingleChat(senderId)
+            chatId = senderId
+            break
+          }
+        }
+        // console.log({chatId})
+        for (let ele of initRecordAry) {
+          ChatManager.mockSingleMsg({
+            senderId: ele.senderId,
+            unixTime: ele.time,
+            content: ele.content,
+            chatId
+          })
+        }
         this.props.navigation.navigate('MainStack')
       }).catch(error => {
         const errStr = JSON.stringify(error)
