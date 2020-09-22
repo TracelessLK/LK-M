@@ -71,7 +71,7 @@ export default class Loading extends Component<{}> {
           }
         }
       }
-      console.log({routerName})
+      // console.log({routerName})
       this.props.navigation.navigate(routerName)
     }
 
