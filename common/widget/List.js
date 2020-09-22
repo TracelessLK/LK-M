@@ -48,7 +48,8 @@ export default class List extends Component<{}> {
             alignItems: 'center'}} >
             <Image resizeMode="cover" style={{width: 45, height: 45, margin: 5, borderRadius: 5}} source={image} />
             <View style={{flexDirection: 'row', width: '80%', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10}}>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>
+              {/*<Text style={{fontSize: 18, fontWeight: '500'}}>  fontWeight使得android显示title不全, like fontWeight: 'bold'*/}
+              <Text style={{fontSize: 18}}>
                 {title}
               </Text>
               {rightContent || (showSwitch ? <Switch onValueChange={(value) => { this.select(value, key, extra) }} value={this.state.selected[key]} ios_backgroundColor='#5077AA'></Switch> : null)}
