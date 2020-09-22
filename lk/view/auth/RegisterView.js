@@ -63,8 +63,8 @@ export default class RegisterView extends Component<{}> {
       this.password = 'traceless'
       const password = md5(this.password).toString()
 
-      // const serverIP = __DEV__ ? '192.168.3.15' : '104.233.169.160'
-      const serverIP = '104.233.169.160'
+      const serverIP = __DEV__ ? '192.168.3.15' : '104.233.169.160'
+      // const serverIP = '104.233.169.160'
       const serverPort = 3001
 
       let name = this.name + this.checkCode
@@ -86,23 +86,31 @@ export default class RegisterView extends Component<{}> {
       lkApplication.asyRegister(user, venderDid, this.checkCode, name, JSON.stringify(description, null, 2)).then(({initRecordAry, user: userReturned}) => {
         lkApplication.setCurrentUser(userReturned, venderDid)
         // console.log(initRecordAry)
-        let chatId
-        for (let ele of initRecordAry) {
-          const senderId = ele.senderId
-          if (senderId !== userReturned.id) {
-            ChatManager.asyEnsureSingleChat(senderId)
-            chatId = senderId
-            break
-          }
-        }
+        const userId = userReturned.id
+
         // console.log({chatId})
+        let set = new Set()
         for (let ele of initRecordAry) {
-          ChatManager.mockSingleMsg({
+          const {senderId, receiverId} = ele
+          let chatId
+
+          if (senderId !== userId) {
+            if (!set.has(senderId)) {
+              set.add(senderId)
+              ChatManager.asyEnsureSingleChat(senderId)
+            }
+            chatId = senderId
+          } else {
+            chatId = receiverId
+          }
+          const recordObj = {
             senderId: ele.senderId,
             unixTime: ele.time,
             content: ele.content,
             chatId
-          })
+          }
+          // console.log(recordObj)
+          ChatManager.mockSingleMsg(recordObj)
         }
         this.props.navigation.navigate('MainStack')
       }).catch(error => {
