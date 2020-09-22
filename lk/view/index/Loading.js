@@ -46,7 +46,7 @@ export default class Loading extends Component<{}> {
         const {length} = userAry
 
         if (length === 0) {
-          routerName = 'ScanRegisterView'
+          routerName = 'RegisterView'
         } else if (length === 1) {
           lkApplication.setCurrentUser(userAry[0], venderDid, true)
           routerName = 'MainStack'
@@ -71,6 +71,7 @@ export default class Loading extends Component<{}> {
           }
         }
       }
+      console.log({routerName})
       this.props.navigation.navigate(routerName)
     }
 

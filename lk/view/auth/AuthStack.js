@@ -6,10 +6,9 @@ import RegisterView from './RegisterView'
 import CheckCodeView from './CheckCodeView'
 
 const StackNavigator = createStackNavigator({
-  ScanRegisterView,
+  RegisterView,
   PasswordLoginView,
   SelectUserView,
-  RegisterView,
   CheckCodeView
 }, {
 })

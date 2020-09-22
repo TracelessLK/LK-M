@@ -60,7 +60,7 @@ export default class ScanRegisterView extends React.Component {
       const {data} = e
       const decryptedText = decryptAES(data)
       const obj = JSON.parse(decryptedText)
-      // console.log({obj})
+      console.log({obj})
       //const userAry = await UserManager.asyGetAll()
       const {action} = obj
       if (action === 'registerForAdmin') {
